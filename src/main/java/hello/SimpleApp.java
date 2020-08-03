@@ -1,3 +1,5 @@
+package hello;
+
 public class SimpleApp {
     public String sayHello() {
         return "Hello World!";
