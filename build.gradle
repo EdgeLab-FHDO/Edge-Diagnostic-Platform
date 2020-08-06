@@ -1,14 +1,28 @@
 plugins {
-    id 'java'
+    //Application plugin which implicitly includes java plugin
+    //Makes the app runnable on CL (gradle run)
+    id 'application'
+}
+application{
+    //Necessary configuration for application plugin, path to the main method
+    mainClassName 'hello.SimpleApp'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+group 'de.fh-dortmund'
+version '0.5'
+
+jar {
+    //Include the Main-Class Attribute so that the generated jar is executable using java -jar
+    manifest {
+        attributes "Main-Class": "hello.SimpleApp"
+    }
+}
 
 repositories {
+    //Where to get the dependencies
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation 'junit:junit:4.12'
 }
