@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="hello.Tester" tests="2" skipped="0" failures="0" errors="0" timestamp="2020-08-03T14:40:38" hostname="LAPTOP-PN5JAMBO" time="0.002">
-  <properties/>
-  <testcase name="NullTest" classname="hello.Tester" time="0.001"/>
-  <testcase name="ContentTest" classname="hello.Tester" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
