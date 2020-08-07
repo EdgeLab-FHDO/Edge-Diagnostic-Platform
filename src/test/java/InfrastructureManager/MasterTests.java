@@ -36,5 +36,19 @@ public class MasterTests {
         String expected = "GUI update execution";
         Assert.assertEquals(expected,master.execute(command));
     }
+    @Test
+    public void commandnotrecognizedTest() {
+        String command = "do something";
+        String expected = "command not defined!";
+        Assert.assertEquals(expected,master.execute(command));
+    }
+
+    @Test
+    public void commandEmptyTest() {
+        String command = "";
+        String expected = "Empty Command!";
+        Assert.assertEquals(expected,master.execute(command));
+    }
+
 
 }

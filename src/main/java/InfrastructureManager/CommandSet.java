@@ -7,12 +7,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandSet implements MasterConfig<Map<String,String>> {
+
+    private static CommandSet instance = null; //Singleton Implementation, only one command set will be necessary
+
     private final Map<String,String> commands;
     private final String FILE_PATH = "src/main/resources/commands.txt";
 
-    public CommandSet() {
+    private CommandSet() {
         this.commands = new HashMap<>();
         readCommandsFromFile();
+    }
+
+    public static CommandSet getInstance() { //Singleton implementation
+        if (instance == null) {
+            instance = new CommandSet();
+        }
+        return instance;
     }
 
     @Override
@@ -22,12 +32,15 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
 
     @Override
     public Map<String, String> get() {
-
         return this.commands;
     }
 
     public String getResponse(String command) {
-        return this.commands.getOrDefault(command,"command not defined!");
+        if (command.isEmpty()) {
+            return "Empty Command!";
+        } else {
+            return this.commands.getOrDefault(command,"command not defined!");
+        }
     }
 
     private void readCommandsFromFile() {
