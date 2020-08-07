@@ -5,7 +5,7 @@ plugins {
 }
 application{
     //Necessary configuration for application plugin, path to the main method
-    mainClassName 'hello.SimpleApp'
+    mainClassName 'InfrastructureManager.Main'
 }
 
 group 'de.fh-dortmund'
@@ -14,7 +14,7 @@ version '0.5'
 jar {
     //Include the Main-Class Attribute so that the generated jar is executable using java -jar
     manifest {
-        attributes "Main-Class": "hello.SimpleApp"
+        attributes "Main-Class": "InfrastructureManager.Main"
     }
 }
 
