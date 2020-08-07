@@ -26,6 +26,10 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
         return this.commands;
     }
 
+    public String getResponse(String command) {
+        return this.commands.getOrDefault(command,"command not defined!");
+    }
+
     private void readCommandsFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader(this.FILE_PATH))) {
             String[] command;
@@ -39,10 +43,5 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
             e.printStackTrace();
         }
     }
-
-    public String getCommand(String command) {
-        return this.commands.get(command);
-    }
-
 
 }
