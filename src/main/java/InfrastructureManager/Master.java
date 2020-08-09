@@ -13,6 +13,7 @@ public class Master {
         Master master = new Master();
         String in = master.fromInput();
         String mapping = master.execute(in);
+        System.out.println(mapping);
     }
 
     public String fromInput() {
