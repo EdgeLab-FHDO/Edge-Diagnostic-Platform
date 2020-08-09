@@ -1,14 +1,16 @@
 package InfrastructureManager;
 
 public class Master {
+
     private final CommandSet commandSet;
     private final MasterInput input;
     private final MasterOutput output;
 
     public Master() {
-        commandSet = CommandSet.getInstance();
-        input =new ConsoleInput();
-        output = new ConsoleOutput();
+        MasterConfigurator configurator = new MasterConfigurator();
+        commandSet = configurator.getCommands();
+        input =configurator.getInput();
+        output = configurator.getOutput();
     }
     public String fromInput() {
         return this.input.read();
