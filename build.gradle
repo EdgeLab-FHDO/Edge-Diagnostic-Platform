@@ -1,9 +1,22 @@
 plugins {
-    //Java plugin (No main method to run)
-    id 'java'
+    //Application plugin which implicitly includes java plugin
+    //Makes the app runnable on CL (gradle run)
+    id 'application'
 }
+application{
+    //Necessary configuration for application plugin, path to the main method
+    mainClassName 'InfrastructureManager.Master'
+}
+
 group 'de.fh-dortmund'
 version '0.5'
+
+jar {
+    //Include the Main-Class Attribute so that the generated jar is executable using java -jar
+    manifest {
+        attributes "Main-Class": "InfrastructureManager.Master"
+    }
+}
 
 repositories {
     //Where to get the dependencies
