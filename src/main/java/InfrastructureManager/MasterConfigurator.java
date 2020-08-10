@@ -13,15 +13,23 @@ public class MasterConfigurator {
     }
 
     public CommandSet getCommands() {
-        //TODO: Implement
+        //TODO: Implement to replace actual implementation with txt
         return CommandSet.getInstance();
     }
     public MasterInput getInput() {
-        //TODO: Implement
-        return new ConsoleInput();
+        switch (data.getInputSource()) {
+            case "console":
+                return new ConsoleInput();
+            default:
+                throw new IllegalArgumentException("Invalid input in Configuration");
+        }
     }
     public MasterOutput getOutput() {
-        //TODO: Implement
-        return new ConsoleOutput();
+        switch (data.getOutputSource()) {
+            case "console":
+                return new ConsoleOutput();
+            default:
+                throw new IllegalArgumentException("Invalid output in Configuration");
+        }
     }
 }
