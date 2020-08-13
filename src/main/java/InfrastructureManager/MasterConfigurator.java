@@ -1,6 +1,8 @@
 package InfrastructureManager;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.io.IOException;
 
 public class MasterConfigurator {
     private MasterConfigurationData data;
@@ -8,8 +10,13 @@ public class MasterConfigurator {
     //      Also, consider making it a singleton
 
     public MasterConfigurator() {
-        //TODO: Read JSON and Create the data object
-        this.data = new MasterConfigurationData(); //Remove
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            this.data = mapper.readValue(new File("src/main/resources/config.json"), MasterConfigurationData.class);
+        } catch (IOException e) {
+            System.out.println("Error while reading JSON Config File");
+            e.printStackTrace();
+        }
     }
 
     public CommandSet getCommands() {
