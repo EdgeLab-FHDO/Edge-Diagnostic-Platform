@@ -37,7 +37,7 @@ public class MasterTests {
         Assert.assertEquals(expected,master.execute(command));
     }
     @Test
-    public void commandnotrecognizedTest() {
+    public void commandNotRecognizedTest() {
         String command = "do something";
         String expected = "command not defined!";
         Assert.assertEquals(expected,master.execute(command));
