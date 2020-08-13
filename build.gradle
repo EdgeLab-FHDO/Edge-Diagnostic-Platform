@@ -5,7 +5,7 @@ plugins {
 }
 application{
     //Necessary configuration for application plugin, path to the main method
-    mainClassName 'hello.SimpleApp'
+    mainClassName 'InfrastructureManager.Master'
 }
 
 group 'de.fh-dortmund'
@@ -14,7 +14,7 @@ version '0.5'
 jar {
     //Include the Main-Class Attribute so that the generated jar is executable using java -jar
     manifest {
-        attributes "Main-Class": "hello.SimpleApp"
+        attributes "Main-Class": "InfrastructureManager.Master"
     }
 }
 
@@ -24,5 +24,6 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
     testImplementation 'junit:junit:4.12'
 }
