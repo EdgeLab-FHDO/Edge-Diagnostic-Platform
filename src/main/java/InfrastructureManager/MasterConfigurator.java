@@ -6,8 +6,7 @@ import java.io.IOException;
 
 public class MasterConfigurator {
     private MasterConfigurationData data;
-    //TODO: Implement reading configuration from a JSON file
-    //      Also, consider making it a singleton
+    //TODO: consider making it a singleton
 
     public MasterConfigurator() {
         ObjectMapper mapper = new ObjectMapper();
@@ -20,7 +19,7 @@ public class MasterConfigurator {
     }
 
     public CommandSet getCommands() {
-        //TODO: Implement to replace actual implementation with txt
+        CommandSet.getInstance().set(data.getCommands());
         return CommandSet.getInstance();
     }
     public MasterInput getInput() {

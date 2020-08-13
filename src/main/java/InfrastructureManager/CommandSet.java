@@ -10,12 +10,11 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
 
     private static CommandSet instance = null; //Singleton Implementation, only one command set will be necessary
 
-    private final Map<String,String> commands;
+    private Map<String,String> commands;
     private final String FILE_PATH = "src/main/resources/commands.txt";
 
     private CommandSet() {
         this.commands = new HashMap<>();
-        readCommandsFromFile();
     }
 
     public static CommandSet getInstance() { //Singleton implementation
@@ -27,7 +26,7 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
 
     @Override
     public void set(Map<String, String> config) {
-        //TODO: implement in future
+        this.commands = config;
     }
 
     @Override
@@ -42,19 +41,4 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
             return this.commands.getOrDefault(command,"command not defined!");
         }
     }
-
-    private void readCommandsFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(this.FILE_PATH))) {
-            String[] command;
-            String line;
-            while ((line = reader.readLine()) != null) {
-                command = line.split("->");
-                this.commands.putIfAbsent(command[0],command[1]);
-            }
-        } catch (IOException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
 }

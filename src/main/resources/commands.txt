@@ -1,5 +1,0 @@
-deploy application->Helm chart execution
-node request->Match making execution
-update gui->GUI update execution
-save statistics->Logger execution
-show statistics->GUI update execution
