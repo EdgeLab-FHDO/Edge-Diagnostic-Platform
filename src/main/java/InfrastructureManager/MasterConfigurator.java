@@ -10,6 +10,7 @@ import java.io.IOException;
  * output types, etc.)
  */
 public class MasterConfigurator {
+    private final String CONFIG_FILE_PATH = "src/main/resources/config.json";
     private MasterConfigurationData data; //Configuration File Interface
     //TODO: consider making it a singleton
 
@@ -17,7 +18,7 @@ public class MasterConfigurator {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
         try {
             //Map the contents of the JSON file to a java object
-            this.data = mapper.readValue(new File("src/main/resources/config.json"), MasterConfigurationData.class);
+            this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
         } catch (IOException e) {
             System.out.println("Error while reading JSON Config File");
             e.printStackTrace();
