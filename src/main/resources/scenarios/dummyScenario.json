@@ -1,0 +1,8 @@
+{
+  "name" : "dummy" ,
+  "eventList" : [
+    "node request",
+    "deploy application",
+    "update gui"
+  ]
+}
