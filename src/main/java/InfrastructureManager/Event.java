@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 public class Event implements MasterInput {
     private String command;
     private int time;
@@ -26,6 +28,7 @@ public class Event implements MasterInput {
     }
 
     @Override
+    @JsonGetter("command")
     public String read() {
         //TODO: Implement
         return this.command;

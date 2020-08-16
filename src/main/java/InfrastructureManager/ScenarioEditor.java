@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,24 +11,44 @@ public class ScenarioEditor implements MasterOutput{
     private final ObjectMapper mapper;
 
     public ScenarioEditor() {
-        this.mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);;
     }
     @Override
     public void out(String response) {
-        //TODO: Implement
+        String[] command = response.split(" ");
+        switch (command[0]) {
+            case "create":
+                create(command[1]);
+                break;
+            case "addEvent":
+                addEvent(command[1], Integer.parseInt(command[2]));
+                break;
+            case "deleteEvent":
+                deleteLastEvent();
+                break;
+            case "toFile" :
+                scenarioToFile();
+                break;
+            case "fromFile":
+                scenarioFromFile(command[1]);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+        }
     }
 
-    public void create(){
-        scenario = new Scenario();
+    public void create(String name){
+        scenario = new Scenario(name);
     }
     public void addEvent(String command, int time){
-        scenario.getEventList().add(new Event(command,time));
+        scenario.addEvent(new Event(command,time));
     }
-    public void deleteEvent(){
+    public void deleteLastEvent(){
         int last = scenario.getEventList().size() - 1;
-        scenario.getEventList().remove(last);
+        scenario.deleteEvent(last);
     }
-    public void scenarioToFile(String path){
+    public void scenarioToFile(){
+        String path = "src/main/resources/scenarios/" + scenario.getName() + ".json";
         try {
             mapper.writeValue(new File(path), this.scenario);
         } catch (IOException e) {
@@ -41,5 +62,4 @@ public class ScenarioEditor implements MasterOutput{
             e.printStackTrace();
         }
     }
-
 }

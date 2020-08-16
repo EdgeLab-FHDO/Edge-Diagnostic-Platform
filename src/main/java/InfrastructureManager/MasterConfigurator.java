@@ -61,6 +61,8 @@ public class MasterConfigurator {
                 return new ConsoleOutput();
             case "scenario dispatcher" :
                 return new ScenarioDispatcher();
+            case  "scenario editor" :
+                return new ScenarioEditor();
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }

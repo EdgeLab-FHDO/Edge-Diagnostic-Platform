@@ -9,6 +9,11 @@ public class Scenario {
 
     public Scenario() {
         this.name = null;
+        //TODO: Is it the better implementation?
+        this.eventList = new ArrayList<>();
+    }
+    public Scenario(String name) {
+        this.name = name;
         this.eventList = new ArrayList<>();
     }
 
@@ -18,5 +23,13 @@ public class Scenario {
 
     public List<Event> getEventList() {
         return eventList;
+    }
+
+    public void addEvent(Event event) {
+        this.eventList.add(event);
+    }
+
+    public void deleteEvent(int index) {
+        this.eventList.remove(index);
     }
 }
