@@ -15,18 +15,15 @@ public class ScenarioDispatcher implements MasterOutput {
     }
     @Override
     public void out(String response) {
-        if (response.contains("load scenario")) {
-            this.path = response.replaceAll("load scenario ", "");
-            response = "load scenario";
-        }
-        switch (response) {
-            case "load scenario":
-                scenarioFromFile();
+        String[] command = response.split(" ");
+        switch (command[0]) {
+            case "fromFile":
+                scenarioFromFile(command[1]);
                 break;
-            case "run scenario" :
+            case "run" :
                 runScenario();
                 break;
-            case "pause scenario" :
+            case "pause" :
                 pauseScenario();
                 break;
             default:
@@ -35,15 +32,17 @@ public class ScenarioDispatcher implements MasterOutput {
     }
 
     private void pauseScenario() {
-
+        //TODO: Implement
+        System.out.println("Pause Function");
     }
 
     private void runScenario() {
         //TODO: Implement
+        System.out.println("Run Function");
         scenario.getEventList().forEach(e -> System.out.println(e.toString()));
     }
 
-    private void scenarioFromFile() {
+    private void scenarioFromFile(String path){
         ObjectMapper mapper = new ObjectMapper();
         try {
             this.scenario = mapper.readValue(new File(path),Scenario.class);

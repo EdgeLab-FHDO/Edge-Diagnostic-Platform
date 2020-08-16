@@ -27,7 +27,6 @@ public class Master {
         String in;
         String mapping;
         while (true){
-            System.out.println("Input: ");
             in = master.fromInput();
             if (in.equals("exit")) {
                 break;

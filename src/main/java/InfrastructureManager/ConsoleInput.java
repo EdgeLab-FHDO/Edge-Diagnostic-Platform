@@ -14,6 +14,7 @@ public class ConsoleInput implements MasterInput{
      */
     @Override
     public String read() {
+        System.out.println("Input >");
         return IN.nextLine(); //Wraps the nextLine method from the console scanner
     }
 }

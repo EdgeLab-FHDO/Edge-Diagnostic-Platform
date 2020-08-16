@@ -2,15 +2,15 @@
   "name" : "dummy" ,
   "eventList" : [
     {
-      "command" : "deploy application",
+      "command" : "deploy_application",
       "time" : 0
     },
     {
-      "command" : "node request",
+      "command" : "node_request",
       "time" : 1
     },
     {
-      "command" : "update gui",
+      "command" : "update_gui",
       "time" : 2
     }
   ]
