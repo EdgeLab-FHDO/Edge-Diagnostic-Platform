@@ -8,6 +8,11 @@ public class Event implements MasterInput {
         this.time = 0;
     }
 
+    public Event(String command, int time) {
+        this.command = command;
+        this.time = time;
+    }
+
     public void setCommand(String command) {
         this.command = command;
     }

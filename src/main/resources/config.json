@@ -1,5 +1,5 @@
 {
-  "inputSource": "dummyScenario",
+  "inputSource": "console",
   "commands" : {
     "deploy application" : "Helm chart execution" ,
     "node request" : "Match making execution" ,
@@ -7,5 +7,5 @@
     "save statistics" : "Logger execution" ,
     "show statistics" : "GUI update execution"
   } ,
-  "outputSource" : "console"
+  "outputSource" : "scenario dispatcher"
 }

@@ -1,5 +1,6 @@
 package InfrastructureManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Scenario {
@@ -8,7 +9,7 @@ public class Scenario {
 
     public Scenario() {
         this.name = null;
-        this.eventList = null;
+        this.eventList = new ArrayList<>();
     }
 
     public String getName() {

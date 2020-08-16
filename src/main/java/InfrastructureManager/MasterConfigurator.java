@@ -44,7 +44,7 @@ public class MasterConfigurator {
             case "console":
                 return new ConsoleInput();
             case "dummyScenario" :
-                return new Event();
+                return new Event(); //TODO: Correct
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -59,6 +59,8 @@ public class MasterConfigurator {
         switch (data.getOutputSource()) {
             case "console":
                 return new ConsoleOutput();
+            case "scenario dispatcher" :
+                return new ScenarioDispatcher();
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }
