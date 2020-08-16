@@ -26,12 +26,11 @@ public class Master {
         Master master = new Master();
         String in;
         String mapping;
-        while (true) {
+        do {
             in = master.fromInput();
             mapping = master.execute(in);
             master.toOutput(mapping);
-            if (in.equals("exit")) {break;}
-        }
+        } while (!in.equals("exit"));
     }
 
 }

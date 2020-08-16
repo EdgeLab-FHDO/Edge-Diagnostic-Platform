@@ -43,6 +43,8 @@ public class MasterConfigurator {
         switch (data.getInputSource()) {
             case "console":
                 return new ConsoleInput();
+            case "dummyScenario" :
+                return new Event();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }

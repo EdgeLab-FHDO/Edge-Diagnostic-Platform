@@ -1,8 +1,17 @@
 {
   "name" : "dummy" ,
   "eventList" : [
-    "node request",
-    "deploy application",
-    "update gui"
+    {
+      "command" : "deploy application",
+      "time" : 0
+    },
+    {
+      "command" : "node request",
+      "time" : 1
+    },
+    {
+      "command" : "update gui",
+      "time" : 2
+    }
   ]
 }

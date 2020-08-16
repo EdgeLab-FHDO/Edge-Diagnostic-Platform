@@ -1,5 +1,5 @@
 {
-  "inputSource": "console",
+  "inputSource": "dummyScenario",
   "commands" : {
     "deploy application" : "Helm chart execution" ,
     "node request" : "Match making execution" ,
