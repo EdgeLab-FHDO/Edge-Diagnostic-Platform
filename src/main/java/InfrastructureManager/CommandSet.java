@@ -3,6 +3,8 @@ package InfrastructureManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Singleton Class that interfaces the command set to the master
@@ -50,10 +52,22 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
      * given command is not configured
      */
     public String getResponse(String command) {
+        String[] aux = extractPath(command);
+        command = aux[0];
+        String path = aux[1].isEmpty() ? "" : " " + aux[1];
         if (command.isEmpty()) {
             return "Empty Command!";
         } else {
-            return this.commands.getOrDefault(command,"command not defined!");
+            return this.commands.getOrDefault(command,"command not defined!") + path;
         }
+    }
+    private String[] extractPath(String command) {
+        final String pattern = "(\\w*:?)?([\\\\\\/][\\S]+)+";
+        String[] result = new String[2];
+        Pattern pattern1 = Pattern.compile(pattern);
+        Matcher matcher = pattern1.matcher(command);
+        result[1] = matcher.find() ? matcher.group() : "";
+        result[0] = command.replace(result[1],"");
+        return result;
     }
 }
