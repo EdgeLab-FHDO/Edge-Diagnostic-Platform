@@ -11,7 +11,7 @@ public class ScenarioEditor implements MasterOutput{
     private final ObjectMapper mapper;
 
     public ScenarioEditor() {
-        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);;
+        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
     @Override
     public void out(String response) {

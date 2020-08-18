@@ -3,8 +3,6 @@ package InfrastructureManager;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Singleton Class that interfaces the command set to the master

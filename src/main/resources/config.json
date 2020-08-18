@@ -14,5 +14,5 @@
     "run_scenario" : "run",
     "pause_scenario" : "pause"
   } ,
-  "outputSource" : "scenario editor"
+  "outputSource" : "scenario dispatcher"
 }

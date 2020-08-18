@@ -7,11 +7,9 @@ import java.io.IOException;
 
 public class ScenarioDispatcher implements MasterOutput {
     private Scenario scenario;
-    private String path;
 
     public ScenarioDispatcher() {
         this.scenario = null;
-        this.path = "";
     }
     @Override
     public void out(String response) {
@@ -33,13 +31,21 @@ public class ScenarioDispatcher implements MasterOutput {
 
     private void pauseScenario() {
         //TODO: Implement
-        System.out.println("Pause Function");
     }
 
     private void runScenario() {
-        //TODO: Implement
-        System.out.println("Run Function");
-        scenario.getEventList().forEach(e -> System.out.println(e.toString()));
+        Master master = Master.getInstance();
+        for (Event e : this.scenario.getEventList()) {
+            String command = e.read(); //So it will not require runtime changes in config
+            String mapping = master.execute(command);
+            System.out.println(mapping); //TODO: Figure out the output
+            try {
+                Thread.sleep(1000); //Just to see it sequentially in the console
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+        }
+
     }
 
     private void scenarioFromFile(String path){
