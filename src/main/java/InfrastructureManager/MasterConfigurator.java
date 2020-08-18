@@ -44,7 +44,9 @@ public class MasterConfigurator {
             case "console":
                 return new ConsoleInput();
             case "dummyScenario" :
-                return new Event(); //TODO: Correct
+                ScenarioEditor editor = new ScenarioEditor();
+                editor.scenarioFromFile("src/main/resources/scenarios/dummyScenario.json");
+                return editor.getScenario(); //TODO: Correct
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }

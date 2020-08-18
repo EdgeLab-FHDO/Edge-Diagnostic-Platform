@@ -62,4 +62,8 @@ public class ScenarioEditor implements MasterOutput{
             e.printStackTrace();
         }
     }
+
+    public Scenario getScenario() {
+        return scenario;
+    }
 }
