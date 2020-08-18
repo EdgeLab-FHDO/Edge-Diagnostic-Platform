@@ -1,0 +1,10 @@
+{
+  "name" : "testScenario",
+  "eventList" : [ {
+    "command" : "test_event0",
+    "time" : 0
+  }, {
+    "command" : "test_event1",
+    "time" : 1
+  } ]
+}

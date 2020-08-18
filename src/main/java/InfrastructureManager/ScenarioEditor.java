@@ -27,7 +27,7 @@ public class ScenarioEditor implements MasterOutput{
                 deleteLastEvent();
                 break;
             case "toFile" :
-                scenarioToFile();
+                scenarioToFile(command[1]);
                 break;
             case "fromFile":
                 scenarioFromFile(command[1]);
@@ -47,8 +47,8 @@ public class ScenarioEditor implements MasterOutput{
         int last = scenario.getEventList().size() - 1;
         scenario.deleteEvent(last);
     }
-    public void scenarioToFile(){
-        String path = "src/main/resources/scenarios/" + scenario.getName() + ".json";
+    public void scenarioToFile(String path){
+        path = path + scenario.getName() + ".json";
         try {
             mapper.writeValue(new File(path), this.scenario);
         } catch (IOException e) {

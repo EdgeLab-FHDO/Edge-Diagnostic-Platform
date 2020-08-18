@@ -1,5 +1,5 @@
 {
-  "inputSource": "dummyScenario",
+  "inputSource": "console",
   "commands" : {
     "deploy_application" : "Helm chart execution" ,
     "node_request" : "Match making execution" ,
@@ -14,5 +14,5 @@
     "run_scenario" : "run",
     "pause_scenario" : "pause"
   } ,
-  "outputSource" : "console"
+  "outputSource" : "scenario editor"
 }
