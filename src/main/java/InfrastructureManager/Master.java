@@ -5,8 +5,9 @@ public class Master {
     private final CommandSet commandSet;
     private final MasterInput input;
     private final MasterOutput output;
+    private static Master instance = null;
 
-    public Master() {
+    private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         input =configurator.getInput();
@@ -21,9 +22,15 @@ public class Master {
     public void toOutput(String response) {
         this.output.out(response);
     }
+    public static Master getInstance() {
+        if (instance == null) {
+            instance = new Master();
+        }
+        return instance;
+    }
 
     public static void main(String[] args) {
-        Master master = new Master();
+        Master master = Master.getInstance();
         String in;
         String mapping;
         while (true){

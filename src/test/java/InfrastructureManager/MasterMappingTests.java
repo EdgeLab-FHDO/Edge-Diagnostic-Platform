@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class MasterMappingTests {
-    Master master = new Master();
+    Master master = Master.getInstance();
 
     @Test
     public void command1Test() {
