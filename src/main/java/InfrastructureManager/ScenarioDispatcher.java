@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class ScenarioDispatcher implements MasterOutput {
     private Scenario scenario;
-
+    private ScenarioRunner runner;
     public ScenarioDispatcher() {
         this.scenario = null;
     }
@@ -24,34 +24,31 @@ public class ScenarioDispatcher implements MasterOutput {
             case "pause" :
                 pauseScenario();
                 break;
+            case "resume" :
+                resumeScenario();
+                break;
             default:
                 throw new IllegalArgumentException("Invalid Command for ScenarioDispatcher!");
         }
     }
 
     private void pauseScenario() {
-        //TODO: Implement
+        this.runner.pause();
+    }
+    private void resumeScenario() {
+        this.runner.resume();
     }
 
     private void runScenario() {
-        Master master = Master.getInstance();
-        for (Event e : this.scenario.getEventList()) {
-            String command = e.read(); //So it will not require runtime changes in config
-            String mapping = master.execute(command);
-            System.out.println(mapping); //TODO: Figure out the output
-            try {
-                Thread.sleep(1000); //Just to see it sequentially in the console
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            }
-        }
-
+        Thread runThread = new Thread(this.runner);
+        runThread.start();
     }
 
     private void scenarioFromFile(String path){
         ObjectMapper mapper = new ObjectMapper();
         try {
             this.scenario = mapper.readValue(new File(path),Scenario.class);
+            this.runner = new ScenarioRunner(this.scenario);
         } catch (IOException e) {
             e.printStackTrace();
         }

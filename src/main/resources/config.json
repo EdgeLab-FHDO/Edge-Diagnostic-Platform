@@ -12,7 +12,8 @@
     "save_scenario" : "toFile",
     "load_scenario" : "fromFile",
     "run_scenario" : "run",
-    "pause_scenario" : "pause"
+    "pause_scenario" : "pause",
+    "resume_scenario" : "resume"
   } ,
   "outputSource" : "scenario dispatcher"
 }
