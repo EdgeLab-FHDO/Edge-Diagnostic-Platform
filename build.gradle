@@ -18,6 +18,13 @@ jar {
     }
 }
 
+jar {
+    //jar for Applications
+    manifest {
+        attributes "Main-Class": "Application.DockerApp"
+    }
+}
+
 repositories {
     //Where to get the dependencies
     mavenCentral()
