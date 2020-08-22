@@ -1,6 +1,7 @@
 {
   "inputSource": "console",
   "commands" : {
+    "exit" : "exit",
     "deploy_application" : "Helm chart execution" ,
     "node_request" : "Match making execution" ,
     "update_gui" : "GUI update execution" ,

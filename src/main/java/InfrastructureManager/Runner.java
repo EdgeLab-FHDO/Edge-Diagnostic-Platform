@@ -1,7 +1,5 @@
 package InfrastructureManager;
 
-import java.util.Arrays;
-
 public class Runner implements Runnable{
     protected MasterInput input;
     protected MasterOutput[] outputs;
@@ -23,6 +21,7 @@ public class Runner implements Runnable{
             runOperation();
         }
     }
+
     public void checkPause() {
         if (paused) {
             synchronized (pauseLock) {
@@ -34,7 +33,6 @@ public class Runner implements Runnable{
             }
         }
     }
-
     public void runOperation() {
         Master master = Master.getInstance();
         String mapping = master.execute(input.read());
@@ -42,11 +40,9 @@ public class Runner implements Runnable{
             output.out(mapping);
         }
     }
-
     public void exit(){
         exit = true;
     }
-
     public void pause() {
         paused = true;
     }

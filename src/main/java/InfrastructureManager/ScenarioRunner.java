@@ -6,6 +6,7 @@ public class ScenarioRunner extends Runner {
     private int currentEvent;
 
     public ScenarioRunner(Scenario scenario) {
+        //TODO: From configurator
         super(null,new ConsoleOutput());
         this.scenario = scenario;
         this.currentEvent = 0;
@@ -20,10 +21,10 @@ public class ScenarioRunner extends Runner {
             currentEvent = 0;
             exit();
         }
-        delay(2000);
+        delay(2000); //Temporary, So each event "happens" slowly and can be paused
     }
 
-    public void delay(int ms) {
+    private void delay(int ms) {
         try {
             Thread.sleep(ms); //Just to see it sequentially in the console
         } catch (InterruptedException interruptedException) {
