@@ -1,0 +1,19 @@
+{
+  "inputSource": "console",
+  "commands" : {
+    "deploy_application" : "Helm chart execution" ,
+    "node_request" : "Match making execution" ,
+    "update_gui" : "GUI update execution" ,
+    "save_statistics" : "Logger execution" ,
+    "show_statistics" : "GUI update execution",
+    "create_scenario" : "create",
+    "add_event" : "addEvent",
+    "delete_event" : "deleteEvent",
+    "save_scenario" : "toFile",
+    "load_scenario" : "fromFile",
+    "run_scenario" : "run",
+    "pause_scenario" : "pause",
+    "resume_scenario" : "resume"
+  } ,
+  "outputSource" : "scenario dispatcher"
+}
