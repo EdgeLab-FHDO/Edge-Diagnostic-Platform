@@ -49,6 +49,7 @@ public class Master {
     public void startMainRunner() {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Main")) {
+                running.add(runner);
                 new Thread(runner,"MainRunner").start();
                 break;
             }
