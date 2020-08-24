@@ -28,7 +28,7 @@ public class ScenarioEditor implements MasterOutput{
      * Based on responses from the master executes the different functionalities
      * @param response Must be in the way "editor command" and additionally:
      *                 - Create Scenario : Add the name of the scenario (editor create scenarioName)
-     *                 - Add Event : Add the Command for the event and the time (editor addEvent event1 10)
+     *                 - Add Event : Add the Command for the event (editor addEvent event1)
      *                 - Delete : Just the command. (editor deleteEvent)
      *                 - Save to file : Add the path of the folder in which the file will be saved (editor toFile src/resources/scenarios/)
      *                 - Load from File: Add the path to the file (editor fromFile src/resources/scenario.json)
@@ -43,7 +43,7 @@ public class ScenarioEditor implements MasterOutput{
                     create(command[2]);
                     break;
                 case "addEvent":
-                    addEvent(command[2], Integer.parseInt(command[3]));
+                    addEvent(command[2]);
                     break;
                 case "deleteEvent":
                     deleteLastEvent();
@@ -72,10 +72,9 @@ public class ScenarioEditor implements MasterOutput{
     /**
      * Add an event to an already loaded (from file or created) scenario
      * @param command Command of the event
-     * @param time Time of the event
      */
-    private void addEvent(String command, int time){
-        scenario.addEvent(new Event(command,time));
+    private void addEvent(String command){
+        scenario.addEvent(new Event(command));
     }
 
     /**
