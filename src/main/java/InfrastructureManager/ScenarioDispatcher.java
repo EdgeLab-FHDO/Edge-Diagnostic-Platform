@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScenarioDispatcher implements MasterOutput {
+
     private Scenario scenario;
 
     public ScenarioDispatcher() {

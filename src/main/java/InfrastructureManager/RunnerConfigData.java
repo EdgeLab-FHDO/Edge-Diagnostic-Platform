@@ -1,7 +1,5 @@
 package InfrastructureManager;
 
-import java.util.List;
-
 public class RunnerConfigData {
 
     private String name;

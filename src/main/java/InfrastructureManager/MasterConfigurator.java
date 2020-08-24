@@ -4,22 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-/*
-TODO: Configurator should be able to return to the master a list of runners
-    each one of them, has input (only one) and a list of outputs. Configurator
-    should only do things that are needed in the start of the programm, for
-    run time operations is the master.
- */
 
 /**
  * Configurator class for the master, that takes the values in the configuration file
- * object and gives the master the different elements based on that (Different Input types,
- * output types, etc.)
+ * object and gives the master the different elements based on that (Commands, and Runners)
  */
 public class MasterConfigurator {
+
     private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     //TODO: consider making it a singleton
@@ -48,16 +39,11 @@ public class MasterConfigurator {
      * Based on the input defined in the config file, returns different types of input to the master
      * @return an object that implements the MasterInput interface
      */
-
     private MasterInput getInput(String inputString) {
         //TODO: Add more inputs
         switch (inputString) {
             case "console":
                 return new ConsoleInput();
-            /*case "dummyScenario" :
-                ScenarioEditor editor = new ScenarioEditor();
-                editor.scenarioFromFile("src/main/resources/scenarios/dummyScenario.json");
-                return editor.getScenario();*/
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -67,7 +53,6 @@ public class MasterConfigurator {
      * Based on the output defined in the config file, returns different types of output objects to the master
      * @return an Object that implements the MasterOutput interface
      */
-
     private MasterOutput[] getOutputs(String[] outputStringArray) {
         //TODO: Add more outputs
         MasterOutput[] result = new MasterOutput[outputStringArray.length];

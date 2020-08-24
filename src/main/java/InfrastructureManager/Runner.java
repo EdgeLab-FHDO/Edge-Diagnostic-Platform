@@ -1,6 +1,5 @@
 package InfrastructureManager;
 
-import java.util.Objects;
 
 public class Runner implements Runnable{
     protected String name;

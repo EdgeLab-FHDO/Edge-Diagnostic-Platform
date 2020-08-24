@@ -6,7 +6,7 @@ package InfrastructureManager;
 public class ConsoleOutput implements MasterOutput {
     /**
      * Method for outputting to the console
-     * @param response Message to be outputted to the console
+     * @param response Message to be outputted to the console, the command has to be preceded by "console"
      */
     @Override
     public void out(String response) {

@@ -3,11 +3,10 @@ package InfrastructureManager;
 public class ScenarioRunner extends Runner {
 
     private Scenario scenario;
-    private String scenarioName;
+    private final String scenarioName;
     private int currentEvent;
 
     public ScenarioRunner(String name,String scenarioName, MasterOutput...outputs) {
-        //TODO: From configurator
         super(name,null,outputs);
         this.scenarioName = scenarioName;
         this.scenario = null;
@@ -31,7 +30,7 @@ public class ScenarioRunner extends Runner {
             currentEvent = 0;
             exit();
         }
-        delay(2000); //Temporary, So each event "happens" slowly and can be paused
+        delay(2000); //Temporary, So right now each event "happens" slowly and the scenario can be paused
     }
 
     private void delay(int ms) {

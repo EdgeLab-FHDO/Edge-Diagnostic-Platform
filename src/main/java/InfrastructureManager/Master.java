@@ -5,17 +5,14 @@ import java.util.ArrayList;
 public class Master {
 
     private final CommandSet commandSet;
-    //private final MasterInput input;
-    //private final MasterOutput output;
-    private ArrayList<Runner> runnerList;
-    private ArrayList<ScenarioRunner> runningScenarios;
+    private final ArrayList<Runner> runnerList;
+    private final ArrayList<ScenarioRunner> runningScenarios;
+
     private static Master instance = null;
 
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
-        //input =configurator.getInput();
-        //output = configurator.getOutput();
         runnerList = configurator.getRunners();
         runningScenarios = new ArrayList<>();
     }
@@ -87,20 +84,6 @@ public class Master {
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
-        /*
-        Master master = Master.getInstance();
-        String in;
-        String mapping;
-        while (true){
-            in = master.fromInput();
-            if (in.equals("exit")) {
-                break;
-            }
-            mapping = master.execute(in);
-            master.toOutput(mapping);
-        }
-
-         */
     }
 
 
