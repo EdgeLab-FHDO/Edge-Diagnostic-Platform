@@ -2,14 +2,28 @@ package InfrastructureManager;
 
 public class ScenarioRunner extends Runner {
 
-    private final Scenario scenario;
+    private Scenario scenario;
+    private String scenarioName;
     private int currentEvent;
 
-    public ScenarioRunner(Scenario scenario) {
+    public ScenarioRunner(String name,String scenarioName, MasterOutput...outputs) {
         //TODO: From configurator
-        super(null,new ConsoleOutput());
-        this.scenario = scenario;
+        super(name,null,outputs);
+        this.scenarioName = scenarioName;
+        this.scenario = null;
         this.currentEvent = 0;
+    }
+
+    public void setScenario(Scenario scenario) {
+        if (scenario.getName().equalsIgnoreCase(scenarioName)) {
+            this.scenario = scenario;
+        } else {
+            throw new IllegalArgumentException("Scenario cant be assigned because of configuration");
+        }
+    }
+
+    public String getScenarioName() {
+        return scenarioName;
     }
 
     @Override

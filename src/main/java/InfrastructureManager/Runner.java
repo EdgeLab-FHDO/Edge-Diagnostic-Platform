@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
 public class Runner implements Runnable{
+    protected String name;
     protected MasterInput input;
     protected MasterOutput[] outputs;
 
@@ -8,7 +9,8 @@ public class Runner implements Runnable{
     protected volatile boolean paused = false;
     protected volatile boolean exit = false;
 
-    public Runner(MasterInput input, MasterOutput...outputs) {
+    public Runner(String name,MasterInput input, MasterOutput...outputs) {
+        this.name = name;
         this.input = input;
         this.outputs = outputs;
     }
@@ -51,5 +53,9 @@ public class Runner implements Runnable{
             paused = false;
             pauseLock.notifyAll();
         }
+    }
+
+    public String getName() {
+        return name;
     }
 }

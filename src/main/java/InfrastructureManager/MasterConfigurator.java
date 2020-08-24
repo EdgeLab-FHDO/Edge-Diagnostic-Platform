@@ -3,6 +3,15 @@ package InfrastructureManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/*
+TODO: Configurator should be able to return to the master a list of runners
+    each one of them, has input (only one) and a list of outputs. Configurator
+    should only do things that are needed in the start of the programm, for
+    run time operations is the master.
+ */
 
 /**
  * Configurator class for the master, that takes the values in the configuration file
@@ -10,7 +19,7 @@ import java.io.IOException;
  * output types, etc.)
  */
 public class MasterConfigurator {
-    private final String CONFIG_FILE_PATH = "src/main/resources/config.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     //TODO: consider making it a singleton
 
@@ -38,15 +47,16 @@ public class MasterConfigurator {
      * Based on the input defined in the config file, returns different types of input to the master
      * @return an object that implements the MasterInput interface
      */
-    public MasterInput getInput() {
+
+    private MasterInput getInput(String inputString) {
         //TODO: Add more inputs
-        switch (data.getInputSource()) {
+        switch (inputString) {
             case "console":
                 return new ConsoleInput();
-            case "dummyScenario" :
+            /*case "dummyScenario" :
                 ScenarioEditor editor = new ScenarioEditor();
                 editor.scenarioFromFile("src/main/resources/scenarios/dummyScenario.json");
-                return editor.getScenario();
+                return editor.getScenario();*/
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -56,17 +66,43 @@ public class MasterConfigurator {
      * Based on the output defined in the config file, returns different types of output objects to the master
      * @return an Object that implements the MasterOutput interface
      */
-    public MasterOutput getOutput() {
+
+    private MasterOutput[] getOutputs(String[] outputStringArray) {
         //TODO: Add more outputs
-        switch (data.getOutputSource()) {
-            case "console":
-                return new ConsoleOutput();
-            case "scenario dispatcher" :
-                return new ScenarioDispatcher();
-            case  "scenario editor" :
-                return new ScenarioEditor();
-            default:
-                throw new IllegalArgumentException("Invalid output in Configuration");
+        MasterOutput[] result = new MasterOutput[outputStringArray.length];
+        for (int i = 0; i < outputStringArray.length; i++) {
+            switch (outputStringArray[i]) {
+                case "console":
+                    result[i] = new ConsoleOutput();
+                case "util" :
+                    result[i] = new MasterUtility();
+                case "scenario dispatcher" :
+                    result[i] = new ScenarioDispatcher();
+                case  "scenario editor" :
+                    result[i] = new ScenarioEditor();
+                default:
+                    throw new IllegalArgumentException("Invalid output in Configuration");
+            }
         }
+        return result;
     }
+
+    public ArrayList<Runner> getRunners(){
+        ArrayList<Runner> result = new ArrayList<>();
+        String input;
+        MasterOutput[] output;
+        String name;
+        for (RunnerConfigData runnerData : data.getRunners()){
+            input = runnerData.getInput();
+            output = getOutputs(runnerData.getOutputs());
+            name = runnerData.getName();
+            if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
+                result.add(new ScenarioRunner(name,input,output));
+            } else { //Input as masterInput
+                result.add(new Runner(name,getInput(input),output));
+            }
+        }
+        return result;
+    }
+
 }
