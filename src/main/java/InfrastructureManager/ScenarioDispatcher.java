@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class ScenarioDispatcher implements MasterOutput {
     private Scenario scenario;
-    private ScenarioRunner runner;
+
     public ScenarioDispatcher() {
         this.scenario = null;
     }
@@ -35,10 +35,10 @@ public class ScenarioDispatcher implements MasterOutput {
     }
 
     private void pauseScenario() {
-        this.runner.pause();
+        Master.getInstance().pauseScenario(this.scenario);
     }
     private void resumeScenario() {
-        this.runner.resume();
+        Master.getInstance().resumeScenario(this.scenario);
     }
 
     private void runScenario() {
@@ -52,9 +52,5 @@ public class ScenarioDispatcher implements MasterOutput {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setRunner(ScenarioRunner runner) {
-        this.runner = runner;
     }
 }

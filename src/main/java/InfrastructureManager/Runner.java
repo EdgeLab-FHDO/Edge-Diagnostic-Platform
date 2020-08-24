@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import java.util.Objects;
+
 public class Runner implements Runnable{
     protected String name;
     protected MasterInput input;
@@ -57,5 +59,13 @@ public class Runner implements Runnable{
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Runner runner = (Runner) o;
+        return name.equals(runner.name);
     }
 }

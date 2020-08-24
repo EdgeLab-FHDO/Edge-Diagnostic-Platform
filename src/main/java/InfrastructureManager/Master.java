@@ -8,6 +8,7 @@ public class Master {
     //private final MasterInput input;
     //private final MasterOutput output;
     private ArrayList<Runner> runnerList;
+    private ArrayList<ScenarioRunner> runningScenarios;
     private static Master instance = null;
 
     private Master() {
@@ -16,6 +17,7 @@ public class Master {
         //input =configurator.getInput();
         //output = configurator.getOutput();
         runnerList = configurator.getRunners();
+        runningScenarios = new ArrayList<>();
     }
     public String execute(String command) {
         return this.commandSet.getResponse(command);
@@ -38,28 +40,42 @@ public class Master {
     }
 
     public void runScenario(Scenario scenario) {
-        /*
-        TODO: Search in the runner list, for the scenario runner with the
-         scenario name assigned matching the passed scenario. If found,
-         start a new thread and run it. This method will be called from the
-         mainrunner only.
-         */
+        ScenarioRunner scenarioRunner = getRunner(scenario);
+        if (runningScenarios.contains(scenarioRunner)) {
+            scenarioRunner.exit();
+            runningScenarios.remove(scenarioRunner);
+        }
+        scenarioRunner.setScenario(scenario);
+        runningScenarios.add(scenarioRunner);
+        new Thread(scenarioRunner).start();
+
+    }
+    public void pauseScenario(Scenario scenario) {
+        ScenarioRunner scenarioRunner = getRunner(scenario);
+        if (runningScenarios.contains(scenarioRunner)) {
+            scenarioRunner.pause();
+        }
+    }
+    public void resumeScenario(Scenario scenario) {
+        ScenarioRunner scenarioRunner = getRunner(scenario);
+        if (runningScenarios.contains(scenarioRunner)) {
+            scenarioRunner.resume();
+        }
+    }
+
+    private ScenarioRunner getRunner(Scenario scenario) {
         ScenarioRunner scenarioRunner;
         for (Runner runner : runnerList) {
             try {
                 scenarioRunner = (ScenarioRunner) runner;
                 if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
-                    scenarioRunner.setScenario(scenario);
-                    new Thread(scenarioRunner).start();
-                    break;
-                } else {
-                    throw new IllegalArgumentException("There is no runner configured for the given scenario");
+                    return scenarioRunner;
                 }
             } catch (ClassCastException e) {
                 continue;
             }
         }
-
+        throw new IllegalArgumentException("There is no runner configured for the given scenario");
     }
 
     public static Master getInstance() {
