@@ -10,6 +10,9 @@ public class ConsoleOutput implements MasterOutput {
      */
     @Override
     public void out(String response) {
-        System.out.println(response);
+        String[] command = response.split(" ");
+        if (command[0].equals("console")) {
+            System.out.println(command[1]);
+        }
     }
 }

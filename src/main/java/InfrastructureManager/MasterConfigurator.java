@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -74,12 +75,16 @@ public class MasterConfigurator {
             switch (outputStringArray[i]) {
                 case "console":
                     result[i] = new ConsoleOutput();
+                    break;
                 case "util" :
                     result[i] = new MasterUtility();
+                    break;
                 case "scenario dispatcher" :
                     result[i] = new ScenarioDispatcher();
+                    break;
                 case  "scenario editor" :
                     result[i] = new ScenarioEditor();
+                    break;
                 default:
                     throw new IllegalArgumentException("Invalid output in Configuration");
             }

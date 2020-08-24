@@ -15,11 +15,7 @@ public class ScenarioRunner extends Runner {
     }
 
     public void setScenario(Scenario scenario) {
-        if (scenario.getName().equalsIgnoreCase(scenarioName)) {
-            this.scenario = scenario;
-        } else {
-            throw new IllegalArgumentException("Scenario cant be assigned because of configuration");
-        }
+        this.scenario = scenario;
     }
 
     public String getScenarioName() {

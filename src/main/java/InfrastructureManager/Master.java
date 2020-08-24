@@ -46,12 +46,17 @@ public class Master {
          */
         ScenarioRunner scenarioRunner;
         for (Runner runner : runnerList) {
-            scenarioRunner = (ScenarioRunner) runner;
-            if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
-                new Thread(scenarioRunner).start();
-                break;
-            } else {
-                throw new IllegalArgumentException("There is no runner configured for the given scenario");
+            try {
+                scenarioRunner = (ScenarioRunner) runner;
+                if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
+                    scenarioRunner.setScenario(scenario);
+                    new Thread(scenarioRunner).start();
+                    break;
+                } else {
+                    throw new IllegalArgumentException("There is no runner configured for the given scenario");
+                }
+            } catch (ClassCastException e) {
+                continue;
             }
         }
 

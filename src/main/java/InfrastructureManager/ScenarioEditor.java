@@ -16,25 +16,28 @@ public class ScenarioEditor implements MasterOutput{
     @Override
     public void out(String response) {
         String[] command = response.split(" ");
-        switch (command[0]) {
-            case "create":
-                create(command[1]);
-                break;
-            case "addEvent":
-                addEvent(command[1], Integer.parseInt(command[2]));
-                break;
-            case "deleteEvent":
-                deleteLastEvent();
-                break;
-            case "toFile" :
-                scenarioToFile(command[1]);
-                break;
-            case "fromFile":
-                scenarioFromFile(command[1]);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+        if (command[0].equals("editor")) {
+            switch (command[1]) {
+                case "create":
+                    create(command[2]);
+                    break;
+                case "addEvent":
+                    addEvent(command[2], Integer.parseInt(command[3]));
+                    break;
+                case "deleteEvent":
+                    deleteLastEvent();
+                    break;
+                case "toFile" :
+                    scenarioToFile(command[2]);
+                    break;
+                case "fromFile":
+                    scenarioFromFile(command[2]);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+            }
         }
+
     }
 
     public void create(String name){
