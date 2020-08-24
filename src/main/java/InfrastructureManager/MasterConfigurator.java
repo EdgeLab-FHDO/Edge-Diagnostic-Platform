@@ -77,6 +77,10 @@ public class MasterConfigurator {
         return result;
     }
 
+    /**
+     * Based on the configuration file, returns the runners that the master should use
+     * @return ArrayList of Runner objects for the master to run
+     */
     public ArrayList<Runner> getRunners(){
         ArrayList<Runner> result = new ArrayList<>();
         String input;

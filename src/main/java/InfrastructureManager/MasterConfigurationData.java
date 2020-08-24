@@ -3,10 +3,6 @@ package InfrastructureManager;
 import java.util.List;
 import java.util.Map;
 
-/*
-TODO: Has to change almost completely to be able to contain and pass information
-    about the different runners
- */
 
 /**
  * Configuration Data Object (Mapped from JSON Config File)
@@ -30,6 +26,10 @@ public class MasterConfigurationData {
         return commands;
     }
 
+    /**
+     * Mehtod to get the list of runners defined for the master
+     * @return The Runners in form of a list of RunnerConfigData (Raw data for Runners) objects
+     */
     public List<RunnerConfigData> getRunners() {
         return runners;
     }

@@ -11,7 +11,7 @@ public class ConsoleOutput implements MasterOutput {
     @Override
     public void out(String response) {
         String[] command = response.split(" ");
-        if (command[0].equals("console")) {
+        if (command[0].equals("console") && command.length > 1) { //The commands must come like "console command"
             System.out.println(command[1]);
         }
     }
