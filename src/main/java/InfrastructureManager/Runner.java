@@ -13,6 +13,7 @@ public class Runner implements Runnable{
     protected final Object pauseLock = new Object(); //In order to pause the runnable
     protected volatile boolean paused = false; //Flag to check status and be able to pause
     protected volatile boolean exit = false; //Flag to check status and be able to exit
+    protected volatile boolean running = false; //Flag to see runner status
 
     /**
      * Constructor of the class, normally configured based on raw data (RunnerConfigData) by the
@@ -33,11 +34,13 @@ public class Runner implements Runnable{
      */
     @Override
     public void run() {
+        running = true;
         exit = false;
         while (!exit) {
             checkPause();
             runOperation();
         }
+        running = false;
     }
 
     /**
@@ -45,6 +48,7 @@ public class Runner implements Runnable{
      */
     private void checkPause() {
         if (paused) {
+            running = false;
             synchronized (pauseLock) { //Access the shared flag resource
                 try {
                     pauseLock.wait(); //Runner Pauses until is notified by other thread
@@ -89,6 +93,7 @@ public class Runner implements Runnable{
     public void resume() {
         synchronized (pauseLock) {
             paused = false;
+            running = true;
             pauseLock.notifyAll(); //Notifies using the shared resource
         }
     }
@@ -99,6 +104,22 @@ public class Runner implements Runnable{
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * See if the current runner is running
+     * @return True if the runner is running, otherwise false.
+     */
+    public boolean isRunning() {
+        return running;
+    }
+
+    /**
+     * See if the current runner is paused
+     * @return True if the runner was started but now its paused, false otherwise
+     */
+    public boolean isPaused() {
+        return paused;
     }
 
     /**

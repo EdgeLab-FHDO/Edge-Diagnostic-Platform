@@ -9,7 +9,6 @@ public class Master {
 
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
-    private final ArrayList<Runner> running; //List to store currently running runners
 
     private static Master instance = null;
 
@@ -21,7 +20,6 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
-        running = new ArrayList<>();
     }
 
     /**
@@ -37,19 +35,19 @@ public class Master {
      * Method for exiting the program, by exiting each running runner
      */
     public void exitAll() {
-        for (Runner runner : running) {
-            runner.exit();
+        for (Runner runner : runnerList) {
+            if (runner.isRunning()){
+                runner.exit();
+            }
         }
     }
 
     /**
      * Method for starting the main runner thread, declared in the config file
      */
-    //TODO:This could maybe go in configurator
     public void startMainRunner() {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Main")) {
-                running.add(runner);
                 new Thread(runner,"MainRunner").start();
                 break;
             }
@@ -64,14 +62,11 @@ public class Master {
      */
     public void runScenario(Scenario scenario) {
         ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (running.contains(scenarioRunner)) { //If running then stop it and re-run
+        if (scenarioRunner.isRunning()) { //If running then stop it and re-run
             scenarioRunner.exit();
-            running.remove(scenarioRunner);
         }
         scenarioRunner.setScenario(scenario);
-        running.add(scenarioRunner);
         new Thread(scenarioRunner).start(); // Run the scenario in another thread
-
     }
 
     /**
@@ -80,7 +75,7 @@ public class Master {
      */
     public void pauseScenario(Scenario scenario) {
         ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (running.contains(scenarioRunner)) {
+        if (scenarioRunner.isRunning()) {
             scenarioRunner.pause();
         }
     }
@@ -91,7 +86,7 @@ public class Master {
      */
     public void resumeScenario(Scenario scenario) {
         ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (running.contains(scenarioRunner)) {
+        if (scenarioRunner.isPaused()) {
             scenarioRunner.resume();
         }
     }
