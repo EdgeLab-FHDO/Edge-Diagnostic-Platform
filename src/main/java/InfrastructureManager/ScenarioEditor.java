@@ -114,4 +114,12 @@ public class ScenarioEditor implements MasterOutput{
             e.printStackTrace();
         }
     }
+
+    /**
+     * Get the scenario being edited
+     * @return Scenario being edited in the editor
+     */
+    public Scenario getScenario() { //FOR TESTS
+        return scenario;
+    }
 }
