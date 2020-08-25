@@ -50,10 +50,15 @@ public class ScenarioRunner extends Runner {
         super.runOperation();
         currentEvent++;
         if (currentEvent == this.scenario.getEventList().size()) {
-            currentEvent = 0;
             exit();
         }
         //delay(2000); //Temporary, So right each event "happens" slowly and the scenario can be paused
+    }
+
+    @Override
+    public void exit() {
+        currentEvent = 0;
+        super.exit();
     }
 
     /**

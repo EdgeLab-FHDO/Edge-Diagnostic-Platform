@@ -45,6 +45,9 @@ public class ScenarioDispatcher implements MasterOutput {
                     case "resume" :
                         resumeScenario();
                         break;
+                    case "stop" :
+                        stopScenario();
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid Command for ScenarioDispatcher!");
                 }
@@ -52,6 +55,13 @@ public class ScenarioDispatcher implements MasterOutput {
                 throw new IllegalArgumentException("Arguments missing for command  - ScenarioDispatcher!");
             }
         }
+    }
+
+    /**
+     * Method for stopping the current scenario
+     */
+    private void stopScenario() {
+        Master.getInstance().stopScenario(this.scenario);
     }
 
     /**

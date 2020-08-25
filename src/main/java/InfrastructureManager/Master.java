@@ -69,11 +69,25 @@ public class Master {
     public void runScenario(Scenario scenario) {
         try {
             ScenarioRunner scenarioRunner = getRunner(scenario);
-            if (scenarioRunner.isRunning()) { //If running then stop it and re-run
+            if (!scenarioRunner.isRunning()) { //If running then leave it running
+                scenarioRunner.setScenario(scenario);
+                new Thread(scenarioRunner).start(); // Run the scenario in another thread
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Stop a running ScenarioRunner, given the scenario that is running
+     * @param scenario Running scenario to be stopped
+     */
+    public void stopScenario(Scenario scenario) {
+        try {
+            ScenarioRunner scenarioRunner = getRunner(scenario);
+            if (scenarioRunner.isRunning()) {
                 scenarioRunner.exit();
             }
-            scenarioRunner.setScenario(scenario);
-            new Thread(scenarioRunner).start(); // Run the scenario in another thread
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
