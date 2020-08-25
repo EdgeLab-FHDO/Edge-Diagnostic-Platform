@@ -58,7 +58,7 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
             throw new IllegalArgumentException("Empty Command at input!");
         } else {
             if (this.commands.containsKey(command)) {
-                return this.commands.get(command);
+                return this.commands.get(command) + param;
             } else {
                 throw new IllegalArgumentException("Command not defined in config");
             }
