@@ -9,6 +9,7 @@ public class Master {
 
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
+    private Thread mainThread;
 
     private static Master instance = null;
 
@@ -53,10 +54,15 @@ public class Master {
     public void startMainRunner() {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Main")) {
-                new Thread(runner,"MainRunner").start();
+                mainThread = new Thread(runner,"MainRunner");
+                mainThread.start();
                 break;
             }
         }
+    }
+
+    public Thread getMainThread() {
+        return mainThread;
     }
 
     /**
@@ -144,6 +150,11 @@ public class Master {
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
+        try {
+            Master.getInstance().getMainThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
