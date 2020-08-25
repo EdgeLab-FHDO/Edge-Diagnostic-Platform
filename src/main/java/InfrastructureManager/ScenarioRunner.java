@@ -53,7 +53,7 @@ public class ScenarioRunner extends Runner {
             currentEvent = 0;
             exit();
         }
-        delay(2000); //Temporary, So right now each event "happens" slowly and the scenario can be paused
+        //delay(2000); //Temporary, So right each event "happens" slowly and the scenario can be paused
     }
 
     /**

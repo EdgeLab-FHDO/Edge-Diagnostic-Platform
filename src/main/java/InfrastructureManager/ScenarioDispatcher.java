@@ -87,4 +87,12 @@ public class ScenarioDispatcher implements MasterOutput {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Get the scenario assigned to this dispatcher
+     * @return Scenario to which all action will be performed
+     */
+    public Scenario getScenario() { //FOR TESTS
+        return scenario;
+    }
 }
