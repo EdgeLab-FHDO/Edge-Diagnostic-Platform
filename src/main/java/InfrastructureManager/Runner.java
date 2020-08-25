@@ -67,8 +67,8 @@ public class Runner implements Runnable{
      */
     protected void runOperation() {
         Master master = Master.getInstance();
-        String mapping = master.execute(input.read());
         try {
+            String mapping = master.execute(input.read());
             for (MasterOutput output : outputs) {
                 output.out(mapping);
             }

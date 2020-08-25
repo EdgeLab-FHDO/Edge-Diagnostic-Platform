@@ -29,12 +29,7 @@ public class Master {
      * @return Response going to the output(s)
      */
     public String execute(String command) {
-        try {
-            return this.commandSet.getResponse(command);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
+        return this.commandSet.getResponse(command);
     }
 
     /**
