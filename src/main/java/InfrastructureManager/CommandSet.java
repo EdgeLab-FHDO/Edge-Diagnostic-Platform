@@ -48,15 +48,20 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
      * @param command Command for which the response is wanted
      * @return Response defined for the given command or "command not defined!" if the
      * given command is not configured
+     * @throws IllegalArgumentException if the command is not defined or is empty
      */
-    public String getResponse(String command) {
+    public String getResponse(String command) throws IllegalArgumentException {
         String[] aux = command.split(" ");
         String param = command.replace(aux[0],"");
         command = aux[0];
         if (command.isEmpty()) {
-            return "Empty Command!";
+            throw new IllegalArgumentException("Empty Command at input!");
         } else {
-            return this.commands.getOrDefault(command,"command not defined!") + param;
+            if (this.commands.containsKey(command)) {
+                return this.commands.get(command);
+            } else {
+                throw new IllegalArgumentException("Command not defined in config");
+            }
         }
     }
 }

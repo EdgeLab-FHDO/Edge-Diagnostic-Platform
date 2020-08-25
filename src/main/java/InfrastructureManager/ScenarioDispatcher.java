@@ -25,27 +25,31 @@ public class ScenarioDispatcher implements MasterOutput {
      * @param response Must be in the way "dispatcher command" and additionally:
      *                 - Loading Scenario : Should include the path of the file (dispatcher fromFile src/resources/scenario.json)
      *                 - Other functionalities : Just the command.
-     * @throws IllegalArgumentException If the command is not defined
+     * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
     @Override
     public void out(String response) {
         String[] command = response.split(" ");
-        if (command[0].equals("dispatcher") && command.length > 1) {
-            switch (command[1]) {
-                case "fromFile":
-                    scenarioFromFile(command[2]);
-                    break;
-                case "run" :
-                    runScenario();
-                    break;
-                case "pause" :
-                    pauseScenario();
-                    break;
-                case "resume" :
-                    resumeScenario();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid Command for ScenarioDispatcher!");
+        if (command[0].equals("dispatcher")) {
+            try {
+                switch (command[1]) {
+                    case "fromFile":
+                        scenarioFromFile(command[2]);
+                        break;
+                    case "run" :
+                        runScenario();
+                        break;
+                    case "pause" :
+                        pauseScenario();
+                        break;
+                    case "resume" :
+                        resumeScenario();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid Command for ScenarioDispatcher!");
+                }
+            } catch (IndexOutOfBoundsException e){
+                throw new IllegalArgumentException("Arguments missing for command  - ScenarioDispatcher!");
             }
         }
     }

@@ -32,33 +32,36 @@ public class ScenarioEditor implements MasterOutput{
      *                 - Delete : Just the command. (editor deleteEvent)
      *                 - Save to file : Add the path of the folder in which the file will be saved (editor toFile src/resources/scenarios/)
      *                 - Load from File: Add the path to the file (editor fromFile src/resources/scenario.json)
-     *@throws IllegalArgumentException If the command is not defined
+     *@throws IllegalArgumentException If the command is not defined or is missing arguments
      */
     @Override
     public void out(String response) {
         String[] command = response.split(" ");
         if (command[0].equals("editor")) {
-            switch (command[1]) {
-                case "create":
-                    create(command[2]);
-                    break;
-                case "addEvent":
-                    addEvent(command[2]);
-                    break;
-                case "deleteEvent":
-                    deleteLastEvent();
-                    break;
-                case "toFile" :
-                    scenarioToFile(command[2]);
-                    break;
-                case "fromFile":
-                    scenarioFromFile(command[2]);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+            try {
+                switch (command[1]) {
+                    case "create":
+                        create(command[2]);
+                        break;
+                    case "addEvent":
+                        addEvent(command[2]);
+                        break;
+                    case "deleteEvent":
+                        deleteLastEvent();
+                        break;
+                    case "toFile" :
+                        scenarioToFile(command[2]);
+                        break;
+                    case "fromFile":
+                        scenarioFromFile(command[2]);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+                }
+            } catch (IndexOutOfBoundsException e){
+                throw new IllegalArgumentException("Arguments missing for command  - ScenarioEditor");
             }
         }
-
     }
 
     /**

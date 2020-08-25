@@ -28,7 +28,12 @@ public class Master {
      * @return Response going to the output(s)
      */
     public String execute(String command) {
-        return this.commandSet.getResponse(command);
+        try {
+            return this.commandSet.getResponse(command);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     /**
@@ -61,12 +66,16 @@ public class Master {
      * @param scenario Scenario to be run
      */
     public void runScenario(Scenario scenario) {
-        ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (scenarioRunner.isRunning()) { //If running then stop it and re-run
-            scenarioRunner.exit();
+        try {
+            ScenarioRunner scenarioRunner = getRunner(scenario);
+            if (scenarioRunner.isRunning()) { //If running then stop it and re-run
+                scenarioRunner.exit();
+            }
+            scenarioRunner.setScenario(scenario);
+            new Thread(scenarioRunner).start(); // Run the scenario in another thread
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
-        scenarioRunner.setScenario(scenario);
-        new Thread(scenarioRunner).start(); // Run the scenario in another thread
     }
 
     /**
@@ -74,9 +83,13 @@ public class Master {
      * @param scenario Running scenario to be paused
      */
     public void pauseScenario(Scenario scenario) {
-        ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (scenarioRunner.isRunning()) {
-            scenarioRunner.pause();
+        try {
+            ScenarioRunner scenarioRunner = getRunner(scenario);
+            if (scenarioRunner.isRunning()) {
+                scenarioRunner.pause();
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -85,9 +98,13 @@ public class Master {
      * @param scenario Paused scenario to be resumed
      */
     public void resumeScenario(Scenario scenario) {
-        ScenarioRunner scenarioRunner = getRunner(scenario);
-        if (scenarioRunner.isPaused()) {
-            scenarioRunner.resume();
+        try {
+            ScenarioRunner scenarioRunner = getRunner(scenario);
+            if (scenarioRunner.isPaused()) {
+                scenarioRunner.resume();
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -99,7 +116,7 @@ public class Master {
      * @throws IllegalArgumentException If there is no scenarioRunner configured to run the
      * given scenario
      */
-    private ScenarioRunner getRunner(Scenario scenario) {
+    private ScenarioRunner getRunner(Scenario scenario) throws IllegalArgumentException {
         ScenarioRunner scenarioRunner;
         for (Runner runner : runnerList) {
             try {
@@ -107,7 +124,7 @@ public class Master {
                 if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
                     return scenarioRunner;
                 }
-            } catch (ClassCastException e) {
+            } catch (Exception e) {
                 continue;
             }
         }

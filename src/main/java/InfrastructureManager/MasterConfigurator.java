@@ -38,8 +38,9 @@ public class MasterConfigurator {
     /**
      * Based on the input defined in the config file, returns different types of input to the master
      * @return an object that implements the MasterInput interface
+     * @throws IllegalArgumentException if input string in the configuration is not defined
      */
-    private MasterInput getInput(String inputString) {
+    private MasterInput getInput(String inputString) throws IllegalArgumentException {
         //TODO: Add more inputs
         switch (inputString) {
             case "console":
@@ -52,8 +53,9 @@ public class MasterConfigurator {
     /**
      * Based on the output defined in the config file, returns different types of output objects to the master
      * @return an Object that implements the MasterOutput interface
+     * @throws IllegalArgumentException if output string in the configuration is not defined
      */
-    private MasterOutput[] getOutputs(String[] outputStringArray) {
+    private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
         //TODO: Add more outputs
         MasterOutput[] result = new MasterOutput[outputStringArray.length];
         for (int i = 0; i < outputStringArray.length; i++) {
@@ -87,14 +89,19 @@ public class MasterConfigurator {
         MasterOutput[] output;
         String name;
         for (RunnerConfigData runnerData : data.getRunners()){
-            input = runnerData.getInput();
-            output = getOutputs(runnerData.getOutputs());
-            name = runnerData.getName();
-            if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
-                result.add(new ScenarioRunner(name,input,output));
-            } else { //Input as masterInput
-                result.add(new Runner(name,getInput(input),output));
-            }
+           try {
+               input = runnerData.getInput();
+               output = getOutputs(runnerData.getOutputs());
+               name = runnerData.getName();
+               if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
+                   result.add(new ScenarioRunner(name,input,output));
+               } else { //Input as masterInput
+                   result.add(new Runner(name,getInput(input),output));
+               }
+           } catch (Exception e) {
+               System.err.println("Error in Runner " + runnerData.getName());
+               e.printStackTrace();
+           }
         }
         return result;
     }
