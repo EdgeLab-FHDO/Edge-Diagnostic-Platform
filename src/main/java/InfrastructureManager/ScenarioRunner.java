@@ -56,7 +56,8 @@ public class ScenarioRunner extends Runner {
      */
     @Override
     public void runOperation() {
-        this.input = this.scenario.getEventList().get(currentEvent);
+        Event current = this.scenario.getEventList().get(currentEvent);
+        waitForEvent(current);
         super.runOperation();
         currentEvent++;
         if (currentEvent == this.scenario.getEventList().size()) {
@@ -68,5 +69,18 @@ public class ScenarioRunner extends Runner {
     public void exit() {
         currentEvent = 0;
         super.exit();
+    }
+
+    /**
+     * Wait for executing the states according to their relative execution times
+     * @param e Event to be waited for
+     */
+    private void waitForEvent (Event e) {
+        while (true) {
+            if (System.currentTimeMillis() - this.scenario.getStartTime() >= e.getExecutionTime()) {
+                this.input = e;
+                return;
+            }
+        }
     }
 }

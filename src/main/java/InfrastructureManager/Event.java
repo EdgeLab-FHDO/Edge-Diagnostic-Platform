@@ -8,21 +8,25 @@ import com.fasterxml.jackson.annotation.JsonGetter;
  */
 public class Event implements MasterInput {
 
-    private String command;
+    private String command; //Command to be executed in the master
+    private long executionTime; //Execution time relative to the scenario start (in ms)
 
     /**
      * Default constructor of the class, initializes values
      */
     public Event() { //This is needed for Jackson to create the object
         this.command = null;
+        this.executionTime = 0;
     }
 
     /**
      * Constructor of the class
      * @param command Command of the event (To be interpreted by the master)
+     * @param executionTime Execution time of the event in milliseconds, relative to the start of the scenario
      */
-    public Event(String command) {
+    public Event(String command, long executionTime) {
         this.command = command;
+        this.executionTime = executionTime;
     }
 
     /**
@@ -41,5 +45,13 @@ public class Event implements MasterInput {
     @JsonGetter("command")
     public String read() {
         return this.command;
+    }
+
+    /**
+     * Gets the execution time defined for the event
+     * @return Event relative execution time in ms
+     */
+    public long getExecutionTime() {
+        return executionTime;
     }
 }
