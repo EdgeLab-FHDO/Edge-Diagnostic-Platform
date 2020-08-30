@@ -25,7 +25,7 @@ public class ScenarioRunner extends Runner {
 
     /**
      * Set the scenario of the runner
-     * @param scenario Scenario to be runned
+     * @param scenario Scenario to be run.
      */
     public void setScenario(Scenario scenario) {
         this.scenario = scenario;
@@ -40,7 +40,17 @@ public class ScenarioRunner extends Runner {
     }
 
     /**
-     * Overriden method in that goes in the run() method. Here, the execution of the master is
+     * Overridden run method that in addition to running like a runner object, assigns the
+     * current absolute time to the scenario as start time
+     */
+    @Override
+    public void run() {
+        this.scenario.setStartTime(System.currentTimeMillis());
+        super.run();
+    }
+
+    /**
+     * Overridden method in that goes in the run() method. Here, the execution of the master is
      * specific to run events as inputs. A different event in the list is run, each time this
      * method is called
      */
@@ -52,24 +62,11 @@ public class ScenarioRunner extends Runner {
         if (currentEvent == this.scenario.getEventList().size()) {
             exit();
         }
-        //delay(2000); //Temporary, So right each event "happens" slowly and the scenario can be paused
     }
 
     @Override
     public void exit() {
         currentEvent = 0;
         super.exit();
-    }
-
-    /**
-     * Method for making the current thread wait for a given time
-     * @param ms Time (in milliseconds) the thread should wait
-     */
-    private void delay(int ms) {
-        try {
-            Thread.sleep(ms); //Just to see it sequentially in the console
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
     }
 }

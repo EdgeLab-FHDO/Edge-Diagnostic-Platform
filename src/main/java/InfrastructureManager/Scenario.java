@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +12,22 @@ public class Scenario {
 
     private final String name;
     private final List<Event> eventList;
+    @JsonIgnore
+    private long startTime;
 
     public Scenario() { //Needed for Jackson
-        this(null);
+        this(null, System.currentTimeMillis());
     }
 
     /**
      * Constructor of the class
      * @param name Name of the new scenario
+     * @param currentTime Current Absolute time to pass as the Scenario's start time
      */
-    public Scenario(String name) {
+    public Scenario(String name, long currentTime) {
         this.name = name;
         this.eventList = new ArrayList<>();
+        this.startTime = currentTime;
     }
 
     /**
@@ -38,6 +44,22 @@ public class Scenario {
      */
     public List<Event> getEventList() {
         return eventList;
+    }
+
+    /**
+     * Set the start time of the scenario
+     * @param startTime Absolute time in milliseconds (Since UNIX epoch)
+     */
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    /**
+     * Get the defined start time for the scenario
+     * @return Defined absolute time in milliseconds (Since UNIX epoch)
+     */
+    public long getStartTime() {
+        return startTime;
     }
 
     /**
