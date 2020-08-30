@@ -22,7 +22,7 @@ public class ScenarioEditorTests {
     @Test
     public void addFirstEventTest() {
         editor.out("editor create " + scenarioName);
-        editor.out("editor addEvent test_event0");
+        editor.out("editor addEvent test_event0 1000");
         String expected = "test_event0";
         StringBuilder result = new StringBuilder();
         for (Event e : editor.getScenario().getEventList()) {
@@ -34,8 +34,8 @@ public class ScenarioEditorTests {
     @Test
     public void addAnotherEventTest() {
         editor.out("editor create " + scenarioName);
-        editor.out("editor addEvent test_event0");
-        editor.out("editor addEvent test_event1");
+        editor.out("editor addEvent test_event0 1000");
+        editor.out("editor addEvent test_event1 2000");
         String expected = "test_event0" + "test_event1";
         StringBuilder result = new StringBuilder();
         for (Event e : editor.getScenario().getEventList()) {
@@ -47,8 +47,8 @@ public class ScenarioEditorTests {
     @Test
     public void deleteEventTest() {
         editor.out("editor create " + scenarioName);
-        editor.out("editor addEvent test_event0");
-        editor.out("editor addEvent test_event1");
+        editor.out("editor addEvent test_event0 1000");
+        editor.out("editor addEvent test_event1 2000");
         editor.out("editor deleteEvent");
         String expected = "test_event0";
         StringBuilder result = new StringBuilder();
@@ -65,8 +65,8 @@ public class ScenarioEditorTests {
             scenarioFile.delete();
         }
         editor.out("editor create " + scenarioName);
-        editor.out("editor addEvent test_event0");
-        editor.out("editor addEvent test_event1");
+        editor.out("editor addEvent test_event0 1000");
+        editor.out("editor addEvent test_event1 2000");
         editor.out("editor toFile src/test/resources/");
 
         Assert.assertTrue(scenarioFile.exists());

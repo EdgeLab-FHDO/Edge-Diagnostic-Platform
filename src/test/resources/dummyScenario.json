@@ -2,13 +2,16 @@
   "name" : "dummy" ,
   "eventList" : [
     {
-      "command" : "deploy_application"
+      "command" : "deploy_application",
+      "executionTime" : 1000
     },
     {
-      "command" : "node_request"
+      "command" : "node_request",
+      "executionTime" : 3000
     },
     {
-      "command" : "update_gui"
+      "command" : "update_gui",
+      "executionTime" : 10000
     }
   ]
 }

@@ -43,7 +43,7 @@ public class ScenarioDispatcherTests {
         String expected = "helmChartExecution\n" + "matchMakingExecution\n" +
                 "GUIUpdateExecution\n";
         //Waiting for a very small time, necessary otherwise wont read
-        Thread.sleep(1); //If events are delayed this has to be modified
+        Thread.sleep(11000); //If events are delayed this has to be modified
         Assert.assertEquals(expected,outContent.toString().replaceAll("\r",""));
 
     }

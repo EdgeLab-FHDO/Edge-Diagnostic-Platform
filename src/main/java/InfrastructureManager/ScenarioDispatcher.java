@@ -82,7 +82,7 @@ public class ScenarioDispatcher implements MasterOutput {
      * Method to run the scenario
      */
     private void runScenario() {
-        Master.getInstance().runScenario(this.scenario);
+        Master.getInstance().runScenario(this.scenario, System.currentTimeMillis());
     }
 
     /**

@@ -66,11 +66,11 @@ public class Master {
      * it
      * @param scenario Scenario to be run
      */
-    public void runScenario(Scenario scenario) {
+    public void runScenario(Scenario scenario, long startTime) {
         try {
             ScenarioRunner scenarioRunner = getRunner(scenario);
             if (!scenarioRunner.isRunning()) { //If running then leave it running
-                scenarioRunner.setScenario(scenario);
+                scenarioRunner.setScenario(scenario, startTime);
                 new Thread(scenarioRunner).start(); // Run the scenario in another thread
             }
         } catch (IllegalArgumentException e) {

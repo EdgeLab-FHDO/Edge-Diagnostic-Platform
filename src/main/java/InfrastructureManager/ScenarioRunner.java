@@ -27,8 +27,13 @@ public class ScenarioRunner extends Runner {
      * Set the scenario of the runner
      * @param scenario Scenario to be run.
      */
-    public void setScenario(Scenario scenario) {
+    public void setScenario(Scenario scenario, long startTime) throws IllegalArgumentException{
         this.scenario = scenario;
+        try {
+            this.scenario.setStartTime(startTime);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     /**
@@ -39,15 +44,6 @@ public class ScenarioRunner extends Runner {
         return scenarioName;
     }
 
-    /**
-     * Overridden run method that in addition to running like a runner object, assigns the
-     * current absolute time to the scenario as start time
-     */
-    @Override
-    public void run() {
-        this.scenario.setStartTime(System.currentTimeMillis());
-        super.run();
-    }
 
     /**
      * Overridden method in that goes in the run() method. Here, the execution of the master is

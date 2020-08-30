@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,12 @@ public class Scenario {
     public Scenario(String name, long currentTime) {
         this.name = name;
         this.eventList = new ArrayList<>();
-        this.startTime = currentTime;
+        try {
+            setStartTime(currentTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -50,8 +56,12 @@ public class Scenario {
      * Set the start time of the scenario
      * @param startTime Absolute time in milliseconds (Since UNIX epoch)
      */
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
+    public void setStartTime(long startTime) throws IllegalArgumentException {
+        if (System.currentTimeMillis() - startTime <= 0) {
+            this.startTime = startTime;
+        } else {
+            throw new IllegalArgumentException("Start time in the past!");
+        }
     }
 
     /**
