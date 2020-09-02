@@ -41,7 +41,7 @@ public class ScenarioDispatcher implements MasterOutput {
                         break;
                     case "run" :
                         if (command.length > 2 && command[2].equals("-d")) {
-                            long startTime = Long.parseLong(command[4]);
+                            long startTime = 0;
                             switch (command[3]) {
                                 case "-r":
                                     startTime += System.currentTimeMillis();
@@ -51,6 +51,7 @@ public class ScenarioDispatcher implements MasterOutput {
                                 default:
                                     throw new IllegalArgumentException("Invalid run command");
                             }
+                            startTime += Long.parseLong(command[4]);
                             runScenario(startTime);
                         } else {
                             runScenario(System.currentTimeMillis());
@@ -66,10 +67,10 @@ public class ScenarioDispatcher implements MasterOutput {
                         stopScenario();
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid Command for ScenarioDispatcher!");
+                        throw new IllegalArgumentException("Invalid command for ScenarioDispatcher");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command  - ScenarioDispatcher!");
+                throw new IllegalArgumentException("Arguments missing for command  - ScenarioDispatcher");
             }
         }
     }
