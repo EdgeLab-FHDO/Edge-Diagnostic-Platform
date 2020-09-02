@@ -54,7 +54,7 @@ public class ScenarioDispatcher implements MasterOutput {
                             startTime += Long.parseLong(command[4]);
                             runScenario(startTime);
                         } else {
-                            runScenario(System.currentTimeMillis());
+                            runScenario(System.currentTimeMillis() + 10);
                         }
                         break;
                     case "pause" :
