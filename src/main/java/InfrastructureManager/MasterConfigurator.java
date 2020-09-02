@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Rest.RestInput;
+import InfrastructureManager.Rest.RestOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +45,8 @@ public class MasterConfigurator {
         switch (data.getInputSource()) {
             case "console":
                 return new ConsoleInput();
+            case "rest":
+                return new RestInput();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -57,6 +61,8 @@ public class MasterConfigurator {
         switch (data.getOutputSource()) {
             case "console":
                 return new ConsoleOutput();
+            case "rest":
+                return new RestOutput();
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }
