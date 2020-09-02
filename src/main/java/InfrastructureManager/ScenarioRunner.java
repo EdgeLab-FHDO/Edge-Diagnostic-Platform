@@ -29,11 +29,7 @@ public class ScenarioRunner extends Runner {
      */
     public void setScenario(Scenario scenario, long startTime) throws IllegalArgumentException{
         this.scenario = scenario;
-        try {
-            this.scenario.setStartTime(startTime);
-        } catch (Exception e) {
-            throw e;
-        }
+        this.scenario.setStartTime(startTime);
     }
 
     /**

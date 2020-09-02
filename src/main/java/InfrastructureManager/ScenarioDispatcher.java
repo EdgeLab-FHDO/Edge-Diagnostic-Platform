@@ -24,6 +24,9 @@ public class ScenarioDispatcher implements MasterOutput {
      * Based on responses from the master executes the different functionalities
      * @param response Must be in the way "dispatcher command" and additionally:
      *                 - Loading Scenario : Should include the path of the file (dispatcher fromFile src/resources/scenario.json)
+     *                 - Running Scenario : If command is only "dispatcher run" the scenario is run right away, if the "-d" flag is
+     *                 used, a delayed start time can be given using either the "-r" flag for a relative time or "-a" flag for
+     *                 an absolute time input (Milliseconds since UNIX epoch), followed by the desired time in milliseconds
      *                 - Other functionalities : Just the command.
      * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
@@ -37,7 +40,21 @@ public class ScenarioDispatcher implements MasterOutput {
                         scenarioFromFile(command[2]);
                         break;
                     case "run" :
-                        runScenario();
+                        if (command.length > 2 && command[2].equals("-d")) {
+                            long startTime = Long.parseLong(command[4]);
+                            switch (command[3]) {
+                                case "-r":
+                                    startTime += System.currentTimeMillis();
+                                    break;
+                                case "-a":
+                                    break;
+                                default:
+                                    throw new IllegalArgumentException("Invalid run command");
+                            }
+                            runScenario(startTime);
+                        } else {
+                            runScenario(System.currentTimeMillis());
+                        }
                         break;
                     case "pause" :
                         pauseScenario();
@@ -81,8 +98,8 @@ public class ScenarioDispatcher implements MasterOutput {
     /**
      * Method to run the scenario
      */
-    private void runScenario() {
-        Master.getInstance().runScenario(this.scenario, System.currentTimeMillis());
+    private void runScenario(long startTime) {
+        Master.getInstance().runScenario(this.scenario, startTime);
     }
 
     /**

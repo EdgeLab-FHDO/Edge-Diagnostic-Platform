@@ -17,7 +17,7 @@ public class Scenario {
     private long startTime;
 
     public Scenario() { //Needed for Jackson
-        this(null, System.currentTimeMillis());
+        this(null, System.currentTimeMillis()); //TODO:FIX
     }
 
     /**
@@ -57,7 +57,7 @@ public class Scenario {
      * @param startTime Absolute time in milliseconds (Since UNIX epoch)
      */
     public void setStartTime(long startTime) throws IllegalArgumentException {
-        if (System.currentTimeMillis() - startTime <= 0) {
+        if (startTime >= System.currentTimeMillis()) {
             this.startTime = startTime;
         } else {
             throw new IllegalArgumentException("Start time in the past!");

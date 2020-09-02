@@ -69,7 +69,7 @@ public class ScenarioEditor implements MasterOutput{
      * @param name Name of the scenario to be created
      */
     private void create(String name){
-        scenario = new Scenario(name, System.currentTimeMillis());
+        scenario = new Scenario(name, System.currentTimeMillis()); //TODO:FIX
     }
 
     /**
