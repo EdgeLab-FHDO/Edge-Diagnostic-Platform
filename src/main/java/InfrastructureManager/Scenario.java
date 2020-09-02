@@ -1,7 +1,6 @@
 package InfrastructureManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +16,17 @@ public class Scenario {
     private long startTime;
 
     public Scenario() { //Needed for Jackson
-        this(null, System.currentTimeMillis()); //TODO:FIX
+        this(null);
     }
 
     /**
      * Constructor of the class
      * @param name Name of the new scenario
-     * @param currentTime Current Absolute time to pass as the Scenario's start time
      */
-    public Scenario(String name, long currentTime) {
+    public Scenario(String name) {
         this.name = name;
         this.eventList = new ArrayList<>();
-        try {
-            setStartTime(currentTime);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
     }
 
     /**
