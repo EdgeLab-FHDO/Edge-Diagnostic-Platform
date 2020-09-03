@@ -15,6 +15,7 @@ import java.io.IOException;
 public class ScenarioDispatcher implements MasterOutput {
 
     private Scenario scenario;
+    private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
     public ScenarioDispatcher() {
         this.scenario = null;
@@ -54,7 +55,7 @@ public class ScenarioDispatcher implements MasterOutput {
                             startTime += Long.parseLong(command[4]);
                             runScenario(startTime);
                         } else {
-                            runScenario(System.currentTimeMillis() + 1000);
+                            runScenario(System.currentTimeMillis() + DEFAULT_DELAY);
                         }
                         break;
                     case "pause" :
