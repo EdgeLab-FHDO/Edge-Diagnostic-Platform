@@ -50,6 +50,7 @@ public class ScenarioRunner extends Runner {
     public void runOperation() {
         Event current = this.scenario.getEventList().get(currentEvent);
         waitForEvent(current);
+        this.input = current;
         super.runOperation();
         currentEvent++;
         if (currentEvent == this.scenario.getEventList().size()) {
@@ -68,11 +69,11 @@ public class ScenarioRunner extends Runner {
      * @param e Event to be waited for
      */
     private void waitForEvent (Event e) {
-        while (true) {
-            if (System.currentTimeMillis() - this.scenario.getStartTime() >= e.getExecutionTime()) {
-                this.input = e;
-                return;
-            }
+        long absoluteTime = this.scenario.getStartTime() + e.getExecutionTime();
+        try {
+            Thread.sleep(absoluteTime - System.currentTimeMillis());
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
     }
 }
