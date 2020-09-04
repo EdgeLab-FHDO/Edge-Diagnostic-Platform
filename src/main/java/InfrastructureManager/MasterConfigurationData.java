@@ -1,36 +1,21 @@
 package InfrastructureManager;
 
+import java.util.List;
 import java.util.Map;
+
 
 /**
  * Configuration Data Object (Mapped from JSON Config File)
  */
 public class MasterConfigurationData {
-    private final String inputSource;
-    private final String outputSource;
+
+    private final List<RunnerConfigData> runners;
     private final Map<String, String> commands;
 
     public MasterConfigurationData() {
         //Initialize all values in null;
-        inputSource = null;
-        outputSource = null;
         commands = null;
-    }
-
-    /**
-     * Method to get the input source
-     * @return the input source defined in the configuration
-     */
-    public String getInputSource() {
-        return inputSource;
-    }
-
-    /**
-     * Method for getting the output source
-     * @return the output source defined in the configuration
-     */
-    public String getOutputSource() {
-        return outputSource;
+        runners = null;
     }
 
     /**
@@ -41,4 +26,11 @@ public class MasterConfigurationData {
         return commands;
     }
 
+    /**
+     * Mehtod to get the list of runners defined for the master
+     * @return The Runners in form of a list of RunnerConfigData (Raw data for Runners) objects
+     */
+    public List<RunnerConfigData> getRunners() {
+        return runners;
+    }
 }
