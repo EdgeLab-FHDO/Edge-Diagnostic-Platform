@@ -1,7 +1,6 @@
 package InfrastructureManager;
 
 import InfrastructureManager.Rest.RestRouter;
-import InfrastructureManager.Rest.Utility.Testing.SparkStarter;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
