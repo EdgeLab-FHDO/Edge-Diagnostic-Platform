@@ -1,5 +1,5 @@
 package InfrastructureManager;
 
 public interface MasterOutput {
-    void out (String response);
+    void out (String response) throws IllegalArgumentException;
 }

@@ -5,14 +5,15 @@ import InfrastructureManager.Rest.RestOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Configurator class for the master, that takes the values in the configuration file
- * object and gives the master the different elements based on that (Different Input types,
- * output types, etc.)
+ * object and gives the master the different elements based on that (Commands, and Runners)
  */
 public class MasterConfigurator {
-    private final String CONFIG_FILE_PATH = "src/main/resources/config.json";
+
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     //TODO: consider making it a singleton
 
@@ -39,10 +40,11 @@ public class MasterConfigurator {
     /**
      * Based on the input defined in the config file, returns different types of input to the master
      * @return an object that implements the MasterInput interface
+     * @throws IllegalArgumentException if input string in the configuration is not defined
      */
-    public MasterInput getInput() {
+    private MasterInput getInput(String inputString) throws IllegalArgumentException {
         //TODO: Add more inputs
-        switch (data.getInputSource()) {
+        switch (inputString) {
             case "console":
                 return new ConsoleInput();
             case "rest":
@@ -55,16 +57,60 @@ public class MasterConfigurator {
     /**
      * Based on the output defined in the config file, returns different types of output objects to the master
      * @return an Object that implements the MasterOutput interface
+     * @throws IllegalArgumentException if output string in the configuration is not defined
      */
-    public MasterOutput getOutput() {
+    private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
         //TODO: Add more outputs
-        switch (data.getOutputSource()) {
-            case "console":
-                return new ConsoleOutput();
-            case "rest":
-                return new RestOutput();
-            default:
-                throw new IllegalArgumentException("Invalid output in Configuration");
+        MasterOutput[] result = new MasterOutput[outputStringArray.length];
+        for (int i = 0; i < outputStringArray.length; i++) {
+            switch (outputStringArray[i]) {
+                case "console":
+                    result[i] = new ConsoleOutput();
+                    break;
+                case "util" :
+                    result[i] = new MasterUtility();
+                    break;
+                case "scenario dispatcher" :
+                    result[i] = new ScenarioDispatcher();
+                    break;
+                case  "scenario editor" :
+                    result[i] = new ScenarioEditor();
+                    break;
+                case "rest":
+                    result[i] = new RestOutput();
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid output in Configuration");
+            }
         }
+        return result;
     }
+
+    /**
+     * Based on the configuration file, returns the runners that the master should use
+     * @return ArrayList of Runner objects for the master to run
+     */
+    public ArrayList<Runner> getRunners(){
+        ArrayList<Runner> result = new ArrayList<>();
+        String input;
+        MasterOutput[] output;
+        String name;
+        for (RunnerConfigData runnerData : data.getRunners()){
+           try {
+               input = runnerData.getInput();
+               output = getOutputs(runnerData.getOutputs());
+               name = runnerData.getName();
+               if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
+                   result.add(new ScenarioRunner(name,input,output));
+               } else { //Input as masterInput
+                   result.add(new Runner(name,getInput(input),output));
+               }
+           } catch (Exception e) {
+               System.err.println("Error in Runner " + runnerData.getName());
+               e.printStackTrace();
+           }
+        }
+        return result;
+    }
+
 }
