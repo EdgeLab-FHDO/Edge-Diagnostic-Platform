@@ -34,5 +34,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.0'
     testImplementation 'io.rest-assured:rest-assured:4.3.1'
     testImplementation 'junit:junit:4.12'
-    compile "com.sparkjava:spark-core:2.9.2"
+    implementation "com.sparkjava:spark-core:2.9.2"
 }
