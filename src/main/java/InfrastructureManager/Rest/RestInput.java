@@ -11,7 +11,11 @@ public class RestInput implements MasterInput {
     };
 
     @Override
-    public String read() {
+    public String read() throws Exception {
+        if(command.isBlank()) {
+           throw new Exception("No command exception");
+        }
         return command;
+
     }
 }
