@@ -2,6 +2,7 @@ package InfrastructureManager;
 
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
+import InfrastructureManager.Rest.RestRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -102,6 +103,8 @@ public class MasterConfigurator {
                name = runnerData.getName();
                if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
                    result.add(new ScenarioRunner(name,input,output));
+               } else if (name.equals("Rest")) {
+                   result.add(new RestRunner(name,getInput(input),output));
                } else { //Input as masterInput
                    result.add(new Runner(name,getInput(input),output));
                }

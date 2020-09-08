@@ -11,6 +11,12 @@
       "scenario" : true,
       "input" : "dummy",
       "outputs" : ["console"]
+    },
+    {
+      "name" : "Rest",
+      "scenario" : false,
+      "input" : "rest",
+      "outputs" : ["rest"]
     }
   ],
   "commands" : {

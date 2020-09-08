@@ -1,5 +1,8 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Rest.RestRouter;
+import InfrastructureManager.Rest.RestRunner;
+
 import java.util.ArrayList;
 
 /**
@@ -12,6 +15,7 @@ public class Master {
     private Thread mainThread;
 
     private static Master instance = null;
+    private static RestRunner restRunner = null;
 
     /**
      * Constructor of the class
@@ -51,6 +55,18 @@ public class Master {
             if (runner.getName().equals("Main")) {
                 mainThread = new Thread(runner,"MainRunner");
                 mainThread.start();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Method for starting the REST runner thread, declared in the config file
+     */
+    public void setRestRunner() {
+        for (Runner runner : runnerList) {
+            if (runner.getName().equals("Rest")) {
+                restRunner = (RestRunner) runner;
                 break;
             }
         }
@@ -157,8 +173,21 @@ public class Master {
         return instance;
     }
 
-    public static void main(String[] args) {
+    /**
+     * Singleton method for getting the only instance of the class
+     * @return The instance of the RestRunner Class
+     */
+    public static RestRunner getRestRunner() {
+        if(restRunner == null) {
+            Master.getInstance().setRestRunner();
+        }
+        return restRunner;
+    }
+
+    public static void main(String[] args) throws InterruptedException {
         Master.getInstance().startMainRunner();
+        Master.getInstance().setRestRunner();
+        Master.getRestRunner().startServerIfNotRunning();
         try {
             Master.getInstance().getMainThread().join();
         } catch (InterruptedException e) {

@@ -22,13 +22,12 @@ public class RestFunctionalTests {
     private static int port = 4567;
 
     @BeforeClass
-    public static void startServer() {
-        String [] args = {};
+    public static void startServer() throws InterruptedException {
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        RestRouter.main(args);
+        Master.getRestRunner().startServerIfNotRunning();
     }
 
     @Test
