@@ -38,7 +38,7 @@ public class RestFunctionalTests {
                     spec(requestSpec).
                     pathParam("command", command).
                 when().
-                    post("/node/command/{command}").
+                    post("/node/read/{command}").
                     asString();
         Assert.assertEquals(command, response);
     }
@@ -54,5 +54,19 @@ public class RestFunctionalTests {
                         get("/client/{request}").
                         asString();
         Assert.assertEquals(request, response);
+    }
+
+    @Test
+    public void commandExecutionTest() {
+        String request = "update_gui";
+        String expected = "console GUIUpdateExecution";
+        String response =
+                given().
+                    spec(requestSpec).
+                    pathParam("command", request).
+                when().
+                    post("/node/execute/{command}").
+                    asString();
+        Assert.assertEquals(expected,response);
     }
 }

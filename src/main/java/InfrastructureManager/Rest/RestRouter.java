@@ -8,15 +8,15 @@ public class RestRouter {
     private RestRouter(int port) {
         before("/*", AuthenticationManager.authenticate);
         path("/node", () -> {
-            post("/command/:command", RestInput.readCommand);
+            post("/read/:command", RestInput.readCommand);
+            post("/execute/:command", RestInput.executeCommand);
         });
         path("/client", () -> {
             get("/:response", RestOutput.printResponse);
         });
-        get("/heartbeat", ((request, response) -> {
-            response.status(200);
-            return null;
-        }));
+        get("/heartbeat", (request, response) -> {
+            return response.status();
+        });
     }
 
     public static RestRouter startRouter(int port) {
