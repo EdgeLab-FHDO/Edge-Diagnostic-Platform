@@ -20,7 +20,7 @@ public class RestInput implements MasterInput {
 
     @Override
     public String read() throws Exception {
-        if(command.isBlank()) {
+        if(command.replaceAll("\\s+","").isEmpty()) {
            throw new Exception("No command exception");
         }
         return command;
