@@ -40,7 +40,7 @@ public class RestFunctionalTests {
                     spec(requestSpec).
                     pathParam("command", command).
                 when().
-                    post("/node/read/{command}").
+                    post("/node/test/read/{command}").
                     asString();
         Assert.assertEquals(command, response);
     }
@@ -67,7 +67,7 @@ public class RestFunctionalTests {
                     spec(requestSpec).
                     pathParam("command", request).
                 when().
-                    post("/node/execute/{command}").
+                    post("/node/test/execute/{command}").
                     asString();
         Assert.assertEquals(expected,response);
     }

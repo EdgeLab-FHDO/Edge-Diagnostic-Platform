@@ -8,14 +8,16 @@ public class RestInput implements MasterInput {
     private static String command = "";
     private static Master master = Master.getInstance();
 
-    public static Route readCommand = (Request request, Response response) ->{
-        command = request.params(":command");
-        return command;
+    public static Route readCommandTest = (Request request, Response response) -> request.params(":command");
+
+    public static Route executeCommandTest = (Request request, Response response) ->{
+        String executed = request.params(":command");
+        return master.execute(executed);
     };
 
     public static Route executeCommand = (Request request, Response response) ->{
         command = request.params(":command");
-        return master.execute(command);
+        return command;
     };
 
     @Override
@@ -23,6 +25,8 @@ public class RestInput implements MasterInput {
         if(command.replaceAll("\\s+","").isEmpty()) {
            throw new Exception("No command exception");
         }
-        return command;
+        String executed = command;
+        command = "";
+        return executed;
     }
 }

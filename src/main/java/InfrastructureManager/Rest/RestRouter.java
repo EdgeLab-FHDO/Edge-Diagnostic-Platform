@@ -8,7 +8,10 @@ public class RestRouter {
     private RestRouter(int port) {
         before("/*", AuthenticationManager.authenticate);
         path("/node", () -> {
-            post("/read/:command", RestInput.readCommand);
+            path("/test", () -> {
+                post("/read/:command", RestInput.readCommandTest);
+                post("/execute/:command", RestInput.executeCommandTest);
+            });
             post("/execute/:command", RestInput.executeCommand);
         });
         path("/client", () -> {

@@ -16,7 +16,7 @@
       "name" : "Rest",
       "scenario" : false,
       "input" : "rest",
-      "outputs" : ["rest"]
+      "outputs" : ["rest", "console"]
     }
   ],
   "commands" : {
