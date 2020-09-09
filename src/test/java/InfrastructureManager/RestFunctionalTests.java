@@ -1,10 +1,9 @@
 package InfrastructureManager;
 
-import InfrastructureManager.Rest.RestRouter;
+import InfrastructureManager.Rest.RestInput;
+import InfrastructureManager.Rest.RestOutput;
+import InfrastructureManager.Rest.RestRunner;
 import org.junit.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import io.restassured.RestAssured;
 import io.restassured.path.json.config.JsonPathConfig;
@@ -12,6 +11,8 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.*;
 import org.apache.http.HttpStatus;
 import org.junit.*;
+
+import java.lang.reflect.Array;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
@@ -22,12 +23,13 @@ public class RestFunctionalTests {
     private static int port = 4567;
 
     @BeforeClass
-    public static void startServer() throws InterruptedException {
+    public static void startServer() throws Exception {
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        Master.getRestRunner().startServerIfNotRunning();
+
+        RestRunner.getRestRunner().startServerIfNotRunning();
     }
 
     @Test

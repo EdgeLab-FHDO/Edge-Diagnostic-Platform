@@ -13,9 +13,9 @@ public class Master {
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
     private Thread mainThread;
+    private Thread restThread;
 
     private static Master instance = null;
-    private static RestRunner restRunner = null;
 
     /**
      * Constructor of the class
@@ -63,13 +63,23 @@ public class Master {
     /**
      * Method for starting the REST runner thread, declared in the config file
      */
-    public void setRestRunner() {
+    private void startRestRunnerThread() throws Exception {
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("Rest")) {
-                restRunner = (RestRunner) runner;
+            if (runner.getName().equals("Rest") && restThread == null) {
+                restThread = new Thread(RestRunner.getRestRunner(runner), "RestRunner");
+                restThread.start();
                 break;
             }
         }
+    }
+
+    public Runner getRunnerConfiguration(String name) {
+        for (Runner runner : runnerList) {
+            if (runner.getName().equals(name)) {
+                return runner;
+            }
+        }
+        throw new IllegalArgumentException("There is no runner configured for the given request");
     }
 
     public Thread getMainThread() {
@@ -173,21 +183,10 @@ public class Master {
         return instance;
     }
 
-    /**
-     * Singleton method for getting the only instance of the class
-     * @return The instance of the RestRunner Class
-     */
-    public static RestRunner getRestRunner() {
-        if(restRunner == null) {
-            Master.getInstance().setRestRunner();
-        }
-        return restRunner;
-    }
-
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         Master.getInstance().startMainRunner();
-        Master.getInstance().setRestRunner();
-        Master.getRestRunner().startServerIfNotRunning();
+        Master.getInstance().startRestRunnerThread();
+
         try {
             Master.getInstance().getMainThread().join();
         } catch (InterruptedException e) {
