@@ -16,13 +16,13 @@ public class RestInput implements MasterInput {
     };
 
     public static Route executeCommand = (Request request, Response response) ->{
-        command = request.params(":command");
+        command = request.params(":command").replaceAll("\\s+","");
         return command;
     };
 
     @Override
     public String read() throws Exception {
-        if(command.replaceAll("\\s+","").isEmpty()) {
+        if(command.isEmpty()) {
            throw new Exception("No command exception");
         }
         String executed = command;
