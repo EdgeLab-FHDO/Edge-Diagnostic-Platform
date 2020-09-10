@@ -2,7 +2,22 @@ package InfrastructureManager.AdvantEdge;
 
 import InfrastructureManager.MasterOutput;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.nio.file.Paths;
+import java.time.Duration;
+
 public class AdvEClient implements MasterOutput {
+    private final HttpClient client = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .connectTimeout(Duration.ofSeconds(20))
+            .build();
 
     @Override
     public void out(String response) throws IllegalArgumentException {
@@ -29,8 +44,22 @@ public class AdvEClient implements MasterOutput {
     }
 
     private void createAEScenario(String name, String pathToJSON) {
-        String requestPath = "/scenarios/" + name;
-        System.out.println("POST to " + requestPath + " with body from " + pathToJSON);
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://postman-echo.com/post/"))
+                    .timeout(Duration.ofMinutes(1))
+                    .header("Content-Type", "application/json")
+                    .POST(BodyPublishers.ofFile(Paths.get(pathToJSON)))
+                    .build();
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.statusCode());
+            System.out.println(response.body());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //String requestPath = "/scenarios/" + name;
+        //System.out.println("POST to " + requestPath + " with body from " + pathToJSON);
     }
 
     private void deployAEScenario(String name) {
