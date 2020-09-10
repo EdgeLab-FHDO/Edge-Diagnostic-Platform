@@ -1,5 +1,6 @@
 package InfrastructureManager;
 
+import InfrastructureManager.AdvantEdge.AdvEClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +72,9 @@ public class MasterConfigurator {
                     break;
                 case  "scenario editor" :
                     result[i] = new ScenarioEditor();
+                    break;
+                case "advantEdge" :
+                    result[i] = new AdvEClient();
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid output in Configuration");
