@@ -44,32 +44,84 @@ public class AdvEClient implements MasterOutput {
     }
 
     private void createAEScenario(String name, String pathToJSON) {
+        String requestPath = "https://postman-echo.com/post/";
+        //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
+        //String requestPath = "http://localhost:80/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://postman-echo.com/post/"))
+                    .uri(URI.create(requestPath))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
                     .POST(BodyPublishers.ofFile(Paths.get(pathToJSON)))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.body());
+            switch (response.statusCode()) {
+                case 200:
+                    System.out.println("200 - OK");
+                    System.out.println(response.body());
+                    break;
+                case 400:
+                    System.out.println("400 - Bad Request");
+                    break;
+                default:
+                    System.out.println("404 - Not found");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //String requestPath = "/scenarios/" + name;
-        //System.out.println("POST to " + requestPath + " with body from " + pathToJSON);
     }
 
     private void deployAEScenario(String name) {
-        String requestPath = "/active/" + name;
-        System.out.println("POST to " + requestPath);
+        //String requestPath = "http://localhost:80/active/" + name;
+        String requestPath = "https://postman-echo.com/post/";
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(requestPath))
+                    .timeout(Duration.ofMinutes(1))
+                    .header("Content-Type", "application/json")
+                    .POST(BodyPublishers.noBody())
+                    .build();
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            switch (response.statusCode()) {
+                case 200:
+                    System.out.println("200 - OK");
+                    System.out.println(response.body());
+                    break;
+                case 400:
+                    System.out.println("400 - Bad Request");
+                    break;
+                default:
+                    System.out.println("404 - Not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void terminateAEScenario() {
         //TODO: Check the active scenario first
-        String requestPath = "/active";
-        System.out.println("DELETE to " + requestPath);
+        //String requestPath = "http://localhost:80/active";
+        String requestPath = "https://postman-echo.com/delete";
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(requestPath))
+                    .timeout(Duration.ofMinutes(1))
+                    .DELETE()
+                    .build();
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            switch (response.statusCode()) {
+                case 200:
+                    System.out.println("200 - OK");
+                    System.out.println(response.body());
+                    break;
+                default:
+                    System.out.println("404 - Not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
