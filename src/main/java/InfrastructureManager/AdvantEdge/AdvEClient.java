@@ -2,8 +2,6 @@ package InfrastructureManager.AdvantEdge;
 
 import InfrastructureManager.MasterOutput;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,6 +17,13 @@ public class AdvEClient implements MasterOutput {
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
+    /**
+     * Based on responses from the master executes the different functionalities
+     * @param response Must be in the way "advantEdge command" and additionally:
+     *                 - Creating Scenario : Should include the  name of the scenario and the path of the file where the scenario is defined
+     *                 - Deploy Scenario : Should include the name of the scenario to be deployed
+     * @throws IllegalArgumentException If the command is not defined or is missing arguments
+     */
     @Override
     public void out(String response) throws IllegalArgumentException {
         String[] command = response.split(" ");
@@ -43,6 +48,11 @@ public class AdvEClient implements MasterOutput {
         }
     }
 
+    /**
+     * Create an AdvantEDGE scenario and add it to the platform scenario store, using AdvantEDGE REST API
+     * @param name name of the scenario to be added
+     * @param pathToJSON path to the JSON file where the scenario is defined
+     */
     private void createAEScenario(String name, String pathToJSON) {
         String requestPath = "https://postman-echo.com/post/";
         //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
@@ -72,6 +82,10 @@ public class AdvEClient implements MasterOutput {
         }
     }
 
+    /**
+     * Deploy a scenario present in the platform scenario store in AdvantEDGE (Using REST API)
+     * @param name Name of the scenario to be deployed
+     */
     private void deployAEScenario(String name) {
         //String requestPath = "http://localhost:80/active/" + name;
         String requestPath = "https://postman-echo.com/post/";
@@ -100,8 +114,11 @@ public class AdvEClient implements MasterOutput {
         }
     }
 
+    /**
+     * Terminate the current running scenario in AdvantEdge (Using the REST API)
+     */
     private void terminateAEScenario() {
-        //TODO: Check the active scenario first
+        //TODO: Check if there is an active scenario first
         //String requestPath = "http://localhost:80/active";
         String requestPath = "https://postman-echo.com/delete";
         try {
