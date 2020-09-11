@@ -16,7 +16,7 @@
       "name" : "Rest",
       "scenario" : false,
       "input" : "rest",
-      "outputs" : ["rest", "console"]
+      "outputs" : ["rest"]
     }
   ],
   "commands" : {
@@ -34,6 +34,7 @@
     "load_scenario" : "dispatcher fromFile",
     "run_scenario" : "dispatcher run",
     "pause_scenario" : "dispatcher pause",
-    "resume_scenario" : "dispatcher resume"
+    "resume_scenario" : "dispatcher resume",
+    "rest_test": "rest test"
   }
 }

@@ -66,20 +66,11 @@ public class Master {
     private void startRestRunnerThread() throws Exception {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Rest") && restThread == null) {
-                restThread = new Thread(RestRunner.getRestRunner(runner), "RestRunner");
+                restThread = new Thread(runner, "RestRunner");
                 restThread.start();
                 break;
             }
         }
-    }
-
-    public Runner getRunnerConfiguration(String name) {
-        for (Runner runner : runnerList) {
-            if (runner.getName().equals(name)) {
-                return runner;
-            }
-        }
-        throw new IllegalArgumentException("There is no runner configured for the given request");
     }
 
     public Thread getMainThread() {
@@ -183,13 +174,12 @@ public class Master {
         return instance;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Master.getInstance().startMainRunner();
-        Master.getInstance().startRestRunnerThread();
-
         try {
+            Master.getInstance().startRestRunnerThread();
             Master.getInstance().getMainThread().join();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

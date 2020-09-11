@@ -15,7 +15,7 @@ public class RestRunner extends Runner {
     private static RestRouter server = null;
     private static RestRunner restRunner = null;
 
-    public RestRunner(String name, MasterInput input, MasterOutput...outputs) {
+    private RestRunner(String name, MasterInput input, MasterOutput...outputs) {
         super(name,input,outputs);
     }
 
@@ -76,9 +76,9 @@ public class RestRunner extends Runner {
     /**
      * Method for getting the Singleton REST Runner instance or set from Configuration if not available
      */
-    public static RestRunner getRestRunner() {
+    public static RestRunner getRestRunner() throws Exception {
         if(restRunner == null) {
-            restRunner = (RestRunner) Master.getInstance().getRunnerConfiguration("Rest");
+            throw new Exception("Runner not set");
         }
         return restRunner;
     }
@@ -86,9 +86,9 @@ public class RestRunner extends Runner {
     /**
      * Method for getting the Singleton REST Runner instance or set from parameter if not available
      */
-    public static RestRunner getRestRunner(Runner runner) {
+    public static RestRunner getRestRunner(String name, MasterInput input, MasterOutput...outputs) {
         if(restRunner == null) {
-            restRunner = (RestRunner) runner;
+            restRunner = new RestRunner(name,input,outputs);
         }
         return restRunner;
     }

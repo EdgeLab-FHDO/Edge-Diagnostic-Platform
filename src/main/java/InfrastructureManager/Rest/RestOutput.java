@@ -1,16 +1,26 @@
 package InfrastructureManager.Rest;
 
+import InfrastructureManager.Master;
 import InfrastructureManager.MasterOutput;
-import spark.*;
 
 public class RestOutput implements MasterOutput {
     private static String output = "";
 
-    public static Route printResponse = (Request request, Response response) ->{
-        return request.params(":response");
+    public static String printResponse() {
+        String response = output;
+        output = "";
+        return response;
     };
+
     @Override
     public void out(String response) {
-        output = response;
+        String[] command = response.split(" ");
+        if (command[0].equals("rest")) {
+            try {
+                output = command[1];
+            } catch (IndexOutOfBoundsException e) {
+                throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
+            }
+        }
     }
 }

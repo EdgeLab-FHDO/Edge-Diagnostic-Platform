@@ -9,13 +9,12 @@ public class RestRouter {
         before("/*", AuthenticationManager.authenticate);
         path("/node", () -> {
             path("/test", () -> {
-                post("/read/:command", RestInput.readCommandTest);
-                post("/execute/:command", RestInput.executeCommandTest);
+                post("/read/:input", RestInput.readParameterTest);
             });
             post("/execute/:command", RestInput.executeCommand);
         });
         path("/client", () -> {
-            get("/:response", RestOutput.printResponse);
+            get("/test/:input", RestInput.readParameterTest);
         });
         get("/heartbeat", (request, response) -> {
             return response.status();

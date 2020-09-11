@@ -104,7 +104,7 @@ public class MasterConfigurator {
                if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
                    result.add(new ScenarioRunner(name,input,output));
                } else if (name.equals("Rest")) {
-                   result.add(new RestRunner(name,getInput(input),output));
+                   result.add(RestRunner.getRestRunner(name,getInput(input),output));
                } else { //Input as masterInput
                    result.add(new Runner(name,getInput(input),output));
                }

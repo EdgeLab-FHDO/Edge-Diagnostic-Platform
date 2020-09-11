@@ -8,16 +8,15 @@ public class RestInput implements MasterInput {
     private static String command = "";
     private static Master master = Master.getInstance();
 
-    public static Route readCommandTest = (Request request, Response response) -> request.params(":command");
+    public static Route readParameterTest = (Request request, Response response) -> request.params(":input");
 
-    public static Route executeCommandTest = (Request request, Response response) ->{
-        String executed = request.params(":command");
-        return master.execute(executed);
-    };
-
-    public static Route executeCommand = (Request request, Response response) ->{
+    /**
+     * Execute route for POST request that only sends one way data to the Master
+     * Returns true if the request is succesful with code 200
+     */
+    public static Route executeCommand = (Request request, Response response) -> {
         command = request.params(":command").replaceAll("\\s+","");
-        return command;
+        return response.status();
     };
 
     @Override
