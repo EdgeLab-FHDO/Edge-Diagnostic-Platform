@@ -14,7 +14,7 @@ public class RestRouter {
             post("/execute/:command", RestInput.executeCommand);
         });
         path("/client", () -> {
-            get("/test/:input", RestInput.readParameterTest);
+            get("/get_node", RestOutput.getNode);
         });
         get("/heartbeat", (request, response) -> {
             return response.status();
