@@ -1,5 +1,8 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Rest.RestRouter;
+import InfrastructureManager.Rest.RestRunner;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +13,7 @@ public class Master {
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
     private Thread mainThread;
+    private Thread restThread;
 
     private static Master instance = null;
 
@@ -51,6 +55,19 @@ public class Master {
             if (runner.getName().equals("Main")) {
                 mainThread = new Thread(runner,"MainRunner");
                 mainThread.start();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Method for starting the REST runner thread, declared in the config file
+     */
+    private void startRestRunnerThread() throws Exception {
+        for (Runner runner : runnerList) {
+            if (runner.getName().equals("Rest") && restThread == null) {
+                restThread = new Thread(runner, "RestRunner");
+                restThread.start();
                 break;
             }
         }
@@ -160,8 +177,9 @@ public class Master {
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
         try {
+            Master.getInstance().startRestRunnerThread();
             Master.getInstance().getMainThread().join();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

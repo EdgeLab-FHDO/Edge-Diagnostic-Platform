@@ -1,5 +1,5 @@
 package InfrastructureManager;
 
 public interface MasterInput {
-    String read();
+    String read() throws Exception;
 }
