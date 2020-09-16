@@ -11,6 +11,12 @@
       "scenario" : true,
       "input" : "dummy",
       "outputs" : ["console"]
+    },
+    {
+      "name" : "Rest",
+      "scenario" : false,
+      "input" : "rest",
+      "outputs" : ["rest"]
     }
   ],
   "commands" : {
@@ -31,6 +37,7 @@
     "resume_scenario" : "dispatcher resume",
     "ae_create_scenario" : "advantEdge create",
     "ae_deploy_scenario" : "advantEdge deploy",
-    "ae_terminate_active" : "advantEdge terminate"
+    "ae_terminate_active" : "advantEdge terminate",
+    "rest_test": "rest test"
   }
 }
