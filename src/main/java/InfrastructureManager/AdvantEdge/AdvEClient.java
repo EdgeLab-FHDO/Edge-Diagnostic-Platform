@@ -51,9 +51,12 @@ public class AdvEClient implements MasterOutput {
     /**
      * Create an AdvantEDGE scenario and add it to the platform scenario store, using AdvantEDGE REST API
      * @param name name of the scenario to be added
-     * @param pathToJSON path to the JSON file where the scenario is defined
+     * @param pathToFile path to the file where the scenario is defined. If it is a YAML file, it parses it into JSON
      */
-    private void createAEScenario(String name, String pathToJSON) {
+    private void createAEScenario(String name, String pathToFile) {
+        if (pathToFile.endsWith(".yaml")) {
+            pathToFile = AdvEScenarioParser.parse(pathToFile);
+        }
         String requestPath = "https://postman-echo.com/post/";
         //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
         //String requestPath = "http://localhost:80/scenarios/" + name;
@@ -62,7 +65,7 @@ public class AdvEClient implements MasterOutput {
                     .uri(URI.create(requestPath))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
-                    .POST(BodyPublishers.ofFile(Paths.get(pathToJSON)))
+                    .POST(BodyPublishers.ofFile(Paths.get(pathToFile)))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -118,7 +121,6 @@ public class AdvEClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        //TODO: Check if there is an active scenario first
         //String requestPath = "http://localhost:80/active";
         String requestPath = "https://postman-echo.com/delete";
         try {
