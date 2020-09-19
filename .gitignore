@@ -3,3 +3,4 @@
 /build
 /out/
 Dockerfile
+src/test/resources/testScenario.json
