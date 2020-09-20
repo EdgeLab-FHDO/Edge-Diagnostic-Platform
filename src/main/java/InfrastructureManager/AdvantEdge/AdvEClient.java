@@ -57,9 +57,9 @@ public class AdvEClient implements MasterOutput {
         if (pathToFile.endsWith(".yaml")) {
             pathToFile = AdvEScenarioParser.parse(pathToFile);
         }
-        String requestPath = "https://postman-echo.com/post/";
+        //String requestPath = "https://postman-echo.com/post/";
         //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
-        //String requestPath = "http://localhost:80/scenarios/" + name;
+        String requestPath = "http://localhost:80/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -72,7 +72,6 @@ public class AdvEClient implements MasterOutput {
             switch (response.statusCode()) {
                 case 200:
                     System.out.println("200 - OK");
-                    System.out.println(response.body());
                     break;
                 case 400:
                     System.out.println("400 - Bad Request");
@@ -90,8 +89,8 @@ public class AdvEClient implements MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        //String requestPath = "http://localhost:80/active/" + name;
-        String requestPath = "https://postman-echo.com/post/";
+        String requestPath = "http://localhost:80/active/" + name;
+        //String requestPath = "https://postman-echo.com/post/";
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -104,7 +103,6 @@ public class AdvEClient implements MasterOutput {
             switch (response.statusCode()) {
                 case 200:
                     System.out.println("200 - OK");
-                    System.out.println(response.body());
                     break;
                 case 400:
                     System.out.println("400 - Bad Request");
@@ -121,8 +119,8 @@ public class AdvEClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        //String requestPath = "http://localhost:80/active";
-        String requestPath = "https://postman-echo.com/delete";
+        String requestPath = "http://localhost:80/active";
+        //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -134,7 +132,6 @@ public class AdvEClient implements MasterOutput {
             switch (response.statusCode()) {
                 case 200:
                     System.out.println("200 - OK");
-                    System.out.println(response.body());
                     break;
                 default:
                     System.out.println("404 - Not found");
