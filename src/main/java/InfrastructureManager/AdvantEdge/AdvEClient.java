@@ -59,7 +59,7 @@ public class AdvEClient implements MasterOutput {
         }
         //String requestPath = "https://postman-echo.com/post/";
         //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
-        String requestPath = "http://localhost:80/scenarios/" + name;
+        String requestPath = "http://localhost:10500/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -89,7 +89,7 @@ public class AdvEClient implements MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        String requestPath = "http://localhost:80/active/" + name;
+        String requestPath = "http://localhost:10500/active/" + name;
         //String requestPath = "https://postman-echo.com/post/";
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -119,7 +119,7 @@ public class AdvEClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        String requestPath = "http://localhost:80/active";
+        String requestPath = "http://localhost:10500/active";
         //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()
