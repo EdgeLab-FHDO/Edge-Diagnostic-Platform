@@ -14,9 +14,10 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class AdvantEdgeClientTests {
     private final AdvEClient client = new AdvEClient();
     private final String scenarioName = "dummy-test";
+    private final int portNumber = 10500;
 
     @Rule //Mock server on port 80
-    public WireMockRule rule = new WireMockRule(options().port(80),false);
+    public WireMockRule rule = new WireMockRule(options().port(portNumber),false);
 
 
     @Test
