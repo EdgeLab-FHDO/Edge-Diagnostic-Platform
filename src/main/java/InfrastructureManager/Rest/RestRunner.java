@@ -5,22 +5,22 @@ import spark.Spark;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class RestRunner extends Runner {
-    private int port = 4567;
-    private int retryAttempt = 10;
-    private String host = "localhost";
-    private String heartbeatPath = "/heartbeat";
-    private static RestRouter server = null;
+    private final int port;
+    private final int retryAttempt = 10;
+    private final String host = "localhost";
+    private final String heartbeatPath = "/heartbeat";
+    private RestRouter server = null;
     private static RestRunner restRunner = null;
 
-    private RestRunner(String name, MasterInput input, MasterOutput...outputs) {
-        super(name,input,outputs);
+    private RestRunner(String name,int port) {
+        super(name);
+        this.port = port;
     }
 
     private void startServer() {
-        this.server = RestRouter.startRouter(port);
+        this.server = RestRouter.startRouter(this.port);
     }
 
     /**
@@ -86,9 +86,9 @@ public class RestRunner extends Runner {
     /**
      * Method for getting the Singleton REST Runner instance or set from parameter if not available
      */
-    public static RestRunner getRestRunner(String name, MasterInput input, MasterOutput...outputs) {
+    public static RestRunner getRestRunner(String name, int port) {
         if(restRunner == null) {
-            restRunner = new RestRunner(name,input,outputs);
+            restRunner = new RestRunner(name, port);
         }
         return restRunner;
     }
@@ -100,7 +100,7 @@ public class RestRunner extends Runner {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        super.run();
+        running = true;
     }
 
     @Override

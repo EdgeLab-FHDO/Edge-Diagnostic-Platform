@@ -6,7 +6,6 @@ import spark.*;
 
 public class RestInput implements MasterInput {
     private static String command = "";
-    private static Master master = Master.getInstance();
 
     public static Route readParameterTest = (Request request, Response response) -> request.params(":input");
 

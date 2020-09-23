@@ -65,7 +65,7 @@ public class Master {
      */
     private void startRestRunnerThread() throws Exception {
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("Rest") && restThread == null) {
+            if (runner.getName().equals("RestServer") && restThread == null) {
                 restThread = new Thread(runner, "RestRunner");
                 restThread.start();
                 break;

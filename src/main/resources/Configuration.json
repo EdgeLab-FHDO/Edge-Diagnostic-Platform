@@ -13,10 +13,10 @@
       "outputs" : ["console"]
     },
     {
-      "name" : "Rest",
+      "name" : "RestServer",
       "scenario" : false,
-      "input" : "rest",
-      "outputs" : ["rest"]
+      "input" : "port4567",
+      "outputs" : [""]
     }
   ],
   "commands" : {
