@@ -63,11 +63,15 @@ public class Master {
     /**
      * Method for starting the REST runner thread, declared in the config file
      */
-    private void startRestRunnerThread() throws Exception {
+    public void startRunnerThread(String name){
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("RestServer") && restThread == null) {
-                restThread = new Thread(runner, "RestRunner");
-                restThread.start();
+            if (runner.getName().equals(name)) {
+                if (name.equals("RestServer") && restThread == null) {
+                    restThread = new Thread(runner, "RestRunner");
+                    restThread.start();
+                    break;
+                }
+                new Thread(runner,name).start();
                 break;
             }
         }
@@ -176,8 +180,8 @@ public class Master {
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
+        Master.getInstance().startRunnerThread("RestServer");
         try {
-            Master.getInstance().startRestRunnerThread();
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {
             e.printStackTrace();

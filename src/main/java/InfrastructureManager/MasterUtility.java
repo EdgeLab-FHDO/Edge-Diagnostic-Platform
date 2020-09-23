@@ -18,6 +18,9 @@ public class MasterUtility implements MasterOutput {
                     case "exit" :
                         Master.getInstance().exitAll();
                         break;
+                    case "runRunner":
+                        Master.getInstance().startRunnerThread(command[2]);
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid Command for Utility Output");
                 }

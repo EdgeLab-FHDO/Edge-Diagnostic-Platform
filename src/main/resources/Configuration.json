@@ -3,8 +3,14 @@
     {
       "name" : "Main",
       "scenario" : false,
+      "input" : "console",
+      "outputs" : ["console", "util","scenario editor","scenario dispatcher", "rest"]
+    },
+    {
+      "name" : "RestInputTest",
+      "scenario" : false,
       "input" : "rest",
-      "outputs" : ["console", "util","scenario editor","scenario dispatcher"]
+      "outputs" : ["console", "util"]
     },
     {
       "name" : "Dummy Scenario",
@@ -21,6 +27,8 @@
   ],
   "commands" : {
     "exit" : "util exit",
+    "start_rest_server" : "util runRunner RestServer",
+    "start_runner" : "util runRunner",
     "deploy_application" : "console helmChartExecution" ,
     "node_request" : "console matchMakingExecution" ,
     "update_gui" : "console GUIUpdateExecution" ,
