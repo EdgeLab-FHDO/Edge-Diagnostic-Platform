@@ -3,7 +3,7 @@
     {
       "name" : "Main",
       "scenario" : false,
-      "input" : "console",
+      "input" : "rest",
       "outputs" : ["console", "util","scenario editor","scenario dispatcher"]
     },
     {

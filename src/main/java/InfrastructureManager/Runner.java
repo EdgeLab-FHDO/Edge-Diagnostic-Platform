@@ -81,7 +81,9 @@ public class Runner implements Runnable{
                 output.out(mapping);
             }
         } catch (Exception e) {
-           // e.printStackTrace();
+           if (!e.getMessage().equals("No command exception")) {
+               e.printStackTrace();
+           }
         }
     }
 
