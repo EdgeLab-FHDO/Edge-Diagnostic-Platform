@@ -32,7 +32,7 @@ public class AdvantEdgeClientTests {
     }
 
     @Test // Checks if adding the scenario as a YAML file, sends a JSON in the request
-    public void YAML2JSONParserTest() {
+    public void addYAMLScenarioRequestTest() {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
         String path = "/scenarios/" + scenarioName;
