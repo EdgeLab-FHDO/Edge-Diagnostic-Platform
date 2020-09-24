@@ -2,11 +2,15 @@ package InfrastructureManager.Rest;
 
 import InfrastructureManager.Master;
 import InfrastructureManager.MasterOutput;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import org.json.*;
@@ -15,11 +19,16 @@ public class RestOutput implements MasterOutput {
 
     private static RestOutput instance = null;
 
-    private Queue<String> output = new LinkedList<>();
+    private final Queue<String> output;
+    private final Map<String,Double> limitNodes;
 
     public Route sendLimitInfo = (Request request, Response response) -> getLimitInfo(response);
     public Route getNode = (Request request, Response response) -> printResponse();
 
+    private RestOutput() {
+        this.output = new LinkedList<>();
+        this.limitNodes = new LinkedHashMap<>();
+    }
     public JSONObject printResponse() {
         JSONObject response = new JSONObject();
 
@@ -31,15 +40,15 @@ public class RestOutput implements MasterOutput {
 
         return response;
     }
-    public JSONObject getLimitInfo(Response response) {
+    public String getLimitInfo(Response response) {
+        ObjectMapper mapper = new ObjectMapper();
+        String response_body = "";
         response.type("application/json");
-        JSONObject response_body = new JSONObject();
-        if(output.isEmpty()) {
-            response_body.put("content", "");
-        } else {
-            response_body.put("content", output.remove());
+        try {
+            response_body = mapper.writeValueAsString(limitNodes);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-
         return response_body;
     }
 
@@ -52,7 +61,7 @@ public class RestOutput implements MasterOutput {
                     output.add(command[1]);
                     break;
                 case "limit":
-                    output.add(command[1]);
+                    addToLimitList(command[1], command[2]);
                     break;
                 default:
             }
@@ -60,6 +69,10 @@ public class RestOutput implements MasterOutput {
             throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
         }
 
+    }
+
+    private void addToLimitList(String tag, String limit) {
+        this.limitNodes.put(tag, Double.parseDouble(limit));
     }
 
     public static RestOutput getInstance() {
