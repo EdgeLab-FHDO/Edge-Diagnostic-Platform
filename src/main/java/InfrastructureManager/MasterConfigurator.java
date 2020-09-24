@@ -64,22 +64,30 @@ public class MasterConfigurator {
     private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
         //TODO: Add more outputs
         MasterOutput[] result = new MasterOutput[outputStringArray.length];
+        String[] outputInfo;
         for (int i = 0; i < outputStringArray.length; i++) {
-            switch (outputStringArray[i]) {
+            outputInfo = outputStringArray[i].split(" ");
+            switch (outputInfo[0]) {
                 case "console":
                     result[i] = new ConsoleOutput();
                     break;
                 case "util" :
                     result[i] = new MasterUtility();
                     break;
-                case "scenario dispatcher" :
+                case "scenario_dispatcher" :
                     result[i] = new ScenarioDispatcher();
                     break;
-                case  "scenario editor" :
+                case  "scenario_editor" :
                     result[i] = new ScenarioEditor();
                     break;
                 case "advantEdge" :
-                    result[i] = new AdvantEdgeClient();
+                    String portNumber;
+                    try {
+                        portNumber = outputInfo[1].replaceAll("[^\\d]*",""); //Get only the numbers
+                    } catch (IndexOutOfBoundsException e) { //If nothing is specified, set it to port 80
+                        portNumber = "80";
+                    }
+                    result[i] = new AdvantEdgeClient(Integer.parseInt(portNumber));
                     break;
                 case "rest":
                     result[i] = new RestOutput();
