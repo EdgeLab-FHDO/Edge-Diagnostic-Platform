@@ -16,6 +16,7 @@ public class RestRouter {
         path("/client", () -> {
             get("/get_node", RestOutput.getNode);
         });
+        get("/limit", RestOutput.sendLimitInfo);
         get("/heartbeat", (request, response) -> {
             return response.status();
         });

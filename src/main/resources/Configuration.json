@@ -43,6 +43,7 @@
     "run_scenario" : "dispatcher run",
     "pause_scenario" : "dispatcher pause",
     "resume_scenario" : "dispatcher resume",
-    "rest_test": "rest test"
+    "rest_test": "rest test",
+    "limit_node" : "limit"
   }
 }
