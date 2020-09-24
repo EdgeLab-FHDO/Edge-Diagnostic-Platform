@@ -4,7 +4,7 @@
       "name" : "Main",
       "scenario" : false,
       "input" : "console",
-      "outputs" : ["console", "util","scenario editor","scenario dispatcher", "rest"]
+      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500", "rest"]
     },
     {
       "name" : "RestInputTest",
@@ -43,6 +43,9 @@
     "run_scenario" : "dispatcher run",
     "pause_scenario" : "dispatcher pause",
     "resume_scenario" : "dispatcher resume",
+    "ae_create_scenario" : "advantEdge create",
+    "ae_deploy_scenario" : "advantEdge deploy",
+    "ae_terminate_active" : "advantEdge terminate",
     "rest_test": "rest test"
   }
 }

@@ -1,0 +1,190 @@
+name: dummy-advantedge
+deployment:
+    netChar:
+        latency: 50
+        latencyVariation: 10
+        latencyDistribution: Normal
+        throughputDl: 1000
+        throughputUl: 1000
+        interDomainPacketLoss: 0
+    domains:
+        -
+            id: PUBLIC
+            name: PUBLIC
+            type: PUBLIC
+            netChar:
+                latency: 6
+                latencyVariation: 2
+                throughputDl: 1000
+                throughputUl: 1000
+                packetLoss: 0
+            zones:
+                -
+                    id: PUBLIC-COMMON
+                    name: PUBLIC-COMMON
+                    type: COMMON
+                    netChar:
+                        latency: 5
+                        latencyVariation: 1
+                        throughputDl: 1000
+                        throughputUl: 1000
+                        packetLoss: 0
+                    networkLocations:
+                        -
+                            id: PUBLIC-COMMON-DEFAULT
+                            name: PUBLIC-COMMON-DEFAULT
+                            type: DEFAULT
+                            netChar:
+                                latency: 1
+                                latencyVariation: 1
+                                throughputDl: 1000
+                                throughputUl: 1000
+                                packetLoss: 0
+                            geoData: null
+                            physicalLocations:
+                                -
+                                    id: b65582b8-7f79-46cc-aa67-5fdfa92833f4
+                                    name: cloud1
+                                    type: DC
+                                    isExternal: false
+                                    netChar:
+                                        latency: 0
+                                        latencyVariation: 0
+                                        throughputDl: 1000
+                                        throughputUl: 1000
+                                        packetLoss: 0
+                                    geoData: null
+                                    processes: []
+        -
+            id: 270b55b9-b5e4-49cd-9991-e516bae779e4
+            name: operator1
+            type: OPERATOR
+            netChar:
+                latency: 6
+                latencyVariation: 2
+                throughputDl: 1000
+                throughputUl: 1000
+                packetLoss: 0
+            zones:
+                -
+                    id: operator1-COMMON
+                    name: operator1-COMMON
+                    type: COMMON
+                    netChar:
+                        latency: 5
+                        latencyVariation: 1
+                        throughputDl: 1000
+                        throughputUl: 1000
+                        packetLoss: 0
+                    networkLocations:
+                        -
+                            id: operator1-COMMON-DEFAULT
+                            name: operator1-COMMON-DEFAULT
+                            type: DEFAULT
+                            netChar:
+                                latency: 1
+                                latencyVariation: 1
+                                throughputDl: 1000
+                                throughputUl: 1000
+                                packetLoss: 0
+                            geoData: null
+                            physicalLocations: []
+                -
+                    id: ff28b87e-22cd-4e82-a109-1e2a754c4624
+                    name: zone1
+                    type: ZONE
+                    netChar:
+                        latency: 5
+                        latencyVariation: 1
+                        throughputDl: 1000
+                        throughputUl: 1000
+                        packetLoss: 0
+                    networkLocations:
+                        -
+                            id: zone1-DEFAULT
+                            name: zone1-DEFAULT
+                            type: DEFAULT
+                            netChar:
+                                latency: 1
+                                latencyVariation: 1
+                                throughputDl: 1000
+                                throughputUl: 1000
+                                packetLoss: 0
+                            geoData: null
+                            physicalLocations:
+                                -
+                                    id: dca863cd-0eb3-497f-8253-1ef307644de5
+                                    name: edge1
+                                    type: EDGE
+                                    isExternal: false
+                                    netChar:
+                                        latency: 0
+                                        latencyVariation: 0
+                                        throughputDl: 1000
+                                        throughputUl: 1000
+                                        packetLoss: 0
+                                    geoData: null
+                                    processes: []
+                        -
+                            id: b7973747-4f99-4a73-8700-670242b83b18
+                            name: poa1
+                            type: POA
+                            netChar:
+                                latency: 1
+                                latencyVariation: 1
+                                throughputDl: 1000
+                                throughputUl: 1000
+                                packetLoss: 0
+                            geoData: null
+                            physicalLocations:
+                                -
+                                    id: a9a4809a-ddae-4280-bae4-77e17bc0f649
+                                    name: fog1
+                                    type: FOG
+                                    isExternal: false
+                                    netChar:
+                                        latency: 0
+                                        latencyVariation: 0
+                                        throughputDl: 1000
+                                        throughputUl: 1000
+                                        packetLoss: 0
+                                    geoData: null
+                                    processes: []
+                                -
+                                    id: 21bdca0b-9e16-489b-8b9e-69e7623e35fe
+                                    name: ue1
+                                    type: UE
+                                    isExternal: false
+                                    netChar:
+                                        latency: 0
+                                        latencyVariation: 0
+                                        throughputDl: 1000
+                                        throughputUl: 1000
+                                        packetLoss: 0
+                                    geoData: null
+                                    processes: []
+                                -
+                                    id: 2199f192-50fe-4b6e-aa20-f0f82bb698a6
+                                    name: ue2
+                                    type: UE
+                                    isExternal: false
+                                    netChar:
+                                        latency: 0
+                                        latencyVariation: 0
+                                        throughputDl: 1000
+                                        throughputUl: 1000
+                                        packetLoss: 0
+                                    geoData: null
+                                    processes: []
+                        -
+                            id: 632ab8f3-4e8f-4a18-b938-65609e9d246a
+                            name: poa2
+                            type: POA
+                            netChar:
+                                latency: 1
+                                latencyVariation: 1
+                                throughputDl: 1000
+                                throughputUl: 1000
+                                packetLoss: 0
+                            geoData: null
+                            physicalLocations: []
