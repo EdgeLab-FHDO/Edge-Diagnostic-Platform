@@ -78,7 +78,7 @@ public class MasterConfigurator {
                     result[i] = new ScenarioEditor();
                     break;
                 case "rest":
-                    result[i] = new RestOutput();
+                    result[i] = RestOutput.getInstance();
                     break;
                 case "":
                     break;

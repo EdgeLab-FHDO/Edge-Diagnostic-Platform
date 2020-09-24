@@ -5,6 +5,7 @@ import spark.*;
 import static spark.Spark.*;
 
 public class RestRouter {
+
     private RestRouter(int port) {
         before("/*", AuthenticationManager.authenticate);
         path("/node", () -> {
@@ -14,9 +15,9 @@ public class RestRouter {
             post("/execute/:command", RestInput.executeCommand);
         });
         path("/client", () -> {
-            get("/get_node", RestOutput.getNode);
+            get("/get_node", RestOutput.getInstance().getNode);
         });
-        get("/limit", RestOutput.sendLimitInfo);
+        get("/limit", RestOutput.getInstance().sendLimitInfo);
         get("/heartbeat", (request, response) -> {
             return response.status();
         });
