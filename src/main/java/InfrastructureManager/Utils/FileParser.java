@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge;
+package InfrastructureManager.Utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -6,8 +6,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
 import java.io.IOException;
 
-public class AdvEScenarioParser {
-    public static String parse(String pathToYAML) {
+public class FileParser {
+
+    public static String YAMLtoJSON(String pathToYAML) {
         String pathToJSON = pathToYAML.replaceAll("\\.yaml", "\\.json");
         ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
         try {

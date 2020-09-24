@@ -1,6 +1,7 @@
 package InfrastructureManager.AdvantEdge;
 
 import InfrastructureManager.MasterOutput;
+import InfrastructureManager.Utils.FileParser;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -56,7 +57,7 @@ public class AdvantEdgeClient implements MasterOutput {
      */
     private void createAEScenario(String name, String pathToFile) {
         if (pathToFile.endsWith(".yaml")) {
-            pathToFile = AdvEScenarioParser.parse(pathToFile);
+            pathToFile = FileParser.YAMLtoJSON(pathToFile);
         }
         //String requestPath = "https://postman-echo.com/post/";
         String requestPath = this.requestPath + "/scenarios/" + name;
