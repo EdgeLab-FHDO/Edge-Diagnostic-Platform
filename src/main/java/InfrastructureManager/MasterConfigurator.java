@@ -1,6 +1,6 @@
 package InfrastructureManager;
 
-import InfrastructureManager.AdvantEdge.AdvEClient;
+import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
@@ -79,7 +79,7 @@ public class MasterConfigurator {
                     result[i] = new ScenarioEditor();
                     break;
                 case "advantEdge" :
-                    result[i] = new AdvEClient();
+                    result[i] = new AdvantEdgeClient();
                     break;
                 case "rest":
                     result[i] = new RestOutput();

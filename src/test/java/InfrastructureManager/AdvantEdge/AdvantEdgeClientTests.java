@@ -12,7 +12,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 
 
 public class AdvantEdgeClientTests {
-    private final AdvEClient client = new AdvEClient();
+    private final AdvantEdgeClient client = new AdvantEdgeClient();
     private final String scenarioName = "dummy-test";
     private final int portNumber = 10500;
 
@@ -66,14 +66,14 @@ public class AdvantEdgeClientTests {
     @Test
     public void invalidCommandThrowsException() {
         exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid command for AdvEClient");
+        exceptionRule.expectMessage("Invalid command for AdvantEdgeClient");
         client.out("advantEdge notACommand");
     }
 
     @Test
     public void incompleteCommandThrowsException() {
         exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command - AdvEClient");
+        exceptionRule.expectMessage("Arguments missing for command - AdvantEdgeClient");
         client.out("advantEdge create"); //Missing the name and path
     }
 }

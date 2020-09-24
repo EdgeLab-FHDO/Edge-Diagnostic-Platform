@@ -10,7 +10,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-public class AdvEClient implements MasterOutput {
+public class AdvantEdgeClient implements MasterOutput {
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -40,10 +40,10 @@ public class AdvEClient implements MasterOutput {
                         terminateAEScenario();
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid command for AdvEClient");
+                        throw new IllegalArgumentException("Invalid command for AdvantEdgeClient");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - AdvEClient");
+                throw new IllegalArgumentException("Arguments missing for command - AdvantEdgeClient");
             }
         }
     }
