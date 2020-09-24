@@ -4,7 +4,13 @@
       "name" : "Main",
       "scenario" : false,
       "input" : "console",
-      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500"]
+      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500", "rest"]
+    },
+    {
+      "name" : "RestInputTest",
+      "scenario" : false,
+      "input" : "rest",
+      "outputs" : ["console", "util"]
     },
     {
       "name" : "Dummy Scenario",
@@ -13,14 +19,16 @@
       "outputs" : ["console"]
     },
     {
-      "name" : "Rest",
+      "name" : "RestServer",
       "scenario" : false,
-      "input" : "rest",
-      "outputs" : ["rest"]
+      "input" : "port4567",
+      "outputs" : [""]
     }
   ],
   "commands" : {
     "exit" : "util exit",
+    "start_rest_server" : "util runRunner RestServer",
+    "start_runner" : "util runRunner",
     "deploy_application" : "console helmChartExecution" ,
     "node_request" : "console matchMakingExecution" ,
     "update_gui" : "console GUIUpdateExecution" ,
