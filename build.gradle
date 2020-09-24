@@ -35,5 +35,4 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured:4.3.1'
     testImplementation 'junit:junit:4.12'
     implementation 'com.sparkjava:spark-core:2.9.2'
-    implementation 'org.json:json:20200518'
 }
