@@ -10,7 +10,7 @@ import java.io.PrintStream;
 public class ScenarioDispatcherTests {
     ScenarioDispatcher dispatcher = new ScenarioDispatcher();
     final String SCENARIO_PATH = "src/test/resources/dummyScenario.json";
-    static final long WAITING_TIME = 11000; //If events are delayed this has to be modified
+    static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     @Test
