@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 
 public class AdvantEdgeClient implements MasterOutput {
+    private final String requestPath = "http://localhost:10500"; //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -58,8 +59,7 @@ public class AdvantEdgeClient implements MasterOutput {
             pathToFile = AdvEScenarioParser.parse(pathToFile);
         }
         //String requestPath = "https://postman-echo.com/post/";
-        //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
-        String requestPath = "http://localhost:10500/scenarios/" + name;
+        String requestPath = this.requestPath + "/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -89,7 +89,7 @@ public class AdvantEdgeClient implements MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        String requestPath = "http://localhost:10500/active/" + name;
+        String requestPath = this.requestPath + "/active/" + name;
         //String requestPath = "https://postman-echo.com/post/";
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -119,7 +119,7 @@ public class AdvantEdgeClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        String requestPath = "http://localhost:10500/active";
+        String requestPath = this.requestPath + "/active";
         //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()
