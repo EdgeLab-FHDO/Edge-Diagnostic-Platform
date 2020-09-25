@@ -18,8 +18,8 @@ public class RestOutput implements MasterOutput {
 
     private static RestOutput instance = null;
 
-    private final Queue<String> output;
-    private final Map<String,String> limitNodes;
+    private Queue<String> output;
+    private Map<String,String> limitNodes;
     private final ObjectMapper mapper;
 
     public Route sendLimitInfo = (Request request, Response response) -> getLimitInfo(response);
@@ -81,5 +81,10 @@ public class RestOutput implements MasterOutput {
             instance = new RestOutput();
         }
         return instance;
+    }
+
+    public void resetOutput() {
+        this.output = new LinkedList<>();
+        this.limitNodes = new LinkedHashMap<>();
     }
 }
