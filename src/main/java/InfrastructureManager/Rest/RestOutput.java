@@ -19,7 +19,7 @@ public class RestOutput implements MasterOutput {
     private static RestOutput instance = null;
 
     private final Queue<String> output;
-    private final Map<String,Double> limitNodes;
+    private final Map<String,String> limitNodes;
     private final ObjectMapper mapper;
 
     public Route sendLimitInfo = (Request request, Response response) -> getLimitInfo(response);
@@ -60,7 +60,8 @@ public class RestOutput implements MasterOutput {
                     output.add(command[1]);
                     break;
                 case "limit":
-                    addToLimitList(command[1], command[2]);
+                    String period = command.length > 3 ? command[3] : "100000";
+                    addToLimitList(command[1], command[2],period);
                     break;
                 default:
             }
@@ -70,8 +71,9 @@ public class RestOutput implements MasterOutput {
 
     }
 
-    private void addToLimitList(String tag, String limit) {
-        this.limitNodes.put(tag, Double.parseDouble(limit));
+    private void addToLimitList(String tag, String limit, String period_ms) {
+        int quota_ms = (int) (Double.parseDouble(limit) * Integer.parseInt(period_ms));
+        this.limitNodes.put(tag, quota_ms + "_" + period_ms);
     }
 
     public static RestOutput getInstance() {
