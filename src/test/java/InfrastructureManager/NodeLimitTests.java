@@ -21,7 +21,7 @@ public class NodeLimitTests {
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        RestRunner.getRestRunner().startServerIfNotRunning();
+        RestRunner.getRestRunner("RestRunner",port).startServerIfNotRunning();
     }
 
     @Before //Before each test flush the saved output
