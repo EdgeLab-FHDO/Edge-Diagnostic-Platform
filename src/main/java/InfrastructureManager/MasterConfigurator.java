@@ -90,7 +90,7 @@ public class MasterConfigurator {
                     result[i] = new AdvantEdgeClient(Integer.parseInt(portNumber));
                     break;
                 case "rest":
-                    result[i] = new RestOutput();
+                    result[i] = RestOutput.getInstance();
                     break;
                 case "":
                     break;

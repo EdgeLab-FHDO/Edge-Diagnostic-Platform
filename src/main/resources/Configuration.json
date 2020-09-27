@@ -46,6 +46,7 @@
     "ae_create_scenario" : "advantEdge create",
     "ae_deploy_scenario" : "advantEdge deploy",
     "ae_terminate_active" : "advantEdge terminate",
-    "rest_test": "rest test"
+    "rest_test": "rest test",
+    "limit_node" : "limit"
   }
 }
