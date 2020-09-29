@@ -16,6 +16,14 @@ public class Runner implements Runnable{
     protected volatile boolean running = false; //Flag to see runner status
 
     /**
+     * Constructor of the class, for runners with no inputs or outputs
+     * @param name Name of the runner
+     */
+    public Runner(String name) {
+        this.name = name;
+    }
+
+    /**
      * Constructor of the class, normally configured based on raw data (RunnerConfigData) by the
      * MasterConfigurator
      * @param name Name of the runner
@@ -23,7 +31,7 @@ public class Runner implements Runnable{
      * @param outputs 1 or more MasterOutput objects to be defined as outputs of the runner
      */
     public Runner(String name,MasterInput input, MasterOutput...outputs) {
-        this.name = name;
+        this(name);
         this.input = input;
         this.outputs = outputs;
     }
@@ -73,7 +81,9 @@ public class Runner implements Runnable{
                 output.out(mapping);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           if (!e.getMessage().equals("No command exception")) {
+               e.printStackTrace();
+           }
         }
     }
 

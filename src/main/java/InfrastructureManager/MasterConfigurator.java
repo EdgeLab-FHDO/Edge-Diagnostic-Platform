@@ -1,5 +1,6 @@
 package InfrastructureManager;
 
+import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
@@ -63,22 +64,35 @@ public class MasterConfigurator {
     private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
         //TODO: Add more outputs
         MasterOutput[] result = new MasterOutput[outputStringArray.length];
+        String[] outputInfo;
         for (int i = 0; i < outputStringArray.length; i++) {
-            switch (outputStringArray[i]) {
+            outputInfo = outputStringArray[i].split(" ");
+            switch (outputInfo[0]) {
                 case "console":
                     result[i] = new ConsoleOutput();
                     break;
                 case "util" :
                     result[i] = new MasterUtility();
                     break;
-                case "scenario dispatcher" :
+                case "scenario_dispatcher" :
                     result[i] = new ScenarioDispatcher();
                     break;
-                case  "scenario editor" :
+                case  "scenario_editor" :
                     result[i] = new ScenarioEditor();
                     break;
+                case "advantEdge" :
+                    String portNumber;
+                    try {
+                        portNumber = outputInfo[1].replaceAll("[^\\d]*",""); //Get only the numbers
+                    } catch (IndexOutOfBoundsException e) { //If nothing is specified, set it to port 80
+                        portNumber = "80";
+                    }
+                    result[i] = new AdvantEdgeClient(Integer.parseInt(portNumber));
+                    break;
                 case "rest":
-                    result[i] = new RestOutput();
+                    result[i] = RestOutput.getInstance();
+                    break;
+                case "":
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid output in Configuration");
@@ -103,8 +117,9 @@ public class MasterConfigurator {
                name = runnerData.getName();
                if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
                    result.add(new ScenarioRunner(name,input,output));
-               } else if (name.equals("Rest")) {
-                   result.add(RestRunner.getRestRunner(name,getInput(input),output));
+               } else if (name.equals("RestServer")) {
+                   String portNumber = input.replaceAll("[^\\d]*","");
+                   result.add(RestRunner.getRestRunner(name, Integer.parseInt(portNumber)));
                } else { //Input as masterInput
                    result.add(new Runner(name,getInput(input),output));
                }
