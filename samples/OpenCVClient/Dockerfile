@@ -1,10 +1,12 @@
 FROM ubuntu:16.04
 
-MAINTAINER akashafh20 "theodore.lumaksono@yahoo.com"
-
 COPY install.sh install.sh
+COPY build_classes.sh build_classes.sh
+COPY DetectMarker.java DetectMarker.java
+COPY OpenCVClient.java OpenCVClient.java
 RUN chmod +x install.sh && sync && ./install.sh && rm install.sh
+WORKDIR /
+RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.sh
 
-VOLUME /gen
-WORKDIR /gen
-CMD bash
+RUN bash
+#CMD java -Djava.library.path=gen/ -cp gen/opencv-450.jar:. OpenCVClient
