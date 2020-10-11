@@ -1,7 +1,11 @@
 package InfrastructureManager.AdvantEdge;
 
+import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkCharacteristicsUpdate;
+import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkEvent;
+import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkParameters;
 import InfrastructureManager.MasterOutput;
 import InfrastructureManager.Utils.FileParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -26,8 +30,9 @@ public class AdvantEdgeClient implements MasterOutput {
     /**
      * Based on responses from the master executes the different functionalities
      * @param response Must be in the way "advantEdge command" and additionally:
-     *                 - Creating Scenario : Should include the  name of the scenario and the path of the file where the scenario is defined
-     *                 - Deploy Scenario : Should include the name of the scenario to be deployed
+     *      *                 - Creating Scenario : Should include the  name of the scenario and the path of the file where the scenario is defined
+     *      *                 - Deploy Scenario : Should include the name of the scenario to be deployed
+     *      *                 - Network Update : Should include the sandbox name, the element name (which receives the update), element type and network params.
      * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
     @Override
@@ -44,6 +49,10 @@ public class AdvantEdgeClient implements MasterOutput {
                         break;
                     case "terminate" :
                         terminateAEScenario();
+                        break;
+                    case "networkUpdate":
+                        sendNetworkCharacteristicsUpdateAEScenario(command[2], command[3], command[4], command[5],
+                                command[6], command[7], command[8], command[9]);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid command for AdvantEdgeClient");
@@ -141,6 +150,51 @@ public class AdvantEdgeClient implements MasterOutput {
                 default:
                     System.out.println("404 - Not found");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends an network characteristics update to an already running AdvantEdge scenario (Using the REST API)
+     * @param elementName The element name of the node to which the network characteristic update will be applied.
+     * @param elementType The type of element: FOG,
+     */
+    private void sendNetworkCharacteristicsUpdateAEScenario(String sandboxName, String elementName, String elementType, String throughputDl,
+                                                            String throughputUl, String latency, String latencyVariation,
+                                                            String packetLoss)
+    {
+        String requestPath = this.requestPath + "/" + sandboxName + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
+
+        NetworkParameters networkParameters = new NetworkParameters(Integer.parseInt(throughputDl), Integer.parseInt(throughputUl),
+                Integer.parseInt(latency), Integer.parseInt(latencyVariation), Integer.parseInt(packetLoss));
+
+        NetworkEvent networkEvent = new NetworkEvent(elementName, elementType, networkParameters);
+        NetworkCharacteristicsUpdate networkCharacteristicsUpdate = new NetworkCharacteristicsUpdate(networkEvent);
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            String jsonString = mapper.writeValueAsString(networkCharacteristicsUpdate);
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(requestPath))
+                    .timeout(Duration.ofMinutes(1))
+                    .header("Content-Type", "application/json")
+                    .POST(BodyPublishers.ofString(jsonString))
+                    .build();
+            HttpResponse<String> response =
+                    client.send(request, HttpResponse.BodyHandlers.ofString());
+            switch (response.statusCode()) {
+                case 200:
+                    System.out.println("200 - OK");
+                    break;
+                case 400:
+                    System.out.println("400 - Bad Request");
+                    break;
+                default:
+                    System.out.println("404 - Not found");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
