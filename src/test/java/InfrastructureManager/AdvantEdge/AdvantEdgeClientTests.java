@@ -8,6 +8,8 @@ import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -63,11 +65,9 @@ public class AdvantEdgeClientTests {
         String jsonTestPath = "src/test/resources/AdvantEdge/network-update-test.json";
         client.out("advantEdge networkUpdate " + sandboxName + " fog-1 FOG 10 10 50 1 0");
 
-        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
 
-        String jsonString = mapper.readValue(Paths.get(jsonTestPath).toFile(), String.class);
-
-        verify(postRequestedFor(urlEqualTo(path))
+        verify(postRequestedFor(urlPathMatching(path))
                 .withRequestBody(equalToJson(jsonString)));
     }
 
