@@ -1,11 +1,16 @@
 package InfrastructureManager.AdvantEdge;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -51,6 +56,19 @@ public class AdvantEdgeClientTests {
         String path = "/active/" + scenarioName;
         client.out("advantEdge deploy " + scenarioName);
         verify(postRequestedFor(urlEqualTo(path)));
+    }
+
+    @Test
+    public void updateNetworkCharacteristics() throws IOException {
+        String sandboxName = "test";
+        String path = "/" + sandboxName + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
+        String jsonTestPath = "src/test/resources/AdvantEdge/network-update-test.json";
+        client.out("advantEdge networkUpdate " + sandboxName + " fog-1 FOG 10 10 50 1 0");
+
+        String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
+
+        verify(postRequestedFor(urlPathMatching(path))
+                .withRequestBody(equalToJson(jsonString)));
     }
 
     @Test
