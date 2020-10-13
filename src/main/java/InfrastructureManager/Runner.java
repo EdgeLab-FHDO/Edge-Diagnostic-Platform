@@ -78,7 +78,11 @@ public class Runner implements Runnable{
         try {
             String mapping = master.execute(input.read());
             for (MasterOutput output : outputs) {
-                output.out(mapping);
+                try {
+                    output.out(mapping);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
            if (!e.getMessage().equals("No command exception")) {
