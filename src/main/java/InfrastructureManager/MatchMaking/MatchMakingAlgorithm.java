@@ -1,5 +1,8 @@
 package InfrastructureManager.MatchMaking;
 
-public interface MatchMakingAlgorithm {
+import InfrastructureManager.EdgeClient;
+import InfrastructureManager.EdgeNode;
 
+public interface MatchMakingAlgorithm {
+    EdgeNode match (EdgeClient client);
 }
