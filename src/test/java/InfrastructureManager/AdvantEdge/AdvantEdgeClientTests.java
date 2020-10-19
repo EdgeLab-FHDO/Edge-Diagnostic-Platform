@@ -52,10 +52,15 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void deployScenarioRequestTest() {
-        String path = "/active/" + scenarioName;
+    public void deployScenarioRequestTest() throws IOException {
+        String path = "/platform-ctrl/v1/sandboxes";
+        String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
         client.out("advantEdge deploy " + scenarioName);
-        verify(postRequestedFor(urlEqualTo(path)));
+
+        String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
+
+        verify(postRequestedFor(urlPathMatching(path))
+                .withRequestBody(equalToJson(jsonString)));
     }
 
     @Test
