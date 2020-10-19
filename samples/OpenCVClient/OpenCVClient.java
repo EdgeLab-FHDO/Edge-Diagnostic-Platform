@@ -7,14 +7,18 @@ import java.net.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import org.opencv.core.Mat;
 
 public class OpenCVClient {
-    public int utilizeServer = 0;
+    private int utilizeServer = 0;
     private Socket clientSocket;
     private DataInputStream in;
     private DataOutputStream out;
+    private DetectMarker detector;
+
 
     private String fileName = "singlemarkerssource.png";
+    private String resultFileName = "detected.png";
     private String fileExtension = "png";
     private BufferedImage currentImage;
 
@@ -23,7 +27,9 @@ public class OpenCVClient {
 
     private static OpenCVClient instance = null;
 
-    public OpenCVClient() {}
+    public OpenCVClient() {
+        detector = new DetectMarker(ImageProcessor.getImageMat(fileName));
+    }
 
     public void startConnection() {
         try {
@@ -96,16 +102,34 @@ public class OpenCVClient {
             e.printStackTrace();
         }
     }
+    
+    public Mat detectMarkerInServer() {
+        // connect to server and detect marker
+        String response = "";
+        Mat result = new Mat();
+        startConnection();
+        // get response as string
+        response = sendImage();
+        // rebuild coreners and ids from response
+
+        return result;
+    }
+
+    public void markerDetection() {
+        Mat result;
+        if(1 == utilizeServer) {
+            detectMarkerInServer();
+        } else {
+            detector.detect();
+        }
+        result = detector.drawDetectedMarkers();
+        ImageProcessor.writeImage(resultFileName, result);
+    }
 
     public static void main(String[] args) {
-        OpenCVClient.getInstance().setup(args);
-        if(1 == OpenCVClient.getInstance().useServer()) {
-            //connect to server and detect marker
-            System.out.println("Under Development");
-            OpenCVClient.getInstance().startConnection();
-            System.out.println(OpenCVClient.getInstance().sendImage());
-        } else {
-            DetectMarker.detect(OpenCVClient.getInstance().getFileName());
-        }
+        DetectMarker.initOpenCVSharedLibrary();
+        OpenCVClient activeClient = OpenCVClient.getInstance();
+        activeClient.setup(args);
+        activeClient.markerDetection();
     }
 }

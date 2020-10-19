@@ -7,17 +7,22 @@ import java.net.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import org.opencv.core.Mat;
 
 public class OpenCVServer {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private DataInputStream in;
     private DataOutputStream out;
+    private DetectMarker detector;
+
+    private String fileName= "read.png";
 
     private BufferedImage currentImage;
-    private String fileName = "read.png";
-    private String resultFileName = "detected.png";
- 
+
+    public OpenCVServer() {
+    }
+
     public void start(int port) {
         try {
             serverSocket = new ServerSocket(port);
@@ -26,8 +31,9 @@ public class OpenCVServer {
             in = new DataInputStream(clientSocket.getInputStream());
             currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
             ImageIO.write(currentImage, "png", new File(fileName));
-            DetectMarker.detect(fileName);
-            currentImage = ImageIO.read(new File(resultFileName));
+            detector = new DetectMarker(ImageProcessor.getImageMat(fileName));
+            detector.detect();
+            currentImage = ImageIO.read(new File("detected.png"));
             ImageIO.write(currentImage, "png", clientSocket.getOutputStream());
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,6 +53,8 @@ public class OpenCVServer {
     
     public static void main(String[] args) {
         OpenCVServer server = new OpenCVServer();
+        DetectMarker.initOpenCVSharedLibrary();
+
         server.start(8080);
     }
 }
