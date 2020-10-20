@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Master Class of the Infrastructure Manager, singleton class
@@ -9,6 +10,7 @@ public class Master {
 
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
+    private final List<EdgeNode> availableNodes;
     private Thread mainThread;
     private Thread restThread;
 
@@ -22,6 +24,7 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
+        availableNodes = new ArrayList<>();
     }
 
     /**
@@ -164,6 +167,10 @@ public class Master {
         throw new IllegalArgumentException("There is no runner configured for the given scenario");
     }
 
+    public List<EdgeNode> getAvailableNodes() {
+        return availableNodes;
+    }
+
     /**
      * Singleton method for getting the only instance of the class
      * @return The instance of the Master Class
@@ -174,6 +181,8 @@ public class Master {
         }
         return instance;
     }
+
+
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
