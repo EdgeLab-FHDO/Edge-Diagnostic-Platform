@@ -5,6 +5,7 @@ import InfrastructureManager.EdgeNode;
 import InfrastructureManager.MasterInput;
 import InfrastructureManager.MasterOutput;
 import InfrastructureManager.Rest.RestOutput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -17,9 +18,12 @@ public class MatchMaker implements MasterOutput {
     public static MatchMaker instance;
     private MatchMakingAlgorithm algorithm;
     private Map<EdgeClient, EdgeNode> matches;
+    private ObjectMapper mapper;
 
     private MatchMaker() {
         this.matches = new HashMap<>();
+        this.algorithm = new RandomMatchMaking(); // For now
+        this.mapper = new ObjectMapper();
     }
 
     public void setAlgorithm(MatchMakingAlgorithm algorithm) {
@@ -27,11 +31,12 @@ public class MatchMaker implements MasterOutput {
     }
 
     public void assign (EdgeClient client) {
-        this.matches.put(client, this.algorithm.match(client));
+        System.out.println("Client received : " + client.getId());
+        //this.matches.put(client, this.algorithm.match(client));
     }
 
     public Route assignNode = (Request request, Response response) -> {
-        EdgeClient client = new EdgeClient(request.body()); //TODO:Define body from application
+        EdgeClient client = this.mapper.readValue(request.body(), EdgeClient.class); //TODO:Define body from application
         this.assign(client);
         return response.status();
     };

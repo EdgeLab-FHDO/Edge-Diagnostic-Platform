@@ -1,7 +1,14 @@
 package InfrastructureManager;
 
 public class EdgeClient {
-    public EdgeClient(String requestBody) {
 
+    private String id;
+
+    public EdgeClient() {
+        this.id = null;
+    }
+
+    public String getId() {
+        return id;
     }
 }
