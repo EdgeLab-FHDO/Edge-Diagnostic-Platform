@@ -32,7 +32,8 @@ public class MatchMaker implements MasterOutput {
 
     public void assign (EdgeClient client) {
         System.out.println("Client received : " + client.getId());
-        //this.matches.put(client, this.algorithm.match(client));
+        this.matches.put(client, this.algorithm.match(client));
+        System.out.println("Server assigned : " + this.matches.get(client).getId());
     }
 
     public Route assignNode = (Request request, Response response) -> {
@@ -47,7 +48,6 @@ public class MatchMaker implements MasterOutput {
         }
         return instance;
     }
-
 
     @Override
     public void out(String response) throws IllegalArgumentException {

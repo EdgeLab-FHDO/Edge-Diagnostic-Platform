@@ -25,6 +25,14 @@ public class Master {
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
         availableNodes = new ArrayList<>();
+        /* Temporal made up nodes for testing */
+        /*---------------------------------------------------------*/
+        availableNodes.add(new EdgeNode("node1", true));
+        availableNodes.add(new EdgeNode("node2", true));
+        availableNodes.add(new EdgeNode("node3", true));
+        availableNodes.add(new EdgeNode("node4", true));
+        availableNodes.add(new EdgeNode("node5", true));
+        /*---------------------------------------------------------*/
     }
 
     /**
