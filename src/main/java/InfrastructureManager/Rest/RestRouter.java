@@ -17,7 +17,7 @@ public class RestRouter {
         });
         path("/client", () -> {
             post("/assign", MatchMaker.getInstance().assignNode);
-            get("/get_node", RestOutput.getInstance().getNode);
+            get("/get_node/:client_id", MatchMaker.getInstance().sendNodeInfo);
         });
         get("/limit", RestOutput.getInstance().sendLimitInfo);
         get("/heartbeat", (request, response) -> {

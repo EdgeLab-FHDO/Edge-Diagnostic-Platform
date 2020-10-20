@@ -27,11 +27,11 @@ public class Master {
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
         /*---------------------------------------------------------*/
-        availableNodes.add(new EdgeNode("node1", true));
-        availableNodes.add(new EdgeNode("node2", true));
-        availableNodes.add(new EdgeNode("node3", true));
-        availableNodes.add(new EdgeNode("node4", true));
-        availableNodes.add(new EdgeNode("node5", true));
+        availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
+        availableNodes.add(new EdgeNode("node2", "192.168.0.2",true));
+        availableNodes.add(new EdgeNode("node3", "192.168.0.3",true));
+        availableNodes.add(new EdgeNode("node4", "192.168.0.4",true));
+        availableNodes.add(new EdgeNode("node5", "192.168.0.5",true));
         /*---------------------------------------------------------*/
     }
 
