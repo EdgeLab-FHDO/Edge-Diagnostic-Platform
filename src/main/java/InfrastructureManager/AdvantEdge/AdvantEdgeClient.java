@@ -135,7 +135,7 @@ public class AdvantEdgeClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        String requestPath = this.requestPath + "/active";
+        String requestPath = this.requestPath + "/sandbox-ctrl/v1/active/";
         //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()
