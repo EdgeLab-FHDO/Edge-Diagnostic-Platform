@@ -40,7 +40,7 @@ public class AdvantEdgeClientTests {
     public void addYAMLScenarioRequestTest() {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
-        String path = "/scenarios/" + scenarioName;
+        String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String YAMLScenarioPath = "src/test/resources/AdvantEdge/dummy-test-to-convert.yaml";
         client.out("advantEdge create " + scenarioName + " " + YAMLScenarioPath);
         verify(postRequestedFor(urlEqualTo(path))
@@ -78,7 +78,7 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void terminateScenarioRequestTest() {
-        String path = "/active";
+        String path = "/sandbox-ctrl/v1/active/";
         client.out("advantEdge terminate");
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
