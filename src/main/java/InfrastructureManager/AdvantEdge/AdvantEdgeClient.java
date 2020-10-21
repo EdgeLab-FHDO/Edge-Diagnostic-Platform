@@ -73,7 +73,7 @@ public class AdvantEdgeClient implements MasterOutput {
             pathToFile = FileParser.YAMLtoJSON(pathToFile);
         }
         //String requestPath = "https://postman-echo.com/post/";
-        String requestPath = this.requestPath + "/scenarios/" + name;
+        String requestPath = this.requestPath + "/platform-ctrl/v1/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
