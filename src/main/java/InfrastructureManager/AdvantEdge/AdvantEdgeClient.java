@@ -103,14 +103,16 @@ public class AdvantEdgeClient implements MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        String requestPath = this.requestPath + "/active/" + name;
+        String requestPath = this.requestPath + "/platform-ctrl/v1/sandboxes";
         //String requestPath = "https://postman-echo.com/post/";
+        String jsonRequestString = "{\"scenarioName\" : \""+name+"\"}";
+
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
-                    .POST(BodyPublishers.noBody())
+                    .POST(BodyPublishers.ofString(jsonRequestString))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
