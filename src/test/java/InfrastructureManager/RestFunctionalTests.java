@@ -21,7 +21,7 @@ public class RestFunctionalTests {
                 setPort(port).
                 build();
 
-        RestRunner.getRestRunner().startServerIfNotRunning();
+        RestRunner.getRestRunner("restRunner",port).startServerIfNotRunning();
     }
 
     @Test
