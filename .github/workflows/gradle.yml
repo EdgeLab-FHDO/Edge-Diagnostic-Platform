@@ -29,5 +29,7 @@ jobs:
       run: chmod +x gradlew
     - name: Open port 10500 for testing
       run: sudo ufw allow 10500
+    - name: Open port 4567 for testing
+      run: sudo ufw allow 4567
     - name: Test with Gradle ##Only testing with Gradle (Not building)
       run: ./gradlew test
