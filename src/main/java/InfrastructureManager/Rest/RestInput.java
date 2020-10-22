@@ -1,7 +1,10 @@
 package InfrastructureManager.Rest;
 
+import InfrastructureManager.EdgeClient;
+import InfrastructureManager.EdgeNode;
 import InfrastructureManager.Master;
 import InfrastructureManager.MasterInput;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.*;
 
 public class RestInput implements MasterInput {
@@ -15,6 +18,17 @@ public class RestInput implements MasterInput {
      */
     public static Route executeCommand = (Request request, Response response) -> {
         command = request.params(":command").replaceAll("\\s+","");
+        return response.status();
+    };
+
+    public static Route registerClient = (Request request, Response response) -> {
+        command = "register_client " + request.body().replaceAll("\\s+","");
+        System.out.println(command);
+        return response.status();
+    };
+
+    public static Route registerNode = (Request request, Response response) -> {
+        command = "register_node " + request.body().replaceAll("\\s+","");
         return response.status();
     };
 

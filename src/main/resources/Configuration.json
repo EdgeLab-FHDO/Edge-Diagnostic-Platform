@@ -10,7 +10,7 @@
       "name" : "RestInputTest",
       "scenario" : false,
       "input" : "rest",
-      "outputs" : ["console", "util"]
+      "outputs" : ["console", "util", "matchMaker"]
     },
     {
       "name" : "Dummy Scenario",
@@ -47,6 +47,8 @@
     "ae_deploy_scenario" : "advantEdge deploy",
     "ae_terminate_active" : "advantEdge terminate",
     "rest_test": "rest test",
-    "limit_node" : "limit"
+    "limit_node" : "limit",
+    "register_client" : "matchMaker register_client",
+    "register_node" : "matchMaker register_node"
   }
 }

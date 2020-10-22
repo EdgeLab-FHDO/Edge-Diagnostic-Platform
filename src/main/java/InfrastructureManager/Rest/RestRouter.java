@@ -14,9 +14,10 @@ public class RestRouter {
                 post("/read/:input", RestInput.readParameterTest);
             });
             post("/execute/:command", RestInput.executeCommand);
+            post("/register", RestInput.registerNode);
         });
         path("/client", () -> {
-            post("/assign", MatchMaker.getInstance().assignNode);
+            post("/register", RestInput.registerClient);
             get("/get_node/:client_id", MatchMaker.getInstance().sendNodeInfo);
         });
         get("/limit", RestOutput.getInstance().sendLimitInfo);

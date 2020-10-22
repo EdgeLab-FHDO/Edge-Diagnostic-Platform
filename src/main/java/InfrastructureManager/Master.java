@@ -11,6 +11,7 @@ public class Master {
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
+    private final List<EdgeClient> registeredClients;
     private Thread mainThread;
     private Thread restThread;
 
@@ -24,6 +25,7 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
+        registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
         /*---------------------------------------------------------*/
@@ -179,6 +181,18 @@ public class Master {
         return availableNodes;
     }
 
+    public void addNode(EdgeNode node) {
+        this.availableNodes.add(node);
+    }
+
+    public List<EdgeClient> getRegisteredClients() {
+        return registeredClients;
+    }
+
+    public void addClient(EdgeClient client) {
+        this.registeredClients.add(client);
+    }
+
     /**
      * Singleton method for getting the only instance of the class
      * @return The instance of the Master Class
@@ -194,6 +208,7 @@ public class Master {
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
+        Master.getInstance().startRunnerThread("RestInputTest");
         Master.getInstance().startRunnerThread("RestServer");
         try {
             Master.getInstance().getMainThread().join();

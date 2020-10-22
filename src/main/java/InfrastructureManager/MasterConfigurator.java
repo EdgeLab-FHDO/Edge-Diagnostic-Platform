@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
+import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
@@ -92,6 +93,8 @@ public class MasterConfigurator {
                 case "rest":
                     result[i] = RestOutput.getInstance();
                     break;
+                case "matchMaker" :
+                    result[i] = MatchMaker.getInstance();
                 case "":
                     break;
                 default:

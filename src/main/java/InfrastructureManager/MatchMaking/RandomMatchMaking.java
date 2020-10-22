@@ -12,6 +12,10 @@ public class RandomMatchMaking implements MatchMakingAlgorithm {
     public EdgeNode match(EdgeClient client) {
         Random random = new Random();
         List<EdgeNode> nodes = Master.getInstance().getAvailableNodes();
-        return nodes.get(random.nextInt(nodes.size()));
+        if (nodes.isEmpty()) {
+            return null;
+        } else {
+            return nodes.get(random.nextInt(nodes.size()));
+        }
     }
 }

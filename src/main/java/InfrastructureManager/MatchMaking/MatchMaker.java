@@ -1,9 +1,6 @@
 package InfrastructureManager.MatchMaking;
 
-import InfrastructureManager.EdgeClient;
-import InfrastructureManager.EdgeNode;
-import InfrastructureManager.MasterInput;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.*;
 import InfrastructureManager.Rest.RestOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +10,9 @@ import spark.Route;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
-public class MatchMaker {
+public class MatchMaker implements MasterOutput {
 
     public static MatchMaker instance;
     private MatchMakingAlgorithm algorithm;
@@ -34,7 +32,12 @@ public class MatchMaker {
 
     private void assign (EdgeClient client) {
         System.out.println("Client received : " + client.getId());
-        this.matches.put(client, this.algorithm.match(client));
+        EdgeNode node = this.algorithm.match(client);
+        if (node == null) {
+            System.out.println("No node to assign");
+        } else {
+            this.matches.put(client, this.algorithm.match(client));
+        }
         System.out.println("Server assigned : " + this.matches.get(client).getId());
     }
 
@@ -56,12 +59,6 @@ public class MatchMaker {
         }
     }
 
-    public Route assignNode = (Request request, Response response) -> {
-        EdgeClient client = this.mapper.readValue(request.body(), EdgeClient.class); //TODO:Define body from application
-        this.assign(client);
-        return response.status();
-    };
-
     public Route sendNodeInfo = (Request request, Response response) -> {
         String id = request.params(":client_id").replaceAll("\\s+","");
         nodeToRestResource(id);
@@ -78,23 +75,45 @@ public class MatchMaker {
         return instance;
     }
 
-    /*
 
     @Override
     public void out(String response) throws IllegalArgumentException {
         String[] command = response.split(" ");
-        if (command[0].equals("matchMaking")) {
+        if (command[0].equals("matchMaker")) {
             try {
-                switch (command[0]) {
-                    case "sendNode":
-                        nodeToRestResource(command[1]);
+                switch (command[1]){
+                    case "register_client" :
+                        registerClient(command[2]);
+                        break;
+                    case "register_node" :
+                        registerNode(command[2]);
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid command for MatchMaker");
+                        throw new IllegalArgumentException("Invalid Command for MatchMaker Output");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
+                throw new IllegalArgumentException("Arguments missing for command - MatchMaker");
             }
         }
-    }*/
+    }
+
+    private void registerClient(String clientAsString) {
+        try {
+            EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
+            Master.getInstance().addClient(client); //Add the client to the list
+            assign(client); //Perform MatchMaking
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void registerNode(String nodeAsString) {
+        try {
+            EdgeNode node = this.mapper.readValue(nodeAsString, EdgeNode.class);
+            Master.getInstance().addNode(node);
+            System.out.println("Node received: " + node.toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 }
