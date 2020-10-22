@@ -52,6 +52,8 @@ public class MasterConfigurator {
                 return new ConsoleInput();
             case "rest":
                 return new RestInput();
+            case "matchMaker":
+                return new MatchMaker(); //TODO: Same instance as output
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -94,7 +96,7 @@ public class MasterConfigurator {
                     result[i] = RestOutput.getInstance();
                     break;
                 case "matchMaker" :
-                    result[i] = MatchMaker.getInstance();
+                    result[i] = new MatchMaker();
                 case "":
                     break;
                 default:

@@ -1,5 +1,7 @@
 package InfrastructureManager.Rest;
 
+import InfrastructureManager.EdgeClient;
+import InfrastructureManager.EdgeNode;
 import InfrastructureManager.Master;
 import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,10 +11,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class RestOutput implements MasterOutput {
 
@@ -20,15 +19,23 @@ public class RestOutput implements MasterOutput {
 
     private Queue<String> output;
     private Map<String,String> limitNodes;
+    private Map<String,String> nodesToSend;
     private final ObjectMapper mapper;
 
     public Route sendLimitInfo = (Request request, Response response) -> getLimitInfo(response);
-    public Route getNode = (Request request, Response response) -> printResponse();
+
+    public Route sendNodeInfo = (Request request, Response response) -> {
+        String clientID = request.params(":client_id").replaceAll("\\s+","");
+        response.type("application/json");
+        String response_body = this.nodesToSend.get(clientID);
+        return response_body;
+    };
 
     private RestOutput() {
         this.mapper = new ObjectMapper();
         this.output = new LinkedList<>();
         this.limitNodes = new LinkedHashMap<>();
+        this.nodesToSend = new HashMap<>();
     }
     public ObjectNode printResponse() {
         ObjectNode response_body = mapper.createObjectNode();
@@ -54,19 +61,21 @@ public class RestOutput implements MasterOutput {
     @Override
     public void out(String response) {
         String[] command = response.split(" ");
-        try {
-            switch (command[0]) {
-                case "rest":
-                    output.add(command[1]);
-                    break;
-                case "limit":
-                    String period = command.length > 3 ? command[3] : "100000";
-                    addToLimitList(command[1], command[2],period);
-                    break;
-                default:
+        if (command[0].equals("restOut")) {
+            try {
+                switch (command[1]) {
+                    case "sendNode":
+                        createNodeResource(command[2]);
+                        break;
+                    case "limit":
+                        String period = command.length > 4 ? command[4] : "100000";
+                        addToLimitList(command[2], command[3],period);
+                        break;
+                    default:
+                }
+            } catch (IndexOutOfBoundsException e) {
+                throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
             }
-        } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
         }
 
     }
@@ -86,5 +95,19 @@ public class RestOutput implements MasterOutput {
     public void resetOutput() {
         this.output = new LinkedList<>();
         this.limitNodes = new LinkedHashMap<>();
+    }
+
+    private void createNodeResource(String clientID) {
+        try {
+            EdgeClient client = Master.getInstance().getClientByID(clientID);
+            EdgeNode node = Master.getInstance().getAssignedNode(client);
+            if (node == null) {
+                throw new Exception("Client not found");
+            }
+            String nodeAsJSON = this.mapper.writeValueAsString(node);
+            this.nodesToSend.put(client.getId(), nodeAsJSON);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

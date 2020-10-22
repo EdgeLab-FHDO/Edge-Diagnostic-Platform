@@ -1,7 +1,9 @@
 package InfrastructureManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Master Class of the Infrastructure Manager, singleton class
@@ -11,7 +13,8 @@ public class Master {
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
-    private final List<EdgeClient> registeredClients;
+    private final Map<EdgeClient,EdgeNode> registeredClients;
+
     private Thread mainThread;
     private Thread restThread;
 
@@ -25,7 +28,7 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
-        registeredClients = new ArrayList<>();
+        registeredClients = new HashMap<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
         /*---------------------------------------------------------*/
@@ -185,12 +188,22 @@ public class Master {
         this.availableNodes.add(node);
     }
 
-    public List<EdgeClient> getRegisteredClients() {
-        return registeredClients;
+    public EdgeNode getAssignedNode(EdgeClient client) {
+        return this.registeredClients.get(client);
     }
 
-    public void addClient(EdgeClient client) {
-        this.registeredClients.add(client);
+    public EdgeClient getClientByID (String clientID) throws Exception {
+        for (EdgeClient client : this.registeredClients.keySet()) {
+            if (client.getId().equals(clientID)) {
+                return client;
+            }
+        }
+        throw new Exception("No client found");
+    }
+
+
+    public void addClient(EdgeClient client, EdgeNode node) {
+        this.registeredClients.put(client,node);
     }
 
     /**

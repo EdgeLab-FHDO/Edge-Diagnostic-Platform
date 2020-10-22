@@ -12,16 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class MatchMaker implements MasterOutput {
+public class MatchMaker implements MasterInput, MasterOutput {
 
-    public static MatchMaker instance;
     private MatchMakingAlgorithm algorithm;
-    private Map<EdgeClient, EdgeNode> matches;
     private ObjectMapper mapper;
-    private String JSONtoSend;
+    private String command = "";
 
-    private MatchMaker() {
-        this.matches = new HashMap<>();
+    public MatchMaker() {
         this.algorithm = new RandomMatchMaking(); // For now
         this.mapper = new ObjectMapper();
     }
@@ -36,45 +33,11 @@ public class MatchMaker implements MasterOutput {
         if (node == null) {
             System.out.println("No node to assign");
         } else {
-            this.matches.put(client, this.algorithm.match(client));
+            Master.getInstance().addClient(client, this.algorithm.match(client));
+            command = "give_node " + client.getId();
         }
-        System.out.println("Server assigned : " + this.matches.get(client).getId());
+        System.out.println("Server assigned : " + node.getId());
     }
-
-    private EdgeClient registeredClientFromID (String id) {
-        for (EdgeClient client : this.matches.keySet()) {
-            if (client.getId().equals(id)) {
-                return client;
-            }
-        }
-        return null;
-    }
-
-    private void nodeToRestResource(String clientID) {
-        EdgeNode node = this.matches.get(registeredClientFromID(clientID));
-        try {
-            this.JSONtoSend = this.mapper.writeValueAsString(node);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Route sendNodeInfo = (Request request, Response response) -> {
-        String id = request.params(":client_id").replaceAll("\\s+","");
-        nodeToRestResource(id);
-        response.type("application/json");
-        String response_body = this.JSONtoSend;
-        JSONtoSend = "";
-        return response_body;
-    };
-
-    public static MatchMaker getInstance() {
-        if (instance == null) {
-            instance = new MatchMaker();
-        }
-        return instance;
-    }
-
 
     @Override
     public void out(String response) throws IllegalArgumentException {
@@ -100,7 +63,6 @@ public class MatchMaker implements MasterOutput {
     private void registerClient(String clientAsString) {
         try {
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
-            Master.getInstance().addClient(client); //Add the client to the list
             assign(client); //Perform MatchMaking
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -115,5 +77,15 @@ public class MatchMaker implements MasterOutput {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String read() throws Exception {
+        if (command.isEmpty()) {
+            throw new Exception("No command exception");
+        }
+        String toSend = command;
+        command = "";
+        return toSend;
     }
 }
