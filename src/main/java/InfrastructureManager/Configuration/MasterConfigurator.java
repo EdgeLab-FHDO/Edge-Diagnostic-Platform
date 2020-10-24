@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration3.json";
     private MasterConfigurationData data; //Configuration File Interface
     //TODO: consider making it a singleton
 
@@ -28,6 +28,7 @@ public class MasterConfigurator {
         try {
             //Map the contents of the JSON file to a java object
             this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
+            this.data.getIoData().printInfo();
         } catch (IOException e) {
             System.out.println("Error while reading JSON Config File");
             e.printStackTrace();
