@@ -4,7 +4,7 @@
       "name" : "Main",
       "scenario" : false,
       "input" : "console",
-      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500", "rest"]
+      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500", "rest", "matchMaker"]
     },
     {
       "name" : "RestInputTest",

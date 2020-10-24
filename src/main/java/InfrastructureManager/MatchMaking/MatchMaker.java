@@ -1,21 +1,14 @@
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.*;
-import InfrastructureManager.Rest.RestOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import spark.Request;
-import spark.Response;
-import spark.Route;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
 
 public class MatchMaker implements MasterInput, MasterOutput {
 
     private MatchMakingAlgorithm algorithm;
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
     private String command = "";
 
     public MatchMaker() {
@@ -28,15 +21,14 @@ public class MatchMaker implements MasterInput, MasterOutput {
     }
 
     private void assign (EdgeClient client) {
-        System.out.println("Client received : " + client.getId());
         EdgeNode node = this.algorithm.match(client);
         if (node == null) {
             System.out.println("No node to assign");
         } else {
-            Master.getInstance().addClient(client, this.algorithm.match(client));
+            Master.getInstance().addClient(client, node);
             command = "give_node " + client.getId();
         }
-        System.out.println("Server assigned : " + node.getId());
+        System.out.println("Client received : " + client.getId() + "Server assigned : " + node.getId());
     }
 
     @Override

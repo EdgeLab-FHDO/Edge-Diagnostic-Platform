@@ -23,7 +23,6 @@ public class RestInput implements MasterInput {
 
     public static Route registerClient = (Request request, Response response) -> {
         command = "register_client " + request.body().replaceAll("\\s+","");
-        System.out.println(command);
         return response.status();
     };
 
