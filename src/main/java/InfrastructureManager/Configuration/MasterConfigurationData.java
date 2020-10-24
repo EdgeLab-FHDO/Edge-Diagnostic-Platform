@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Configuration;
 
 import java.util.List;
 import java.util.Map;

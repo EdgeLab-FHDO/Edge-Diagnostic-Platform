@@ -1,5 +1,6 @@
-package InfrastructureManager;
+package InfrastructureManager.Configuration;
 
+import InfrastructureManager.*;
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.RestInput;

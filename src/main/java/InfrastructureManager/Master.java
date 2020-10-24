@@ -1,5 +1,8 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Configuration.CommandSet;
+import InfrastructureManager.Configuration.MasterConfigurator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

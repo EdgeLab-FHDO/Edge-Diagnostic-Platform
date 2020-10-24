@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Configuration;
 
 /**
  * Raw data representing a Runner object. Objects of this class are meant to be created

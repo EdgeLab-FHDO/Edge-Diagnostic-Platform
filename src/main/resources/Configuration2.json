@@ -1,0 +1,76 @@
+{
+  "I/O": {
+      "inputs": [
+        {"type": "ConsoleInput","name": "console_in"},
+        {"type": "RestInput","name": "rest_in"},
+        {"type": "MatchMaker","name": "match_m"}
+      ],
+      "outputs": [
+        {"type": "ConsoleOutput","name": "console_out"},
+        {"type": "RestOutput","name": "rest_out"},
+        {"type": "MasterUtility","name": "util"},
+        {"type": "AdvantEdgeClient","name": "advant_e", "port": 10500},
+        {"type": "ScenarioRunner","name": "scenario_runner"},
+        {"type": "ScenarioEditor","name": "scenario_editor"},
+        {"type": "MatchMaker","name": "match_m"}
+      ]
+    },
+  "runners" : [
+    {
+      "name" : "Main",
+      "scenario" : false,
+      "input" : "console_in",
+      "output" : ["console_out", "util", "advant_e", "scenario_runner", "scenario_editor"]
+    },
+    {
+      "name" : "RestInputTest",
+      "scenario" : false,
+      "input" : "rest_in",
+      "outputs" : ["console_out", "util", "match_m"]
+    },
+    {
+      "name" : "MMInputTest",
+      "scenario" : false,
+      "input" : "match_m",
+      "outputs" : ["rest_out"]
+    },
+    {
+      "name" : "Dummy Scenario",
+      "scenario" : true,
+      "input" : "dummy",
+      "outputs" : ["console_out"]
+    },
+    {
+      "name" : "RestServer",
+      "scenario" : false,
+      "input" : "port4567",
+      "outputs" : [""]
+    }
+  ],
+  "commands" : {
+    "exit" : "util exit",
+    "start_rest_server" : "util runRunner RestServer",
+    "start_runner" : "util runRunner",
+    "deploy_application" : "console helmChartExecution" ,
+    "node_request" : "console matchMakingExecution" ,
+    "update_gui" : "console GUIUpdateExecution" ,
+    "save_statistics" : "console LoggerExecution" ,
+    "show_statistics" : "console GUIUpdateExecution",
+    "create_scenario" : "editor create",
+    "add_event" : "editor addEvent",
+    "delete_event" : "editor deleteEvent",
+    "save_scenario" : "editor toFile",
+    "read_scenario" : "editor fromFile",
+    "load_scenario" : "dispatcher fromFile",
+    "run_scenario" : "dispatcher run",
+    "pause_scenario" : "dispatcher pause",
+    "resume_scenario" : "dispatcher resume",
+    "ae_create_scenario" : "advantEdge create",
+    "ae_deploy_scenario" : "advantEdge deploy",
+    "ae_terminate_active" : "advantEdge terminate",
+    "give_node": "restOut sendNode",
+    "limit_node" : "restOut limit",
+    "register_client" : "matchMaker register_client",
+    "register_node" : "matchMaker register_node"
+  }
+}
