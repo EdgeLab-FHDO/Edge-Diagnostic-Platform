@@ -1,4 +1,4 @@
-package InfrastructureManager.Configuration;
+package InfrastructureManager.Configuration.RawObjects;
 
 public class InputConfigData {
 

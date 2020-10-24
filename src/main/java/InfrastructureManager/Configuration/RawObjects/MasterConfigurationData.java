@@ -1,4 +1,4 @@
-package InfrastructureManager.Configuration;
+package InfrastructureManager.Configuration.RawObjects;
 
 import java.util.List;
 import java.util.Map;
