@@ -13,7 +13,8 @@ public class Master {
     private final CommandSet commandSet;
     private final ArrayList<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
-    private final Map<EdgeClient,EdgeNode> registeredClients;
+    private final List<EdgeClient> registeredClients;
+    private final Map<EdgeClient,EdgeNode> clientNodeMapping;
 
     private Thread mainThread;
     private Thread restThread;
@@ -28,7 +29,8 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
-        registeredClients = new HashMap<>();
+        clientNodeMapping = new HashMap<>();
+        registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
         /*---------------------------------------------------------*/
@@ -189,11 +191,15 @@ public class Master {
     }
 
     public EdgeNode getAssignedNode(EdgeClient client) {
-        return this.registeredClients.get(client);
+        return this.clientNodeMapping.get(client);
+    }
+
+    public void addClient(EdgeClient client) {
+        this.registeredClients.add(client);
     }
 
     public EdgeClient getClientByID (String clientID) throws Exception {
-        for (EdgeClient client : this.registeredClients.keySet()) {
+        for (EdgeClient client : this.registeredClients) {
             if (client.getId().equals(clientID)) {
                 return client;
             }
@@ -202,8 +208,8 @@ public class Master {
     }
 
 
-    public void addClient(EdgeClient client, EdgeNode node) {
-        this.registeredClients.put(client,node);
+    public void mapClientNode(EdgeClient client, EdgeNode node) {
+        this.clientNodeMapping.put(client,node);
     }
 
     /**

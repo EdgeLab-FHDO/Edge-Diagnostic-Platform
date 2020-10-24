@@ -25,10 +25,10 @@ public class MatchMaker implements MasterInput, MasterOutput {
         if (node == null) {
             System.out.println("No node to assign");
         } else {
-            Master.getInstance().addClient(client, node);
+            Master.getInstance().mapClientNode(client, node);
             command = "give_node " + client.getId();
         }
-        System.out.println("Client received : " + client.getId() + "Server assigned : " + node.getId());
+        System.out.println("Client received : " + client.getId() + " Server assigned : " + node.getId());
     }
 
     @Override
@@ -55,6 +55,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private void registerClient(String clientAsString) {
         try {
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
+            Master.getInstance().addClient(client);
             assign(client); //Perform MatchMaking
         } catch (JsonProcessingException e) {
             e.printStackTrace();
