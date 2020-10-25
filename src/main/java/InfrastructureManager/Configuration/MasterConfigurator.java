@@ -2,6 +2,8 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.*;
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
+import InfrastructureManager.Configuration.RawData.IOConfigData;
+import InfrastructureManager.Configuration.RawData.IOPortConfigData;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.Configuration.RawData.RunnerConfigData;
 import InfrastructureManager.MatchMaking.MatchMaker;
@@ -12,6 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Configurator class for the master, that takes the values in the configuration file
@@ -19,8 +24,10 @@ import java.util.ArrayList;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration3.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration2.json";
     private MasterConfigurationData data; //Configuration File Interface
+    private Map<String,MasterInput> inputInstances;
+    private Map<String,MasterOutput> outputInstances;
     //TODO: consider making it a singleton
 
     public MasterConfigurator() {
@@ -28,7 +35,9 @@ public class MasterConfigurator {
         try {
             //Map the contents of the JSON file to a java object
             this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
-            this.data.getIoData().printInfo();
+            this.inputInstances = new HashMap<>();
+            this.outputInstances = new HashMap<>();
+            //this.data.getIoData().printInfo();
         } catch (IOException e) {
             System.out.println("Error while reading JSON Config File");
             e.printStackTrace();
@@ -44,20 +53,81 @@ public class MasterConfigurator {
         return CommandSet.getInstance();
     }
 
+    private void fillInputInstances() {
+        for (IOConfigData inputData : this.data.getIoData().getInputs()) {
+            this.inputInstances.put(inputData.getName(), getInputFromType(inputData.getType()));
+        }
+    }
+
+    private void fillOutputInstances() {
+        for (IOConfigData outputData : this.data.getIoData().getOutputs()) {
+            if (this.inputInstances.containsKey(outputData.getName())) {
+                this.outputInstances.put(outputData.getName(), (MasterOutput) this.inputInstances.get(outputData.getName()));
+            } else {
+                MasterOutput output;
+                Integer port = getPort(outputData);
+                if (port != null) {
+                    output = getPortOutputFromType(outputData.getType(),port);
+                } else {
+                    output = getOutputFromType(outputData.getType());
+                }
+                this.outputInstances.put(outputData.getName(),output);
+            }
+        }
+    }
+
+    private Integer getPort(IOConfigData ioData) {
+        for (IOPortConfigData portData : this.data.getIoData().getPorts()) {
+            if (portData.getName().equals(ioData.getName())) {
+                return portData.getPort();
+            }
+        }
+        return null;
+    }
+
+    private MasterOutput getOutputFromType(String outputStringType) throws IllegalArgumentException {
+        switch (outputStringType) {
+            case "ConsoleOutput":
+                return new ConsoleOutput();
+            case "MasterUtility" :
+                return new MasterUtility();
+            case "ScenarioDispatcher" :
+                return new ScenarioDispatcher();
+            case  "ScenarioEditor" :
+                return new ScenarioEditor();
+            case "RestOutput":
+                return RestOutput.getInstance();
+            case "MatchMaker" :
+                return new MatchMaker();
+            default:
+                throw new IllegalArgumentException("Invalid output in Configuration");
+        }
+    }
+
+    private MasterOutput getPortOutputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
+        switch (outputStringType) {
+            case "AdvantEdgeClient" :
+                return new AdvantEdgeClient(portNumber);
+            default:
+                throw new IllegalArgumentException("Invalid output in Configuration");
+        }
+    }
+
+
     /**
      * Based on the input defined in the config file, returns different types of input to the master
      * @return an object that implements the MasterInput interface
      * @throws IllegalArgumentException if input string in the configuration is not defined
      */
-    private MasterInput getInput(String inputString) throws IllegalArgumentException {
+    private MasterInput getInputFromType(String inputStringType) throws IllegalArgumentException {
         //TODO: Add more inputs
-        switch (inputString) {
-            case "console":
+        switch (inputStringType) {
+            case "ConsoleInput":
                 return new ConsoleInput();
-            case "rest":
+            case "RestInput":
                 return new RestInput();
-            case "matchMaker":
-                return new MatchMaker(); //TODO: Same instance as output
+            case "MatchMaker":
+                return new MatchMaker();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -68,6 +138,7 @@ public class MasterConfigurator {
      * @return an Object that implements the MasterOutput interface
      * @throws IllegalArgumentException if output string in the configuration is not defined
      */
+    /*
     private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
         //TODO: Add more outputs
         MasterOutput[] result = new MasterOutput[outputStringArray.length];
@@ -108,7 +179,26 @@ public class MasterConfigurator {
             }
         }
         return result;
+    }*/
+
+    private MasterInput getInput(String inputName) {
+        if (this.inputInstances.isEmpty()) {
+            fillInputInstances();
+        }
+        return this.inputInstances.get(inputName);
     }
+
+    private MasterOutput[] getOutputs(String[] outputNames) {
+        MasterOutput[] result = new MasterOutput[outputNames.length];
+        if (this.outputInstances.isEmpty()) {
+            fillOutputInstances();
+        }
+        for (int i = 0; i < result.length; i++) {
+            result[i] = this.outputInstances.get(outputNames[i]);
+        }
+        return result;
+    }
+
 
     /**
      * Based on the configuration file, returns the runners that the master should use
@@ -116,26 +206,19 @@ public class MasterConfigurator {
      */
     public ArrayList<Runner> getRunners(){
         ArrayList<Runner> result = new ArrayList<>();
-        String input;
-        MasterOutput[] output;
         String name;
-        for (RunnerConfigData runnerData : data.getRunners()){
-           try {
-               input = runnerData.getInput();
-               output = getOutputs(runnerData.getOutputs());
-               name = runnerData.getName();
-               if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
-                   result.add(new ScenarioRunner(name,input,output));
-               } else if (name.equals("RestServer")) {
-                   String portNumber = input.replaceAll("[^\\d]*","");
-                   result.add(RestRunner.getRestRunner(name, Integer.parseInt(portNumber)));
-               } else { //Input as masterInput
-                   result.add(new Runner(name,getInput(input),output));
-               }
-           } catch (Exception e) {
-               System.err.println("Error in Runner " + runnerData.getName());
-               e.printStackTrace();
-           }
+        String input;
+        for (RunnerConfigData runnerData : this.data.getRunners()) {
+            name = runnerData.getName();
+            input = runnerData.getInput();
+            if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
+                result.add(new ScenarioRunner(name,input,getOutputs(runnerData.getOutputs())));
+            } else if (name.equals("RestServer")) {
+                String portNumber = input.replaceAll("[^\\d]*","");
+                result.add(RestRunner.getRestRunner(name, Integer.parseInt(portNumber)));
+            } else { //Input as masterInput
+                result.add(new Runner(name, getInput(input),getOutputs(runnerData.getOutputs())));
+            }
         }
         return result;
     }

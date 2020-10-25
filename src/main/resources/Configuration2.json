@@ -9,10 +9,13 @@
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e", "port": 10500},
-        {"type": "ScenarioRunner","name": "scenario_runner"},
+        {"type": "AdvantEdgeClient","name": "advant_e"},
+        {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "MatchMaker","name": "match_m"}
+      ],
+      "ports": [
+        {"name": "advant_e", "port" : 10500}
       ]
     },
   "runners" : [
@@ -20,7 +23,7 @@
       "name" : "Main",
       "scenario" : false,
       "input" : "console_in",
-      "output" : ["console_out", "util", "advant_e", "scenario_runner", "scenario_editor"]
+      "outputs" : ["console_out", "util", "advant_e", "scenario_runner", "scenario_editor"]
     },
     {
       "name" : "RestInputTest",
