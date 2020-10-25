@@ -2,8 +2,8 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.*;
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
-import InfrastructureManager.Configuration.RawObjects.MasterConfigurationData;
-import InfrastructureManager.Configuration.RawObjects.RunnerConfigData;
+import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.Configuration.RawData.RunnerConfigData;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;

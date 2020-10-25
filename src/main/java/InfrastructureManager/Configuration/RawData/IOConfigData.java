@@ -1,4 +1,4 @@
-package InfrastructureManager.Configuration.RawObjects;
+package InfrastructureManager.Configuration.RawData;
 
 public class IOConfigData {
 
