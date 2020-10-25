@@ -10,12 +10,10 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private MatchMakingAlgorithm algorithm;
     private final ObjectMapper mapper;
     private String command = "";
-    public static int instanceCount = 0;
 
     public MatchMaker() {
         this.algorithm = new RandomMatchMaking(); // For now
         this.mapper = new ObjectMapper();
-        instanceCount++;
     }
 
     public void setAlgorithm(MatchMakingAlgorithm algorithm) {

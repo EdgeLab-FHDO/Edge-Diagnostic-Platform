@@ -1,47 +1,22 @@
 {
-  "ioData": {
-      "inputs": [
-        {"type": "ConsoleInput","name": "console_in"},
-        {"type": "RestInput","name": "rest_in"},
-        {"type": "MatchMaker","name": "match_m"}
-      ],
-      "outputs": [
-        {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "RestOutput","name": "rest_out"},
-        {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e"},
-        {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
-        {"type": "ScenarioEditor","name": "scenario_editor"},
-        {"type": "MatchMaker","name": "match_m"}
-      ],
-      "ports": [
-        {"name": "advant_e", "port" : 10500}
-      ]
-    },
   "runners" : [
     {
       "name" : "Main",
       "scenario" : false,
-      "input" : "console_in",
-      "outputs" : ["console_out", "util", "advant_e", "scenario_dispatcher", "scenario_editor"]
+      "input" : "console",
+      "outputs" : ["console", "util","scenario_editor","scenario_dispatcher", "advantEdge port10500", "rest", "matchMaker"]
     },
     {
       "name" : "RestInputTest",
       "scenario" : false,
-      "input" : "rest_in",
-      "outputs" : ["console_out", "util", "match_m"]
-    },
-    {
-      "name" : "MMInputTest",
-      "scenario" : false,
-      "input" : "match_m",
-      "outputs" : ["rest_out"]
+      "input" : "rest",
+      "outputs" : ["console", "util", "matchMaker"]
     },
     {
       "name" : "Dummy Scenario",
       "scenario" : true,
       "input" : "dummy",
-      "outputs" : ["console_out"]
+      "outputs" : ["console"]
     },
     {
       "name" : "RestServer",

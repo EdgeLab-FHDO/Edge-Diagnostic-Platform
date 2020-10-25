@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +23,7 @@ import java.util.Map;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration2.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private Map<String,MasterOutput> outputInstances;
@@ -53,15 +52,21 @@ public class MasterConfigurator {
         return CommandSet.getInstance();
     }
 
+    /**
+     * Extracts data from the configuration file to assign different input instances to their names
+     */
     private void fillInputInstances() {
         for (IOConfigData inputData : this.data.getIoData().getInputs()) {
             this.inputInstances.put(inputData.getName(), getInputFromType(inputData.getType()));
         }
     }
 
+    /**
+     * Extracts output data from the configuration file, including ports
+     */
     private void fillOutputInstances() {
         for (IOConfigData outputData : this.data.getIoData().getOutputs()) {
-            if (this.inputInstances.containsKey(outputData.getName())) {
+            if (this.inputInstances.containsKey(outputData.getName())) { //If an instance is input and output
                 this.outputInstances.put(outputData.getName(), (MasterOutput) this.inputInstances.get(outputData.getName()));
             } else {
                 MasterOutput output;
@@ -115,7 +120,7 @@ public class MasterConfigurator {
 
 
     /**
-     * Based on the input defined in the config file, returns different types of input to the master
+     * Based on the input defined in the config file, returns different instances of masterInputs
      * @return an object that implements the MasterInput interface
      * @throws IllegalArgumentException if input string in the configuration is not defined
      */
@@ -133,53 +138,10 @@ public class MasterConfigurator {
     }
 
     /**
-     * Based on the output defined in the config file, returns different types of output objects to the master
-     * @return an Object that implements the MasterOutput interface
-     * @throws IllegalArgumentException if output string in the configuration is not defined
+     * According to the input instance name, returns the instance.
+     * @param inputName Name of the input instance, declared in ioData in config file
+     * @return MasterInput instance corresponding to the input name
      */
-    /*
-    private MasterOutput[] getOutputs(String[] outputStringArray) throws IllegalArgumentException {
-        //TODO: Add more outputs
-        MasterOutput[] result = new MasterOutput[outputStringArray.length];
-        String[] outputInfo;
-        for (int i = 0; i < outputStringArray.length; i++) {
-            outputInfo = outputStringArray[i].split(" ");
-            switch (outputInfo[0]) {
-                case "console":
-                    result[i] = new ConsoleOutput();
-                    break;
-                case "util" :
-                    result[i] = new MasterUtility();
-                    break;
-                case "scenario_dispatcher" :
-                    result[i] = new ScenarioDispatcher();
-                    break;
-                case  "scenario_editor" :
-                    result[i] = new ScenarioEditor();
-                    break;
-                case "advantEdge" :
-                    String portNumber;
-                    try {
-                        portNumber = outputInfo[1].replaceAll("[^\\d]*",""); //Get only the numbers
-                    } catch (IndexOutOfBoundsException e) { //If nothing is specified, set it to port 80
-                        portNumber = "80";
-                    }
-                    result[i] = new AdvantEdgeClient(Integer.parseInt(portNumber));
-                    break;
-                case "rest":
-                    result[i] = RestOutput.getInstance();
-                    break;
-                case "matchMaker" :
-                    result[i] = new MatchMaker();
-                case "":
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid output in Configuration");
-            }
-        }
-        return result;
-    }*/
-
     private MasterInput getInput(String inputName) {
         if (this.inputInstances.isEmpty()) {
             fillInputInstances();
@@ -187,6 +149,11 @@ public class MasterConfigurator {
         return this.inputInstances.get(inputName);
     }
 
+    /**
+     * According to their defined names, returns the output instances to be used by the runners
+     * @param outputNames Names of the outputs, defined in ioData in config file
+     * @return Output instances as an array
+     */
     private MasterOutput[] getOutputs(String[] outputNames) {
         MasterOutput[] result = new MasterOutput[outputNames.length];
         if (this.outputInstances.isEmpty()) {
@@ -219,7 +186,6 @@ public class MasterConfigurator {
                 result.add(new Runner(name, getInput(input),getOutputs(runnerData.getOutputs())));
             }
         }
-        System.out.println("Matchmaker instances: " + MatchMaker.instanceCount);
         return result;
     }
 
