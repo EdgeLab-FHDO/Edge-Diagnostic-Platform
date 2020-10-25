@@ -73,7 +73,7 @@ public class AdvantEdgeClient implements MasterOutput {
             pathToFile = FileParser.YAMLtoJSON(pathToFile);
         }
         //String requestPath = "https://postman-echo.com/post/";
-        String requestPath = this.requestPath + "/scenarios/" + name;
+        String requestPath = this.requestPath + "/platform-ctrl/v1/scenarios/" + name;
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
@@ -103,14 +103,16 @@ public class AdvantEdgeClient implements MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        String requestPath = this.requestPath + "/active/" + name;
+        String requestPath = this.requestPath + "/platform-ctrl/v1/sandboxes";
         //String requestPath = "https://postman-echo.com/post/";
+        String jsonRequestString = "{\"scenarioName\" : \""+name+"\"}";
+
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(requestPath))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
-                    .POST(BodyPublishers.noBody())
+                    .POST(BodyPublishers.ofString(jsonRequestString))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -133,7 +135,7 @@ public class AdvantEdgeClient implements MasterOutput {
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
     private void terminateAEScenario() {
-        String requestPath = this.requestPath + "/active";
+        String requestPath = this.requestPath + "/sandbox-ctrl/v1/active/";
         //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()

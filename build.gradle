@@ -25,6 +25,11 @@ jar {
     }
 }
 
+run {
+    //Informs Gradle that we are using System.in as our console input (required for Scanner to work properly)
+    standardInput = System.in
+}
+
 repositories {
     //Where to get the dependencies
     mavenCentral()
