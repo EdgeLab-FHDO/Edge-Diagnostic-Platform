@@ -36,7 +36,7 @@ public class Master {
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
-        /*---------------------------------------------------------*/
+        /*
         availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
         availableNodes.add(new EdgeNode("node2", "192.168.0.2",true));
         availableNodes.add(new EdgeNode("node3", "192.168.0.3",true));

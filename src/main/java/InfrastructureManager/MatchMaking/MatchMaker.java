@@ -44,7 +44,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
                         registerNode(command[2]);
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid Command for MatchMaker Output");
+                        throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
             } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("Arguments missing for command - MatchMaker");
