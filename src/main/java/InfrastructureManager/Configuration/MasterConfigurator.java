@@ -120,7 +120,6 @@ public class MasterConfigurator {
      * @throws IllegalArgumentException if input string in the configuration is not defined
      */
     private MasterInput getInputFromType(String inputStringType) throws IllegalArgumentException {
-        //TODO: Add more inputs
         switch (inputStringType) {
             case "ConsoleInput":
                 return new ConsoleInput();
@@ -220,6 +219,7 @@ public class MasterConfigurator {
                 result.add(new Runner(name, getInput(input),getOutputs(runnerData.getOutputs())));
             }
         }
+        System.out.println("Matchmaker instances: " + MatchMaker.instanceCount);
         return result;
     }
 

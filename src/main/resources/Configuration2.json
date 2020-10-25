@@ -23,7 +23,7 @@
       "name" : "Main",
       "scenario" : false,
       "input" : "console_in",
-      "outputs" : ["console_out", "util", "advant_e", "scenario_runner", "scenario_editor"]
+      "outputs" : ["console_out", "util", "advant_e", "scenario_dispatcher", "scenario_editor"]
     },
     {
       "name" : "RestInputTest",
