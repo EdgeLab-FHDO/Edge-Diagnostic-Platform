@@ -9,13 +9,10 @@
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e"},
+        {"type": "AdvantEdgeClient","name": "advant_e","port" : 10500},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "MatchMaker","name": "match_m"}
-      ],
-      "ports": [
-        {"name": "advant_e", "port" : 10500}
       ]
     },
   "runners" : [

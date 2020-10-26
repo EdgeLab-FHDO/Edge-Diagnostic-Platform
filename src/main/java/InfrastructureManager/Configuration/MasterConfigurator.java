@@ -3,7 +3,6 @@ package InfrastructureManager.Configuration;
 import InfrastructureManager.*;
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
 import InfrastructureManager.Configuration.RawData.IOConfigData;
-import InfrastructureManager.Configuration.RawData.IOPortConfigData;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.Configuration.RawData.RunnerConfigData;
 import InfrastructureManager.MatchMaking.MatchMaker;
@@ -36,7 +35,6 @@ public class MasterConfigurator {
             this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
             this.inputInstances = new HashMap<>();
             this.outputInstances = new HashMap<>();
-            //this.data.getIoData().printInfo();
         } catch (IOException e) {
             System.out.println("Error while reading JSON Config File");
             e.printStackTrace();
@@ -72,29 +70,18 @@ public class MasterConfigurator {
      */
     private void fillOutputInstances() {
         MasterOutput output;
-        Integer port;
         for (IOConfigData outputData : this.data.getIoData().getOutputs()) {
             if (this.inputInstances.containsKey(outputData.getName())) { //If an instance is input and output
                 output = (MasterOutput) this.inputInstances.get(outputData.getName());
             } else {
-                port = getPort(outputData);
-                if (port != null) {
-                    output = getPortOutputFromType(outputData.getType(),port);
+                if (outputData.getPort() != 0) {
+                    output = getOutputFromType(outputData.getType(),outputData.getPort());
                 } else {
                     output = getOutputFromType(outputData.getType());
                 }
             }
             this.outputInstances.put(outputData.getName(), output);
         }
-    }
-
-    private Integer getPort(IOConfigData ioData) {
-        for (IOPortConfigData portData : this.data.getIoData().getPorts()) {
-            if (portData.getName().equals(ioData.getName())) {
-                return portData.getPort();
-            }
-        }
-        return null;
     }
 
     private MasterOutput getOutputFromType(String outputStringType) throws IllegalArgumentException {
@@ -116,7 +103,7 @@ public class MasterConfigurator {
         }
     }
 
-    private MasterOutput getPortOutputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
+    private MasterOutput getOutputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
         switch (outputStringType) {
             case "AdvantEdgeClient" :
                 return new AdvantEdgeClient(portNumber);
