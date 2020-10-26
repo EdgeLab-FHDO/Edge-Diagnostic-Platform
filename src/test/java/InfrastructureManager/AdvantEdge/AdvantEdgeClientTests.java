@@ -27,7 +27,7 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void addScenarioRequestTest() {
-        String path = "/scenarios/" + scenarioName;
+        String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String scenarioPath = "src/test/resources/AdvantEdge/dummy-test.json";
         client.out("advantEdge create " + scenarioName + " " + scenarioPath);
         verify(postRequestedFor(urlEqualTo(path))
@@ -40,7 +40,7 @@ public class AdvantEdgeClientTests {
     public void addYAMLScenarioRequestTest() {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
-        String path = "/scenarios/" + scenarioName;
+        String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String YAMLScenarioPath = "src/test/resources/AdvantEdge/dummy-test-to-convert.yaml";
         client.out("advantEdge create " + scenarioName + " " + YAMLScenarioPath);
         verify(postRequestedFor(urlEqualTo(path))
@@ -52,10 +52,15 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void deployScenarioRequestTest() {
-        String path = "/active/" + scenarioName;
+    public void deployScenarioRequestTest() throws IOException {
+        String path = "/platform-ctrl/v1/sandboxes";
+        String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
         client.out("advantEdge deploy " + scenarioName);
-        verify(postRequestedFor(urlEqualTo(path)));
+
+        String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
+
+        verify(postRequestedFor(urlPathMatching(path))
+                .withRequestBody(equalToJson(jsonString)));
     }
 
     @Test
@@ -73,7 +78,7 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void terminateScenarioRequestTest() {
-        String path = "/active";
+        String path = "/sandbox-ctrl/v1/active/";
         client.out("advantEdge terminate");
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
