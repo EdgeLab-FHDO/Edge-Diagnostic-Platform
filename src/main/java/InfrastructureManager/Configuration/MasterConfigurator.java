@@ -56,8 +56,14 @@ public class MasterConfigurator {
      * Extracts data from the configuration file to assign different input instances to their names
      */
     private void fillInputInstances() {
+        MasterInput input;
         for (IOConfigData inputData : this.data.getIoData().getInputs()) {
-            this.inputInstances.put(inputData.getName(), getInputFromType(inputData.getType()));
+            if (this.outputInstances.containsKey(inputData.getName())) {
+                input = (MasterInput) this.outputInstances.get(inputData.getName());
+            } else {
+                input = getInputFromType(inputData.getType());
+            }
+            this.inputInstances.put(inputData.getName(), input);
         }
     }
 
@@ -65,19 +71,20 @@ public class MasterConfigurator {
      * Extracts output data from the configuration file, including ports
      */
     private void fillOutputInstances() {
+        MasterOutput output;
+        Integer port;
         for (IOConfigData outputData : this.data.getIoData().getOutputs()) {
             if (this.inputInstances.containsKey(outputData.getName())) { //If an instance is input and output
-                this.outputInstances.put(outputData.getName(), (MasterOutput) this.inputInstances.get(outputData.getName()));
+                output = (MasterOutput) this.inputInstances.get(outputData.getName());
             } else {
-                MasterOutput output;
-                Integer port = getPort(outputData);
+                port = getPort(outputData);
                 if (port != null) {
                     output = getPortOutputFromType(outputData.getType(),port);
                 } else {
                     output = getOutputFromType(outputData.getType());
                 }
-                this.outputInstances.put(outputData.getName(),output);
             }
+            this.outputInstances.put(outputData.getName(), output);
         }
     }
 
