@@ -74,6 +74,7 @@
     "give_node": "restOut sendNode",
     "limit_node" : "restOut limit",
     "register_client" : "matchMaker register_client",
-    "register_node" : "matchMaker register_node"
+    "register_node" : "matchMaker register_node",
+    "assign_client" : "matchMaker assign_client"
   }
 }

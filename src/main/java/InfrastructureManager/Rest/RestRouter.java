@@ -18,6 +18,7 @@ public class RestRouter {
         });
         path("/client", () -> {
             post("/register", RestInput.registerClient);
+            post("/assign/:client_id", RestInput.assignClient);
             get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
         });
         get("/limit", RestOutput.getInstance().sendLimitInfo);

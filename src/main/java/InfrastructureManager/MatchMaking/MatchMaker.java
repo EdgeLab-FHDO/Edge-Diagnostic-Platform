@@ -20,13 +20,18 @@ public class MatchMaker implements MasterInput, MasterOutput {
         this.algorithm = algorithm;
     }
 
-    private void assign (EdgeClient client) {
-        EdgeNode node = this.algorithm.match(client);
-        if (node == null) {
-            System.out.println("No node to assign");
-        } else {
-            Master.getInstance().mapClientNode(client, node);
-            command = "give_node " + client.getId();
+    private void assign (String clientID) {
+        try {
+            EdgeClient client = Master.getInstance().getClientByID(clientID);
+            EdgeNode node = this.algorithm.match(client);
+            if (node == null) {
+                System.out.println("No node to assign");
+            } else {
+                Master.getInstance().mapClientNode(client, node);
+                command = "give_node " + client.getId();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -42,6 +47,9 @@ public class MatchMaker implements MasterInput, MasterOutput {
                     case "register_node" :
                         registerNode(command[2]);
                         break;
+                    case "assign_client" :
+                        assign(command[2]);
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
@@ -55,7 +63,6 @@ public class MatchMaker implements MasterInput, MasterOutput {
         try {
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
             Master.getInstance().addClient(client);
-            assign(client); //Perform MatchMaking
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

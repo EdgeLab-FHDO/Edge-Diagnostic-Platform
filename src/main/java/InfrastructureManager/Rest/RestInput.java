@@ -31,6 +31,11 @@ public class RestInput implements MasterInput {
         return response.status();
     };
 
+    public static Route assignClient = (Request request, Response response) -> {
+      command = "assign_client " + request.params(":client_id").replaceAll("\\s+","");
+      return response.status();
+    };
+
     @Override
     public String read() throws Exception {
         if(command.isEmpty()) {
