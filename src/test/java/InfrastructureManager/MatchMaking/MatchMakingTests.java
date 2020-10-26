@@ -47,6 +47,7 @@ public class MatchMakingTests {
     public void matchMakerAsInputTest() throws Exception {
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true));
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
+        matchMaker.out("matchMaker assign_client client1");
         Assert.assertEquals(matchMaker.read(),"give_node client1");
     }
 
@@ -54,6 +55,7 @@ public class MatchMakingTests {
     public void assignNodeToClientWithRestOutputTest() {
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true));
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
+        matchMaker.out("matchMaker assign_client client1");
         RestOutput.getInstance().out("restOut sendNode client1");
         String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
 
@@ -67,6 +69,7 @@ public class MatchMakingTests {
     public void assignNodeToClientCompleteTest() throws Exception {
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true));
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
+        matchMaker.out("matchMaker assign_client client1");
         RestOutput.getInstance().out(Master.getInstance().execute(matchMaker.read()));
         String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
 
