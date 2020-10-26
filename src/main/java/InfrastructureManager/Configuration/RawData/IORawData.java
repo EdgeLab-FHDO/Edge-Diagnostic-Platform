@@ -25,13 +25,4 @@ public class IORawData {
     public List<IOPortConfigData> getPorts() {
         return ports;
     }
-
-    public void printInfo() {
-        System.out.println("Inputs: ");
-        inputs.forEach(e -> System.out.println(e.getType()));
-        System.out.println("Outputs: ");
-        outputs.forEach(e -> System.out.println(e.getType()));
-        System.out.println("Ports: ");
-        ports.forEach(e -> System.out.println(e.getPort()));
-    }
 }

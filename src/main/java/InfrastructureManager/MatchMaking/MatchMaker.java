@@ -28,7 +28,6 @@ public class MatchMaker implements MasterInput, MasterOutput {
             Master.getInstance().mapClientNode(client, node);
             command = "give_node " + client.getId();
         }
-        System.out.println("Client received : " + client.getId() + " Server assigned : " + node.getId());
     }
 
     @Override
@@ -66,7 +65,6 @@ public class MatchMaker implements MasterInput, MasterOutput {
         try {
             EdgeNode node = this.mapper.readValue(nodeAsString, EdgeNode.class);
             Master.getInstance().addNode(node);
-            System.out.println("Node received: " + node.toString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
