@@ -35,7 +35,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
 
     private void assign (String clientID) {
         try {
-            EdgeClient client = Master.getInstance().getClientByID(clientID);
+            EdgeClient client = this.getClientByID(clientID);
             EdgeNode node = this.algorithm.match(client, this.nodeList);
             if (node == null) {
                 System.out.println("No node to assign");
@@ -110,5 +110,14 @@ public class MatchMaker implements MasterInput, MasterOutput {
 
     public Map<EdgeClient, EdgeNode> getMapping() {
         return mapping;
+    }
+
+    private EdgeClient getClientByID(String clientID) throws Exception {
+        for (EdgeClient client : this.clientList) {
+            if (client.getId().equals(clientID)) {
+                return client;
+            }
+        }
+        throw new Exception("No client found");
     }
 }
