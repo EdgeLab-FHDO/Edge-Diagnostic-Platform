@@ -230,9 +230,6 @@ public class Master {
 
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
-        Master.getInstance().startRunnerThread("RestInputTest");
-        Master.getInstance().startRunnerThread("RestServer");
-        Master.getInstance().startRunnerThread("MMInputTest");
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {
