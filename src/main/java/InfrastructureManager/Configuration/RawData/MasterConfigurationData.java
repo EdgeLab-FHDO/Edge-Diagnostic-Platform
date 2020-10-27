@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Configuration.RawData;
 
 import java.util.List;
 import java.util.Map;
@@ -9,11 +9,13 @@ import java.util.Map;
  */
 public class MasterConfigurationData {
 
+    private IORawData ioData;
     private final List<RunnerConfigData> runners;
     private final Map<String, String> commands;
 
     public MasterConfigurationData() {
         //Initialize all values in null;
+        ioData = null;
         commands = null;
         runners = null;
     }
@@ -32,5 +34,9 @@ public class MasterConfigurationData {
      */
     public List<RunnerConfigData> getRunners() {
         return runners;
+    }
+
+    public IORawData getIoData() {
+        return ioData;
     }
 }

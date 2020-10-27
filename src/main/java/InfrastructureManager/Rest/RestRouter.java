@@ -1,5 +1,6 @@
 package InfrastructureManager.Rest;
 
+import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.Utility.Authentication.AuthenticationManager;
 import spark.*;
 import static spark.Spark.*;
@@ -13,14 +14,18 @@ public class RestRouter {
                 post("/read/:input", RestInput.readParameterTest);
             });
             post("/execute/:command", RestInput.executeCommand);
+            post("/register", RestInput.registerNode);
         });
         path("/client", () -> {
-            get("/get_node", RestOutput.getInstance().getNode);
+            post("/register", RestInput.registerClient);
+            post("/assign/:client_id", RestInput.assignClient);
+            get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
         });
         get("/limit", RestOutput.getInstance().sendLimitInfo);
         get("/heartbeat", (request, response) -> {
             return response.status();
         });
+
     }
 
     public static RestRouter startRouter(int port) {

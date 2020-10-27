@@ -94,6 +94,24 @@ public class MasterMappingTests {
         Assert.assertEquals(expected,master.execute(command));
     }
     @Test
+    public void giveNodeTest() {
+        String command = "give_node client1 node1";
+        String expected = "restOut sendNode client1 node1";
+        Assert.assertEquals(expected,master.execute(command));
+    }
+    @Test
+    public void registerClientTest() {
+        String command = "register_client $clientAsJSON";
+        String expected = "matchMaker register_client $clientAsJSON";
+        Assert.assertEquals(expected,master.execute(command));
+    }
+    @Test
+    public void registerNodeTest() {
+        String command = "register_node $nodeAsJSON";
+        String expected = "matchMaker register_node $nodeAsJSON";
+        Assert.assertEquals(expected,master.execute(command));
+    }
+    @Test
     public void exitTest() {
         String command = "exit";
         String expected = "util exit";
