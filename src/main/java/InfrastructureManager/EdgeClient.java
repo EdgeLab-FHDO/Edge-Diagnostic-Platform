@@ -8,6 +8,10 @@ public class EdgeClient {
         this.id = null;
     }
 
+    public EdgeClient(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

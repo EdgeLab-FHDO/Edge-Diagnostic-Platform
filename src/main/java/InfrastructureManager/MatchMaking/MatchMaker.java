@@ -99,4 +99,16 @@ public class MatchMaker implements MasterInput, MasterOutput {
         command = "";
         return toSend;
     }
+
+    public List<EdgeNode> getNodeList() {
+        return nodeList;
+    }
+
+    public List<EdgeClient> getClientList() {
+        return clientList;
+    }
+
+    public Map<EdgeClient, EdgeNode> getMapping() {
+        return mapping;
+    }
 }
