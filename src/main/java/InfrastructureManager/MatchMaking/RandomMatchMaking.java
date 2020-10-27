@@ -9,13 +9,12 @@ import java.util.Random;
 
 public class RandomMatchMaking implements MatchMakingAlgorithm {
     @Override
-    public EdgeNode match(EdgeClient client) {
+    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) {
         Random random = new Random();
-        List<EdgeNode> nodes = Master.getInstance().getAvailableNodes();
-        if (nodes.isEmpty()) {
+        if (nodeList.isEmpty()) {
             return null;
         } else {
-            return nodes.get(random.nextInt(nodes.size()));
+            return nodeList.get(random.nextInt(nodeList.size()));
         }
     }
 }

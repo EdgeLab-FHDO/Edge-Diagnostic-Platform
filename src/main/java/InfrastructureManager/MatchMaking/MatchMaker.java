@@ -36,7 +36,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private void assign (String clientID) {
         try {
             EdgeClient client = Master.getInstance().getClientByID(clientID);
-            EdgeNode node = this.algorithm.match(client);
+            EdgeNode node = this.algorithm.match(client, this.nodeList);
             if (node == null) {
                 System.out.println("No node to assign");
             } else {
