@@ -3,10 +3,12 @@
 #Script for creating a cpu limited cgroup based on information retrieved as a REST resource
 
 no_quotes_regex='"\K\w+(?=")' ##Regular expression to match a word between quotes, ignoring the quotes
-read_data="{}" #Start with the empty response from the master (no command given yet)
+read_data="" #Start with the empty response from the master (no command given yet)
 first_data=0 #To be "turned on" only when the loop has processed data for the first time
 request_address=
 verbose=0
+read_node_tag=
+aux=
 
 while [[ -n "$1" ]] ##Process the passed parameters
 do
@@ -21,6 +23,7 @@ do
     shift
 done
 
+[[ -f limitFile ]] && rm limitFile #Each time the script runs, delete the last limitFile
 
 if [[ -n "$request_address" ]] #If there is an URL passed
 then
@@ -50,6 +53,8 @@ then
           sudo cgset -r cpu.cfs_period_us="$period_us" "$node_tag"
           sudo cgset -r cpu.cfs_quota_us="$quota_us" "$node_tag"
 
+          read_node_tag="$node_tag"
+
         done < limitFile
         read_data=$(cat limitFile) #Save processed content
       fi
@@ -60,7 +65,8 @@ then
         #First command in the pipe (ps) outputs all running processes (-e), in full format(-f) and the threads (-T) with SPID
         #AWK command, returns the SPIDs of the process which were called with the node_tag as argument
         # Xargs turns the output of awk into arguments for cgclassify, which then assigns the processes to the limited group
-        ps -ef -T | awk -v tag="$node_tag" '!/awk/ && $0 ~ tag { print $3 }' | xargs -t sudo cgclassify -g cpu:/"$node_tag"
+        aux=$(ps -ef -T | awk -v tag="$read_node_tag" '!/awk/ && $0 ~ tag { print $3 }')
+        echo "$aux" | xargs -t sudo cgclassify -g cpu:/"$read_node_tag"
       fi
       sleep 1 #Delay of 1s to the infinite loop
   done
