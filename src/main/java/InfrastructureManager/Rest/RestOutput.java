@@ -101,9 +101,6 @@ public class RestOutput implements MasterOutput {
         try {
             EdgeClient client = Master.getInstance().getClientByID(clientID);
             EdgeNode node = Master.getInstance().getNodeByID(nodeID);
-            if (node == null) {
-                throw new Exception("Client not found");
-            }
             String nodeAsJSON = this.mapper.writeValueAsString(node);
             this.nodesToSend.put(client.getId(), nodeAsJSON);
         } catch (Exception e) {
