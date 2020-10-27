@@ -17,7 +17,6 @@ public class Master {
     private final ArrayList<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
-    private final Map<EdgeClient,EdgeNode> clientNodeMapping;
 
     private Thread mainThread;
     private Thread restThread;
@@ -32,7 +31,6 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator();
         commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
-        clientNodeMapping = new HashMap<>();
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
@@ -193,9 +191,6 @@ public class Master {
         this.availableNodes.add(node);
     }
 
-    public EdgeNode getAssignedNode(EdgeClient client) {
-        return this.clientNodeMapping.get(client);
-    }
 
     public void addClient(EdgeClient client) {
         this.registeredClients.add(client);
@@ -210,10 +205,15 @@ public class Master {
         throw new Exception("No client found");
     }
 
-
-    public void mapClientNode(EdgeClient client, EdgeNode node) {
-        this.clientNodeMapping.put(client,node);
+    public EdgeNode getNodeByID (String nodeID) throws Exception {
+        for (EdgeNode node : this.availableNodes) {
+            if (node.getId().equals(nodeID)) {
+                return node;
+            }
+        }
+        throw new Exception("No node found");
     }
+
 
     /**
      * Singleton method for getting the only instance of the class

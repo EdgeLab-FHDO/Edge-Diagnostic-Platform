@@ -4,6 +4,11 @@ import InfrastructureManager.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class MatchMaker implements MasterInput, MasterOutput {
 
@@ -11,9 +16,17 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private final ObjectMapper mapper;
     private String command = "";
 
+    private List<EdgeNode> nodeList;
+    private List<EdgeClient> clientList;
+    private Map<EdgeClient,EdgeNode> mapping;
+
     public MatchMaker() {
         this.algorithm = new RandomMatchMaking(); // For now
         this.mapper = new ObjectMapper();
+
+        this.nodeList = new ArrayList<>();
+        this.clientList = new ArrayList<>();
+        this.mapping = new HashMap<>();
     }
 
     public void setAlgorithm(MatchMakingAlgorithm algorithm) {
@@ -27,8 +40,8 @@ public class MatchMaker implements MasterInput, MasterOutput {
             if (node == null) {
                 System.out.println("No node to assign");
             } else {
-                Master.getInstance().mapClientNode(client, node);
-                command = "give_node " + client.getId();
+                this.mapping.put(client,node);
+                command = "give_node " + client.getId() + " " + node.getId();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +75,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private void registerClient(String clientAsString) {
         try {
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
-            Master.getInstance().addClient(client);
+            this.clientList.add(client);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -71,7 +84,7 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private void registerNode(String nodeAsString) {
         try {
             EdgeNode node = this.mapper.readValue(nodeAsString, EdgeNode.class);
-            Master.getInstance().addNode(node);
+            this.nodeList.add(node);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

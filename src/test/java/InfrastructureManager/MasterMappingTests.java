@@ -95,8 +95,8 @@ public class MasterMappingTests {
     }
     @Test
     public void giveNodeTest() {
-        String command = "give_node client1";
-        String expected = "restOut sendNode client1";
+        String command = "give_node client1 node1";
+        String expected = "restOut sendNode client1 node1";
         Assert.assertEquals(expected,master.execute(command));
     }
     @Test

@@ -9,6 +9,7 @@ import spark.*;
 
 public class RestInput implements MasterInput {
     private static String command = "";
+    private static ObjectMapper mapper = new ObjectMapper();
 
     public static Route readParameterTest = (Request request, Response response) -> request.params(":input");
 
@@ -22,12 +23,18 @@ public class RestInput implements MasterInput {
     };
 
     public static Route registerClient = (Request request, Response response) -> {
-        command = "register_client " + request.body().replaceAll("\\s+","");
+        String clientAsString = request.body().replaceAll("\\s+","");
+        EdgeClient client = mapper.readValue(clientAsString, EdgeClient.class);
+        Master.getInstance().addClient(client);
+        command = "register_client " + clientAsString;
         return response.status();
     };
 
     public static Route registerNode = (Request request, Response response) -> {
-        command = "register_node " + request.body().replaceAll("\\s+","");
+        String nodeAsString = request.body().replaceAll("\\s+","");
+        EdgeNode node = mapper.readValue(nodeAsString, EdgeNode.class);
+        Master.getInstance().addNode(node);
+        command = "register_node " + nodeAsString;
         return response.status();
     };
 

@@ -65,7 +65,7 @@ public class RestOutput implements MasterOutput {
             try {
                 switch (command[1]) {
                     case "sendNode":
-                        createNodeResource(command[2]);
+                        createNodeResource(command[2], command[3]);
                         break;
                     case "limit":
                         String period = command.length > 4 ? command[4] : "100000";
@@ -97,10 +97,10 @@ public class RestOutput implements MasterOutput {
         this.limitNodes = new LinkedHashMap<>();
     }
 
-    private void createNodeResource(String clientID) {
+    private void createNodeResource(String clientID, String nodeID) {
         try {
             EdgeClient client = Master.getInstance().getClientByID(clientID);
-            EdgeNode node = Master.getInstance().getAssignedNode(client);
+            EdgeNode node = Master.getInstance().getNodeByID(nodeID);
             if (node == null) {
                 throw new Exception("Client not found");
             }
