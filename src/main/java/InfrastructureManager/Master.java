@@ -14,7 +14,7 @@ import java.util.Map;
 public class Master {
 
     private final CommandSet commandSet;
-    private final ArrayList<Runner> runnerList;
+    private final List<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
 

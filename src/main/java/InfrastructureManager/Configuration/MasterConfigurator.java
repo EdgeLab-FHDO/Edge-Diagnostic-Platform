@@ -2,6 +2,7 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.*;
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
+import InfrastructureManager.Configuration.RawData.ConnectionConfigData;
 import InfrastructureManager.Configuration.RawData.IOConfigData;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.Configuration.RawData.RunnerConfigData;
@@ -10,10 +11,13 @@ import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +30,9 @@ public class MasterConfigurator {
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private Map<String,MasterOutput> outputInstances;
+    private boolean activateRestRunner = false;
     //TODO: consider making it a singleton
+
 
     public MasterConfigurator() {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
@@ -44,11 +50,11 @@ public class MasterConfigurator {
     /**
      * Based on the commands defined in the config file, configures the CommandSet instance and returns it
      * @return The command set for the master to use
-     */
-    public CommandSet getCommands() {
+     */ //TODO: Command Handling
+    /*public CommandSet getCommands() {
         CommandSet.getInstance().set(data.getCommands());
         return CommandSet.getInstance();
-    }
+    }*/
 
     /**
      * Extracts data from the configuration file to assign different input instances to their names
@@ -59,7 +65,11 @@ public class MasterConfigurator {
             if (this.outputInstances.containsKey(inputData.getName())) {
                 input = (MasterInput) this.outputInstances.get(inputData.getName());
             } else {
-                input = getInputFromType(inputData.getType());
+                if (inputData.getPort() != 0) {
+                    input = getInputFromType(inputData.getType(),inputData.getPort());
+                } else {
+                    input = getInputFromType(inputData.getType());
+                }
             }
             this.inputInstances.put(inputData.getName(), input);
         }
@@ -122,12 +132,21 @@ public class MasterConfigurator {
         switch (inputStringType) {
             case "ConsoleInput":
                 return new ConsoleInput();
-            case "RestInput":
-                return new RestInput();
             case "MatchMaker":
                 return new MatchMaker();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
+        }
+    }
+
+    private MasterInput getInputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
+        switch (outputStringType) {
+            case "RestInput":
+                RestRunner.getRestRunner("RestServer",portNumber);
+                activateRestRunner = true;
+                return new RestInput();
+            default:
+                throw new IllegalArgumentException("Invalid output in Configuration");
         }
     }
 
@@ -148,15 +167,21 @@ public class MasterConfigurator {
      * @param outputNames Names of the outputs, defined in ioData in config file
      * @return Output instances as an array
      */
-    private MasterOutput[] getOutputs(String[] outputNames) {
-        MasterOutput[] result = new MasterOutput[outputNames.length];
+    private MasterOutput[] getOutputs(String inputName) {
+        List<MasterOutput> result = new ArrayList<>();
         if (this.outputInstances.isEmpty()) {
             fillOutputInstances();
         }
-        for (int i = 0; i < result.length; i++) {
-            result[i] = this.outputInstances.get(outputNames[i]);
+        for (ConnectionConfigData configData : this.data.getConnections()) {
+            if (configData.getIn().equals(inputName)) {
+                result.add(this.outputInstances.get(configData.getOut()));
+            }
         }
-        return result;
+        return result.toArray(new MasterOutput[0]);
+    }
+
+    private Map<MasterInput,MasterOutput[]> createRunners() {
+
     }
 
 
@@ -164,10 +189,26 @@ public class MasterConfigurator {
      * Based on the configuration file, returns the runners that the master should use
      * @return ArrayList of Runner objects for the master to run
      */
-    public ArrayList<Runner> getRunners(){
-        ArrayList<Runner> result = new ArrayList<>();
-        String name;
-        String input;
+    public List<Runner> getRunners(){
+        //TODO: Scenarios
+        List<Runner> result = new ArrayList<>();
+        MasterInput runnerInput;
+        MasterOutput[] runnerOutputs;
+        String runnerName = "Runner ";
+        for (String inputName : this.data.getConnectedInputs()) {
+            runnerInput = getInput(inputName);
+            runnerOutputs = getOutputs(inputName);
+            result.add(new Runner(runnerName + inputName,runnerInput,runnerOutputs));
+        }
+        if (activateRestRunner) {
+            try {
+                result.add(RestRunner.getRestRunner());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*
         for (RunnerConfigData runnerData : this.data.getRunners()) {
             name = runnerData.getName();
             input = runnerData.getInput();
@@ -179,7 +220,7 @@ public class MasterConfigurator {
             } else { //Input as masterInput
                 result.add(new Runner(name, getInput(input),getOutputs(runnerData.getOutputs())));
             }
-        }
+        }*/
         return result;
     }
 
