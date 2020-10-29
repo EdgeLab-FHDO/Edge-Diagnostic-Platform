@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MatchMaker implements MasterInput, MasterOutput {
+public class MatchMaker extends MasterOutput implements MasterInput {
 
     private MatchMakingAlgorithm algorithm;
     private final ObjectMapper mapper;
@@ -20,7 +20,8 @@ public class MatchMaker implements MasterInput, MasterOutput {
     private List<EdgeClient> clientList;
     private Map<EdgeClient,EdgeNode> mapping;
 
-    public MatchMaker() {
+    public MatchMaker(String name) {
+        super(name);
         this.algorithm = new RandomMatchMaking(); // For now
         this.mapper = new ObjectMapper();
 

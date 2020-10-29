@@ -70,11 +70,7 @@ public class MasterConfigurator {
                 if (this.outputInstances.containsKey(inputData.getName())) {
                     input = (MasterInput) this.outputInstances.get(inputData.getName());
                 } else {
-                    if (inputData.getPort() != 0) {
-                        input = getInputFromType(inputData.getType(),inputData.getPort());
-                    } else {
-                        input = getInputFromType(inputData.getType());
-                    }
+                    input = this.getInputFromData(inputData);
                 }
                 this.inputInstances.put(inputData.getName(), input);
             }
@@ -90,69 +86,47 @@ public class MasterConfigurator {
             if (this.inputInstances.containsKey(outputData.getName())) { //If an instance is input and output
                 output = (MasterOutput) this.inputInstances.get(outputData.getName());
             } else {
-                if (outputData.getPort() != 0) {
-                    output = getOutputFromType(outputData.getType(),outputData.getPort());
-                } else {
-                    output = getOutputFromType(outputData.getType());
-                }
+                output = getOutputFromData(outputData);
             }
             this.outputInstances.put(outputData.getName(), output);
         }
     }
 
-    private MasterOutput getOutputFromType(String outputStringType) throws IllegalArgumentException {
-        switch (outputStringType) {
+    private MasterOutput getOutputFromData(IOConfigData outputData) throws IllegalArgumentException {
+        int port = outputData.getPort();
+        switch (outputData.getType()) {
             case "ConsoleOutput":
-                return new ConsoleOutput();
+                return new ConsoleOutput(outputData.getName());
             case "MasterUtility" :
-                return new MasterUtility();
+                return new MasterUtility(outputData.getName());
             case "ScenarioDispatcher" :
-                return new ScenarioDispatcher();
+                return new ScenarioDispatcher(outputData.getName());
             case  "ScenarioEditor" :
-                return new ScenarioEditor();
+                return new ScenarioEditor(outputData.getName());
             case "RestOutput":
-                return RestOutput.getInstance();
+                return RestOutput.getInstance(outputData.getName());
             case "MatchMaker" :
-                return new MatchMaker();
-            default:
-                throw new IllegalArgumentException("Invalid output in Configuration");
-        }
-    }
-
-    private MasterOutput getOutputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
-        switch (outputStringType) {
+                return new MatchMaker(outputData.getName());
             case "AdvantEdgeClient" :
-                return new AdvantEdgeClient(portNumber);
+                return new AdvantEdgeClient(outputData.getName(),port != 0 ? port : 80);
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }
     }
 
-
-    /**
-     * Based on the input defined in the config file, returns different instances of masterInputs
-     * @return an object that implements the MasterInput interface
-     * @throws IllegalArgumentException if input string in the configuration is not defined
-     */
-    private MasterInput getInputFromType(String inputStringType) throws IllegalArgumentException {
-        switch (inputStringType) {
+    private MasterInput getInputFromData(IOConfigData inputData) throws IllegalArgumentException {
+        int port = inputData.getPort();
+        switch (inputData.getType()) {
             case "ConsoleInput":
                 return new ConsoleInput();
             case "MatchMaker":
-                return new MatchMaker();
-            default:
-                throw new IllegalArgumentException("Invalid input in Configuration");
-        }
-    }
-
-    private MasterInput getInputFromType(String outputStringType, int portNumber) throws IllegalArgumentException {
-        switch (outputStringType) {
+                return new MatchMaker(inputData.getName());
             case "RestInput":
-                RestRunner.getRestRunner("RestServer",portNumber);
+                RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
                 return new RestInput();
             default:
-                throw new IllegalArgumentException("Invalid output in Configuration");
+                throw new IllegalArgumentException("Invalid input in Configuration");
         }
     }
 

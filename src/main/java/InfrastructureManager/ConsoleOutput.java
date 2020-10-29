@@ -3,7 +3,12 @@ package InfrastructureManager;
 /**
  * Class representing output to the console as a form of MasterOutput
  */
-public class ConsoleOutput implements MasterOutput {
+public class ConsoleOutput extends MasterOutput {
+
+    public ConsoleOutput(String name) {
+        super(name);
+    }
+
     /**
      * Method for outputting to the console
      * @param response Message to be outputted to the console, the command has to be preceded by "console"

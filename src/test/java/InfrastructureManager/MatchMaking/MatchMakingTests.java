@@ -16,7 +16,7 @@ import org.junit.rules.ExpectedException;
 import static io.restassured.RestAssured.given;
 
 public class MatchMakingTests {
-    private final MatchMaker matchMaker = new MatchMaker();
+    private final MatchMaker matchMaker = new MatchMaker("match_m");
     private static RequestSpecification requestSpec;
 
     @BeforeClass

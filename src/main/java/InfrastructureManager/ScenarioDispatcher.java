@@ -12,12 +12,13 @@ import java.io.IOException;
  * - Run Scenarios
  * - Pause/Resume Scenarios
  */
-public class ScenarioDispatcher implements MasterOutput {
+public class ScenarioDispatcher extends MasterOutput {
 
     private Scenario scenario;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher() {
+    public ScenarioDispatcher(String name) {
+        super(name);
         this.scenario = null;
     }
 
