@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class Master {
 
-    private final CommandSet commandSet;
     private final List<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
@@ -29,7 +28,6 @@ public class Master {
      */
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
-        commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
@@ -43,13 +41,9 @@ public class Master {
         /*---------------------------------------------------------*/
     }
 
-    /**
-     * Based on the command set predefined, execute a command
-     * @param command Command to be executed coming from the input
-     * @return Response going to the output(s)
-     */
-    public String execute(String command) {
-        return this.commandSet.getResponse(command);
+
+    public String execute(String fromInput, CommandSet commands) {
+        return commands.getResponse(fromInput);
     }
 
     /**

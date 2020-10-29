@@ -8,28 +8,18 @@ import java.util.Map;
  * Singleton Class that interfaces the command set to the master
  * Implements the MasterConfig and MasterResource generic interfaces with a Map of Strings
  */
-public class CommandSet implements MasterConfig<Map<String,String>> {
-
-    private static CommandSet instance = null; //Singleton Implementation, only one command set will be necessary
+public class CommandSet {
 
     private Map<String,String> commands;
 
-    private CommandSet() {
+    public CommandSet() {
         this.commands = new HashMap<>();
-    }
-
-    public static CommandSet getInstance() { //Singleton implementation
-        if (instance == null) {
-            instance = new CommandSet();
-        }
-        return instance;
     }
 
     /**
      * Set the command set to a given map
      * @param config Map<String,String> element containing the commands in the form of ({command} : {response})
      */
-    @Override
     public void set(Map<String, String> config) {
         this.commands = config;
     }
@@ -38,7 +28,6 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
      * Return the commands in form of a map
      * @return Map<String,String> element containing the commands in the form of ({command} : {response})
      */
-    @Override
     public Map<String, String> get() {
         return this.commands;
     }
@@ -60,7 +49,7 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
             if (this.commands.containsKey(command)) {
                 return this.commands.get(command) + param;
             } else {
-                throw new IllegalArgumentException("Command not defined in config");
+                return null;
             }
         }
     }

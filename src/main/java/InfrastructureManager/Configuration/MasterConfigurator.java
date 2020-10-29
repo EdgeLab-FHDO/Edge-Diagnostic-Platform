@@ -49,15 +49,6 @@ public class MasterConfigurator {
         }
     }
 
-    //TODO: Command Handling
-    public CommandSet getCommands() {
-        Map<String,String> oe = new HashMap<>();
-        oe.put("deploy_application","console helmChartExecution");
-        oe.put("update_GUI","console updateGUIExecution");
-        CommandSet.getInstance().set(oe);
-        return CommandSet.getInstance();
-    }
-
     /**
      * Extracts data from the configuration file to assign different input instances to their names
      */
@@ -144,6 +135,19 @@ public class MasterConfigurator {
         return result.toArray(new MasterOutput[0]);
     }
 
+    private Map<String, CommandSet> getCommands(String inputName) {
+        Map<String, CommandSet> result = new HashMap<>();
+        CommandSet commands;
+        for (ConnectionConfigData configData : this.data.getConnections()) {
+            if (configData.getIn().equals(inputName)) {
+                commands = new CommandSet();
+                commands.set(configData.getCommands());
+                result.put(configData.getOut(),commands);
+            }
+        }
+        return result;
+    }
+
 
     /**
      * Based on the configuration file, returns the runners that the master should use
@@ -162,7 +166,9 @@ public class MasterConfigurator {
                 result.add(new ScenarioRunner(runnerName + inputName, inputName, runnerOutputs));
             } else {
                 runnerInput = getInput(inputName);
-                result.add(new Runner(runnerName + inputName, runnerInput, runnerOutputs));
+                Runner runner = new Runner(runnerName + inputName, runnerInput, runnerOutputs);
+                runner.setConfiguredCommands(getCommands(inputName));
+                result.add(runner);
             }
         }
         if (activateRestRunner) {
