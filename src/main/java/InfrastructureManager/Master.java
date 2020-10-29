@@ -62,7 +62,7 @@ public class Master {
      */
     public void startMainRunner() {
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("Main")) {
+            if (runner.getName().equals("Runner_console_in")) {
                 mainThread = new Thread(runner,"MainRunner");
                 mainThread.start();
                 break;
@@ -223,7 +223,7 @@ public class Master {
 
 
     public static void main(String[] args) {
-        Master.getInstance().startMainRunner(); //TODO: Change main runner and runner execution
+        Master.getInstance().startMainRunner();
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {

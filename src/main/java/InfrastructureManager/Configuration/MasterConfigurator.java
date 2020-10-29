@@ -157,7 +157,7 @@ public class MasterConfigurator {
         List<Runner> result = new ArrayList<>();
         MasterInput runnerInput;
         MasterOutput[] runnerOutputs;
-        String runnerName = "Runner ";
+        String runnerName = "Runner_";
         fillInputInstances();
         fillOutputInstances();
         for (String inputName : this.data.getConnectedInputs()) {
