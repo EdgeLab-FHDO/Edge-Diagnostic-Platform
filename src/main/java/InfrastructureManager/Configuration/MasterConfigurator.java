@@ -163,7 +163,9 @@ public class MasterConfigurator {
         for (String inputName : this.data.getConnectedInputs()) {
             runnerOutputs = getOutputs(inputName);
             if (this.scenarios.contains(inputName)) {
-                result.add(new ScenarioRunner(runnerName + inputName, inputName, runnerOutputs));
+                ScenarioRunner scenarioRunner = new ScenarioRunner(runnerName + inputName, inputName, runnerOutputs);
+                scenarioRunner.setConfiguredCommands(getCommands(inputName));
+                result.add(scenarioRunner);
             } else {
                 runnerInput = getInput(inputName);
                 Runner runner = new Runner(runnerName + inputName, runnerInput, runnerOutputs);
