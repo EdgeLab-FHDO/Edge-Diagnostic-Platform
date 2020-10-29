@@ -1,5 +1,6 @@
 package InfrastructureManager.MatchMaking;
 
+import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
 import InfrastructureManager.Master;
@@ -7,28 +8,32 @@ import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
 public class MatchMakingTests {
     private final MatchMaker matchMaker = new MatchMaker("match_m");
+    private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
+
 
     @BeforeClass
     public static void startServer() throws Exception { //Before all tests
         String testIp = "http://localhost";
         int port = 4567;
+        RestOutput.getInstance("rest_out");
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
                 build();
         RestRunner.getRestRunner("RestRunner", port).startServerIfNotRunning();
     }
+
 
     @Test
     public void registerNodeTest() {
@@ -52,6 +57,13 @@ public class MatchMakingTests {
         Assert.assertEquals(matchMaker.read(),"give_node client1 node1");
     }
 
+    @Before
+    public void fillCommands() {
+        Map<String,String> commands = new HashMap<>();
+        commands.put("give_node","restOut sendNode");
+        this.commandSet.set(commands);
+    }
+
     @Test
     public void assignNodeToClientCompleteTest() throws Exception {
 
@@ -61,7 +73,7 @@ public class MatchMakingTests {
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         matchMaker.out("matchMaker assign_client client1");
-        //RestOutput.getInstance("rest_out").out(Master.getInstance().execute(matchMaker.read()));
+        RestOutput.getInstance().out(Master.getInstance().execute(matchMaker.read(),commandSet));
         String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
 
         String response = given().spec(requestSpec)
