@@ -10,14 +10,14 @@ import org.junit.rules.ExpectedException;
 import static io.restassured.RestAssured.given;
 
 public class NodeLimitTests {
-    private RestOutput output = RestOutput.getInstance("rest_out");
+    private static RestOutput output;
     private static RequestSpecification requestSpec;
     private static String testIp = "http://localhost";
     private static int port = 4567;
 
     @BeforeClass
     public static void startServer() throws Exception { //Before all tests
-        RestOutput.getInstance("rest_out");
+        output = RestOutput.getInstance("rest_out");
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
