@@ -223,7 +223,7 @@ public class Master {
 
 
     public static void main(String[] args) {
-        Master.getInstance().startMainRunner();
+        Master.getInstance().startMainRunner(); //TODO: Change main runner and runner execution
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {
