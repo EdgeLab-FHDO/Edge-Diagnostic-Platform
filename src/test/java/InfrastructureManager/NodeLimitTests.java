@@ -17,6 +17,7 @@ public class NodeLimitTests {
 
     @BeforeClass
     public static void startServer() throws Exception { //Before all tests
+        RestOutput.getInstance("rest_out");
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
