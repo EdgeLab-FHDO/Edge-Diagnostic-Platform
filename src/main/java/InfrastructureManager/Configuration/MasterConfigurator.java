@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration3.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private List<String> scenarios;
@@ -50,10 +50,13 @@ public class MasterConfigurator {
     }
 
     //TODO: Command Handling
-    /*public CommandSet getCommands() {
-        CommandSet.getInstance().set(data.getCommands());
+    public CommandSet getCommands() {
+        Map<String,String> oe = new HashMap<>();
+        oe.put("deploy_application","console helmChartExecution");
+        oe.put("update_GUI","console updateGUIExecution");
+        CommandSet.getInstance().set(oe);
         return CommandSet.getInstance();
-    }*/
+    }
 
     /**
      * Extracts data from the configuration file to assign different input instances to their names
@@ -154,17 +157,11 @@ public class MasterConfigurator {
     }
 
     private MasterInput getInput(String inputName) {
-        if (this.inputInstances.isEmpty()) {
-            fillInputInstances();
-        }
         return this.inputInstances.get(inputName);
     }
 
     private MasterOutput[] getOutputs(String inputName) {
         List<MasterOutput> result = new ArrayList<>();
-        if (this.outputInstances.isEmpty()) {
-            fillOutputInstances();
-        }
         for (ConnectionConfigData configData : this.data.getConnections()) {
             if (configData.getIn().equals(inputName)) {
                 result.add(this.outputInstances.get(configData.getOut()));
@@ -183,13 +180,15 @@ public class MasterConfigurator {
         MasterInput runnerInput;
         MasterOutput[] runnerOutputs;
         String runnerName = "Runner ";
+        fillInputInstances();
+        fillOutputInstances();
         for (String inputName : this.data.getConnectedInputs()) {
             runnerOutputs = getOutputs(inputName);
             if (this.scenarios.contains(inputName)) {
-                result.add(new ScenarioRunner(runnerName + inputName,inputName,runnerOutputs));
+                result.add(new ScenarioRunner(runnerName + inputName, inputName, runnerOutputs));
             } else {
                 runnerInput = getInput(inputName);
-                result.add(new Runner(runnerName + inputName,runnerInput,runnerOutputs));
+                result.add(new Runner(runnerName + inputName, runnerInput, runnerOutputs));
             }
         }
         if (activateRestRunner) {
