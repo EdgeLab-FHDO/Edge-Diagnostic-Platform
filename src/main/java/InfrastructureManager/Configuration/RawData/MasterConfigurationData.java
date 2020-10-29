@@ -13,7 +13,6 @@ public class MasterConfigurationData {
 
     private IORawData ioData;
     private List<ConnectionConfigData> connections;
-    //private final List<RunnerConfigData> runners;
     //private final Map<String, String> commands;
 
     public MasterConfigurationData() {
@@ -21,7 +20,6 @@ public class MasterConfigurationData {
         ioData = null;
         connections = null;
         //commands = null;
-        //runners = null;
     }
 
     /**
@@ -43,16 +41,6 @@ public class MasterConfigurationData {
         }
         return result;
     }
-
-    /**
-     * Mehtod to get the list of runners defined for the master
-     * @return The Runners in form of a list of RunnerConfigData (Raw data for Runners) objects
-     */
-    /*public List<RunnerConfigData> getRunners() {
-        return runners;
-    }*/
-
-
 
     public IORawData getIoData() {
         return ioData;

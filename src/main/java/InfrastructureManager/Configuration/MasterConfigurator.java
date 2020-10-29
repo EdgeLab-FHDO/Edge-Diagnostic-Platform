@@ -29,6 +29,7 @@ public class MasterConfigurator {
     private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
+    private List<String> scenarios;
     private Map<String,MasterOutput> outputInstances;
     private boolean activateRestRunner = false;
     //TODO: consider making it a singleton
@@ -41,16 +42,14 @@ public class MasterConfigurator {
             this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
             this.inputInstances = new HashMap<>();
             this.outputInstances = new HashMap<>();
+            this.scenarios = new ArrayList<>();
         } catch (IOException e) {
             System.out.println("Error while reading JSON Config File");
             e.printStackTrace();
         }
     }
 
-    /**
-     * Based on the commands defined in the config file, configures the CommandSet instance and returns it
-     * @return The command set for the master to use
-     */ //TODO: Command Handling
+    //TODO: Command Handling
     /*public CommandSet getCommands() {
         CommandSet.getInstance().set(data.getCommands());
         return CommandSet.getInstance();
@@ -62,16 +61,20 @@ public class MasterConfigurator {
     private void fillInputInstances() {
         MasterInput input;
         for (IOConfigData inputData : this.data.getIoData().getInputs()) {
-            if (this.outputInstances.containsKey(inputData.getName())) {
-                input = (MasterInput) this.outputInstances.get(inputData.getName());
+            if (inputData.getType().equals("Scenario")) {
+                this.scenarios.add(inputData.getName());
             } else {
-                if (inputData.getPort() != 0) {
-                    input = getInputFromType(inputData.getType(),inputData.getPort());
+                if (this.outputInstances.containsKey(inputData.getName())) {
+                    input = (MasterInput) this.outputInstances.get(inputData.getName());
                 } else {
-                    input = getInputFromType(inputData.getType());
+                    if (inputData.getPort() != 0) {
+                        input = getInputFromType(inputData.getType(),inputData.getPort());
+                    } else {
+                        input = getInputFromType(inputData.getType());
+                    }
                 }
+                this.inputInstances.put(inputData.getName(), input);
             }
-            this.inputInstances.put(inputData.getName(), input);
         }
     }
 
@@ -150,11 +153,6 @@ public class MasterConfigurator {
         }
     }
 
-    /**
-     * According to the input instance name, returns the instance.
-     * @param inputName Name of the input instance, declared in ioData in config file
-     * @return MasterInput instance corresponding to the input name
-     */
     private MasterInput getInput(String inputName) {
         if (this.inputInstances.isEmpty()) {
             fillInputInstances();
@@ -162,11 +160,6 @@ public class MasterConfigurator {
         return this.inputInstances.get(inputName);
     }
 
-    /**
-     * According to their defined names, returns the output instances to be used by the runners
-     * @param outputNames Names of the outputs, defined in ioData in config file
-     * @return Output instances as an array
-     */
     private MasterOutput[] getOutputs(String inputName) {
         List<MasterOutput> result = new ArrayList<>();
         if (this.outputInstances.isEmpty()) {
@@ -180,25 +173,24 @@ public class MasterConfigurator {
         return result.toArray(new MasterOutput[0]);
     }
 
-    private Map<MasterInput,MasterOutput[]> createRunners() {
-
-    }
-
 
     /**
      * Based on the configuration file, returns the runners that the master should use
      * @return ArrayList of Runner objects for the master to run
      */
     public List<Runner> getRunners(){
-        //TODO: Scenarios
         List<Runner> result = new ArrayList<>();
         MasterInput runnerInput;
         MasterOutput[] runnerOutputs;
         String runnerName = "Runner ";
         for (String inputName : this.data.getConnectedInputs()) {
-            runnerInput = getInput(inputName);
             runnerOutputs = getOutputs(inputName);
-            result.add(new Runner(runnerName + inputName,runnerInput,runnerOutputs));
+            if (this.scenarios.contains(inputName)) {
+                result.add(new ScenarioRunner(runnerName + inputName,inputName,runnerOutputs));
+            } else {
+                runnerInput = getInput(inputName);
+                result.add(new Runner(runnerName + inputName,runnerInput,runnerOutputs));
+            }
         }
         if (activateRestRunner) {
             try {
@@ -207,20 +199,6 @@ public class MasterConfigurator {
                 e.printStackTrace();
             }
         }
-
-        /*
-        for (RunnerConfigData runnerData : this.data.getRunners()) {
-            name = runnerData.getName();
-            input = runnerData.getInput();
-            if (runnerData.isScenario()) { //Input as scenario name if is an scenario runner
-                result.add(new ScenarioRunner(name,input,getOutputs(runnerData.getOutputs())));
-            } else if (name.equals("RestServer")) {
-                String portNumber = input.replaceAll("[^\\d]*","");
-                result.add(RestRunner.getRestRunner(name, Integer.parseInt(portNumber)));
-            } else { //Input as masterInput
-                result.add(new Runner(name, getInput(input),getOutputs(runnerData.getOutputs())));
-            }
-        }*/
         return result;
     }
 
