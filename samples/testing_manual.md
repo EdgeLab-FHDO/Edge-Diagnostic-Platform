@@ -19,4 +19,4 @@ Run the client
 Default ``[server_alias]`` is "server", you may change this in OpenCVClient.java for testing
 
 When manually testing from bash, run:<br>
-`java -Djava.library.path=gen/ -cp gen/opencv-450.jar:. OpenCVClient`
+`java -Djava.library.path=gen/ -cp usr/share/java/jackson-core-2.4.2.jar:usr/share/java/jackson-databind-2.4.2.jar:usr/share/java/jackson-annotations-2.4.2.jar:usr/share/java/:gen/opencv-450.jar:. [application]`

@@ -3,6 +3,7 @@ FROM ubuntu:16.04
 COPY install.sh install.sh
 COPY build_classes.sh build_classes.sh
 COPY ImageProcessor.java ImageProcessor.java
+COPY OpenCVUtil.java OpenCVUtil.java
 COPY DetectMarker.java DetectMarker.java
 COPY OpenCVServer.java OpenCVServer.java
 RUN chmod +x install.sh && sync && ./install.sh && rm install.sh
