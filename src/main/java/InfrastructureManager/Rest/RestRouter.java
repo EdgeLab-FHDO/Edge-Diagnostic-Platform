@@ -1,8 +1,8 @@
 package InfrastructureManager.Rest;
 
-import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.Utility.Authentication.AuthenticationManager;
-import spark.*;
+import spark.Spark;
+
 import static spark.Spark.*;
 
 public class RestRouter {

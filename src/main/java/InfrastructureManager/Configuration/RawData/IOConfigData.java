@@ -2,9 +2,9 @@ package InfrastructureManager.Configuration.RawData;
 
 public class IOConfigData {
 
-    private String type;
-    private String name;
-    private int port;
+    private final String type;
+    private final String name;
+    private final int port;
 
     public IOConfigData() {
         this.type = null;

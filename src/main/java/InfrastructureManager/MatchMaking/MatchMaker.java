@@ -16,9 +16,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final ObjectMapper mapper;
     private String command = "";
 
-    private List<EdgeNode> nodeList;
-    private List<EdgeClient> clientList;
-    private Map<EdgeClient,EdgeNode> mapping;
+    private final List<EdgeNode> nodeList;
+    private final List<EdgeClient> clientList;
+    private final Map<EdgeClient,EdgeNode> mapping;
 
     public MatchMaker(String name) {
         super(name);

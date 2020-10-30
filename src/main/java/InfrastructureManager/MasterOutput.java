@@ -1,7 +1,7 @@
 package InfrastructureManager;
 
 public abstract class MasterOutput {
-    private String name;
+    private final String name;
 
     public MasterOutput() {
         this.name = null;
