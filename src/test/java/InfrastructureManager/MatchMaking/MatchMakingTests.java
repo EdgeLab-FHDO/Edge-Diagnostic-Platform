@@ -61,7 +61,7 @@ public class MatchMakingTests {
     @Before
     public void fillCommands() {
         Map<String,String> commands = new HashMap<>();
-        commands.put("give_node","restOut sendNode");
+        commands.put("give_node $client_id $node_id","restOut sendNode $client_id $node_id");
         this.commandSet.set(commands);
     }
 
