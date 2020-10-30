@@ -34,15 +34,15 @@
       "commands" : {
         "exit" : "util exit",
         "start_rest_server" : "util runRunner RestServer",
-        "start_runner" : "util runRunner"
+        "start_runner $runner_name" : "util runRunner $runner_name"
       }
     },
     {
       "in" : "console_in",
       "out" : "advant_e",
       "commands" : {
-        "ae_create_scenario" : "advantEdge create",
-        "ae_deploy_scenario" : "advantEdge deploy",
+        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
+        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
         "ae_terminate_active" : "advantEdge terminate"
       }
     },
@@ -50,18 +50,18 @@
       "in" : "console_in",
       "out" : "scenario_editor",
       "commands" : {
-        "create_scenario" : "editor create",
-        "add_event" : "editor addEvent",
+        "create_scenario $scenario_name" : "editor create $scenario_name",
+        "add_event $event_name $execution_time" : "editor addEvent $event_name $execution_time",
         "delete_event" : "editor deleteEvent",
-        "save_scenario" : "editor toFile",
-        "read_scenario" : "editor fromFile"
+        "save_scenario $path" : "editor toFile $path",
+        "read_scenario $path" : "editor fromFile $path"
       }
     },
     {
       "in" : "console_in",
       "out" : "scenario_dispatcher",
       "commands" : {
-        "load_scenario" : "dispatcher fromFile",
+        "load_scenario $path" : "dispatcher fromFile $path",
         "run_scenario" : "dispatcher run",
         "pause_scenario" : "dispatcher pause",
         "resume_scenario" : "dispatcher resume"
@@ -72,30 +72,30 @@
       "out" : "util",
       "commands" : {
         "exit" : "util exit",
-        "start_runner" : "util runRunner"
+        "start_runner $runnerName" : "util runRunner $runnerName"
       }
     },
     {
       "in" : "rest_in",
       "out" : "match_m",
       "commands" : {
-        "register_client" : "matchMaker register_client",
-        "register_node" : "matchMaker register_node",
-        "assign_client" : "matchMaker assign_client"
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
       }
     },
     {
       "in" : "match_m",
       "out" : "rest_out",
       "commands" : {
-        "give_node": "restOut sendNode"
+        "give_node $client_id $node_id": "restOut sendNode $client_id $node_id"
       }
     },
     {
       "in" : "console_in",
       "out" : "rest_out",
       "commands" : {
-        "limit_node" : "restOut limit"
+        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
       }
     },
     {
