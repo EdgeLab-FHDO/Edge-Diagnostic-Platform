@@ -86,16 +86,15 @@ public class RestOutput extends MasterOutput {
         this.limitNodes.put(tag, quota_ms + "_" + period_ms);
     }
 
-    public static RestOutput getInstance(String name) {
+    public static void setInstanceName(String name) {
         if (instance == null) {
             instance = new RestOutput(name);
         }
-        return instance;
     }
 
-    public static RestOutput getInstance() throws Exception {
+    public static RestOutput getInstance() {
         if (instance == null) {
-            throw new Exception("Instance Name not set");
+            setInstanceName("rest_out"); //Default name because is a singleton
         }
         return instance;
     }

@@ -93,7 +93,8 @@ public class MasterConfigurator {
             case  "ScenarioEditor" :
                 return new ScenarioEditor(outputData.getName());
             case "RestOutput":
-                return RestOutput.getInstance(outputData.getName());
+                RestOutput.setInstanceName(outputData.getName());
+                return RestOutput.getInstance();
             case "MatchMaker" :
                 return new MatchMaker(outputData.getName());
             case "AdvantEdgeClient" :

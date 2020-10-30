@@ -20,13 +20,11 @@ public class MatchMakingTests {
     private final MatchMaker matchMaker = new MatchMaker("match_m");
     private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
-    private static RestOutput restOutput;
 
 
     @BeforeClass
     public static void startServer() throws Exception { //Before all tests
         String testIp = "http://localhost";
-        restOutput = RestOutput.getInstance("rest_out");
         int port = 4567;
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
@@ -74,7 +72,7 @@ public class MatchMakingTests {
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         matchMaker.out("matchMaker assign_client client1");
-        restOutput.out(Master.getInstance().execute(matchMaker.read(),commandSet));
+        RestOutput.getInstance().out(Master.getInstance().execute(matchMaker.read(),commandSet));
         String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
 
         String response = given().spec(requestSpec)
