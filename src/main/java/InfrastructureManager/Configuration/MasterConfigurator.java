@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration3.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private List<String> scenarios;
