@@ -18,25 +18,39 @@ public class OpenCVServer {
     private DataInputStream in;
     private PrintWriter out;
     private DetectMarker detector;
+    private int port;
 
     private String fileName= "read.png";
 
     private BufferedImage currentImage;
 
+    private Thread serverThread;
+    private Thread heartBeatThread;
+
+    private static OpenCVServer instance = null;
+
     public OpenCVServer() {
     }
 
-    public void start(int port) {
+    public void startConnection() {
         try {
             serverSocket = new ServerSocket(port);
             clientSocket = serverSocket.accept();
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new DataInputStream(clientSocket.getInputStream());
-            //if input is faulty, timeout and continue
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // change name to something more appropriate
+    public void standbyForConnection() {
+        //if input is faulty, timeout and continue
+        try {
             currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
+            ImageIO.write(currentImage, "png", new File(fileName));
             Mat subject = ImageProcessor.getImageMat(fileName);
 
-            ImageIO.write(currentImage, "png", new File(fileName));
             detector = new DetectMarker();
             detector.detect(subject);
             String ids = OpenCVUtil.serializeMat(detector.getIds());
@@ -47,6 +61,8 @@ public class OpenCVServer {
             ObjectNode resultObject = mapper.createObjectNode();
             resultObject.put("ids", ids);
             resultObject.put("corners", corners);
+            System.out.println(ids);
+            System.out.println(corners);
 
             result = mapper.writeValueAsString(resultObject);
 
@@ -54,9 +70,10 @@ public class OpenCVServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
     }
-
-    public void stop() {
+ 
+    public void stopConnection() {
         try {
             in.close();
             out.close();
@@ -67,10 +84,49 @@ public class OpenCVServer {
         }
     }
 
+    private void setup(String[] args) {
+        String[] argument;
+        port = 10200; //any port 10000 - 64999 otherwise as specified
+        // make a rest request to the master to ask for server and port for server
+        // do locally if no response
+        try {
+            for(int i=0; i<args.length; i++) {
+                argument = args[i].split("=");
+                switch(argument[0]) {
+                    case "PORT":
+                        this.port = port;
+                        break;
+                    default :
+                        throw new IllegalArgumentException("Invaild argument");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static OpenCVServer getInstance() {
+        if (instance == null) {
+            instance = new OpenCVServer();
+        }
+        return instance;
+    }
+    
     public static void main(String[] args) {
         DetectMarker.initOpenCVSharedLibrary();
-        OpenCVServer server = new OpenCVServer();
-        int port = 10200; // take port as argument
-        server.start(port);
+        OpenCVServer activeServer = OpenCVServer.getInstance();
+        activeServer.setup(args);
+        
+        activeServer.serverThread = new Thread(new ServerRunner());
+        activeServer.serverThread.start();
+        activeServer.heartBeatThread = new Thread(new HeartBeatRunner());
+        activeServer.heartBeatThread.start();
+        
+        try {
+            activeServer.serverThread.join();
+            activeServer.heartBeatThread.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

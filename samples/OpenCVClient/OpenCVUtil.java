@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class OpenCVUtil {
-    public static String serializeMat(Mat subject) {
+    public static String serializeMat(Mat subject) throws Exception {
         int type = subject.type();
         int rows = subject.rows();
         int cols = subject.cols();
@@ -62,11 +62,10 @@ public class OpenCVUtil {
         String returnedResult = "";
         String[] resultCandidate;
 
-        for (Mat content : subject) {
-            result.add(serializeMat(content));
-        }
-
         try {
+            for (Mat content : subject) {
+                result.add(serializeMat(content));
+            }
             returnedResult = mapper.writeValueAsString(result);
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,7 +74,8 @@ public class OpenCVUtil {
         return returnedResult;
     }
     
-    public static Mat deserializeMat(String subject) {
+    public static Mat deserializeMat(String subject) throws Exception {
+        System.out.println("deserializeMat");
         ObjectMapper mapper = new ObjectMapper();
         Mat result = new Mat();
         int type=0;
@@ -134,13 +134,20 @@ public class OpenCVUtil {
         return result;
     }
 
-    public static List<Mat> deserializeMatList(String subject) {
+    public static List<Mat> deserializeMatList(String subject) throws Exception {
+        System.out.println("deserializeMatList");
+
         List<Mat> result = new ArrayList<Mat>();
         String[] elements = subject.replace("[\"", "").replace("\"]", "").split("\",\"");
-
-        for(String element : elements) {
-            result.add(deserializeMat(element));
+        try {
+            for(String element : elements) {
+                result.add(deserializeMat(element));
+            }
+        } catch (Exception e) {
+            //TODO: handle exception
+            throw new Exception("Invalid OpenCV Type");
         }
+        
 
         return result;
     }
