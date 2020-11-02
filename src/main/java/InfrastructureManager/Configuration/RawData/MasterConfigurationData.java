@@ -1,7 +1,8 @@
 package InfrastructureManager.Configuration.RawData;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -9,31 +10,27 @@ import java.util.Map;
  */
 public class MasterConfigurationData {
 
-    private IORawData ioData;
-    private final List<RunnerConfigData> runners;
-    private final Map<String, String> commands;
+    private final IORawData ioData;
+    private final List<ConnectionConfigData> connections;
 
     public MasterConfigurationData() {
         //Initialize all values in null;
         ioData = null;
-        commands = null;
-        runners = null;
+        connections = null;
     }
 
-    /**
-     * Method to get the commands defined for the master
-     * @return The commands defined in the configuration in form of a Map Object
-     */
-    public Map<String, String> getCommands() {
-        return commands;
+    public List<ConnectionConfigData> getConnections() {
+        return connections;
     }
 
-    /**
-     * Mehtod to get the list of runners defined for the master
-     * @return The Runners in form of a list of RunnerConfigData (Raw data for Runners) objects
-     */
-    public List<RunnerConfigData> getRunners() {
-        return runners;
+    public Set<String> getConnectedInputs() {
+        Set<String> result = new HashSet<>();
+        if (this.connections != null) {
+            for (ConnectionConfigData data : this.connections) {
+                result.add(data.getIn());
+            }
+        }
+        return result;
     }
 
     public IORawData getIoData() {

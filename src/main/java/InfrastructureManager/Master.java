@@ -4,17 +4,14 @@ import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Master Class of the Infrastructure Manager, singleton class
  */
 public class Master {
 
-    private final CommandSet commandSet;
-    private final ArrayList<Runner> runnerList;
+    private final List<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
 
@@ -29,7 +26,6 @@ public class Master {
      */
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
-        commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
@@ -43,13 +39,9 @@ public class Master {
         /*---------------------------------------------------------*/
     }
 
-    /**
-     * Based on the command set predefined, execute a command
-     * @param command Command to be executed coming from the input
-     * @return Response going to the output(s)
-     */
-    public String execute(String command) {
-        return this.commandSet.getResponse(command);
+
+    public String execute(String fromInput, CommandSet commands) {
+        return commands.getResponse(fromInput);
     }
 
     /**
@@ -68,7 +60,7 @@ public class Master {
      */
     public void startMainRunner() {
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("Main")) {
+            if (runner.getName().equals("Runner_console_in")) {
                 mainThread = new Thread(runner,"MainRunner");
                 mainThread.start();
                 break;

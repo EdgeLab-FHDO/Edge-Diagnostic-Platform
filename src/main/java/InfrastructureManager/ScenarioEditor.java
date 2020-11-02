@@ -14,12 +14,13 @@ import java.io.IOException;
  * - Save Scenarios to JSON Files
  * - Load Scenarios from JSON Files
  */
-public class ScenarioEditor implements MasterOutput{
+public class ScenarioEditor extends MasterOutput{
 
     private Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor() {
+    public ScenarioEditor(String name) {
+        super(name);
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }

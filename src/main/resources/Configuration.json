@@ -2,8 +2,9 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "RestInput","name": "rest_in"},
-        {"type": "MatchMaker","name": "match_m"}
+        {"type": "RestInput","name": "rest_in", "port": 4567},
+        {"type": "MatchMaker","name": "match_m"},
+        {"type": "Scenario", "name": "dummy"}
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
@@ -15,63 +16,96 @@
         {"type": "MatchMaker","name": "match_m"}
       ]
     },
-  "runners" : [
+  "connections" : [
     {
-      "name" : "Main",
-      "scenario" : false,
-      "input" : "console_in",
-      "outputs" : ["console_out", "util", "advant_e", "scenario_dispatcher", "scenario_editor"]
+      "in" : "console_in",
+      "out" : "console_out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution" ,
+        "save_statistics" : "console LoggerExecution" ,
+        "show_statistics" : "console GUIUpdateExecution"
+      }
     },
     {
-      "name" : "RestInputTest",
-      "scenario" : false,
-      "input" : "rest_in",
-      "outputs" : ["console_out", "util", "match_m"]
+      "in" : "console_in",
+      "out" : "util",
+      "commands" : {
+        "exit" : "util exit",
+        "start_rest_server" : "util runRunner RestServer",
+        "start_runner $runner_name" : "util runRunner $runner_name"
+      }
     },
     {
-      "name" : "MMInputTest",
-      "scenario" : false,
-      "input" : "match_m",
-      "outputs" : ["rest_out"]
+      "in" : "console_in",
+      "out" : "advant_e",
+      "commands" : {
+        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
+        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
+        "ae_terminate_active" : "advantEdge terminate"
+      }
     },
     {
-      "name" : "Dummy Scenario",
-      "scenario" : true,
-      "input" : "dummy",
-      "outputs" : ["console_out"]
+      "in" : "console_in",
+      "out" : "scenario_editor",
+      "commands" : {
+        "create_scenario $scenario_name" : "editor create $scenario_name",
+        "add_event $event_name $execution_time" : "editor addEvent $event_name $execution_time",
+        "delete_event" : "editor deleteEvent",
+        "save_scenario $path" : "editor toFile $path",
+        "read_scenario $path" : "editor fromFile $path"
+      }
     },
     {
-      "name" : "RestServer",
-      "scenario" : false,
-      "input" : "port4567",
-      "outputs" : [""]
+      "in" : "console_in",
+      "out" : "scenario_dispatcher",
+      "commands" : {
+        "load_scenario $path" : "dispatcher fromFile $path",
+        "run_scenario" : "dispatcher run",
+        "pause_scenario" : "dispatcher pause",
+        "resume_scenario" : "dispatcher resume"
+      }
+    },
+    {
+      "in" : "rest_in",
+      "out" : "util",
+      "commands" : {
+        "exit" : "util exit",
+        "start_runner $runnerName" : "util runRunner $runnerName"
+      }
+    },
+    {
+      "in" : "rest_in",
+      "out" : "match_m",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "match_m",
+      "out" : "rest_out",
+      "commands" : {
+        "give_node $client_id $node_id": "restOut sendNode $client_id $node_id"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "rest_out",
+      "commands" : {
+        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
+      }
+    },
+    {
+      "in" : "dummy",
+      "out" : "console_out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution"
+      }
     }
-  ],
-  "commands" : {
-    "exit" : "util exit",
-    "start_rest_server" : "util runRunner RestServer",
-    "start_runner" : "util runRunner",
-    "deploy_application" : "console helmChartExecution" ,
-    "node_request" : "console matchMakingExecution" ,
-    "update_gui" : "console GUIUpdateExecution" ,
-    "save_statistics" : "console LoggerExecution" ,
-    "show_statistics" : "console GUIUpdateExecution",
-    "create_scenario" : "editor create",
-    "add_event" : "editor addEvent",
-    "delete_event" : "editor deleteEvent",
-    "save_scenario" : "editor toFile",
-    "read_scenario" : "editor fromFile",
-    "load_scenario" : "dispatcher fromFile",
-    "run_scenario" : "dispatcher run",
-    "pause_scenario" : "dispatcher pause",
-    "resume_scenario" : "dispatcher resume",
-    "ae_create_scenario" : "advantEdge create",
-    "ae_deploy_scenario" : "advantEdge deploy",
-    "ae_terminate_active" : "advantEdge terminate",
-    "give_node": "restOut sendNode",
-    "limit_node" : "restOut limit",
-    "register_client" : "matchMaker register_client",
-    "register_node" : "matchMaker register_node",
-    "assign_client" : "matchMaker assign_client"
-  }
+  ]
 }

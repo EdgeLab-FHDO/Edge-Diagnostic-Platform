@@ -1,30 +1,38 @@
 package InfrastructureManager.Rest;
 
-import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.Utility.Authentication.AuthenticationManager;
-import spark.*;
+import spark.Spark;
+
 import static spark.Spark.*;
 
 public class RestRouter {
 
     private RestRouter(int port) {
-        before("/*", AuthenticationManager.authenticate);
-        path("/node", () -> {
-            path("/test", () -> {
-                post("/read/:input", RestInput.readParameterTest);
+        try {
+            before("/*", AuthenticationManager.authenticate);
+            path("/node", () -> {
+                path("/test", () -> {
+                    post("/read/:input", RestInput.readParameterTest);
+                });
+                post("/execute/:command", RestInput.executeCommand);
+                post("/register", RestInput.registerNode);
             });
-            post("/execute/:command", RestInput.executeCommand);
-            post("/register", RestInput.registerNode);
-        });
-        path("/client", () -> {
-            post("/register", RestInput.registerClient);
-            post("/assign/:client_id", RestInput.assignClient);
-            get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
-        });
-        get("/limit", RestOutput.getInstance().sendLimitInfo);
-        get("/heartbeat", (request, response) -> {
-            return response.status();
-        });
+            path("/client", () -> {
+                post("/register", RestInput.registerClient);
+                post("/assign/:client_id", RestInput.assignClient);
+                try {
+                    get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+            get("/limit", RestOutput.getInstance().sendLimitInfo);
+            get("/heartbeat", (request, response) -> {
+                return response.status();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

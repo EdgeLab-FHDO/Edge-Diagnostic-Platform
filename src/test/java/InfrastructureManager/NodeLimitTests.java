@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import static io.restassured.RestAssured.given;
 
 public class NodeLimitTests {
-    private RestOutput output = RestOutput.getInstance();
+    private static RestOutput output = RestOutput.getInstance();
     private static RequestSpecification requestSpec;
     private static String testIp = "http://localhost";
     private static int port = 4567;

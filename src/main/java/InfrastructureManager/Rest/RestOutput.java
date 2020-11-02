@@ -13,7 +13,7 @@ import spark.Route;
 
 import java.util.*;
 
-public class RestOutput implements MasterOutput {
+public class RestOutput extends MasterOutput {
 
     private static RestOutput instance = null;
 
@@ -31,7 +31,8 @@ public class RestOutput implements MasterOutput {
         return response_body;
     };
 
-    private RestOutput() {
+    private RestOutput(String name) {
+        super(name);
         this.mapper = new ObjectMapper();
         this.output = new LinkedList<>();
         this.limitNodes = new LinkedHashMap<>();
@@ -85,9 +86,15 @@ public class RestOutput implements MasterOutput {
         this.limitNodes.put(tag, quota_ms + "_" + period_ms);
     }
 
+    public static void setInstanceName(String name) {
+        if (instance == null) {
+            instance = new RestOutput(name);
+        }
+    }
+
     public static RestOutput getInstance() {
         if (instance == null) {
-            instance = new RestOutput();
+            setInstanceName("rest_out"); //Default name because is a singleton
         }
         return instance;
     }

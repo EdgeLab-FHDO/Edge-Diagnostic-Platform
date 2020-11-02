@@ -1,44 +1,38 @@
 package InfrastructureManager.Configuration;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Singleton Class that interfaces the command set to the master
  * Implements the MasterConfig and MasterResource generic interfaces with a Map of Strings
  */
-public class CommandSet implements MasterConfig<Map<String,String>> {
-
-    private static CommandSet instance = null; //Singleton Implementation, only one command set will be necessary
+public class CommandSet {
 
     private Map<String,String> commands;
+    private final Map<String,List<Integer>> parameterMapping;
 
-    private CommandSet() {
+    public CommandSet() {
         this.commands = new HashMap<>();
-    }
-
-    public static CommandSet getInstance() { //Singleton implementation
-        if (instance == null) {
-            instance = new CommandSet();
-        }
-        return instance;
+        this.parameterMapping = new HashMap<>();
     }
 
     /**
      * Set the command set to a given map
      * @param config Map<String,String> element containing the commands in the form of ({command} : {response})
      */
-    @Override
     public void set(Map<String, String> config) {
         this.commands = config;
+        fillMapping();
     }
 
     /**
      * Return the commands in form of a map
      * @return Map<String,String> element containing the commands in the form of ({command} : {response})
      */
-    @Override
     public Map<String, String> get() {
         return this.commands;
     }
@@ -51,17 +45,58 @@ public class CommandSet implements MasterConfig<Map<String,String>> {
      * @throws IllegalArgumentException if the command is not defined or is empty
      */
     public String getResponse(String command) throws IllegalArgumentException {
-        String[] aux = command.split(" ");
-        String param = command.replace(aux[0],"");
-        command = aux[0];
+        String[] commandAsArray = command.split(" ");
+        //String param = command.replace(commandAsArray[0],"");
+        command = commandAsArray[0];
         if (command.isEmpty()) {
             throw new IllegalArgumentException("Empty Command at input!");
         } else {
-            if (this.commands.containsKey(command)) {
-                return this.commands.get(command) + param;
+            String response = getUnmappedResponse(commandAsArray);
+            if (response != null) {
+                return mapCommand(commandAsArray,response);
             } else {
-                throw new IllegalArgumentException("Command not defined in config");
+                return null;
             }
         }
+    }
+
+    private void fillMapping() {
+        for (String command : this.commands.keySet()){
+            this.parameterMapping.put(command.split(" ")[0],getMappingPositions(command));
+        }
+    }
+
+    private List<Integer> getMappingPositions(String command) {
+        List<Integer> result = new ArrayList<>();
+        String[] commandAsArray = command.split(" ");
+        String response = this.commands.get(command);
+        for (int i = 1; i < commandAsArray.length; i++) {
+            if (response.contains(commandAsArray[i])) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    private String getUnmappedResponse(String[] commandAsArray) {
+        String[] aux;
+        for (String definedCommand : this.commands.keySet()) {
+            if (definedCommand.startsWith(commandAsArray[0])) {
+                aux = definedCommand.split(" ");
+                if (aux.length == commandAsArray.length){
+                    return this.commands.get(definedCommand);
+                }
+            }
+        }
+        return null;
+    }
+
+    private String mapCommand(String[] commandAsArray, String response) {
+        List<Integer> positions = this.parameterMapping.get(commandAsArray[0]);
+        for (int i = 0; i < positions.size() ; i++) {
+            response = response.replaceFirst("\\s+\\$.+?\\b"," " + commandAsArray[positions.get(i)]);
+        }
+        return response;
+
     }
 }

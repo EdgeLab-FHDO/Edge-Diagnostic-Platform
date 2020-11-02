@@ -10,7 +10,7 @@ import java.io.File;
 
 public class ScenarioEditorTests {
 
-    ScenarioEditor editor = new ScenarioEditor();
+    ScenarioEditor editor = new ScenarioEditor("scenario_editor");
     final String scenarioName = "testScenario";
 
     @Test

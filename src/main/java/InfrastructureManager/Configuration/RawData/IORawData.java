@@ -4,8 +4,8 @@ import java.util.List;
 
 public class IORawData {
 
-    private List<IOConfigData> inputs;
-    private List<IOConfigData> outputs;
+    private final List<IOConfigData> inputs;
+    private final List<IOConfigData> outputs;
 
     public IORawData() {
         this.inputs = null;
