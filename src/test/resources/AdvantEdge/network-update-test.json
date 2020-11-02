@@ -1,0 +1,15 @@
+{
+  "name": "name",
+  "type": "NETWORK-CHARACTERISTICS-UPDATE",
+  "eventNetworkCharacteristicsUpdate": {
+    "elementName": "fog-1",
+    "elementType": "FOG",
+    "netChar": {
+      "throughputDl": 10,
+      "throughputUl": 10,
+      "latency": 50,
+      "latencyVariation": 1,
+      "packetLoss": 0
+    }
+  }
+}

@@ -1,14 +1,20 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Configuration.CommandSet;
+import InfrastructureManager.Configuration.MasterConfigurator;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Master Class of the Infrastructure Manager, singleton class
  */
 public class Master {
 
-    private final CommandSet commandSet;
-    private final ArrayList<Runner> runnerList;
+    private final List<Runner> runnerList;
+    private final List<EdgeNode> availableNodes;
+    private final List<EdgeClient> registeredClients;
+
     private Thread mainThread;
     private Thread restThread;
 
@@ -20,17 +26,22 @@ public class Master {
      */
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
-        commandSet = configurator.getCommands();
         runnerList = configurator.getRunners();
+        registeredClients = new ArrayList<>();
+        availableNodes = new ArrayList<>();
+        /* Temporal made up nodes for testing */
+        /*
+        availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
+        availableNodes.add(new EdgeNode("node2", "192.168.0.2",true));
+        availableNodes.add(new EdgeNode("node3", "192.168.0.3",true));
+        availableNodes.add(new EdgeNode("node4", "192.168.0.4",true));
+        availableNodes.add(new EdgeNode("node5", "192.168.0.5",true));
+        /*---------------------------------------------------------*/
     }
 
-    /**
-     * Based on the command set predefined, execute a command
-     * @param command Command to be executed coming from the input
-     * @return Response going to the output(s)
-     */
-    public String execute(String command) {
-        return this.commandSet.getResponse(command);
+
+    public String execute(String fromInput, CommandSet commands) {
+        return commands.getResponse(fromInput);
     }
 
     /**
@@ -49,7 +60,7 @@ public class Master {
      */
     public void startMainRunner() {
         for (Runner runner : runnerList) {
-            if (runner.getName().equals("Main")) {
+            if (runner.getName().equals("Runner_console_in")) {
                 mainThread = new Thread(runner,"MainRunner");
                 mainThread.start();
                 break;
@@ -164,6 +175,38 @@ public class Master {
         throw new IllegalArgumentException("There is no runner configured for the given scenario");
     }
 
+    public List<EdgeNode> getAvailableNodes() {
+        return availableNodes;
+    }
+
+    public void addNode(EdgeNode node) {
+        this.availableNodes.add(node);
+    }
+
+
+    public void addClient(EdgeClient client) {
+        this.registeredClients.add(client);
+    }
+
+    public EdgeClient getClientByID (String clientID) throws Exception {
+        for (EdgeClient client : this.registeredClients) {
+            if (client.getId().equals(clientID)) {
+                return client;
+            }
+        }
+        throw new Exception("No client found");
+    }
+
+    public EdgeNode getNodeByID (String nodeID) throws Exception {
+        for (EdgeNode node : this.availableNodes) {
+            if (node.getId().equals(nodeID)) {
+                return node;
+            }
+        }
+        throw new Exception("No node found");
+    }
+
+
     /**
      * Singleton method for getting the only instance of the class
      * @return The instance of the Master Class
@@ -175,9 +218,10 @@ public class Master {
         return instance;
     }
 
+
+
     public static void main(String[] args) {
         Master.getInstance().startMainRunner();
-        Master.getInstance().startRunnerThread("RestServer");
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {

@@ -1,5 +1,10 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Configuration.CommandSet;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Class implementing the Runnable interface to be run in different threads by the master.
  * Implements the basic master functionality of reading from input, mapping and sending to output.
@@ -9,6 +14,7 @@ public class Runner implements Runnable{
     protected String name;
     protected MasterInput input;
     protected MasterOutput[] outputs;
+    protected Map<String, CommandSet> configuredCommands;
 
     protected final Object pauseLock = new Object(); //In order to pause the runnable
     protected volatile boolean paused = false; //Flag to check status and be able to pause
@@ -32,8 +38,13 @@ public class Runner implements Runnable{
      */
     public Runner(String name,MasterInput input, MasterOutput...outputs) {
         this(name);
+        this.configuredCommands = new HashMap<>();
         this.input = input;
         this.outputs = outputs;
+    }
+
+    public void setConfiguredCommands(Map<String, CommandSet> configuredCommands) {
+        this.configuredCommands = configuredCommands;
     }
 
     /**
@@ -76,9 +87,16 @@ public class Runner implements Runnable{
     protected void runOperation() {
         Master master = Master.getInstance();
         try {
-            String mapping = master.execute(input.read());
+            String fromInput = input.read();
             for (MasterOutput output : outputs) {
-                output.out(mapping);
+                String mapping = master.execute(fromInput,configuredCommands.get(output.getName()));
+                if (mapping != null) {
+                    try {
+                        output.out(mapping);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         } catch (Exception e) {
            if (!e.getMessage().equals("No command exception")) {

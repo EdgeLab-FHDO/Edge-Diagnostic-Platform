@@ -3,7 +3,12 @@ package InfrastructureManager;
 /**
  * Class implementing MasterOutput, for utilities within the master
  */
-public class MasterUtility implements MasterOutput {
+public class MasterUtility extends MasterOutput {
+
+    public MasterUtility(String name) {
+        super(name);
+    }
+
     /**
      * Out method implementation according to MasterOutput interface, which gets commands from the master
      * @param response Response coming from the master.
