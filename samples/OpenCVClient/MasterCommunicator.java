@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class MasterCommunicator {
     //later move this to configuration or as a paramter
-    private String masterUrl = "https://divine-wave-184.getsandbox.com/hello";
+    private String masterUrl = "http://host.docker.internal:4567/client/get_node/client13";
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -48,12 +48,8 @@ public class MasterCommunicator {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(response.body());
-            Iterator<JsonNode> iterator = node.iterator();
-            int i = 0;
-            while(iterator.hasNext() && i < 2) {
-                serverInformation[i] = iterator.next().asText();
-                i++;
-            }
+            serverInformation[0] = "IP=" + node.findValue("ipAddress").asText();
+            serverInformation[1] = "PORT=" + node.findValue("port").asText();
         } catch (Exception e) {
             e.printStackTrace();
         }

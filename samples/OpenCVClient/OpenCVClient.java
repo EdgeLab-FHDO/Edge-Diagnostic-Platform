@@ -230,7 +230,12 @@ public class OpenCVClient {
         activeClient.masterCommunicationThread.start();
         activeClient.processingThread = new Thread(new ProcessingRunner(), "ProcessingThread");
         activeClient.processingThread.start();
-        activeClient.heartBeatThread = new Thread(new HeartBeatRunner(), "HeartBeatThread");
+        HeartBeatRunner beatRunner = new HeartBeatRunner();
+        beatRunner.url = "http://host.docker.internal:4567/client/register";
+        beatRunner.body = "{" +
+                "\"id\" : \"client13\"" +
+                "}";
+        activeClient.heartBeatThread = new Thread(beatRunner, "HeartBeatThread");
         activeClient.heartBeatThread.start();
         //System.out.println("threads started");
         

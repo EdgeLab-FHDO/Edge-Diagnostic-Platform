@@ -8,7 +8,7 @@ import java.net.http.HttpRequest.BodyPublishers.*;
 import java.util.Iterator;
 
 public class EdpHeartbeat {
-    private String masterUrl = "https://divine-wave-184.getsandbox.com/users";
+    public String masterUrl = "http://127.0.0.1:4567/";
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -22,8 +22,8 @@ public class EdpHeartbeat {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(masterUrl))
                     .timeout(Duration.ofMinutes(1))
-                    .header("Content-Type", "application/text")
-                    .POST(HttpRequest.BodyPublishers.ofString("beat for " + name))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(name))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());

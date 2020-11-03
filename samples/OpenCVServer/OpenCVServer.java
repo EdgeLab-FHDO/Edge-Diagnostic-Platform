@@ -119,7 +119,15 @@ public class OpenCVServer {
         
         activeServer.serverThread = new Thread(new ServerRunner());
         activeServer.serverThread.start();
-        activeServer.heartBeatThread = new Thread(new HeartBeatRunner());
+        HeartBeatRunner beatRunner = new HeartBeatRunner();
+        beatRunner.url = "http://host.docker.internal:4567/node/register";
+        beatRunner.body = "{" +
+                "    \"id\": \"node2\"," +
+                "    \"ipAddress\": \"172.19.0.1\"," +
+                "    \"connected\": true," +
+                "    \"port\": 10200" +
+                "}";
+        activeServer.heartBeatThread = new Thread(beatRunner);
         activeServer.heartBeatThread.start();
         
         try {
