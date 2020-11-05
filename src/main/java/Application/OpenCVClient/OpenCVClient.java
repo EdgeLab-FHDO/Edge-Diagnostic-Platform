@@ -65,12 +65,9 @@ public class OpenCVClient {
     }
 
     public String sendImage() {
-        //System.out.println("sendImage");
         String resp = "";
-        SerializableMat receivedIds;
         Mat ids;
         try {
-            //System.out.println("sendImage2");
             currentImage = ImageIO.read(new File(fileName));
             ImageIO.write(currentImage, fileExtension, clientSocket.getOutputStream());
                 System.out.println("sendImage3");
@@ -78,7 +75,6 @@ public class OpenCVClient {
         } catch (Exception e) {
             //e.printStackTrace();
         }
-        //System.out.println("sendImage4");
 
         return resp;
     }

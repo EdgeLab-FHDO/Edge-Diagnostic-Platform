@@ -5,3 +5,5 @@
 Dockerfile
 src/test/resources/testScenario.json
 *.bat
+src/main/java/Application/testfiles
+src/main/java/Application/temp
