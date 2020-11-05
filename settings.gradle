@@ -1,2 +1,3 @@
 rootProject.name = 'Edge-Diagnostic-Platform'
 
+include ':libraries:opencv'
