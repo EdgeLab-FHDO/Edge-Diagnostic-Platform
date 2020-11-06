@@ -17,10 +17,4 @@ RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.
 #execute
 COPY OpenCVServer/server_exe.sh server_exe.sh
 WORKDIR /
-ENV serverid=13
-ENV serverip=172.0.0.1
-ENV masterurl=http://host.docker.internal:4567/
-ENV beatcommand=client/register
-ENV connected=true
-ENV port=10200
 RUN chmod +x server_exe.sh && sync && ./server_exe.sh && rm server_exe.sh
