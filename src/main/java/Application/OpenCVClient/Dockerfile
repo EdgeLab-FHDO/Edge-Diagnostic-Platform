@@ -18,4 +18,8 @@ RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.
 #execute
 COPY OpenCVClient/client_exe.sh client_exe.sh
 WORKDIR /
+ENV clientid=client13
+ENV masterurl=http://host.docker.internal:4567/
+ENV beatcommand=client/register
+ENV getservercommand=client/get_node/
 RUN chmod +x client_exe.sh && sync && ./client_exe.sh && rm client_exe.sh

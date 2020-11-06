@@ -130,7 +130,6 @@ public class OpenCVServer {
         String missingParameterList = "";
 
         for(int i=0; i<args.length; i++) {
-            argument = args[i].split("=");
             System.out.println(argument[1]);
             switch(argument[0]) {
                 case "SERVER_ID":
