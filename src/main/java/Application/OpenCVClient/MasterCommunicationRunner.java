@@ -3,12 +3,18 @@ import java.net.StandardSocketOptions;
 public class MasterCommunicationRunner implements Runnable {
     //TO DO: change extends Runner and instead implement Runnable
     //TO DO: reuse instances
+    private OpenCVClient activeClient;
+    private ConnectionEvaluator evaluation;
+    public MasterCommunicator communicator;
+
+    public MasterCommunicationRunner() {
+        activeClient = OpenCVClient.getInstance();
+        evaluation = new ConnectionEvaluator();
+        communicator = new MasterCommunicator();
+    }
+
     @Override
     public void run() {
-        OpenCVClient activeClient = OpenCVClient.getInstance();
-        ConnectionEvaluator evaluation = new ConnectionEvaluator();
-        MasterCommunicator communicator = new MasterCommunicator();
-
         while(true) {
             System.out.println("setup server");
             activeClient.setup(communicator.getServer());

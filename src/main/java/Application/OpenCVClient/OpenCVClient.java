@@ -38,8 +38,9 @@ public class OpenCVClient {
     private String ip;
     private int port;
 
-    //Master Communication Properties
-    private String masterUrl;
+    private HeartBeatRunner beatRunner;
+    private MasterCommunicationRunner masterCommunicationRunner;
+    private ProcessingRunner processingRunner;
 
     private static OpenCVClient instance = null;
 
@@ -130,7 +131,6 @@ public class OpenCVClient {
 
     public void setup(String[] args) {
         //System.out.println("setup");
-
         String[] argument;
         // make a rest request to the master to ask for server and port for server
         // do locally if no response
@@ -156,6 +156,65 @@ public class OpenCVClient {
         } finally {
             ipLock.release();
         }
+    }
+
+    private void setupClientRunners(String args[]) throws IllegalArgumentException {
+        String[] argument;
+        String clientId = ""; // for test: client13
+        String masterUrl = ""; // for test: http://host.docker.internal:4567/
+        String beatCommand = ""; // for test: client/register
+        String getServerCommand = ""; // for test: client/get_node/
+        processingRunner = new ProcessingRunner();
+        masterCommunicationRunner = new MasterCommunicationRunner();
+        beatRunner = new HeartBeatRunner();
+
+        int missingParameter = 0;
+        String missingParameterList = "";
+
+        for(int i=0; i<args.length; i++) {
+            argument = args[i].split("=");
+            switch(argument[0]) {
+                case "CLIENT_ID":
+                    clientId = argument[1];
+                    break;
+                case "MASTER_URL":
+                    masterUrl = argument[1];
+                    break;
+                case "BEAT_COMMAND":
+                    beatCommand = argument[1];
+                    break;
+                case "GET_SERVER_COMMAND":
+                    getServerCommand = argument[1];
+                    break;
+                default :
+                    throw new IllegalArgumentException("Invaild argument");
+            }
+        }
+        if(clientId.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "CLIENT_ID,";
+        }
+        if(masterUrl.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "MASTER_URL,";
+        }
+        if(beatCommand.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "BEAT_COMMAND,";
+        }
+        if(getServerCommand.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "GET_SERVER_COMMAND";
+        }
+        if(missingParameter > 0) {
+            throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
+        }
+
+        beatRunner.url = masterUrl + beatCommand;
+        beatRunner.body = "{" +
+                "\"id\" : \"" + clientId + "\"" +
+                "}";
+        masterCommunicationRunner.communicator.url = masterUrl + getServerCommand + clientId;
     }
     
     public void detectMarkerInServer() {
@@ -222,23 +281,21 @@ public class OpenCVClient {
     public static void main(String[] args) {
         DetectMarker.initOpenCVSharedLibrary();
         OpenCVClient activeClient = OpenCVClient.getInstance();
-        activeClient.masterCommunicationThread = new Thread(new MasterCommunicationRunner(), "MasterCommunicationThread");
-        activeClient.masterCommunicationThread.start();
-        activeClient.processingThread = new Thread(new ProcessingRunner(), "ProcessingThread");
-        activeClient.processingThread.start();
-        HeartBeatRunner beatRunner = new HeartBeatRunner();
-        beatRunner.url = "http://host.docker.internal:4567/client/register";
-        beatRunner.body = "{" +
-                "\"id\" : \"client13\"" +
-                "}";
-        activeClient.heartBeatThread = new Thread(beatRunner, "HeartBeatThread");
-        activeClient.heartBeatThread.start();
-        //System.out.println("threads started");
         
         try {
+            activeClient.setupClientRunners(args);
+            activeClient.masterCommunicationThread = new Thread(activeClient.masterCommunicationRunner, "MasterCommunicationThread");
+            activeClient.masterCommunicationThread.start();
+            activeClient.processingThread = new Thread(activeClient.processingRunner, "ProcessingThread");
+            activeClient.processingThread.start();
+            activeClient.heartBeatThread = new Thread(activeClient.beatRunner, "HeartBeatThread");
+            activeClient.heartBeatThread.start();
+
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
             activeClient.heartBeatThread.join();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class MasterCommunicator {
     //later move this to configuration or as a paramter
-    private String masterUrl = "http://host.docker.internal:4567/client/get_node/client13";
+    public String url;
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
@@ -28,7 +28,7 @@ public class MasterCommunicator {
         String[] serverInformation = new String[2];
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(masterUrl))
+                    .uri(URI.create(url))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
                     .GET()

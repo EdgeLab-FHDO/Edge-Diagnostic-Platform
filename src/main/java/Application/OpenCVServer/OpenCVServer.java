@@ -24,12 +24,15 @@ public class OpenCVServer {
 
     private BufferedImage currentImage;
 
+    private ServerRunner serverRunner;
+    private HeartBeatRunner beatRunner;
     private Thread serverThread;
     private Thread heartBeatThread;
 
     private static OpenCVServer instance = null;
 
     public OpenCVServer() {
+        port = 0;
     }
 
     public void startConnection() {
@@ -111,28 +114,95 @@ public class OpenCVServer {
         }
         return instance;
     }
+
+    private void setupServerRunners(String args[]) throws IllegalArgumentException {
+        String[] argument;
+        String masterUrl = ""; // for test: http://host.docker.internal:4567/
+        String beatCommand = ""; // for test: client/register
+        String serverId = "";
+        String serverIp = "";
+        boolean connected = false;
+
+        serverRunner = new ServerRunner();
+        beatRunner = new HeartBeatRunner();
+
+        int missingParameter = 0;
+        String missingParameterList = "";
+
+        for(int i=0; i<args.length; i++) {
+            argument = args[i].split("=");
+            System.out.println(argument[1]);
+            switch(argument[0]) {
+                case "SERVER_ID":
+                    serverId = argument[1];
+                    break;
+                case "SERVER_IP":
+                    serverIp = argument[1];
+                    break;
+                case "MASTER_URL":
+                    masterUrl = argument[1];
+                    break;
+                case "BEAT_COMMAND":
+                    beatCommand = argument[1];
+                    break;
+                case "CONNECTED":
+                    connected = Boolean.parseBoolean(argument[1]);
+                    break;
+                case "PORT":
+                    port = Integer.parseInt(argument[1]);
+                    break;
+                default :
+                    throw new IllegalArgumentException("Invaild argument");
+            }
+        }
+        if(serverId.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "SERVER_ID,";
+        }
+        if(serverIp.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "SERVER_IP,";
+        }
+        if(masterUrl.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "MASTER_URL,";
+        }
+        if(beatCommand.trim().isEmpty()) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "BEAT_COMMAND,";
+        }
+        if(port == 0) {
+            missingParameter++;
+            missingParameterList = missingParameterList + "PORT";
+        }
+        if(missingParameter > 0) {
+            throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
+        }
+
+        beatRunner.url = masterUrl + beatCommand;
+        beatRunner.body = "{" +
+                "    \"id\": \"" + serverId + "\"," +
+                "    \"ipAddress\": \"" + serverIp + "\"," +
+                "    \"connected\": " + connected + "," +
+                "    \"port\": " + port +
+                "}";
+    }
     
     public static void main(String[] args) {
         DetectMarker.initOpenCVSharedLibrary();
         OpenCVServer activeServer = OpenCVServer.getInstance();
-        activeServer.setup(args);
-        
-        activeServer.serverThread = new Thread(new ServerRunner());
+
+        activeServer.setupServerRunners(args);
+        activeServer.serverThread = new Thread(activeServer.serverRunner);
         activeServer.serverThread.start();
-        HeartBeatRunner beatRunner = new HeartBeatRunner();
-        beatRunner.url = "http://host.docker.internal:4567/node/register";
-        beatRunner.body = "{" +
-                "    \"id\": \"node2\"," +
-                "    \"ipAddress\": \"172.19.0.1\"," +
-                "    \"connected\": true," +
-                "    \"port\": 10200" +
-                "}";
-        activeServer.heartBeatThread = new Thread(beatRunner);
+        activeServer.heartBeatThread = new Thread(activeServer.beatRunner);
         activeServer.heartBeatThread.start();
         
         try {
             activeServer.serverThread.join();
             activeServer.heartBeatThread.join();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
