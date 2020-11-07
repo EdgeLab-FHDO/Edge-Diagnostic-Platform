@@ -33,6 +33,7 @@ public class AdvantEdgeClient extends MasterOutput {
      * @param response Must be in the way "advantEdge command" and additionally:
      *      *                 - Creating Scenario : Should include the  name of the scenario and the path of the file where the scenario is defined
      *      *                 - Deploy Scenario : Should include the name of the scenario to be deployed
+     *      *                 - Terminate Scenario: Should include the name of the sandbox name
      *      *                 - Network Update : Should include the sandbox name, the element name (which receives the update), element type and network params.
      * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
@@ -49,7 +50,7 @@ public class AdvantEdgeClient extends MasterOutput {
                         deployAEScenario(command[2]);
                         break;
                     case "terminate" :
-                        terminateAEScenario();
+                        terminateAEScenario(command[2]);
                         break;
                     case "networkUpdate":
                         sendNetworkCharacteristicsUpdateAEScenario(command[2], command[3], command[4], command[5],
@@ -104,7 +105,7 @@ public class AdvantEdgeClient extends MasterOutput {
      * @param name Name of the scenario to be deployed
      */
     private void deployAEScenario(String name) {
-        String requestPath = this.requestPath + "/platform-ctrl/v1/sandboxes";
+        String requestPath = this.requestPath + "/platform-ctrl/v1/sandboxes/sandbox_" + name;
         //String requestPath = "https://postman-echo.com/post/";
         String jsonRequestString = "{\"scenarioName\" : \""+name+"\"}";
 
@@ -135,8 +136,8 @@ public class AdvantEdgeClient extends MasterOutput {
     /**
      * Terminate the current running scenario in AdvantEdge (Using the REST API)
      */
-    private void terminateAEScenario() {
-        String requestPath = this.requestPath + "/sandbox-ctrl/v1/active/";
+    private void terminateAEScenario(String sandboxName) {
+        String requestPath = this.requestPath + "/" + sandboxName + "/sandbox-ctrl/v1/active/";
         //String requestPath = "https://postman-echo.com/delete";
         try {
             HttpRequest request = HttpRequest.newBuilder()
