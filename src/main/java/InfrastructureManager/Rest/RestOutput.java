@@ -38,15 +38,6 @@ public class RestOutput extends MasterOutput {
         this.limitNodes = new LinkedHashMap<>();
         this.nodesToSend = new HashMap<>();
     }
-    public ObjectNode printResponse() {
-        ObjectNode response_body = mapper.createObjectNode();
-        if(output.isEmpty()) {
-            response_body.put("content", "");
-        } else {
-            response_body.put("content", output.remove());
-        }
-        return response_body;
-    }
 
     public String getLimitInfo(Response response) {
         response.type("application/json");
