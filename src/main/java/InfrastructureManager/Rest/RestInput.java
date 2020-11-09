@@ -11,14 +11,6 @@ public class RestInput implements MasterInput {
     private static String command = "";
     private static ObjectMapper mapper = new ObjectMapper();
 
-    /**
-     * Execute route for POST request that only sends one way data to the Master
-     * Returns true if the request is succesful with code 200
-     */
-    public static Route executeCommand = (Request request, Response response) -> {
-        command = request.params(":command").replaceAll("\\s+","");
-        return response.status();
-    };
 
     public static Route registerClient = (Request request, Response response) -> {
         String clientAsString = request.body().replaceAll("\\s+","");

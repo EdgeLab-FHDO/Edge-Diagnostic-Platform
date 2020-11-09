@@ -69,14 +69,6 @@
     },
     {
       "in" : "rest_in",
-      "out" : "util",
-      "commands" : {
-        "exit" : "util exit",
-        "start_runner $runnerName" : "util runRunner $runnerName"
-      }
-    },
-    {
-      "in" : "rest_in",
       "out" : "match_m",
       "commands" : {
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",

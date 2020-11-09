@@ -11,7 +11,6 @@ public class RestRouter {
         try {
             before("/*", AuthenticationManager.authenticate);
             path("/node", () -> {
-                post("/execute/:command", RestInput.executeCommand);
                 post("/register", RestInput.registerNode);
                 get("/limit", RestOutput.getInstance().sendLimitInfo);
             });
