@@ -11,22 +11,16 @@ public class RestRouter {
         try {
             before("/*", AuthenticationManager.authenticate);
             path("/node", () -> {
-                path("/test", () -> {
-                    post("/read/:input", RestInput.readParameterTest);
-                });
                 post("/execute/:command", RestInput.executeCommand);
                 post("/register", RestInput.registerNode);
+                get("/limit", RestOutput.getInstance().sendLimitInfo);
             });
             path("/client", () -> {
                 post("/register", RestInput.registerClient);
                 post("/assign/:client_id", RestInput.assignClient);
-                try {
-                    get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
             });
-            get("/limit", RestOutput.getInstance().sendLimitInfo);
+
             get("/heartbeat", (request, response) -> {
                 return response.status();
             });
