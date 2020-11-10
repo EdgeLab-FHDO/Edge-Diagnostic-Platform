@@ -17,7 +17,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 
 public class MatchMakingTests {
-    private final MatchMaker matchMaker = new MatchMaker("match_m");
+    private final MatchMaker matchMaker = new MatchMaker("match_m","random");
     private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
 
