@@ -20,9 +20,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient,EdgeNode> mapping;
 
-    public MatchMaker(String name) {
+    public MatchMaker(String name, String algorithmType) {
         super(name);
-        this.algorithm = new RandomMatchMaking(); // For now
+        setAlgorithmFromString(algorithmType);
         this.mapper = new ObjectMapper();
 
         this.nodeList = new ArrayList<>();
@@ -30,7 +30,17 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         this.mapping = new HashMap<>();
     }
 
-    public void setAlgorithm(MatchMakingAlgorithm algorithm) {
+    public void setAlgorithmFromString(String algorithmType) {
+        switch (algorithmType.toLowerCase()) {
+            case "random" :
+                setAlgorithm(new RandomMatchMaking());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid type for MatchMaker");
+        }
+    }
+
+    private void setAlgorithm(MatchMakingAlgorithm algorithm) {
         this.algorithm = algorithm;
     }
 

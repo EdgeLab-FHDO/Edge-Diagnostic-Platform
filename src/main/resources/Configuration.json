@@ -3,7 +3,7 @@
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "RestInput","name": "rest_in", "port": 4567},
-        {"type": "MatchMaker","name": "match_m"},
+        {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "Scenario", "name": "dummy"}
       ],
       "outputs": [
@@ -13,7 +13,7 @@
         {"type": "AdvantEdgeClient","name": "advant_e","port" : 10500},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
-        {"type": "MatchMaker","name": "match_m"}
+        {"type": "MatchMaker-Random","name": "match_m"}
       ]
     },
   "connections" : [
