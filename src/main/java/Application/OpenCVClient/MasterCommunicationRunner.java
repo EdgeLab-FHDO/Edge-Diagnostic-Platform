@@ -1,3 +1,5 @@
+package Application.OpenCVClient;
+
 import java.net.StandardSocketOptions;
 
 public class MasterCommunicationRunner implements Runnable {

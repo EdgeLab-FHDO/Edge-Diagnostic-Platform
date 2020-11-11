@@ -1,3 +1,5 @@
+package Application.OpenCVClient;
+
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.*;

@@ -1,3 +1,5 @@
+package Application.OpenCVServer;
+
 public class ServerRunner implements Runnable {
     @Override
     public void run() {

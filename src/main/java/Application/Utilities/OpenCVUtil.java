@@ -1,3 +1,5 @@
+package Application.Utilities;
+
 import org.opencv.core.Mat;
 import org.opencv.core.CvType;
 

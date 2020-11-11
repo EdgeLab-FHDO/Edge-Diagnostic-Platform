@@ -1,3 +1,5 @@
+package Application.OpenCVClient;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -7,6 +9,11 @@ import java.net.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+
+import Application.Utilities.DetectMarker;
+import Application.Utilities.HeartBeatRunner;
+import Application.Utilities.ImageProcessor;
+import Application.Utilities.OpenCVUtil;
 import org.opencv.core.Mat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;

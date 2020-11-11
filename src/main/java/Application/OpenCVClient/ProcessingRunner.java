@@ -1,3 +1,5 @@
+package Application.OpenCVClient;
+
 public class ProcessingRunner implements Runnable {
     private OpenCVClientOperator activeOperator;
 

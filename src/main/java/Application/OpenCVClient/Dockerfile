@@ -10,8 +10,8 @@ RUN chmod +x install.sh && sync && ./install.sh && rm install.sh
 
 #copy and build codes
 COPY build_classes.sh build_classes.sh
-COPY OpenCVClient/*.java /
-COPY Utilities/*.java /
+COPY OpenCVClient/*.java /Application/OpenCVClient/
+COPY Utilities/*.java /Application/Utilities/
 WORKDIR /
 RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.sh
 
