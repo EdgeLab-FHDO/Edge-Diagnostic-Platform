@@ -16,16 +16,16 @@ import java.nio.file.Paths;
 import java.time.Duration;
 
 public class AdvantEdgeClient extends MasterOutput {
-    private String requestPath = "http://localhost"; //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
+    private final String requestPath; //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
-    public AdvantEdgeClient(String name,int port) {
+    public AdvantEdgeClient(String name,String address, int port) {
         super(name);
-        this.requestPath += ":" + port;
+        this.requestPath = address + ":" + port;
     }
 
     /**

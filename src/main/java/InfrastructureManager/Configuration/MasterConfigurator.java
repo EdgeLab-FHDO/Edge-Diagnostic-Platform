@@ -99,7 +99,7 @@ public class MasterConfigurator {
             case "MatchMaker" :
                 return new MatchMaker(outputData.getName(),type.length > 1 ? type[1] : "random");
             case "AdvantEdgeClient" :
-                return new AdvantEdgeClient(outputData.getName(),port != 0 ? port : 80);
+                return new AdvantEdgeClient(outputData.getName(),outputData.getAddress() ,port != 0 ? port : 80);
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }
