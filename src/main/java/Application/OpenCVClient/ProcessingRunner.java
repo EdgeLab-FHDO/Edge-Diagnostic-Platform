@@ -1,8 +1,13 @@
-public class ProcessingRunner extends Runner {
-    // TO DO: move OpenCVClients functions to here or a new class
+public class ProcessingRunner implements Runnable {
+    private OpenCVClientOperator activeOperator;
+
+    public ProcessingRunner() {
+        activeOperator = OpenCVClientOperator.getInstance();
+    }
     @Override
-    protected void runOperation() {
-        OpenCVClient activeClient = OpenCVClient.getInstance();
-        activeClient.markerDetection();
+    public void run() {
+        while(true) {
+            activeOperator.markerDetection();
+        }
     }
 }
