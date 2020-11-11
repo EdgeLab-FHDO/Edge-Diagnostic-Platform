@@ -18,7 +18,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class AdvantEdgeClientTests {
     private final String scenarioName = "dummy-test";
     private final int portNumber = 10500;
-    private final AdvantEdgeClient client = new AdvantEdgeClient("ae_client",portNumber);
+    private final AdvantEdgeClient client = new AdvantEdgeClient("ae_client","http://localhost",portNumber);
 
     @Rule //Mock server on port 10500
     public WireMockRule rule = new WireMockRule(options().port(portNumber),false);

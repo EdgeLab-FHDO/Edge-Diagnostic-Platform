@@ -10,7 +10,7 @@
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "192.100.21.2", "port" : 10500},
+        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 10500},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "MatchMaker-Random","name": "match_m"}
