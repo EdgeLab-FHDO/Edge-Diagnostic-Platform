@@ -7,6 +7,11 @@ public class HeartBeatRunner implements Runnable {
     //TO DO: reuse instances
     public String url;
     public String body;
+
+    public HeartBeatRunner(String url, String body) {
+        this.url = url;
+        this.body = body;
+    }
     @Override
     public void run() {
         EdpHeartbeat beater = new EdpHeartbeat();

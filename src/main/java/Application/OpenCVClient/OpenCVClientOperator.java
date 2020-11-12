@@ -171,8 +171,6 @@ public class OpenCVClientOperator {
         String beatCommand = ""; // for test: client/register
         String getServerCommand = ""; // for test: client/get_node/
         processingRunner = new ProcessingRunner();
-        masterCommunicationRunner = new MasterCommunicationRunner();
-        beatRunner = new HeartBeatRunner();
 
         int missingParameter = 0;
         String missingParameterList = "";
@@ -218,12 +216,13 @@ public class OpenCVClientOperator {
         if(missingParameter > 0) {
             throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
         }
-
-        beatRunner.url = masterUrl + beatCommand;
-        beatRunner.body = "{" +
+        String beatUrl = masterUrl + beatCommand;
+        String beatBody =  "{" +
                 "\"id\" : \"" + clientId + "\"" +
                 "}";
-        masterCommunicationRunner.communicator.url = masterUrl + getServerCommand + clientId;
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+        String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
+        masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
     public void detectMarkerInServer() {

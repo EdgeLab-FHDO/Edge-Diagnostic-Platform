@@ -26,6 +26,10 @@ public class MasterCommunicator {
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
+    public MasterCommunicator(String masterUrl) {
+        url = masterUrl;
+    }
+
     public String[] getServer() {
         String[] serverInformation = new String[2];
         try {

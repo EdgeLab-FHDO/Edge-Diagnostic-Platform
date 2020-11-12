@@ -9,10 +9,10 @@ public class MasterCommunicationRunner implements Runnable {
     private ConnectionEvaluator evaluation;
     public MasterCommunicator communicator;
 
-    public MasterCommunicationRunner() {
+    public MasterCommunicationRunner(String masterUrl) {
         activeOperator = OpenCVClientOperator.getInstance();
         evaluation = new ConnectionEvaluator();
-        communicator = new MasterCommunicator();
+        communicator = new MasterCommunicator(masterUrl);
     }
 
     @Override

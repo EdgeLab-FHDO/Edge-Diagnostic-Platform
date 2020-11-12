@@ -108,7 +108,6 @@ public class OpenCVServerOperator {
         boolean connected = false;
 
         serverRunner = new ServerRunner();
-        beatRunner = new HeartBeatRunner();
 
         int missingParameter = 0;
         String missingParameterList = "";
@@ -164,12 +163,13 @@ public class OpenCVServerOperator {
             throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
         }
 
-        beatRunner.url = masterUrl + beatCommand;
-        beatRunner.body = "{" +
+        String beatUrl = masterUrl + beatCommand;
+        String beatBody =  "{" +
                 "    \"id\": \"" + serverId + "\"," +
                 "    \"ipAddress\": \"" + serverIp + "\"," +
                 "    \"connected\": " + connected + "," +
                 "    \"port\": " + port +
                 "}";
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
     }
 }
