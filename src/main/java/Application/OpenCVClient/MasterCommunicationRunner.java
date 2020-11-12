@@ -1,5 +1,6 @@
 package Application.OpenCVClient;
 
+import java.io.IOException;
 import java.net.StandardSocketOptions;
 
 public class MasterCommunicationRunner implements Runnable {
@@ -18,8 +19,20 @@ public class MasterCommunicationRunner implements Runnable {
     @Override
     public void run() {
         while(true) {
-            System.out.println("setup server");
-            activeOperator.setup(communicator.getServer());
+            try {
+                System.out.println("setup server");
+                activeOperator.setup(communicator.getServer());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             System.out.println("start loop");
             while (evaluation.isGood()) {
@@ -27,6 +40,8 @@ public class MasterCommunicationRunner implements Runnable {
                 evaluation.evaluate();
                 try {
                     Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

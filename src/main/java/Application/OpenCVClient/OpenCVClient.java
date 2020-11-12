@@ -33,9 +33,9 @@ public class OpenCVClient {
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
             activeClient.heartBeatThread.join();
-        } catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

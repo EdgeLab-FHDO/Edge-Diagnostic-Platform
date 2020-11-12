@@ -1,5 +1,6 @@
 package Application.Utilities;
 
+import java.io.IOException;
 import java.net.StandardSocketOptions;
 
 public class HeartBeatRunner implements Runnable {
@@ -13,10 +14,28 @@ public class HeartBeatRunner implements Runnable {
     @Override
     public void run() {
         while(true) {
-            beater.beat();
+            try {
+                beater.beat();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                System.out.println("Heartbeat target URL is faulty");
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

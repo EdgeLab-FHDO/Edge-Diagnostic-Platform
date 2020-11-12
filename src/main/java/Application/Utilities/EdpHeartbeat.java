@@ -1,5 +1,6 @@
 package Application.Utilities;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -23,8 +24,7 @@ public class EdpHeartbeat {
         this.body = body;
     }
 
-    public void beat() {
-        try {
+    public void beat() throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
             System.out.println("beats");
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -45,8 +45,5 @@ public class EdpHeartbeat {
                 default:
                     System.out.println("404 - Not found");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

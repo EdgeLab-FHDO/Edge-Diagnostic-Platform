@@ -38,6 +38,8 @@ public class OpenCVServer {
             activeServer.heartBeatThread.join();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

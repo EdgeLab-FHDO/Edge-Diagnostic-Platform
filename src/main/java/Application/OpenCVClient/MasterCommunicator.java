@@ -1,5 +1,6 @@
 package Application.OpenCVClient;
 
+import java.io.IOException;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.*;
@@ -30,35 +31,31 @@ public class MasterCommunicator {
         url = masterUrl;
     }
 
-    public String[] getServer() {
+    public String[] getServer() throws IOException, InterruptedException {
         String[] serverInformation = new String[2];
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .timeout(Duration.ofMinutes(1))
-                    .header("Content-Type", "application/json")
-                    .GET()
-                    .build();
-            HttpResponse<String> response =
-                    client.send(request, HttpResponse.BodyHandlers.ofString());
-            switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                case 400:
-                    System.out.println("400 - Bad Request");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode node = mapper.readTree(response.body());
-            serverInformation[0] = "IP=" + node.findValue("ipAddress").asText();
-            serverInformation[1] = "PORT=" + node.findValue("port").asText();
-        } catch (Exception e) {
-            e.printStackTrace();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .timeout(Duration.ofMinutes(1))
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+        switch (response.statusCode()) {
+            case 200:
+                System.out.println("200 - OK");
+                break;
+            case 400:
+                System.out.println("400 - Bad Request");
+                break;
+            default:
+                System.out.println("404 - Not found");
         }
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(response.body());
+        serverInformation[0] = "IP=" + node.findValue("ipAddress").asText();
+        serverInformation[1] = "PORT=" + node.findValue("port").asText();
 
         return serverInformation;
     }

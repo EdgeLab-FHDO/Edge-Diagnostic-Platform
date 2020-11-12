@@ -14,6 +14,8 @@ import Application.Utilities.DetectMarker;
 import Application.Utilities.HeartBeatRunner;
 import Application.Utilities.ImageProcessor;
 import Application.Utilities.OpenCVUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.opencv.core.Mat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,7 +58,6 @@ public class OpenCVClientOperator {
     }
 
     public static OpenCVClientOperator getInstance() {
-        //System.out.println("getInstance");
         if (instance == null) {
             instance = new OpenCVClientOperator();
         }
@@ -64,77 +65,58 @@ public class OpenCVClientOperator {
     }
 
     public void startConnection() {
-        //System.out.println("startConnection");
         try {
             ipLock.acquire();
             clientSocket = new Socket(ip, port);
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         } finally {
             ipLock.release();
         }
     }
 
-    public String sendImage() {
+    public String sendImage() throws IOException {
         String resp = "";
         Mat ids;
-        try {
-            currentImage = ImageIO.read(new File(fileName));
-            ImageIO.write(currentImage, fileExtension, clientSocket.getOutputStream());
-            System.out.println("sendImage3");
-            resp = in.readLine();
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        currentImage = ImageIO.read(new File(fileName));
+        ImageIO.write(currentImage, fileExtension, clientSocket.getOutputStream());
+        System.out.println("sendImage3");
+        resp = in.readLine();
 
         return resp;
     }
 
-    public void stopConnection() {
-        //System.out.println("stopConnection");
-        try {
-            in.close();
-            out.close();
-            clientSocket.close();
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+    public void stopConnection() throws IOException {
+        in.close();
+        out.close();
+        clientSocket.close();
     }
 
     public String getFileName() {
-        //System.out.println("getFileName");
-
         return fileName;
     }
 
     public int useServer() {
-        //System.out.println("useServer");
-
         return utilizeServer;
     }
 
     public void setServerUtilization(int input) {
-        //System.out.println("setServerUtilization");
         try {
-            //System.out.println("setServerUtilization2");
             serverLock.acquire();
             utilizeServer = input;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } catch (Exception e) {
-            //System.out.println("setServerUtilization3");
-            //TODO: handle exception
-            //e.printStackTrace();
+            e.printStackTrace();
         } finally {
-            //System.out.println("setServerUtilization4");
             serverLock.release();
         }
-        //System.out.println("setServerUtilization5");
 
     }
 
-    public void setup(String[] args) {
-        //System.out.println("setup");
+    public void setup(String[] args) throws IllegalArgumentException, ArrayIndexOutOfBoundsException, InterruptedException {
         String[] argument;
         // make a rest request to the master to ask for server and port for server
         // do locally if no response
@@ -155,10 +137,14 @@ public class OpenCVClientOperator {
                         throw new IllegalArgumentException("Invaild argument");
                 }
             }
+        } catch (IllegalArgumentException e) {
+            throw e;
         } catch (ArrayIndexOutOfBoundsException e) {
             throw e;
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Exception e) {
-            //e.printStackTrace();
+            throw e;
         } finally {
             ipLock.release();
         }
@@ -225,28 +211,19 @@ public class OpenCVClientOperator {
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
-    public void detectMarkerInServer() {
+    public void detectMarkerInServer() throws JsonProcessingException, InvalidObjectException, IOException {
         System.out.println("detectMarkerInServer");
         // connect to server and detect marker
         String response;
         JsonNode node;
-        Mat ids = new Mat();
-        List<Mat> corners = new ArrayList<Mat>();
 
         startConnection();
         response = sendImage().replace("\\\\", "");
 
-        try {
-            node = mapper.readTree(response);
-            ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
-            corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
-            //System.out.println(ids.dump());
-            //System.out.println(corners.get(0).dump());
-            System.out.println("Marker Drawn with remote informations");
-        } catch (Exception e) {
-            e.printStackTrace();
-            detectMarkerInClient();
-        }
+        node = mapper.readTree(response);
+        Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
+        List<Mat> corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
+        System.out.println("Marker Drawn with remote informations");
 
         detector.setIds(ids);
         detector.setCorners(corners);
@@ -258,27 +235,31 @@ public class OpenCVClientOperator {
         System.out.println("Marker Drawn locally");
     }
 
+    private void handleServerDetectException(Exception e) {
+        e.printStackTrace();
+        detectMarkerInClient();
+    }
+
     public void markerDetection() {
-        //System.out.println("markerDetection");
         Mat result;
-        Mat ids;
-        List<Mat> corners;
         subject = ImageProcessor.getImageMat(fileName);
         detector = new DetectMarker();
         try {
-            //System.out.println("markerDetection2");
-
             serverLock.acquire();
             if(1 == utilizeServer) {
                 detectMarkerInServer();
             } else {
                 detectMarkerInClient();
             }
+        } catch (InvalidObjectException e) {
+            handleServerDetectException(e);
+        } catch (JsonProcessingException e) {
+            handleServerDetectException(e);
+        } catch (IOException e) {
+            handleServerDetectException(e);
         } catch (Exception e) {
-            //TODO: handle exception
-            //e.printStackTrace();
+            handleServerDetectException(e);
         } finally {
-            //System.out.println("markerDetection3");
             serverLock.release();
         }
 

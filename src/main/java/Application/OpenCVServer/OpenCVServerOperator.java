@@ -14,6 +14,7 @@ import Application.Utilities.DetectMarker;
 import Application.Utilities.HeartBeatRunner;
 import Application.Utilities.ImageProcessor;
 import Application.Utilities.OpenCVUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opencv.core.Mat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,56 +41,44 @@ public class OpenCVServerOperator {
         fileName= "read.png";
     }
 
-    public void startConnection() {
-        try {
-            serverSocket = new ServerSocket(port);
-            clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream(), true);
-            in = new DataInputStream(clientSocket.getInputStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void startConnection() throws IOException {
+        serverSocket = new ServerSocket(port);
+        clientSocket = serverSocket.accept();
+        out = new PrintWriter(clientSocket.getOutputStream(), true);
+        in = new DataInputStream(clientSocket.getInputStream());
     }
 
     // change name to something more appropriate
-    public void standbyForConnection() {
+    public void standbyForConnection() throws InvalidObjectException, IllegalArgumentException, JsonProcessingException, IOException {
         //if input is faulty, timeout and continue
-        try {
-            currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
-            ImageIO.write(currentImage, "png", new File(fileName));
-            Mat subject = ImageProcessor.getImageMat(fileName);
+        currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
+        ImageIO.write(currentImage, "png", new File(fileName));
+        Mat subject = ImageProcessor.getImageMat(fileName);
 
-            detector = new DetectMarker();
-            detector.detect(subject);
-            String ids = OpenCVUtil.serializeMat(detector.getIds());
-            String corners = OpenCVUtil.serializeMatList(detector.getCorners());
-            String result = "";
+        detector = new DetectMarker();
+        detector.detect(subject);
+        String ids = OpenCVUtil.serializeMat(detector.getIds());
+        String corners = OpenCVUtil.serializeMatList(detector.getCorners());
+        String result = "";
 
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode resultObject = mapper.createObjectNode();
-            resultObject.put("ids", ids);
-            resultObject.put("corners", corners);
-            System.out.println(ids);
-            System.out.println(corners);
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode resultObject = mapper.createObjectNode();
+        resultObject.put("ids", ids);
+        resultObject.put("corners", corners);
+        System.out.println(ids);
+        System.out.println(corners);
 
-            result = mapper.writeValueAsString(resultObject);
+        result = mapper.writeValueAsString(resultObject);
 
-            out.println(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        out.println(result);
 
     }
 
-    public void stopConnection() {
-        try {
-            in.close();
-            out.close();
-            clientSocket.close();
-            serverSocket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void stopConnection() throws IOException {
+        in.close();
+        out.close();
+        clientSocket.close();
+        serverSocket.close();
     }
 
     public static OpenCVServerOperator getInstance() {
