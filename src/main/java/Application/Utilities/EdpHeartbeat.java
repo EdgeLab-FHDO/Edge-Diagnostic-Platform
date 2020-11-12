@@ -10,22 +10,28 @@ import java.net.http.HttpRequest.BodyPublishers.*;
 import java.util.Iterator;
 
 public class EdpHeartbeat {
-    public String masterUrl = "http://127.0.0.1:4567/";
+    public String url;
+    public String body;
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .followRedirects(HttpClient.Redirect.NORMAL)
             .connectTimeout(Duration.ofSeconds(20))
             .build();
+    
+    public EdpHeartbeat(String url, String body) {
+        this.url = url;
+        this.body = body;
+    }
 
-    public void beat(String name) {
+    public void beat() {
         try {
             System.out.println("beats");
 
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(masterUrl))
+                    .uri(URI.create(url))
                     .timeout(Duration.ofMinutes(1))
                     .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(name))
+                    .POST(HttpRequest.BodyPublishers.ofString(body))
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
