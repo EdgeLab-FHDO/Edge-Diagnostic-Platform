@@ -34,7 +34,7 @@ public class NodeLimitTests {
         output.out("restOut limit node1 1.5");
         String expected = "{\"node1\":\"150000_100000\"}";
         String response = given().spec(requestSpec)
-                .when().get("/limit")
+                .when().get("/node/limit")
                 .asString();
         Assert.assertEquals(expected, response);
     }
@@ -44,7 +44,7 @@ public class NodeLimitTests {
         output.out("restOut limit node1 1.5 10000");
         String expected = "{\"node1\":\"15000_10000\"}";
         String response = given().spec(requestSpec)
-                .when().get("/limit")
+                .when().get("/node/limit")
                 .asString();
         Assert.assertEquals(expected, response);
     }
@@ -55,7 +55,7 @@ public class NodeLimitTests {
         output.out("restOut limit node2 0.5");
         String expected = "{\"node1\":\"150000_100000\",\"node2\":\"50000_100000\"}";
         String response = given().spec(requestSpec)
-                .when().get("/limit")
+                .when().get("/node/limit")
                 .asString();
         Assert.assertEquals(expected, response);
     }
@@ -64,7 +64,7 @@ public class NodeLimitTests {
     public void requestWithoutCommandFirstTest() {
         String expected = "{}";
         String response = given().spec(requestSpec)
-                .when().get("/limit")
+                .when().get("/node/limit")
                 .asString();
         Assert.assertEquals(expected, response);
     }

@@ -83,7 +83,8 @@ public class MasterConfigurator {
 
     private MasterOutput getOutputFromData(IOConfigData outputData) throws IllegalArgumentException {
         int port = outputData.getPort();
-        switch (outputData.getType()) {
+        String[] type = outputData.getType().split("-");
+        switch (type[0]) {
             case "ConsoleOutput":
                 return new ConsoleOutput(outputData.getName());
             case "MasterUtility" :
@@ -96,9 +97,9 @@ public class MasterConfigurator {
                 RestOutput.setInstanceName(outputData.getName());
                 return RestOutput.getInstance();
             case "MatchMaker" :
-                return new MatchMaker(outputData.getName());
+                return new MatchMaker(outputData.getName(),type.length > 1 ? type[1] : "random");
             case "AdvantEdgeClient" :
-                return new AdvantEdgeClient(outputData.getName(),port != 0 ? port : 80);
+                return new AdvantEdgeClient(outputData.getName(),outputData.getAddress() ,port != 0 ? port : 80);
             default:
                 throw new IllegalArgumentException("Invalid output in Configuration");
         }
@@ -106,11 +107,12 @@ public class MasterConfigurator {
 
     private MasterInput getInputFromData(IOConfigData inputData) throws IllegalArgumentException {
         int port = inputData.getPort();
-        switch (inputData.getType()) {
+        String[] type = inputData.getType().split("-");
+        switch (type[0]) {
             case "ConsoleInput":
                 return new ConsoleInput();
             case "MatchMaker":
-                return new MatchMaker(inputData.getName());
+                return new MatchMaker(inputData.getName(),type.length > 1 ? type[1] : "random");
             case "RestInput":
                 RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;

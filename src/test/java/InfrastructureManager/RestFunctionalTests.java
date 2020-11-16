@@ -24,28 +24,16 @@ public class RestFunctionalTests {
         RestRunner.getRestRunner("RestRunner",port).startServerIfNotRunning();
     }
 
-    @Test
-    public void testPostRequest() {
-        String command = "test";
-        String response =
-                given().
-                    spec(requestSpec).
-                    pathParam("input", command).
-                when().
-                    post("/node/test/read/{input}").
-                    asString();
-        Assert.assertEquals(command, response);
-    }
 
     @Test
     public void postSubmissionTest() {
-        String request = "resttest";
         String response =
             given().
-                spec(requestSpec).
-                pathParam("command", request).
+                spec(requestSpec)
+                    .contentType("application/json")
+                    .body("{\"id\":\"client1\"}").
             when().
-                post("/node/execute/{command}").
+                post("/client/register").
                 asString();
         Assert.assertEquals("200", response);
     }

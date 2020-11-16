@@ -1,6 +1,5 @@
 package InfrastructureManager.AdvantEdge;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,7 +18,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class AdvantEdgeClientTests {
     private final String scenarioName = "dummy-test";
     private final int portNumber = 10500;
-    private final AdvantEdgeClient client = new AdvantEdgeClient("ae_client",portNumber);
+    private final AdvantEdgeClient client = new AdvantEdgeClient("ae_client","http://localhost",portNumber);
 
     @Rule //Mock server on port 10500
     public WireMockRule rule = new WireMockRule(options().port(portNumber),false);
@@ -53,7 +52,7 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void deployScenarioRequestTest() throws IOException {
-        String path = "/platform-ctrl/v1/sandboxes";
+        String path = "/platform-ctrl/v1/sandboxes/sandbox_" + scenarioName;
         String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
         client.out("advantEdge deploy " + scenarioName);
 
@@ -78,8 +77,8 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void terminateScenarioRequestTest() {
-        String path = "/sandbox-ctrl/v1/active/";
-        client.out("advantEdge terminate");
+        String path = "/test_sandbox/sandbox-ctrl/v1/active/";
+        client.out("advantEdge terminate test_sandbox");
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
 

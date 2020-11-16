@@ -3,17 +3,17 @@
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "RestInput","name": "rest_in", "port": 4567},
-        {"type": "MatchMaker","name": "match_m"},
+        {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "Scenario", "name": "dummy"}
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e","port" : 10500},
+        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 10500},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
-        {"type": "MatchMaker","name": "match_m"}
+        {"type": "MatchMaker-Random","name": "match_m"}
       ]
     },
   "connections" : [
@@ -43,7 +43,7 @@
       "commands" : {
         "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
         "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
-        "ae_terminate_active" : "advantEdge terminate"
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
       }
     },
     {
@@ -65,14 +65,6 @@
         "run_scenario" : "dispatcher run",
         "pause_scenario" : "dispatcher pause",
         "resume_scenario" : "dispatcher resume"
-      }
-    },
-    {
-      "in" : "rest_in",
-      "out" : "util",
-      "commands" : {
-        "exit" : "util exit",
-        "start_runner $runnerName" : "util runRunner $runnerName"
       }
     },
     {
