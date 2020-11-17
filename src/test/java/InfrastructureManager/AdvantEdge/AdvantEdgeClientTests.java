@@ -52,7 +52,7 @@ public class AdvantEdgeClientTests {
 
     @Test
     public void deployScenarioRequestTest() throws IOException {
-        String path = "/platform-ctrl/v1/sandboxes/sandbox_" + scenarioName;
+        String path = "/platform-ctrl/v1/sandboxes/sandbox-" + scenarioName;
         String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
         client.out("advantEdge deploy " + scenarioName);
 
