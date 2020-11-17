@@ -1,10 +1,6 @@
 package Application.OpenCVServer;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import java.net.*;
 
 import javax.imageio.ImageIO;
@@ -37,7 +33,7 @@ public class OpenCVServerOperator {
 
     private static OpenCVServerOperator instance = null;
 
-    public OpenCVServerOperator() {
+    private OpenCVServerOperator() {
         fileName= "read.png";
     }
 
@@ -88,7 +84,7 @@ public class OpenCVServerOperator {
         return instance;
     }
 
-    public void setupServerRunners(String args[]) throws IllegalArgumentException {
+    public void setupServerRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
         String masterUrl = ""; // for test: http://host.docker.internal:4567/
         String beatCommand = ""; // for test: client/register
@@ -124,7 +120,7 @@ public class OpenCVServerOperator {
                         port = Integer.parseInt(argument[1]);
                         break;
                     default:
-                        throw new IllegalArgumentException("Invaild argument");
+                        throw new IllegalArgumentException("Invalid argument");
                 }
             }
         }

@@ -1,26 +1,19 @@
 package Application.OpenCVClient;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.net.*;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-
 import Application.Utilities.DetectMarker;
 import Application.Utilities.HeartBeatRunner;
 import Application.Utilities.ImageProcessor;
 import Application.Utilities.OpenCVUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import org.opencv.core.Mat;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opencv.core.Mat;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 public class OpenCVClientOperator {
@@ -40,7 +33,7 @@ public class OpenCVClientOperator {
     public Semaphore serverLock;
 
     //Server Communication Properties
-    private int utilizeServer;
+    private boolean utilizeServer;
     private String ip;
     private int port;
 
@@ -50,11 +43,11 @@ public class OpenCVClientOperator {
 
     private static OpenCVClientOperator instance = null;
 
-    public OpenCVClientOperator() {
+    private OpenCVClientOperator() {
         mapper = new ObjectMapper();
         ipLock = new Semaphore(1);
         serverLock = new Semaphore(1);
-        utilizeServer = 0;
+        utilizeServer = false;
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -79,10 +72,9 @@ public class OpenCVClientOperator {
 
     public String sendImage() throws IOException {
         String resp = "";
-        Mat ids;
+
         currentImage = ImageIO.read(new File(fileName));
         ImageIO.write(currentImage, fileExtension, clientSocket.getOutputStream());
-        System.out.println("sendImage3");
         resp = in.readLine();
 
         return resp;
@@ -94,15 +86,7 @@ public class OpenCVClientOperator {
         clientSocket.close();
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public int useServer() {
-        return utilizeServer;
-    }
-
-    public void setServerUtilization(int input) {
+    public void setServerUtilization(boolean input) {
         try {
             serverLock.acquire();
             utilizeServer = input;
@@ -134,7 +118,7 @@ public class OpenCVClientOperator {
                         System.out.println("ip :" +ip);
                         break;
                     default :
-                        throw new IllegalArgumentException("Invaild argument");
+                        throw new IllegalArgumentException("Invalid argument");
                 }
             }
         } catch (IllegalArgumentException e) {
@@ -150,7 +134,7 @@ public class OpenCVClientOperator {
         }
     }
 
-    public void setupClientRunners(String args[]) throws IllegalArgumentException {
+    public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
         String clientId = ""; // for test: client13
         String masterUrl = ""; // for test: http://host.docker.internal:4567/
@@ -179,7 +163,7 @@ public class OpenCVClientOperator {
                         getServerCommand = argument[1];
                         break;
                     default:
-                        throw new IllegalArgumentException("Invaild argument");
+                        throw new IllegalArgumentException("Invalid argument");
                 }
             }
         }
@@ -219,6 +203,7 @@ public class OpenCVClientOperator {
 
         startConnection();
         response = sendImage().replace("\\\\", "");
+        stopConnection();
 
         node = mapper.readTree(response);
         Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
@@ -246,7 +231,7 @@ public class OpenCVClientOperator {
         detector = new DetectMarker();
         try {
             serverLock.acquire();
-            if(1 == utilizeServer) {
+            if(true == utilizeServer) {
                 detectMarkerInServer();
             } else {
                 detectMarkerInClient();

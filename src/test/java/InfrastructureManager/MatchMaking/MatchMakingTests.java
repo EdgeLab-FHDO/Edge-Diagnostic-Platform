@@ -73,7 +73,7 @@ public class MatchMakingTests {
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         matchMaker.out("matchMaker assign_client client1");
         RestOutput.getInstance().out(Master.getInstance().execute(matchMaker.read(),commandSet));
-        String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
+        String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true,\"port\":10200}";
 
         String response = given().spec(requestSpec)
                 .when().get("/client/get_node/client1")

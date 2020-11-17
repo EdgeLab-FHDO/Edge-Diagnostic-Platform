@@ -2,15 +2,6 @@ package Application.OpenCVClient;
 
 import Application.Utilities.DetectMarker;
 
-import java.io.*;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.net.*;
-
-import java.util.concurrent.Semaphore;
-
 public class OpenCVClient {
     private Thread processingThread;
     private Thread masterCommunicationThread;

@@ -20,7 +20,6 @@ public class OpenCVUtil {
         int type = subject.type();
         int rows = subject.rows();
         int cols = subject.cols();
-        int total = (int)subject.total();
         int elemSize = (int)subject.elemSize();
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
@@ -61,7 +60,6 @@ public class OpenCVUtil {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode result = mapper.createArrayNode();
         String returnedResult = "";
-        String[] resultCandidate;
 
         for (Mat content : subject) {
             result.add(serializeMat(content));
@@ -73,7 +71,6 @@ public class OpenCVUtil {
     
     public static Mat deserializeMat(String subject) throws JsonProcessingException, InvalidObjectException, IOException {
         ObjectMapper mapper = new ObjectMapper();
-        Mat result = new Mat();
         int type=0;
         int rows=0;
         int cols=0;
@@ -82,13 +79,13 @@ public class OpenCVUtil {
         type = node.get("type").asInt();
         rows = node.get("rows").asInt();
         cols = node.get("cols").asInt();
-        //result does not match the array content??
+
         JsonNode dataArray = node.get("data");
         int dataSize = dataArray.size();
         int i = 0;
         Iterator<JsonNode> iterator = dataArray.iterator();
 
-        result = new Mat(rows, cols, type);
+        Mat result = new Mat(rows, cols, type);
 
         if(type == CvType.CV_32S || type == CvType.CV_32SC2 || type == CvType.CV_32SC3 || type == CvType.CV_16S) {
             int[] data = new int[dataSize];
@@ -126,12 +123,11 @@ public class OpenCVUtil {
     }
 
     public static List<Mat> deserializeMatList(String subject) throws InvalidObjectException, JsonProcessingException, IOException {
-        List<Mat> result = new ArrayList<Mat>();
+        List<Mat> result = new ArrayList<>();
         String[] elements = subject.replace("[\"", "").replace("\"]", "").split("\",\"");
         for(String element : elements) {
             result.add(deserializeMat(element));
         }
-        
 
         return result;
     }

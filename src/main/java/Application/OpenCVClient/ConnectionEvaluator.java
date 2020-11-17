@@ -1,7 +1,7 @@
 package Application.OpenCVClient;
 
 public class ConnectionEvaluator {
-    protected boolean evaluation;
+    private boolean evaluation;
 
     public ConnectionEvaluator() {
         evaluation = true; //assume connection is okay before evaluating on first iteration

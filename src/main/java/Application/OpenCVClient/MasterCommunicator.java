@@ -1,21 +1,13 @@
 package Application.OpenCVClient;
 
 import java.io.IOException;
-import java.net.*;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.*;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.*;
-import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.*;
 import java.net.URI;
 import java.time.Duration;
-import java.util.Iterator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class MasterCommunicator {

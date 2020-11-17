@@ -33,9 +33,6 @@ run {
 repositories {
     //Where to get the dependencies
     mavenCentral()
-    flatDir {
-        dir file('libraries/opencv')
-    }
 }
 
 dependencies {
