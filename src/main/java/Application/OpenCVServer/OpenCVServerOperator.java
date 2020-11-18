@@ -5,6 +5,8 @@ import java.net.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import Application.Utilities.DetectMarker;
 import Application.Utilities.HeartBeatRunner;
@@ -94,8 +96,7 @@ public class OpenCVServerOperator {
 
         serverRunner = new ServerRunner();
 
-        int missingParameter = 0;
-        String missingParameterList = "";
+        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "MASTER_URL", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
 
         for (String arg : args) {
             argument = arg.split("=");
@@ -103,49 +104,35 @@ public class OpenCVServerOperator {
                 switch (argument[0]) {
                     case "SERVER_ID":
                         serverId = argument[1];
+                        missingParameterList.remove("SERVER_ID");
                         break;
                     case "SERVER_IP":
                         serverIp = argument[1];
+                        missingParameterList.remove("SERVER_IP");
                         break;
                     case "MASTER_URL":
                         masterUrl = argument[1];
+                        missingParameterList.remove("MASTER_URL");
                         break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
+                        missingParameterList.remove("BEAT_COMMAND");
                         break;
                     case "CONNECTED":
                         connected = Boolean.parseBoolean(argument[1]);
                         break;
                     case "PORT":
                         port = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("PORT");
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
                 }
             }
         }
-        if(serverId.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "SERVER_ID,";
-        }
-        if(serverIp.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "SERVER_IP,";
-        }
-        if(masterUrl.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "MASTER_URL,";
-        }
-        if(beatCommand.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "BEAT_COMMAND,";
-        }
-        if(port == 0) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "PORT";
-        }
-        if(missingParameter > 0) {
-            throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
+
+        if(missingParameterList.size() > 0) {
+            throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
 
         String beatUrl = masterUrl + beatCommand;

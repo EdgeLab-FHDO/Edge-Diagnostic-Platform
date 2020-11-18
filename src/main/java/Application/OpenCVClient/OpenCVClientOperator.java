@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -128,8 +129,7 @@ public class OpenCVClientOperator {
         String getServerCommand = ""; // for test: client/get_node/
         processingRunner = new ProcessingRunner();
 
-        int missingParameter = 0;
-        String missingParameterList = "";
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
 
         for(int i=0; i<args.length; i++) {
             System.out.println(args[i]);
@@ -138,39 +138,28 @@ public class OpenCVClientOperator {
                 switch (argument[0]) {
                     case "CLIENT_ID":
                         clientId = argument[1];
+                        missingParameterList.remove("CLIENT_ID");
                         break;
                     case "MASTER_URL":
                         masterUrl = argument[1];
+                        missingParameterList.remove("MASTER_URL");
                         break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
+                        missingParameterList.remove("BEAT_COMMAND");
                         break;
                     case "GET_SERVER_COMMAND":
                         getServerCommand = argument[1];
+                        missingParameterList.remove("GET_SERVER_COMMAND");
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
                 }
             }
         }
-        if(clientId.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "CLIENT_ID,";
-        }
-        if(masterUrl.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "MASTER_URL,";
-        }
-        if(beatCommand.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "BEAT_COMMAND,";
-        }
-        if(getServerCommand.trim().isEmpty()) {
-            missingParameter++;
-            missingParameterList = missingParameterList + "GET_SERVER_COMMAND";
-        }
-        if(missingParameter > 0) {
-            throw new IllegalArgumentException("Missing Parameter: " + missingParameterList);
+
+        if(missingParameterList.size() > 0) {
+            throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{" +
