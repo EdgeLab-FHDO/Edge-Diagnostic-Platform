@@ -36,14 +36,14 @@ public class MasterCommunicator {
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
         switch (response.statusCode()) {
-            case 200 -> {
+            case 200:
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode node = mapper.readTree(response.body());
                 serverInformation[0] = "IP=" + node.findValue("ipAddress").asText();
                 serverInformation[1] = "PORT=" + node.findValue("port").asText();
-            }
-            case 400 -> throw new ConnectException("400 - Bad Request");
-            default -> throw new ConnectException("404 - Not found");
+                break;
+            case 400: throw new ConnectException("400 - Bad Request");
+            default: throw new ConnectException("404 - Not found");
         }
 
         return serverInformation;
