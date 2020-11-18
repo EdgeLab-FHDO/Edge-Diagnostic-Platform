@@ -45,6 +45,7 @@ public class OpenCVClientOperator {
         ipLock = new Semaphore(1);
         serverLock = new Semaphore(1);
         utilizeServer = false;
+        detector = new DetectMarker();
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -60,6 +61,7 @@ public class OpenCVClientOperator {
             clientSocket = new Socket(ip, port);
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            //TODO set connected to true
         } finally {
             ipLock.release();
         }
@@ -79,6 +81,7 @@ public class OpenCVClientOperator {
         in.close();
         out.close();
         clientSocket.close();
+        //TODO set connceted to false
     }
 
     public void setServerUtilization(boolean input) {
@@ -170,15 +173,15 @@ public class OpenCVClientOperator {
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
-    public void detectMarkerInServer() throws RemoteExecutionException {
+    public void detectMarkerInServer() throws RemoteExecutionException, IOException {
         System.out.println("detectMarkerInServer");
         // connect to server and detect marker
         String response;
         JsonNode node;
         try {
+            //TODO if not !connected start connection
             startConnection();
             response = sendImage().replace("\\\\", "");
-            stopConnection();
 
             node = mapper.readTree(response);
             Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
@@ -188,6 +191,7 @@ public class OpenCVClientOperator {
             detector.setIds(ids);
             detector.setCorners(corners);
         } catch (IOException | InterruptedException e) {
+            stopConnection();
             throw new RemoteExecutionException(e);
         }
     }
@@ -200,7 +204,6 @@ public class OpenCVClientOperator {
     public void markerDetection() {
         Mat result;
         subject = ImageProcessor.getImageMat(fileName);
-        detector = new DetectMarker();
         try {
             serverLock.acquire();
             if(utilizeServer) {

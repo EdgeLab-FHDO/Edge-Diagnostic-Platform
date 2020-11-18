@@ -37,6 +37,7 @@ public class OpenCVServerOperator {
 
     private OpenCVServerOperator() {
         fileName= "read.png";
+        detector = new DetectMarker();
     }
 
     public void startConnection() throws IOException {
@@ -53,7 +54,6 @@ public class OpenCVServerOperator {
         ImageIO.write(currentImage, "png", new File(fileName));
         Mat subject = ImageProcessor.getImageMat(fileName);
 
-        detector = new DetectMarker();
         detector.detect(subject);
         String ids = OpenCVUtil.serializeMat(detector.getIds());
         String corners = OpenCVUtil.serializeMatList(detector.getCorners());
