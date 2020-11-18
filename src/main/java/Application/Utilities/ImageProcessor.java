@@ -5,9 +5,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 public class ImageProcessor {
     public static Mat getImageMat(String filename) {
-        Mat input = Imgcodecs.imread(filename);
-
-        return input;
+        return Imgcodecs.imread(filename);
     }
 
     public static void writeImage(String filename, Mat output) {

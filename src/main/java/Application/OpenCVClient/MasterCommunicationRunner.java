@@ -19,15 +19,7 @@ public class MasterCommunicationRunner implements Runnable {
             try {
                 System.out.println("setup server");
                 activeOperator.setup(communicator.getServer());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (ArrayIndexOutOfBoundsException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
+            } catch (InterruptedException | IllegalArgumentException | IOException e) {
                 e.printStackTrace();
             }
 
@@ -38,8 +30,6 @@ public class MasterCommunicationRunner implements Runnable {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

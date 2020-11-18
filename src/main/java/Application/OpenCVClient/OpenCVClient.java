@@ -1,6 +1,6 @@
 package Application.OpenCVClient;
 
-import Application.Utilities.DetectMarker;
+import Application.Utilities.OpenCVUtil;
 
 public class OpenCVClient {
     private Thread processingThread;
@@ -8,7 +8,7 @@ public class OpenCVClient {
     private Thread heartBeatThread;
 
     public static void main(String[] args) {
-        DetectMarker.initOpenCVSharedLibrary();
+        OpenCVUtil.initOpenCVSharedLibrary();
         OpenCVClient activeClient = new OpenCVClient();
         OpenCVClientOperator activeOperator = OpenCVClientOperator.getInstance();
 
@@ -24,11 +24,7 @@ public class OpenCVClient {
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
             activeClient.heartBeatThread.join();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
         }
     }

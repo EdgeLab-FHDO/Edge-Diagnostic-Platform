@@ -97,9 +97,9 @@ public class OpenCVServerOperator {
         int missingParameter = 0;
         String missingParameterList = "";
 
-        for(int i=0; i<args.length; i++) {
-            argument = args[i].split("=");
-            if(argument.length == 2) {
+        for (String arg : args) {
+            argument = arg.split("=");
+            if (argument.length == 2) {
                 switch (argument[0]) {
                     case "SERVER_ID":
                         serverId = argument[1];

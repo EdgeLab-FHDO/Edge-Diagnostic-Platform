@@ -1,10 +1,6 @@
 package Application.OpenCVClient;
 
-import Application.Utilities.DetectMarker;
-import Application.Utilities.HeartBeatRunner;
-import Application.Utilities.ImageProcessor;
-import Application.Utilities.OpenCVUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import Application.Utilities.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opencv.core.Mat;
@@ -57,14 +53,12 @@ public class OpenCVClientOperator {
         return instance;
     }
 
-    public void startConnection() {
+    public void startConnection() throws IOException, InterruptedException {
         try {
             ipLock.acquire();
             clientSocket = new Socket(ip, port);
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             ipLock.release();
         }
@@ -92,15 +86,13 @@ public class OpenCVClientOperator {
             utilizeServer = input;
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             serverLock.release();
         }
 
     }
 
-    public void setup(String[] args) throws IllegalArgumentException, ArrayIndexOutOfBoundsException, InterruptedException {
+    public void setup(String[] args) throws IllegalArgumentException, InterruptedException {
         String[] argument;
         // make a rest request to the master to ask for server and port for server
         // do locally if no response
@@ -121,14 +113,8 @@ public class OpenCVClientOperator {
                         throw new IllegalArgumentException("Invalid argument");
                 }
             }
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw e;
-        } catch (InterruptedException e) {
-            throw e;
-        } catch (Exception e) {
-            throw e;
+            throw new IllegalArgumentException("Invalid argument format");
         } finally {
             ipLock.release();
         }
@@ -195,34 +181,31 @@ public class OpenCVClientOperator {
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
-    public void detectMarkerInServer() throws JsonProcessingException, InvalidObjectException, IOException {
+    public void detectMarkerInServer() throws RemoteExecutionException {
         System.out.println("detectMarkerInServer");
         // connect to server and detect marker
         String response;
         JsonNode node;
+        try {
+            startConnection();
+            response = sendImage().replace("\\\\", "");
+            stopConnection();
 
-        startConnection();
-        response = sendImage().replace("\\\\", "");
-        stopConnection();
+            node = mapper.readTree(response);
+            Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
+            List<Mat> corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
+            System.out.println("Marker Drawn with remote informations");
 
-        node = mapper.readTree(response);
-        Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
-        List<Mat> corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
-        System.out.println("Marker Drawn with remote informations");
-
-        detector.setIds(ids);
-        detector.setCorners(corners);
+            detector.setIds(ids);
+            detector.setCorners(corners);
+        } catch (IOException | InterruptedException e) {
+            throw new RemoteExecutionException(e);
+        }
     }
 
     public void detectMarkerInClient() {
-        //System.out.println("detectMarkerInClient");
         detector.detect(subject);
         System.out.println("Marker Drawn locally");
-    }
-
-    private void handleServerDetectException(Exception e) {
-        e.printStackTrace();
-        detectMarkerInClient();
     }
 
     public void markerDetection() {
@@ -231,19 +214,15 @@ public class OpenCVClientOperator {
         detector = new DetectMarker();
         try {
             serverLock.acquire();
-            if(true == utilizeServer) {
+            if(utilizeServer) {
                 detectMarkerInServer();
             } else {
                 detectMarkerInClient();
             }
-        } catch (InvalidObjectException e) {
-            handleServerDetectException(e);
-        } catch (JsonProcessingException e) {
-            handleServerDetectException(e);
-        } catch (IOException e) {
-            handleServerDetectException(e);
-        } catch (Exception e) {
-            handleServerDetectException(e);
+        } catch (RemoteExecutionException e) {
+            detectMarkerInClient();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             serverLock.release();
         }

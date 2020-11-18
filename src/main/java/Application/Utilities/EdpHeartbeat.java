@@ -1,6 +1,7 @@
 package Application.Utilities;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,15 +33,10 @@ public class EdpHeartbeat {
                     .build();
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                case 400:
-                    System.out.println("400 - Bad Request");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
-            }
+        switch (response.statusCode()) {
+            case 200 -> System.out.println("200 - OK");
+            case 400 -> throw new ConnectException("400 - Bad Request");
+            default -> throw new ConnectException("404 - Not found");
+        }
     }
 }

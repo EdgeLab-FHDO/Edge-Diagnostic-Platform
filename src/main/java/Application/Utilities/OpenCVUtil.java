@@ -1,6 +1,7 @@
 package Application.Utilities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.CvType;
 
@@ -23,7 +24,7 @@ public class OpenCVUtil {
         int elemSize = (int)subject.elemSize();
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
-        ArrayNode dataNode = mapper.createArrayNode();
+        ArrayNode dataNode;
         String returnedResult = "";
 
         result.put("type", type);
@@ -69,7 +70,7 @@ public class OpenCVUtil {
         return returnedResult;
     }
     
-    public static Mat deserializeMat(String subject) throws JsonProcessingException, InvalidObjectException, IOException {
+    public static Mat deserializeMat(String subject) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         int type=0;
         int rows=0;
@@ -122,7 +123,7 @@ public class OpenCVUtil {
         return result;
     }
 
-    public static List<Mat> deserializeMatList(String subject) throws InvalidObjectException, JsonProcessingException, IOException {
+    public static List<Mat> deserializeMatList(String subject) throws IOException {
         List<Mat> result = new ArrayList<>();
         String[] elements = subject.replace("[\"", "").replace("\"]", "").split("\",\"");
         for(String element : elements) {
@@ -130,5 +131,9 @@ public class OpenCVUtil {
         }
 
         return result;
+    }
+
+    public static void initOpenCVSharedLibrary() {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 }

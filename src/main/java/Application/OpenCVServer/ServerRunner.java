@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 
 public class ServerRunner implements Runnable {
-    private OpenCVServerOperator activeOperator;
+    private final OpenCVServerOperator activeOperator;
 
     public ServerRunner() {
         activeOperator = OpenCVServerOperator.getInstance();
@@ -19,15 +19,7 @@ public class ServerRunner implements Runnable {
                 activeOperator.startConnection();
                 activeOperator.standbyForConnection();
                 activeOperator.stopConnection();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }  catch (InvalidObjectException e) {
-                e.printStackTrace();
-            }  catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }  catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
+            } catch (IllegalArgumentException | IOException e) {
                 e.printStackTrace();
             }
         }

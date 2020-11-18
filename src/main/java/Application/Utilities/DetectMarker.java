@@ -43,8 +43,4 @@ public class DetectMarker {
    public void setIds(Mat ids) {
       this.ids = ids;
    }
-
-   public static void initOpenCVSharedLibrary() {
-      System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-   }
 }

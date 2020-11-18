@@ -1,13 +1,13 @@
 package Application.OpenCVServer;
 
-import Application.Utilities.DetectMarker;
+import Application.Utilities.OpenCVUtil;
 
 public class OpenCVServer {
     private Thread serverThread;
     private Thread heartBeatThread;
 
     public static void main(String[] args) {
-        DetectMarker.initOpenCVSharedLibrary();
+        OpenCVUtil.initOpenCVSharedLibrary();
         OpenCVServer activeServer = new OpenCVServer();
         OpenCVServerOperator activeOperator = OpenCVServerOperator.getInstance();
 
@@ -20,11 +20,7 @@ public class OpenCVServer {
         try {
             activeServer.serverThread.join();
             activeServer.heartBeatThread.join();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
         }
     }
