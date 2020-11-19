@@ -48,7 +48,7 @@ public class OpenCVServerOperator {
     }
 
     // change name to something more appropriate
-    public void standbyForConnection() throws InvalidObjectException, IllegalArgumentException, JsonProcessingException, IOException {
+    public void standbyForConnection() throws IllegalArgumentException, IOException {
         //if input is faulty, timeout and continue
         currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
         ImageIO.write(currentImage, "png", new File(fileName));
@@ -63,8 +63,7 @@ public class OpenCVServerOperator {
         ObjectNode resultObject = mapper.createObjectNode();
         resultObject.put("ids", ids);
         resultObject.put("corners", corners);
-        System.out.println(ids);
-        System.out.println(corners);
+        System.out.println("responding");
 
         result = mapper.writeValueAsString(resultObject);
 
@@ -96,7 +95,7 @@ public class OpenCVServerOperator {
 
         serverRunner = new ServerRunner();
 
-        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "MASTER_URL", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
+        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
 
         for (String arg : args) {
             argument = arg.split("=");
@@ -136,12 +135,7 @@ public class OpenCVServerOperator {
         }
 
         String beatUrl = masterUrl + beatCommand;
-        String beatBody =  "{" +
-                "    \"id\": \"" + serverId + "\"," +
-                "    \"ipAddress\": \"" + serverIp + "\"," +
-                "    \"connected\": " + connected + "," +
-                "    \"port\": " + port +
-                "}";
+        String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + "\", \"connected\": " + connected + "}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
     }
 }

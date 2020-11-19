@@ -20,9 +20,9 @@ public class OpenCVClientOperator {
     private DetectMarker detector;
     private ObjectMapper mapper;
 
-    private String fileName = "singlemarkerssource.png";
-    private String resultFileName = "detected.png";
-    private String fileExtension = "png";
+    private final String fileName= "singlemarkerssource.png";
+    private final String resultFileName = "detected.png";
+    private final String fileExtension = "png";
     private Mat subject;
     private BufferedImage currentImage;
 
@@ -33,6 +33,7 @@ public class OpenCVClientOperator {
     private boolean utilizeServer;
     private String ip;
     private int port;
+    private boolean connected;
 
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
@@ -46,6 +47,7 @@ public class OpenCVClientOperator {
         serverLock = new Semaphore(1);
         utilizeServer = false;
         detector = new DetectMarker();
+        connected = false;
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -61,7 +63,7 @@ public class OpenCVClientOperator {
             clientSocket = new Socket(ip, port);
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            //TODO set connected to true
+            connected = true;
         } finally {
             ipLock.release();
         }
@@ -77,11 +79,15 @@ public class OpenCVClientOperator {
         return resp;
     }
 
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
-        clientSocket.close();
-        //TODO set connceted to false
+    public void stopConnection() throws RemoteExecutionException {
+        try {
+            in.close();
+            out.close();
+            clientSocket.close();
+            connected = false;
+        } catch (IOException | NullPointerException e) {
+            throw new RemoteExecutionException(e);
+        }
     }
 
     public void setServerUtilization(boolean input) {
@@ -96,29 +102,19 @@ public class OpenCVClientOperator {
 
     }
 
-    public void setup(String[] args) throws IllegalArgumentException, InterruptedException {
+    public void setupTcpConnection(String ipAddress) throws IllegalArgumentException, InterruptedException {
         String[] argument;
         // make a rest request to the master to ask for server and port for server
         // do locally if no response
         try {
             ipLock.acquire();
-            for(int i=0; i<args.length; i++) {
-                argument = args[i].split("=");
-                switch(argument[0]) {
-                    case "PORT":
-                        port = Integer.parseInt(argument[1]);
-                        System.out.println("port :" +port);
-                        break;
-                    case "IP":
-                        ip = argument[1];
-                        System.out.println("ip :" +ip);
-                        break;
-                    default :
-                        throw new IllegalArgumentException("Invalid argument");
-                }
+            argument = ipAddress.split(":");
+            if(argument.length == 2) {
+                ip = argument[0];
+                port = Integer.parseInt(argument[1]);
+            } else {
+                throw new IllegalArgumentException("Invalid argument");
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Invalid argument format");
         } finally {
             ipLock.release();
         }
@@ -135,7 +131,6 @@ public class OpenCVClientOperator {
         List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
 
         for(int i=0; i<args.length; i++) {
-            System.out.println(args[i]);
             argument = args[i].split("=");
             if(argument.length == 2) {
                 switch (argument[0]) {
@@ -165,9 +160,7 @@ public class OpenCVClientOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
         String beatUrl = masterUrl + beatCommand;
-        String beatBody =  "{" +
-                "\"id\" : \"" + clientId + "\"" +
-                "}";
+        String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
@@ -179,8 +172,9 @@ public class OpenCVClientOperator {
         String response;
         JsonNode node;
         try {
-            //TODO if not !connected start connection
-            startConnection();
+            if(!connected) {
+                startConnection();
+            }
             response = sendImage().replace("\\\\", "");
 
             node = mapper.readTree(response);
@@ -213,7 +207,7 @@ public class OpenCVClientOperator {
             }
         } catch (RemoteExecutionException e) {
             detectMarkerInClient();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         } finally {
             serverLock.release();

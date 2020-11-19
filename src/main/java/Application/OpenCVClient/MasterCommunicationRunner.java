@@ -3,7 +3,7 @@ package Application.OpenCVClient;
 import java.io.IOException;
 
 public class MasterCommunicationRunner implements Runnable {
-    private OpenCVClientOperator activeOperator;
+    private final OpenCVClientOperator activeOperator;
     private ConnectionEvaluator evaluation;
     public MasterCommunicator communicator;
 
@@ -18,8 +18,8 @@ public class MasterCommunicationRunner implements Runnable {
         while(true) {
             try {
                 System.out.println("setup server");
-                activeOperator.setup(communicator.getServer());
-            } catch (InterruptedException | IllegalArgumentException | IOException e) {
+                activeOperator.setupTcpConnection("172.17.0.1:10200");
+            } catch (InterruptedException | IllegalArgumentException e) {
                 e.printStackTrace();
             }
 
