@@ -17,20 +17,20 @@ public class MasterCommunicationRunner implements Runnable {
     public void run() {
         while(true) {
             try {
-                System.out.println("setup server");
-                activeOperator.setupTcpConnection("172.17.0.1:10200");
-            } catch (InterruptedException | IllegalArgumentException e) {
+                activeOperator.setupTcpConnection(communicator.getServer());
+            } catch (InterruptedException | IllegalArgumentException | IOException e) {
                 e.printStackTrace();
             }
 
-            System.out.println("start loop");
             while (evaluation.isGood()) {
+                //TODO consider moving the new server utlization value into a parameter or take it from the evaluation result
                 activeOperator.setServerUtilization(true);
                 evaluation.evaluate();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    break;
                 }
             }
             activeOperator.setServerUtilization(false);

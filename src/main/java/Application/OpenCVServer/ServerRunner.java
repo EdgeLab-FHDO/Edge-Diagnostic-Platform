@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 
 public class ServerRunner implements Runnable {
+    //TODO implement and use exit and running values
     private final OpenCVServerOperator activeOperator;
 
-    //stub for future classes
     private volatile boolean exit = false; //Flag to check status and be able to exit
     private volatile boolean running = false; //Flag to see runner status
 
@@ -21,7 +21,7 @@ public class ServerRunner implements Runnable {
         while(true) {
             try {
                 activeOperator.startConnection();
-                activeOperator.standbyForConnection();
+                activeOperator.processing();
                 activeOperator.stopConnection();
             } catch (IllegalArgumentException | IOException e) {
                 e.printStackTrace();

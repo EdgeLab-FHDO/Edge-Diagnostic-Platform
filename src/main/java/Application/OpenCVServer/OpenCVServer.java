@@ -3,6 +3,7 @@ package Application.OpenCVServer;
 import Application.Utilities.OpenCVUtil;
 
 public class OpenCVServer {
+    //TODO implement debug mode
     private Thread serverThread;
     private Thread heartBeatThread;
 

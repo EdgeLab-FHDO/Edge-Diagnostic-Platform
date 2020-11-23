@@ -3,11 +3,11 @@ package Application.Utilities;
 import java.io.IOException;
 
 public class HeartBeatRunner implements Runnable {
+    //TODO implement and use exit and running values
     private final EdpHeartbeat beater;
 
-    //stub for future classes
-    private volatile boolean exit = false; //Flag to check status and be able to exit
-    private volatile boolean running = false; //Flag to see runner status
+    private volatile boolean exit = false;
+    private volatile boolean running = false;
 
     public HeartBeatRunner(String url, String body) {
         beater = new EdpHeartbeat(url, body);
@@ -20,7 +20,6 @@ public class HeartBeatRunner implements Runnable {
             } catch (IOException | InterruptedException | SecurityException e) {
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-                System.out.println("Heartbeat target URL is faulty");
                 e.printStackTrace();
             }
 

@@ -104,8 +104,6 @@ public class OpenCVClientOperator {
 
     public void setupTcpConnection(String ipAddress) throws IllegalArgumentException, InterruptedException {
         String[] argument;
-        // make a rest request to the master to ask for server and port for server
-        // do locally if no response
         try {
             ipLock.acquire();
             argument = ipAddress.split(":");
@@ -122,10 +120,10 @@ public class OpenCVClientOperator {
 
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
-        String clientId = ""; // for test: client13
-        String masterUrl = ""; // for test: http://host.docker.internal:4567/
-        String beatCommand = ""; // for test: client/register
-        String getServerCommand = ""; // for test: client/get_node/
+        String clientId = "";
+        String masterUrl = "";
+        String beatCommand = "";
+        String getServerCommand = "";
         processingRunner = new ProcessingRunner();
 
         List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
@@ -167,8 +165,6 @@ public class OpenCVClientOperator {
     }
 
     public void detectMarkerInServer() throws RemoteExecutionException, IOException {
-        System.out.println("detectMarkerInServer");
-        // connect to server and detect marker
         String response;
         JsonNode node;
         try {
@@ -180,7 +176,6 @@ public class OpenCVClientOperator {
             node = mapper.readTree(response);
             Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
             List<Mat> corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
-            System.out.println("Marker Drawn with remote informations");
 
             detector.setIds(ids);
             detector.setCorners(corners);
@@ -192,7 +187,6 @@ public class OpenCVClientOperator {
 
     public void detectMarkerInClient() {
         detector.detect(subject);
-        System.out.println("Marker Drawn locally");
     }
 
     public void markerDetection() {

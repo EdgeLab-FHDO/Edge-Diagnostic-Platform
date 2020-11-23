@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class MasterCommunicator {
-    //later move this to configuration or as a paramter
+    //TODO consider moving url to configuration
     public String url;
     private final HttpClient client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)

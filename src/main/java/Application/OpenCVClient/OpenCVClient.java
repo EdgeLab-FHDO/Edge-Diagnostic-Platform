@@ -3,6 +3,7 @@ package Application.OpenCVClient;
 import Application.Utilities.OpenCVUtil;
 
 public class OpenCVClient {
+    //TODO implement debug mode
     private Thread processingThread;
     private Thread masterCommunicationThread;
     private Thread heartBeatThread;

@@ -47,9 +47,7 @@ public class OpenCVServerOperator {
         in = new DataInputStream(clientSocket.getInputStream());
     }
 
-    // change name to something more appropriate
-    public void standbyForConnection() throws IllegalArgumentException, IOException {
-        //if input is faulty, timeout and continue
+    public void processing() throws IllegalArgumentException, IOException {
         currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
         ImageIO.write(currentImage, "png", new File(fileName));
         Mat subject = ImageProcessor.getImageMat(fileName);
@@ -63,7 +61,6 @@ public class OpenCVServerOperator {
         ObjectNode resultObject = mapper.createObjectNode();
         resultObject.put("ids", ids);
         resultObject.put("corners", corners);
-        System.out.println("responding");
 
         result = mapper.writeValueAsString(resultObject);
 
@@ -87,8 +84,8 @@ public class OpenCVServerOperator {
 
     public void setupServerRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
-        String masterUrl = ""; // for test: http://host.docker.internal:4567/
-        String beatCommand = ""; // for test: client/register
+        String masterUrl = "";
+        String beatCommand = "";
         String serverId = "";
         String serverIp = "";
         boolean connected = false;

@@ -34,7 +34,7 @@ public class EdgeNode {
         return "EdgeNode{" +
                 "id='" + id + '\'' +
                 ", ipAddress='" + ipAddress + '\'' +
-                ", connected=" + connected + '\'' +
+                ", connected=" + connected +
                 '}';
     }
 }
