@@ -1,3 +1,4 @@
+#runs the OpenCVServer with parameters or from environment variables
 while getopts i:a:m:b:c:p: flag
 do
     case "${flag}" in

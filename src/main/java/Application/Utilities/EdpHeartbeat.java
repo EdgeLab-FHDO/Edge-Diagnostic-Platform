@@ -23,8 +23,6 @@ public class EdpHeartbeat {
     }
 
     public void beat() throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
-            System.out.println("beats");
-
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .timeout(Duration.ofMinutes(1))
@@ -35,7 +33,6 @@ public class EdpHeartbeat {
                     client.send(request, HttpResponse.BodyHandlers.ofString());
         switch (response.statusCode()) {
             case 200:
-                System.out.println("200 - OK");
                 break;
             case 400: throw new ConnectException("400 - Bad Request");
             default: throw new ConnectException("404 - Not found");

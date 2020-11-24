@@ -20,6 +20,7 @@ public class OpenCVClientOperator {
     private DetectMarker detector;
     private ObjectMapper mapper;
 
+    //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
     private final String fileName= "singlemarkerssource.png";
     private final String resultFileName = "detected.png";
     private final String fileExtension = "png";

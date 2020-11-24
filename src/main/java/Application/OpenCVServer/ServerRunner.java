@@ -23,7 +23,7 @@ public class ServerRunner implements Runnable {
                 activeOperator.startConnection();
                 activeOperator.processing();
                 activeOperator.stopConnection();
-            } catch (IllegalArgumentException | IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

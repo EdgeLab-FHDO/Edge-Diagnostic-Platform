@@ -1,3 +1,4 @@
+#runs the OpenCVClient with parameters or from environment variables
 while getopts i:m:b:s: flag
 do
     case "${flag}" in

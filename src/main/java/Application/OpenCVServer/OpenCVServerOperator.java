@@ -36,6 +36,7 @@ public class OpenCVServerOperator {
     private static OpenCVServerOperator instance = null;
 
     private OpenCVServerOperator() {
+        //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
         fileName= "read.png";
         detector = new DetectMarker();
     }
@@ -47,7 +48,7 @@ public class OpenCVServerOperator {
         in = new DataInputStream(clientSocket.getInputStream());
     }
 
-    public void processing() throws IllegalArgumentException, IOException {
+    public void processing() throws IOException {
         currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
         ImageIO.write(currentImage, "png", new File(fileName));
         Mat subject = ImageProcessor.getImageMat(fileName);
@@ -65,7 +66,6 @@ public class OpenCVServerOperator {
         result = mapper.writeValueAsString(resultObject);
 
         out.println(result);
-
     }
 
     public void stopConnection() throws IOException {
