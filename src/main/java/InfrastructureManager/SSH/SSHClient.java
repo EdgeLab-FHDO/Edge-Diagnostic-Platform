@@ -78,10 +78,15 @@ public class SSHClient extends MasterOutput {
                 responseStream = new ByteArrayOutputStream();
                 channel.setOutputStream(responseStream);
             }
+
             channel.connect();
+
             do {
                 Thread.sleep(100);
             } while (channel.isConnected());
+
+            //TODO: Add support for sudo commands
+            //TODO: Add support for sending files via
 
 
             if (!background) {
