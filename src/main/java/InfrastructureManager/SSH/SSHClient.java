@@ -14,6 +14,23 @@ public class SSHClient extends MasterOutput {
 
     @Override
     public void out(String response) throws IllegalArgumentException {
+        String[] command = response.split(" ",3);
+        if (command[0].equals("ssh")) { //The commands must come like "ssh command"
+            try {
+                switch (command[1]) {
+                    case "execute":
+                        execute(command[2]);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid command for SSHClient");
+                }
+            } catch (IndexOutOfBoundsException e){
+                throw new IllegalArgumentException("Arguments missing for command  - SSHClient");
+            }
+        }
+    }
 
+    private void execute(String command) {
+        System.out.println("To execute remotely: " + command);
     }
 }
