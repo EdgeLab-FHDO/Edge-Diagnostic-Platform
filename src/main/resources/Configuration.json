@@ -35,7 +35,9 @@
       "commands" : {
         "see_file" : "ssh execute ls",
         "echo $param" : "ssh execute echo $param",
-        "create_file $file" : "ssh execute touch $file"
+        "create_file $file" : "ssh execute touch $file",
+        "check" : "ssh execute ps -ef -T",
+        "execute_dummy" : "ssh execute bash dummy"
       }
     },
     {

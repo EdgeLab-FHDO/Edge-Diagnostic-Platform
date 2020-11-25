@@ -50,15 +50,13 @@ public class SSHClient extends MasterOutput {
             session.connect();
 
             channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(command);
+            channel.setCommand(command + " > /dev/null 2>&1 &");
             ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
             channel.setOutputStream(responseStream);
             channel.connect();
 
-            while (channel.isConnected()) {
-                Thread.sleep(100);
-            }
-
+            Thread.sleep(100);
+            
             String responseString = new String(responseStream.toByteArray());
             System.out.println(responseString);
         } catch (JSchException | InterruptedException e) {
