@@ -34,11 +34,14 @@
       "out" : "ssh",
       "commands" : {
         "setup_ssh $HOST $PORT $USERNAME $PASSWORD" : "ssh setup $HOST $PORT $USERNAME $PASSWORD",
-        "see_file" : "ssh execute -f ls",
+        "test_setup" : "ssh setup 192.168.0.127 22 jpcr3108 jp1234",
+        "see_files" : "ssh execute -f sudo ls",
         "echo $param" : "ssh execute -f echo $param",
         "create_file $file" : "ssh execute -f touch $file",
-        "check_processes" : "ssh execute -f ps -ef -T",
-        "execute_dummy" : "ssh execute -b bash dummy"
+        "check_processes" : "ssh execute -f ps -ef | grep dummy",
+        "execute_dummy" : "ssh execute -b bash dummy",
+        "execute_dummy_sudo" : "ssh execute -b sudo bash dummy",
+        "sudo" : "ssh execute -f sudo echo with_sudo"
       }
     },
     {

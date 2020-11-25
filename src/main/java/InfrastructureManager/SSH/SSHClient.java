@@ -7,6 +7,8 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 public class SSHClient extends MasterOutput {
@@ -62,9 +64,12 @@ public class SSHClient extends MasterOutput {
         if (!isSetUp()) {
             throw new IllegalStateException("SSH Client has not been set up");
         }
+        boolean sudo = command.startsWith("sudo");
         Session session = null;
         ChannelExec channel = null;
-        command = background ? command + " > /dev/null 2>&1 &" : command;
+        ByteArrayOutputStream responseStream = null;
+        command = modifyCommand(command,background,sudo);
+
         try {
             session = jsch.getSession(username,host,port);
             session.setPassword(password);
@@ -73,28 +78,32 @@ public class SSHClient extends MasterOutput {
 
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(command);
-            ByteArrayOutputStream responseStream = null;
+
             if (!background) {
                 responseStream = new ByteArrayOutputStream();
                 channel.setOutputStream(responseStream);
             }
-
+            OutputStream toChannel = channel.getOutputStream();
             channel.connect();
+
+            if (sudo) { //If sudo command,write the password to the STDIN
+                toChannel.write((password + "\n").getBytes());
+                toChannel.flush();
+            }
 
             do {
                 Thread.sleep(100);
             } while (channel.isConnected());
 
-            //TODO: Add support for sudo commands
-            //TODO: Add support for sending files via
-
+            //TODO: Add support for sending files via SCP
+            toChannel.close();
 
             if (!background) {
                 String responseString = new String(responseStream.toByteArray());
                 System.out.println(responseString);
             }
 
-        } catch (JSchException | InterruptedException e) {
+        } catch (JSchException | InterruptedException | IOException e) {
             e.printStackTrace();
         } finally {
             if (session != null) {
@@ -105,6 +114,19 @@ public class SSHClient extends MasterOutput {
             }
         }
     }
+
+    private String modifyCommand(String command, boolean background, boolean sudo) {
+        if (background && sudo) {
+            return command.replaceFirst("sudo\\s+","sudo -b -S ") + " > /dev/null 2>&1";
+        } else if (background) {
+            return command + " > /dev/null 2>&1 &";
+        } else if (sudo) {
+            return command.replaceFirst("sudo\\s+","sudo -S ");
+        } else {
+            return command;
+        }
+    }
+
     private void setUpClient(String host, String port, String username, String password) {
         this.username = username;
         this.host = host;
