@@ -7,39 +7,47 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 public class SSHClient extends MasterOutput {
 
     private final JSch jsch;
-    private final String username = "jpcr3108";
-    private final String host = "192.168.0.127";
-    private final String password = "jp1234";
-    private final int port = 22;
+    private String username;
+    private String host;
+    private String password;
+    private int port;
 
 
     public SSHClient(String name) {
         super(name);
         this.jsch = new JSch();
+        this.username = null;
+        this.password = null;
+        this.host = null;
+        this.port = 0;
     }
 
     @Override
     public void out(String response) throws IllegalArgumentException {
-        String[] command = response.split(" ",4);
+        String[] command = response.split(" ");
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {
                 switch (command[1]) {
                     case "execute":
+                        String toSend = String.join(" ", Arrays.copyOfRange(command,3,command.length));
                         switch (command[2]) {
                             case "-b" :
-                                execute(command[3],true);
+                                execute(toSend,true);
                                 break;
                             case "-f":
-                                execute(command[3], false);
+                                execute(toSend, false);
                                 break;
                             default:
                                 throw new IllegalArgumentException("Display parameter missing in SSHClient command");
                         }
-
+                        break;
+                    case "setup" :
+                        setUpClient(command[2],command[3],command[4], command[5]);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid command for SSHClient");
@@ -51,6 +59,9 @@ public class SSHClient extends MasterOutput {
     }
 
     private void execute(String command, boolean background) {
+        if (!isSetUp()) {
+            throw new IllegalStateException("SSH Client has not been set up");
+        }
         Session session = null;
         ChannelExec channel = null;
         command = background ? command + " > /dev/null 2>&1 &" : command;
@@ -88,5 +99,15 @@ public class SSHClient extends MasterOutput {
                 channel.disconnect();
             }
         }
+    }
+    private void setUpClient(String host, String port, String username, String password) {
+        this.username = username;
+        this.host = host;
+        this.password = password;
+        this.port = Integer.parseInt(port);
+    }
+
+    private boolean isSetUp() {
+        return this.username != null && this.host != null && this.port != 0 && this.password != null;
     }
 }

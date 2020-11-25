@@ -33,6 +33,7 @@
       "in" : "console_in",
       "out" : "ssh",
       "commands" : {
+        "setup_ssh $HOST $PORT $USERNAME $PASSWORD" : "ssh setup $HOST $PORT $USERNAME $PASSWORD",
         "see_file" : "ssh execute -f ls",
         "echo $param" : "ssh execute -f echo $param",
         "create_file $file" : "ssh execute -f touch $file",
