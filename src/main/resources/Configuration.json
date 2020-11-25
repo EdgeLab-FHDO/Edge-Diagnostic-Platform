@@ -33,11 +33,11 @@
       "in" : "console_in",
       "out" : "ssh",
       "commands" : {
-        "see_file" : "ssh execute ls",
-        "echo $param" : "ssh execute echo $param",
-        "create_file $file" : "ssh execute touch $file",
-        "check" : "ssh execute ps -ef -T",
-        "execute_dummy" : "ssh execute bash dummy"
+        "see_file" : "ssh execute -f ls",
+        "echo $param" : "ssh execute -f echo $param",
+        "create_file $file" : "ssh execute -f touch $file",
+        "check_processes" : "ssh execute -f ps -ef -T",
+        "execute_dummy" : "ssh execute -b bash dummy"
       }
     },
     {

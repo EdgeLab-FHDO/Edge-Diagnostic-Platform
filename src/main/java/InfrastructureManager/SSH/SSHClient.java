@@ -24,12 +24,22 @@ public class SSHClient extends MasterOutput {
 
     @Override
     public void out(String response) throws IllegalArgumentException {
-        String[] command = response.split(" ",3);
+        String[] command = response.split(" ",4);
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {
                 switch (command[1]) {
                     case "execute":
-                        execute(command[2]);
+                        switch (command[2]) {
+                            case "-b" :
+                                execute(command[3],true);
+                                break;
+                            case "-f":
+                                execute(command[3], false);
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Display parameter missing in SSHClient command");
+                        }
+
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid command for SSHClient");
@@ -40,9 +50,10 @@ public class SSHClient extends MasterOutput {
         }
     }
 
-    private void execute(String command) {
+    private void execute(String command, boolean background) {
         Session session = null;
         ChannelExec channel = null;
+        command = background ? command + " > /dev/null 2>&1 &" : command;
         try {
             session = jsch.getSession(username,host,port);
             session.setPassword(password);
@@ -50,15 +61,23 @@ public class SSHClient extends MasterOutput {
             session.connect();
 
             channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(command + " > /dev/null 2>&1 &");
-            ByteArrayOutputStream responseStream = new ByteArrayOutputStream();
-            channel.setOutputStream(responseStream);
+            channel.setCommand(command);
+            ByteArrayOutputStream responseStream = null;
+            if (!background) {
+                responseStream = new ByteArrayOutputStream();
+                channel.setOutputStream(responseStream);
+            }
             channel.connect();
+            do {
+                Thread.sleep(100);
+            } while (channel.isConnected());
 
-            Thread.sleep(100);
-            
-            String responseString = new String(responseStream.toByteArray());
-            System.out.println(responseString);
+
+            if (!background) {
+                String responseString = new String(responseStream.toByteArray());
+                System.out.println(responseString);
+            }
+
         } catch (JSchException | InterruptedException e) {
             e.printStackTrace();
         } finally {
