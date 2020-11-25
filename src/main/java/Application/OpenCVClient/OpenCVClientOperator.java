@@ -168,11 +168,10 @@ public class OpenCVClientOperator {
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
-    public void detectMarkerInServer() throws RemoteExecutionException, IOException {
+    public void detectMarkerInServer() throws RemoteExecutionException {
         String response;
         JsonNode node;
         try {
-
             startConnection();
             response = sendImage().replace("\\\\", "");
 
@@ -204,7 +203,7 @@ public class OpenCVClientOperator {
             }
         } catch (RemoteExecutionException e) {
             detectMarkerInClient();
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             serverLock.release();
