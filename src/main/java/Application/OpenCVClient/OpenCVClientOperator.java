@@ -59,14 +59,16 @@ public class OpenCVClientOperator {
     }
 
     public void startConnection() throws IOException, InterruptedException {
-        try {
-            ipLock.acquire();
-            clientSocket = new Socket(ip, port);
-            out = new DataOutputStream(clientSocket.getOutputStream());
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            connected = true;
-        } finally {
-            ipLock.release();
+        if(!connected) {
+            try {
+                ipLock.acquire();
+                clientSocket = new Socket(ip, port);
+                out = new DataOutputStream(clientSocket.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                connected = true;
+            } finally {
+                ipLock.release();
+            }
         }
     }
 
@@ -170,9 +172,8 @@ public class OpenCVClientOperator {
         String response;
         JsonNode node;
         try {
-            if(!connected) {
-                startConnection();
-            }
+
+            startConnection();
             response = sendImage().replace("\\\\", "");
 
             node = mapper.readTree(response);

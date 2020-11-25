@@ -1,6 +1,7 @@
 package Application.OpenCVServer;
 
 
+import Application.Utilities.RemoteExecutionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
@@ -22,8 +23,13 @@ public class ServerRunner implements Runnable {
             try {
                 activeOperator.startConnection();
                 activeOperator.processing();
-                activeOperator.stopConnection();
             } catch (IOException e) {
+                try {
+                    activeOperator.stopConnection();
+                    Thread.sleep(1000);
+                } catch (RemoteExecutionException | InterruptedException stopException) {
+                    stopException.printStackTrace();
+                }
                 e.printStackTrace();
             }
         }
