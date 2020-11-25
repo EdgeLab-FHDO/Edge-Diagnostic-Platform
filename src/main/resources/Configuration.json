@@ -22,7 +22,9 @@
       "in" : "console_in",
       "out" : "ssh",
       "commands" : {
-        "test_ssh" : "ssh execute echo -s -P algo c:/path"
+        "see_file" : "ssh execute ls",
+        "echo $param" : "ssh execute echo $param",
+        "create_file $file" : "ssh execute touch $file"
       }
     },
     {
