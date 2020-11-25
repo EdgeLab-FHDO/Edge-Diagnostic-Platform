@@ -20,6 +20,17 @@
   "connections" : [
     {
       "in" : "console_in",
+      "out" : "console_out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution" ,
+        "save_statistics" : "console LoggerExecution" ,
+        "show_statistics" : "console GUIUpdateExecution"
+      }
+    },
+    {
+      "in" : "console_in",
       "out" : "ssh",
       "commands" : {
         "see_file" : "ssh execute ls",
@@ -34,6 +45,68 @@
         "exit" : "util exit",
         "start_rest_server" : "util runRunner RestServer",
         "start_runner $runner_name" : "util runRunner $runner_name"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "advant_e",
+      "commands" : {
+        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
+        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "scenario_editor",
+      "commands" : {
+        "create_scenario $scenario_name" : "editor create $scenario_name",
+        "add_event $event_name $execution_time" : "editor addEvent $event_name $execution_time",
+        "delete_event" : "editor deleteEvent",
+        "save_scenario $path" : "editor toFile $path",
+        "read_scenario $path" : "editor fromFile $path"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "scenario_dispatcher",
+      "commands" : {
+        "load_scenario $path" : "dispatcher fromFile $path",
+        "run_scenario" : "dispatcher run",
+        "pause_scenario" : "dispatcher pause",
+        "resume_scenario" : "dispatcher resume"
+      }
+    },
+    {
+      "in" : "rest_in",
+      "out" : "match_m",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "match_m",
+      "out" : "rest_out",
+      "commands" : {
+        "give_node $client_id $node_id": "restOut sendNode $client_id $node_id"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "rest_out",
+      "commands" : {
+        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
+      }
+    },
+    {
+      "in" : "dummy",
+      "out" : "console_out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution"
       }
     }
   ]
