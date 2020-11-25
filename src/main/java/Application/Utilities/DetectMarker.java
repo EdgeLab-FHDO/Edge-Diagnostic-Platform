@@ -17,6 +17,7 @@ public class DetectMarker {
    }
 
    public void detect(Mat subject) {
+      //TODO allow changing or loading of other Dictionaries
       Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_6X6_250);
 
       Aruco.detectMarkers(subject, dictionary, corners, ids);

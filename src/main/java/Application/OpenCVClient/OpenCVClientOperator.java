@@ -129,6 +129,7 @@ public class OpenCVClientOperator {
 
         List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
 
+        //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
             argument = args[i].split("=");
             if(argument.length == 2) {

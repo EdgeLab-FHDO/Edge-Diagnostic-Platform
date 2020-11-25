@@ -23,7 +23,7 @@ public class MasterCommunicationRunner implements Runnable {
             }
 
             while (evaluation.isGood()) {
-                //TODO consider moving the new server utlization value into a parameter or take it from the evaluation result
+                //TODO consider moving the new server utilization value into a parameter or take it from the evaluation result
                 activeOperator.setServerUtilization(true);
                 evaluation.evaluate();
                 try {

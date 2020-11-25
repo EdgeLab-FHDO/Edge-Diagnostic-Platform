@@ -48,12 +48,12 @@ public class OpenCVServerOperator {
         in = new DataInputStream(clientSocket.getInputStream());
     }
 
-    public void processing() throws IOException {
+    public void processing() throws IOException, IllegalArgumentException {
         currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
-        ImageIO.write(currentImage, "png", new File(fileName));
-        Mat subject = ImageProcessor.getImageMat(fileName);
+        Mat subject = ImageProcessor.getBufferedImageMat(currentImage);
 
         detector.detect(subject);
+
         String ids = OpenCVUtil.serializeMat(detector.getIds());
         String corners = OpenCVUtil.serializeMatList(detector.getCorners());
         String result = "";
@@ -94,6 +94,7 @@ public class OpenCVServerOperator {
 
         List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
 
+        //TODO move beat command to other input methods such as configuration files
         for (String arg : args) {
             argument = arg.split("=");
             if (argument.length == 2) {

@@ -10,6 +10,7 @@ public class CreateMarker {
       System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
       Mat markerImage = new Mat();
+      //TODO allow changing or loading of other Dictionaries
       Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_6X6_250);
       Aruco.drawMarker(dictionary, 23, 200, markerImage);
 
