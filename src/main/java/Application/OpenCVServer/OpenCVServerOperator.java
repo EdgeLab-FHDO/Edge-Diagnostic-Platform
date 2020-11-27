@@ -51,7 +51,7 @@ public class OpenCVServerOperator {
     }
 
     public void processing() throws IOException, IllegalArgumentException {
-        currentImage = ImageIO.read(ImageIO.createImageInputStream(clientSocket.getInputStream()));
+        currentImage = ImageIO.read(in);
         if(currentImage != null) {
             Mat subject = ImageProcessor.getBufferedImageMat(currentImage);
 
@@ -69,6 +69,8 @@ public class OpenCVServerOperator {
             result = mapper.writeValueAsString(resultObject);
 
             out.println(result);
+        } else {
+            clientSocket.sendUrgentData(1);
         }
     }
 
@@ -98,7 +100,6 @@ public class OpenCVServerOperator {
         String serverId = "";
         String serverIp = "";
         boolean connected = false;
-
         serverRunner = new ServerRunner();
 
         List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false

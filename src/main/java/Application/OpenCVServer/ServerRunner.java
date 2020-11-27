@@ -2,10 +2,7 @@ package Application.OpenCVServer;
 
 
 import Application.Utilities.RemoteExecutionException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.IOException;
-import java.io.InvalidObjectException;
 
 public class ServerRunner implements Runnable {
     //TODO implement and use exit and running values
@@ -23,7 +20,7 @@ public class ServerRunner implements Runnable {
             try {
                 activeOperator.startConnection();
                 activeOperator.processing();
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 try {
                     activeOperator.stopConnection();
                     Thread.sleep(1000);
