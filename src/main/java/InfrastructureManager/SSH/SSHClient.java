@@ -6,10 +6,9 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Arrays;
+import java.util.IllegalFormatCodePointException;
 
 public class SSHClient extends MasterOutput {
 
@@ -51,6 +50,9 @@ public class SSHClient extends MasterOutput {
                     case "setup" :
                         setUpClient(command[2],command[3],command[4], command[5]);
                         break;
+                    case "sendFile" :
+                        sendFile(command [2], command[3]);
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid command for SSHClient");
                 }
@@ -58,6 +60,92 @@ public class SSHClient extends MasterOutput {
                 throw new IllegalArgumentException("Arguments missing for command  - SSHClient");
             }
         }
+    }
+
+    private void sendFile(String localFilePath, String remoteDestFilePath) {
+        if (!isSetUp()) {
+            throw new IllegalStateException("SSH Client has not been set up");
+        }
+        Session session = null;
+        ChannelExec channel = null;
+        File localFile = new File(localFilePath);
+        FileInputStream fileStream = null;
+        if (!localFile.isFile()) {
+            throw new IllegalArgumentException("Invalid File");
+        }
+        try {
+            session = createSession();
+            session.connect();
+
+            String command = "scp -t " + remoteDestFilePath;
+            channel = (ChannelExec) session.openChannel("exec");
+            channel.setCommand(command);
+
+            OutputStream out = channel.getOutputStream();
+            InputStream in = channel.getInputStream();
+
+            channel.connect();
+
+            checkSCPAck(in);
+
+            // send "C0644 filesize filename", where filename should not include '/'
+            command="C0644 "+ localFile.length() +" " + localFile.getName() + "\n";
+            out.write(command.getBytes());
+            out.flush();
+
+            checkSCPAck(in);
+
+            // send a content of lfile
+            fileStream = new FileInputStream(localFile);
+            byte[] buf=new byte[1024];
+            while(true){
+                int len= fileStream.read(buf, 0, buf.length);
+                if(len<=0) break;
+                out.write(buf, 0, len);
+            }
+            fileStream.close();
+
+            // send '\0'
+            buf[0]=0; out.write(buf, 0, 1);
+            out.flush();
+            checkSCPAck(in);
+
+            out.close();
+
+        } catch (JSchException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (channel != null) {
+                channel.disconnect();
+            }
+            if (session != null) {
+                session.disconnect();
+            }
+        }
+    }
+
+    private void checkSCPAck(InputStream in) throws IOException{
+        int ack=in.read();
+        switch (ack) {
+            case 0: return;
+            case 1:
+            case 2:
+                System.out.println(getErrorFromInputStream(in));
+                return;
+            default:
+                System.out.println("Error");
+        }
+    }
+
+    private String getErrorFromInputStream (InputStream in) throws IOException {
+        int ch;
+        StringBuilder sb=new StringBuilder();
+        do {
+            ch=in.read();
+            sb.append((char)ch);
+        }
+        while(ch!='\n');
+        return sb.toString();
     }
 
     private void execute(String command, boolean background) {
@@ -71,9 +159,7 @@ public class SSHClient extends MasterOutput {
         command = modifyCommand(command,background,sudo);
 
         try {
-            session = jsch.getSession(username,host,port);
-            session.setPassword(password);
-            session.setConfig("StrictHostKeyChecking", "no");
+            session = createSession();
             session.connect();
 
             channel = (ChannelExec) session.openChannel("exec");
@@ -95,7 +181,7 @@ public class SSHClient extends MasterOutput {
                 Thread.sleep(100);
             } while (channel.isConnected());
 
-            //TODO: Add support for sending files via SCP
+
             toChannel.close();
 
             if (!background) {
@@ -113,6 +199,13 @@ public class SSHClient extends MasterOutput {
                 channel.disconnect();
             }
         }
+    }
+
+    private Session createSession() throws JSchException {
+        Session session = jsch.getSession(username,host,port);
+        session.setPassword(password);
+        session.setConfig("StrictHostKeyChecking", "no");
+        return session;
     }
 
     private String modifyCommand(String command, boolean background, boolean sudo) {
