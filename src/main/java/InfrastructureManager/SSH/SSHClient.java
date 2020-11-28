@@ -43,7 +43,7 @@ public class SSHClient extends MasterOutput {
                                 execute(toSend, false);
                                 break;
                             default:
-                                throw new IllegalArgumentException("Display parameter missing in SSHClient command");
+                                throw new IllegalArgumentException("Wrong Display parameter in SSHClient execute command");
                         }
                         break;
                     case "setup" :
@@ -56,7 +56,7 @@ public class SSHClient extends MasterOutput {
                         throw new IllegalArgumentException("Invalid command for SSHClient");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command  - SSHClient");
+                throw new IllegalArgumentException("Arguments missing for command - SSHClient");
             }
         }
     }
