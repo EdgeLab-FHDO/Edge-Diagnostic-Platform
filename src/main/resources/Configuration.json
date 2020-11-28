@@ -38,9 +38,9 @@
         "see_files" : "ssh execute -f sudo ls",
         "echo $param" : "ssh execute -f echo $param",
         "create_file $file" : "ssh execute -f touch $file",
-        "check_processes" : "ssh execute -f ps -ef | grep dummy",
-        "execute_dummy" : "ssh execute -b bash dummy",
-        "execute_dummy_sudo" : "ssh execute -b sudo bash dummy",
+        "check_processes" : "ssh execute -f ps -ef",
+        "execute_dummy" : "ssh execute -b bash dummy.sh",
+        "execute_dummy_sudo" : "ssh execute -b sudo bash dummy.sh",
         "sudo" : "ssh execute -f sudo echo with_sudo",
         "send_dummy" : "ssh sendFile src/test/resources/ManualTestResources/dummy.sh /home/jpcr3108/dummy.sh"
       }

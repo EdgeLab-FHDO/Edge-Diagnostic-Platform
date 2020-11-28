@@ -8,7 +8,6 @@ import com.jcraft.jsch.Session;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.IllegalFormatCodePointException;
 
 public class SSHClient extends MasterOutput {
 
@@ -66,74 +65,75 @@ public class SSHClient extends MasterOutput {
         if (!isSetUp()) {
             throw new IllegalStateException("SSH Client has not been set up");
         }
+        //Resources declaration in null, so they can be closed in the finally
         Session session = null;
         ChannelExec channel = null;
+        OutputStream out = null;
+        InputStream in = null;
+        //-----------------------------
         File localFile = new File(localFilePath);
-        FileInputStream fileStream = null;
         if (!localFile.isFile()) {
             throw new IllegalArgumentException("Invalid File");
         }
-        try {
-            session = createSession();
-            session.connect();
+        //Try-with-resources, closes the stream automatically
+        try (FileInputStream fileStream = new FileInputStream(localFile)) {
 
-            String command = "scp -t " + remoteDestFilePath;
+            session = createSession();
+            session.connect(); //Connect to SSH Session
+
+            String command = "scp -t " + remoteDestFilePath; //Execute scp -t file in the remote
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(command);
 
-            OutputStream out = channel.getOutputStream();
-            InputStream in = channel.getInputStream();
+            out = channel.getOutputStream(); //Get stream to send to remote
+            in = channel.getInputStream(); //Get stream to receive from remote
 
-            channel.connect();
+            channel.connect(); //Start the channel and send the command
 
-            checkSCPAck(in);
+            checkSCPAck(in); //Check for SCP acknowledge
 
-            // send "C0644 filesize filename", where filename should not include '/'
+            // send "C0644 fileSize filename" according to SCP Protocol, end with new line char
             command="C0644 "+ localFile.length() +" " + localFile.getName() + "\n";
             out.write(command.getBytes());
             out.flush();
 
-            checkSCPAck(in);
+            checkSCPAck(in); //Check if received
 
-            // send a content of lfile
-            fileStream = new FileInputStream(localFile);
+            // send content of the file
             byte[] buf=new byte[1024];
             while(true){
                 int len= fileStream.read(buf, 0, buf.length);
                 if(len<=0) break;
                 out.write(buf, 0, len);
             }
-            fileStream.close();
 
-            // send '\0'
+            // send '\0' to finish
             buf[0]=0; out.write(buf, 0, 1);
             out.flush();
-            checkSCPAck(in);
 
-            out.close();
+            checkSCPAck(in); //check received
 
-        } catch (JSchException | IOException e) {
+
+        } catch (JSchException | IOException | SCPException e) {
             e.printStackTrace();
         } finally {
-            if (channel != null) {
-                channel.disconnect();
-            }
-            if (session != null) {
-                session.disconnect();
-            }
+            //Close IO Resources
+            if (channel != null) channel.disconnect();
+            if (session != null) session.disconnect();
+            if (in != null) try {in.close();} catch (IOException ignored) {}
+            if (out != null) try {out.close();} catch (IOException ignored) {}
         }
     }
 
-    private void checkSCPAck(InputStream in) throws IOException{
+    private void checkSCPAck(InputStream in) throws IOException, SCPException {
         int ack=in.read();
         switch (ack) {
             case 0: return;
             case 1:
             case 2:
-                System.out.println(getErrorFromInputStream(in));
-                return;
+                throw new SCPException(getErrorFromInputStream(in)); //If response is 1 or 2 then print the error message
             default:
-                System.out.println("Error");
+                throw new SCPException("Unknown error");
         }
     }
 
@@ -144,7 +144,7 @@ public class SSHClient extends MasterOutput {
             ch=in.read();
             sb.append((char)ch);
         }
-        while(ch!='\n');
+        while(ch!='\n'); //Read the error message for responses 1 and 2
         return sb.toString();
     }
 
@@ -152,39 +152,38 @@ public class SSHClient extends MasterOutput {
         if (!isSetUp()) {
             throw new IllegalStateException("SSH Client has not been set up");
         }
-        boolean sudo = command.startsWith("sudo");
+        //Resources declaration in null, so they can be closed in the finally
         Session session = null;
         ChannelExec channel = null;
         ByteArrayOutputStream responseStream = null;
-        command = modifyCommand(command,background,sudo);
+        OutputStream toChannel = null;
+        //-------------------------------------------
+        boolean sudo = command.startsWith("sudo");
+        command = modifyCommand(command,background,sudo); //Modify the command according to if its sudo and background
 
         try {
             session = createSession();
-            session.connect();
+            session.connect(); //Connect to the SSH session
 
             channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(command);
+            channel.setCommand(command); //Create an execution channel and set the command
 
-            if (!background) {
+            if (!background) { //If commands runs on the front, create a stream to sink its output
                 responseStream = new ByteArrayOutputStream();
                 channel.setOutputStream(responseStream);
             }
-            OutputStream toChannel = channel.getOutputStream();
-            channel.connect();
+            if (sudo) toChannel = channel.getOutputStream(); //If command is sudo, create a stream to be able to send password
+
+            channel.connect(); //Connect to the channel and send the command
 
             if (sudo) { //If sudo command,write the password to the STDIN
                 toChannel.write((password + "\n").getBytes());
                 toChannel.flush();
             }
-
-            do {
-                Thread.sleep(100);
-            } while (channel.isConnected());
-
-
-            toChannel.close();
-
-            if (!background) {
+            if (!background) { //If the command runs on the front, print its output to the console
+                do {
+                    Thread.sleep(100);
+                } while (channel.isConnected()); //Wait for command to be over in the remote
                 String responseString = new String(responseStream.toByteArray());
                 System.out.println(responseString);
             }
@@ -192,12 +191,11 @@ public class SSHClient extends MasterOutput {
         } catch (JSchException | InterruptedException | IOException e) {
             e.printStackTrace();
         } finally {
-            if (session != null) {
-                session.disconnect();
-            }
-            if (channel != null) {
-                channel.disconnect();
-            }
+            //Close IO Resources
+            if (channel != null) channel.disconnect();
+            if (session != null) session.disconnect();
+            if (responseStream != null) try {responseStream.close();} catch (IOException ignored) {}
+            if (toChannel != null) try {toChannel.close();} catch (IOException ignored) {}
         }
     }
 
