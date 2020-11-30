@@ -23,8 +23,7 @@ public class RandomMatchMaking implements MatchMakingAlgorithm {
             return null;
         } else {
             for (EdgeNode thisNode : nodeList){
-                logger.info(thisNode.toString());
-//                System.out.println(thisNode.toString());
+                logger.info("node - {}",thisNode.toString());
             }
             logger.info("random match making is done");
             return nodeList.get(random.nextInt(nodeList.size()));

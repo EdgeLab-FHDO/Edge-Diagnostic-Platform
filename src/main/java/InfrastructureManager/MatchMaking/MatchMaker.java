@@ -3,6 +3,8 @@ package InfrastructureManager.MatchMaking;
 import InfrastructureManager.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
-    private final Map<EdgeClient,EdgeNode> mapping;
+    private final Map<EdgeClient, EdgeNode> mapping;
 
     /*
     -----------------------start_match_m start from here--------------------------------------------------
@@ -41,7 +43,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      */
     public void setAlgorithmFromString(String algorithmType) {
         switch (algorithmType.toLowerCase()) {
-            case "random" :
+            case "random":
                 setAlgorithm(new RandomMatchMaking());
                 break;
             default:
@@ -57,7 +59,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     -----------------------Assigning client to node--------------------------------------------------
     Single client to single node, not multiple in the same time
     */
-    private void assign (String clientID) {
+    private void assign(String clientID) {
 
         logger.info("\n assigning client to node \n -------------------------");
         try {
@@ -65,12 +67,13 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //match client with node in nodelist according to algorithm
 
             EdgeNode node = this.algorithm.match(client, this.nodeList);
-            logger.info("node info: {}", node);
+            logger.info("assigned node info: {}", node);
 
             if (node == null) {
                 logger.warn("no node in nodelist");
             } else {
-                this.mapping.put(client,node);
+                logger.info("assign client [{}] to node [{}] ", client.getId(), node.getId());
+                this.mapping.put(client, node);
                 command = "give_node " + client.getId() + " " + node.getId();
                 logger.info("done with assigning -----------------------");
             }
@@ -94,16 +97,16 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         logger.info("after split response: {}", Arrays.toString(command));
         if (command[0].equals("matchMaker")) {
             try {
-                switch (command[1]){
-                    case "register_client" :
+                switch (command[1]) {
+                    case "register_client":
                         registerClient(command[2]);
                         logger.info("client registered, done with [outfunction]\n");
                         break;
-                    case "register_node" :
+                    case "register_node":
                         registerNode(command[2]);
                         logger.info("node registered, done with [outfunction]\n");
                         break;
-                    case "assign_client" :
+                    case "assign_client":
                         assign(command[2]);
                         logger.info("client assigned, done with [outfunction]\n");
                         break;
@@ -122,10 +125,16 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private void registerClient(String clientAsString) {
         try {
             logger.info("RegisterClient - client as string : {} ", clientAsString);
-            //take value using a string from JSON file? what if client name is similar to node name? :)) Then we fck huh
+            //take value using a string from JSON file? what if client name is similar to node name? :)) Then we are fcked huh
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
-            logger.info("client after readValue from mapper: {}", client.getId());
+
+            //Just for debugging purpose
+            String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(client);
+            logger.info("client after readValue from mapper: {}", clientPretty);
             this.clientList.add(client);
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -136,9 +145,10 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      */
     private void registerNode(String nodeAsString) {
         try {
-            logger.info("RegisterNode - node as string: {} ",nodeAsString);
+            logger.info("RegisterNode - node as string: {} ", nodeAsString);
             EdgeNode node = this.mapper.readValue(nodeAsString, EdgeNode.class);
-            logger.info("node after readValue from mapper: {}", node.toString());
+            String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+            logger.info("node after readValue from mapper: {}", nodePretty);
             this.nodeList.add(node);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -146,19 +156,19 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
     /*/
-    TODO: read what?
+    This happen after assign (or match making), sending command such as [give_node client1 node1] to the server (i guess)
      */
     @Override
     public String read() throws Exception {
+        //TODO: using class variable [command] may fck things up when doing multi-thread.
         if (command.isEmpty()) {
             throw new Exception("No command exception");
         }
-
-
+        //fetch the command that was changed by function [assign] above,
         String toSend = command;
-        logger.info("toSend = command = {}", toSend);
+        //this line to reset command (class variable) to empty
+
         command = "";
-        logger.info("toSend ({})     command ({})      ", toSend, command);
         return toSend;
     }
 
