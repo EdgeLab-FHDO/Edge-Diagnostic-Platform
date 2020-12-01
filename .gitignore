@@ -2,3 +2,10 @@
 /.idea/
 /build
 /out/
+Dockerfile
+src/test/resources/testScenario.json
+*.bat
+src/main/java/Application/testfiles
+src/main/java/Application/temp
+src/main/java/Application/Dockerfile_test_server
+src/main/java/Application/Dockerfile_test_universal
