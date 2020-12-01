@@ -20,13 +20,17 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient, EdgeNode> mapping;
-
+    //TODO: make logger depend on debugging (use a boolean variable will be fine) to reduce the console output later on
     /*
     -----------------------start_match_m start from here--------------------------------------------------
      */
     public MatchMaker(String name, String algorithmType) {
         super(name);
-        System.out.println("input for match making:  \nstart_rest_server \nstart_runner Runner_rest_in \nstart_runner Runner_match_m ");
+
+        //Manually changed algorithm used here. -negative, can't use
+//        algorithmType = "sbmm";
+        System.out.println("input for match making:  \nstart_rest_server \nstart_runner Runner_rest_in \nstart_runner Runner_match_m \n");
+
 
         setAlgorithmFromString(algorithmType);
 
@@ -42,10 +46,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     -----------------------getting match making algorithm--------------------------------------------------
      */
     public void setAlgorithmFromString(String algorithmType) {
+        logger.info("Algorithm used: {}", algorithmType);
         switch (algorithmType.toLowerCase()) {
             case "random":
-                setAlgorithm(new RandomMatchMaking());
+                setAlgorithm(new ScoreBasedMM());
+//                setAlgorithm(new RandomMatchMaking());
                 break;
+            case "sbmm":
+                setAlgorithm(new ScoreBasedMM());
             default:
                 throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
@@ -65,8 +73,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         try {
             EdgeClient client = this.getClientByID(clientID);
             //match client with node in nodelist according to algorithm
-
             EdgeNode node = this.algorithm.match(client, this.nodeList);
+            //list of node, for debugging purposes
+            for (EdgeNode theNode: nodeList) {
+                logger.info(theNode.toString());
+            }
+
             logger.info("assigned node info: {}", node);
 
             if (node == null) {
