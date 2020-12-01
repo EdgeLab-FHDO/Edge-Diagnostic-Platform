@@ -17,4 +17,5 @@ RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.
 #execute
 COPY bash/OpenCVServer/server_exe.sh server_exe.sh
 WORKDIR /
-RUN chmod +x server_exe.sh && sync && ./server_exe.sh && rm server_exe.sh
+RUN chmod +x server_exe.sh
+#&& sync && ./server_exe.sh && rm server_exe.sh

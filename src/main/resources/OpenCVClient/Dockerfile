@@ -18,4 +18,5 @@ RUN chmod +x build_classes.sh && sync && ./build_classes.sh && rm build_classes.
 #execute
 COPY bash/OpenCVClient/client_exe.sh client_exe.sh
 WORKDIR /
-RUN chmod +x client_exe.sh && sync && ./client_exe.sh && rm client_exe.sh
+RUN chmod +x client_exe.sh
+#&& sync && ./client_exe.sh && rm client_exe.sh
