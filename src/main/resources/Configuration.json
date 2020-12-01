@@ -113,6 +113,13 @@
         "update_gui" : "console GUIUpdateExecution" ,
         "node_request" : "console matchMakingExecution"
       }
+    },
+    {
+      "in" : "console_in",
+      "out" : "match_m",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
     }
   ]
 }
