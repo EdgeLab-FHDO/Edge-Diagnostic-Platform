@@ -9,6 +9,7 @@ import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
+import InfrastructureManager.SSH.SSHClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -93,6 +94,8 @@ public class MasterConfigurator {
                 return new ScenarioDispatcher(outputData.getName());
             case  "ScenarioEditor" :
                 return new ScenarioEditor(outputData.getName());
+            case "SSHClient" :
+                return new SSHClient(outputData.getName());
             case "RestOutput":
                 RestOutput.setInstanceName(outputData.getName());
                 return RestOutput.getInstance();
