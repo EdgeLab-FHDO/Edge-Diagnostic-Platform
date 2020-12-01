@@ -34,6 +34,8 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", true, Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 10; // TODO: this should be dynamic
+        //initiate temp/comparing  variable
+        long leftResource = 0;//resource available after connected
 
         //Get client requirement (required resource, network)
         long require_resource = client.getReqResource();
@@ -43,18 +45,27 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
             //List of comparing variables
             long nodeResource = theNode.getResource();
 
-            //Eliminate the not good one
-            if ((nodeResource < require_resource)) {
+            //Eliminate the one that's not good
+            if ((nodeResource <= require_resource)) {
                 //Skip this node if it doesn't have enough resources
                 continue;
             } else {
 
+                //Find the one with the most available resources
+                //TODO: change the criteria that we compare to resource + network + ping + history. Not just available resource like this
+                long thisNodeLeftResource = nodeResource - require_resource;
+
+                if (thisNodeLeftResource > leftResource){
+                    leftResource = thisNodeLeftResource;
+                    bestNode = theNode;
+                }
+                //TODO: calculate current node score and find best node
+
+                //Adding good nodes into a list? Should be redundance? Or hashmap? Or none at all?
                 acceptableNodesList.add(theNode);
             }
 
         }
-
-        //Get the score from all node in nodeList
 
         //Check whether it's good enough to match, or we just return the rejectedNode
         if (bestScore < qosThreeshold) {
