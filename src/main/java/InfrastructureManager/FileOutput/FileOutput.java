@@ -39,6 +39,10 @@ public class FileOutput extends MasterOutput {
         }
     }
 
+    public Charset getEncoding() {
+        return encoding;
+    }
+
     public void setEncoding(String encodingName) {
         this.encoding = Charset.forName(encodingName);
     }
