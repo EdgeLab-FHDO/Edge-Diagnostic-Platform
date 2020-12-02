@@ -1,6 +1,7 @@
 package InfrastructureManager.FileOutput;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,6 +13,17 @@ public class FileOutputTests {
 
     private final FileOutput fileOutput = new FileOutput("file_out");
     private final String testPath = "src/test/resources/FileOutput/";
+
+    @BeforeClass
+    public static void createTestFolder() throws Exception {
+        File testFolder = new File("src/test/resources/FileOutput/");
+        if (!testFolder.exists()) {
+            if (!testFolder.mkdir()) {
+                throw new Exception("Test folder could not be created in FileOutputTests");
+            }
+        }
+    }
+
 
     @Test
     public void fileIsCreatedTest() {
