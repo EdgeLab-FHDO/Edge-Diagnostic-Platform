@@ -5,6 +5,7 @@ import InfrastructureManager.Configuration.RawData.ConnectionConfigData;
 import InfrastructureManager.Configuration.RawData.IOConfigData;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.*;
+import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
@@ -96,6 +97,8 @@ public class MasterConfigurator {
                 return new ScenarioEditor(outputData.getName());
             case "SSHClient" :
                 return new SSHClient(outputData.getName());
+            case "FileOutput" :
+                return new FileOutput(outputData.getName());
             case "RestOutput":
                 RestOutput.setInstanceName(outputData.getName());
                 return RestOutput.getInstance();
