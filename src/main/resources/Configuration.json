@@ -34,7 +34,8 @@
       "in" : "console_in",
       "out" : "file_out",
       "commands" : {
-        "create_test_file" : "file_out create src/main/resources/created/test.txt HelloWorld"
+        "define_encoding $ENCODING" : "file_out encoding $ENCODING",
+        "create_file $PATH" : "file_out create $PATH Hello World!"
       }
     },
     {
