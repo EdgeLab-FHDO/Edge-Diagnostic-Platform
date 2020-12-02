@@ -35,7 +35,8 @@
       "out" : "file_out",
       "commands" : {
         "define_encoding $ENCODING" : "file_out encoding $ENCODING",
-        "create_file $PATH" : "file_out create $PATH Hello World!"
+        "create_file $PATH" : "file_out create $PATH Hello World!",
+        "append_to_file $PATH" : "file_out append $PATH \nHello Back!"
       }
     },
     {

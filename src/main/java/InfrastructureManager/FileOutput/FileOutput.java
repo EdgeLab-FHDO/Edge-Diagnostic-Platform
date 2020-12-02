@@ -25,7 +25,10 @@ public class FileOutput extends MasterOutput {
                     case "encoding" :
                         setEncoding(command[2]);
                     case "create":
-                        writeToFile(command[2], restOfCommand(3, command));
+                        writeToFile(command[2], restOfCommand(3, command), false);
+                        break;
+                    case "append":
+                        writeToFile(command[2], restOfCommand(3, command), true);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid command for FileOutput");
@@ -40,9 +43,9 @@ public class FileOutput extends MasterOutput {
         this.encoding = Charset.forName(encodingName);
     }
 
-    private void writeToFile(String path, String content) {
+    private void writeToFile(String path, String content, boolean append) {
         File file = new File(path);
-        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file,append))) {
             byte[] toWrite = content.getBytes(this.encoding);
             out.write(toWrite);
         } catch (IOException e) {
