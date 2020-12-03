@@ -14,7 +14,8 @@
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "MatchMaker-Random","name": "match_m"},
-        {"type": "SSHClient","name": "ssh"}
+        {"type": "SSHClient","name": "ssh"},
+        {"type": "FileOutput", "name": "file_out"}
       ]
     },
   "connections" : [
@@ -27,6 +28,15 @@
         "node_request" : "console matchMakingExecution" ,
         "save_statistics" : "console LoggerExecution" ,
         "show_statistics" : "console GUIUpdateExecution"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "file_out",
+      "commands" : {
+        "define_encoding $ENCODING" : "file_out encoding $ENCODING",
+        "create_file $PATH" : "file_out create $PATH Hello World!",
+        "append_to_file $PATH" : "file_out append $PATH \nHello Back!"
       }
     },
     {
