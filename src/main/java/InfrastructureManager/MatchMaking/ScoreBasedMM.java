@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ScoreBasedMM implements MatchMakingAlgorithm {
 
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /* big step
@@ -17,6 +18,12 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     TODO: implement slots (resource and network), this should be an attribute in edge client and edge note.
     TODO: History implementation, using SQL? Or keep throwing JSON object back and forward?
     TODO: Need to make sure there won't be no duplicate in nodeList (Id and Address)
+     */
+
+    /*
+    TODO: implement visibility: blind-inacc-accurate. This rather connected to "input" analyze,
+     take the input and somehow "blur" the info by introduce some deviant (multiply by 5-30%, so we get the estimation)
+
      */
 
     /* small step
@@ -31,7 +38,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         //Initiating variable
         List<EdgeNode> acceptableNodesList = new ArrayList<>();
         EdgeNode bestNode = new EdgeNode();
-        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", true, Long.MAX_VALUE); //return this if score not good
+        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", true, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 10; // TODO: this should be dynamic
         //initiate temp/comparing  variable
@@ -39,23 +46,25 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
 
         //Get client requirement (required resource, network)
         long require_resource = client.getReqResource();
+        long require_network = client.getReqNetwork();
 
         //Get node's stats (ping, res, network, and history) and eliminate bad one
         for (EdgeNode theNode : nodeList) {
             //List of comparing variables
             long nodeResource = theNode.getResource();
+            long nodeNetwork = theNode.getNetwork();
 
-            //Eliminate the one that's not good
-            if ((nodeResource <= require_resource)) {
-                //Skip this node if it doesn't have enough resources
-                continue;
+            //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% ultilization
+            if ((nodeResource <= require_resource || nodeNetwork <= require_network)) {
+
+                //Skip this node if it doesn't have enough resources, net work
+                logger.info("node skipped [{}] due to lacking of some criterion \n resources ( {} / {} ) --- network ( {} / {} ) ", theNode.getId(), nodeResource, require_resource, nodeNetwork, require_network);
+
             } else {
-
                 //Find the one with the most available resources
                 //TODO: change the criteria that we compare to resource + network + ping + history. Not just available resource like this
                 long thisNodeLeftResource = nodeResource - require_resource;
-
-                if (thisNodeLeftResource > leftResource){
+                if (thisNodeLeftResource > leftResource) {
                     leftResource = thisNodeLeftResource;
                     bestNode = theNode;
                 }

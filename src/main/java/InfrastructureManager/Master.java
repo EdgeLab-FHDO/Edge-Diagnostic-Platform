@@ -2,6 +2,8 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class Master {
     private Thread restThread;
 
     private static Master instance = null;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Constructor of the class
@@ -30,7 +33,7 @@ public class Master {
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
         /* Temporal made up nodes for testing */
-        /*
+        /* TODO: this is outdated, need to update when we are done defining node's characteristic
         availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
         availableNodes.add(new EdgeNode("node2", "192.168.0.2",true));
         availableNodes.add(new EdgeNode("node3", "192.168.0.3",true));
@@ -179,15 +182,49 @@ public class Master {
         return availableNodes;
     }
 
+    /*
+    Add node to a list (availableNodes)
+     */
     public void addNode(EdgeNode node) {
         this.availableNodes.add(node);
     }
 
+    /*
+    Update node in the list (availableNodes)
+     */
+    public void updateNode(String oldNodeID, EdgeNode newNode){
+        //get updating node location
+        Integer thisNodeLocation = null;
+        logger.info("oldNodeID = {}\n newNode: {}", oldNodeID,newNode.toString());
 
+        //TODO: update to use getNodeByID function below
+        for (EdgeNode oldNode : this.availableNodes)
+        {
+            logger.info("checking node: {}", oldNode.getId());
+            if (oldNode.getId().equalsIgnoreCase(oldNodeID)){
+                logger.info("nodeID matched with new node [{}], leaving\n ", newNode.getId());
+                thisNodeLocation = this.availableNodes.indexOf(oldNode);
+                //get out when found, no need for further exploration
+                break;
+            }
+        }
+        //updating process
+        if (thisNodeLocation == null) {
+            logger.error("new node ID does not match with any node's ID in the system.\n ");
+        }
+        this.availableNodes.set(thisNodeLocation,newNode);
+    }
+
+    /*
+    Add client to a list (registeredClients)
+     */
     public void addClient(EdgeClient client) {
         this.registeredClients.add(client);
     }
 
+    /*
+    Find and return client whose ID match with clientID by iterating list of registeredClient
+     */
     public EdgeClient getClientByID (String clientID) throws Exception {
         for (EdgeClient client : this.registeredClients) {
             if (client.getId().equals(clientID)) {

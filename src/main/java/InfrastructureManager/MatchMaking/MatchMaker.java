@@ -20,6 +20,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient, EdgeNode> mapping;
+
     //TODO: make logger depend on debugging (use a boolean variable will be fine) to reduce the console output later on
     /*
     -----------------------start_match_m start from here--------------------------------------------------
@@ -75,7 +76,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //match client with node in nodelist according to algorithm
             EdgeNode node = this.algorithm.match(client, this.nodeList);
             //list of node, for debugging purposes
-            for (EdgeNode theNode: nodeList) {
+            for (EdgeNode theNode : nodeList) {
                 logger.info(theNode.toString());
             }
 
@@ -122,6 +123,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                         assign(command[2]);
                         logger.info("client assigned, done with [outfunction]\n");
                         break;
+                    case "update_node":
+                        updateNode(command[2]);
+                        logger.info("node updated, done with [outfunction]\n");
                     default:
                         throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
@@ -137,7 +141,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private void registerClient(String clientAsString) {
         try {
             logger.info("RegisterClient - client as string : {} ", clientAsString);
-            //take value using a string from JSON file? what if client name is similar to node name? :)) Then we are fcked huh
+            //Map the contents of the JSON file to a java object
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
 
             //Just for debugging purpose
@@ -162,6 +166,41 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
             logger.info("node after readValue from mapper: {}", nodePretty);
             this.nodeList.add(node);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+   -----------------------update node to the list--------------------------------------------------
+    */
+    private void updateNode(String nodeAsString) {
+        try {
+            logger.info("UpdateNode - node as string: {} ", nodeAsString);
+            //Map the contents of the JSON file to a java object
+            EdgeNode newNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
+            String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newNode);
+            logger.info("node after readValue from mapper: {}", nodePretty);
+
+            //get updating node location
+            Integer thisNodeLocation = null;
+            String oldNodeID = newNode.getId();
+            logger.info("oldNodeID = {}\n newNode: {}", oldNodeID, nodePretty);
+            for (EdgeNode oldNode : this.nodeList) {
+                logger.info("checking node: {}", oldNode.getId());
+                if (oldNode.getId().equalsIgnoreCase(oldNodeID)) {
+                    logger.info("nodeID matched with new node [{}], leaving", newNode.getId());
+                    thisNodeLocation = this.nodeList.indexOf(oldNode);
+                    //get out when found, no need for further exploration
+                    break;
+                }
+            }
+            //updating process
+            if (thisNodeLocation == null) {
+                logger.error("new node ID does not match with any node's ID in the system.");
+            }
+
+            this.nodeList.set(thisNodeLocation, newNode);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
