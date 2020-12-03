@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ScoreBasedMM implements MatchMakingAlgorithm {
 
@@ -15,6 +16,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
 
     /* big step
     TODO: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
+        Weight: 1 - 10 - 10 - 10
     TODO: implement slots (resource and network), this should be an attribute in edge client and edge note.
     TODO: History implementation, using SQL? Or keep throwing JSON object back and forward?
     TODO: Need to make sure there won't be no duplicate in nodeList (Id and Address)
@@ -38,7 +40,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         //Initiating variable
         List<EdgeNode> acceptableNodesList = new ArrayList<>();
         EdgeNode bestNode = new EdgeNode();
-        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", true, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
+        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 10; // TODO: this should be dynamic
         //initiate temp/comparing  variable
@@ -88,6 +90,8 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
      */
     private long getPing(EdgeClient thisClient, EdgeNode thisNode) {
         long pingResult = 0;
+
+        Random random = new Random();
 
         if (pingResult == 0) {
             logger.error("ping = 0 ms? Something fishy here, returning super big ping number \n");

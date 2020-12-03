@@ -52,7 +52,7 @@ public class Master {
      */
     public void exitAll() {
         for (Runner runner : runnerList) {
-            if (runner.isRunning()){
+            if (runner.isRunning()) {
                 runner.exit();
             }
         }
@@ -64,7 +64,7 @@ public class Master {
     public void startMainRunner() {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Runner_console_in")) {
-                mainThread = new Thread(runner,"MainRunner");
+                mainThread = new Thread(runner, "MainRunner");
                 mainThread.start();
                 break;
             }
@@ -74,7 +74,7 @@ public class Master {
     /**
      * Method for starting the REST runner thread, declared in the config file
      */
-    public void startRunnerThread(String name){
+    public void startRunnerThread(String name) {
         for (Runner runner : runnerList) {
             if (runner.getName().equals(name)) {
                 if (name.equals("RestServer") && restThread == null) {
@@ -82,7 +82,7 @@ public class Master {
                     restThread.start();
                     break;
                 }
-                new Thread(runner,name).start();
+                new Thread(runner, name).start();
                 break;
             }
         }
@@ -96,6 +96,7 @@ public class Master {
      * Method that given a certain Scenario, runs the corresponding ScenarioRunner and adds
      * it to the list of running Runners. If called on a running ScenarioRunner, it will restart
      * it
+     *
      * @param scenario Scenario to be run
      */
     public void runScenario(Scenario scenario, long startTime) {
@@ -112,6 +113,7 @@ public class Master {
 
     /**
      * Stop a running ScenarioRunner, given the scenario that is running
+     *
      * @param scenario Running scenario to be stopped
      */
     public void stopScenario(Scenario scenario) {
@@ -127,6 +129,7 @@ public class Master {
 
     /**
      * Method to pause a running ScenarioRunner, given the scenario that is running
+     *
      * @param scenario Running scenario to be paused
      */
     public void pauseScenario(Scenario scenario) {
@@ -142,6 +145,7 @@ public class Master {
 
     /**
      * Method to resume a paused ScenarioRunner, given its scenario
+     *
      * @param scenario Paused scenario to be resumed
      */
     public void resumeScenario(Scenario scenario) {
@@ -158,17 +162,18 @@ public class Master {
     /**
      * Method for finding a ScenarioRunner in the Runner list, based on the scenario is
      * supposed to run according to the configuration file
+     *
      * @param scenario Scenario for which to find the ScenarioRunner
      * @return ScenarioRunner that will run the given scenario
      * @throws IllegalArgumentException If there is no scenarioRunner configured to run the
-     * given scenario
+     *                                  given scenario
      */
     private ScenarioRunner getRunner(Scenario scenario) throws IllegalArgumentException {
         ScenarioRunner scenarioRunner;
         for (Runner runner : runnerList) {
             try {
                 scenarioRunner = (ScenarioRunner) runner;
-                if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
+                if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())) {
                     return scenarioRunner;
                 }
             } catch (Exception e) {
@@ -186,22 +191,26 @@ public class Master {
     Add node to a list (availableNodes)
      */
     public void addNode(EdgeNode node) {
-        this.availableNodes.add(node);
+        if (checkDuplicateNodeInList(node)) {
+            logger.warn("Node [{}] already exist, skip ", node.getId());
+        } else {
+            this.availableNodes.add(node);
+        }
     }
+
 
     /*
     Update node in the list (availableNodes)
      */
-    public void updateNode(String oldNodeID, EdgeNode newNode){
+    public void updateNode(String oldNodeID, EdgeNode newNode) throws Exception {
         //get updating node location
         Integer thisNodeLocation = null;
-        logger.info("oldNodeID = {}\n newNode: {}", oldNodeID,newNode.toString());
+        logger.info("oldNodeID = {}\n newNode: {}", oldNodeID, newNode.toString());
 
         //TODO: update to use getNodeByID function below
-        for (EdgeNode oldNode : this.availableNodes)
-        {
+        for (EdgeNode oldNode : this.availableNodes) {
             logger.info("checking node: {}", oldNode.getId());
-            if (oldNode.getId().equalsIgnoreCase(oldNodeID)){
+            if (oldNode.getId().equalsIgnoreCase(oldNodeID)) {
                 logger.info("nodeID matched with new node [{}], leaving\n ", newNode.getId());
                 thisNodeLocation = this.availableNodes.indexOf(oldNode);
                 //get out when found, no need for further exploration
@@ -211,21 +220,31 @@ public class Master {
         //updating process
         if (thisNodeLocation == null) {
             logger.error("new node ID does not match with any node's ID in the system.\n ");
+            throw new Exception();
         }
-        this.availableNodes.set(thisNodeLocation,newNode);
+        this.availableNodes.set(thisNodeLocation, newNode);
     }
 
     /*
     Add client to a list (registeredClients)
      */
-    public void addClient(EdgeClient client) {
-        this.registeredClients.add(client);
+    public void addClient(EdgeClient thisClient) {
+
+        //Check whether this client has already been registered
+        if (checkDuplicateClientInList(thisClient)) {
+            logger.warn("Client: [{}] already exist, skip ", thisClient.getId());
+        }
+        //Add new client to the list
+        else {
+            this.registeredClients.add(thisClient);
+        }
+
     }
 
     /*
     Find and return client whose ID match with clientID by iterating list of registeredClient
      */
-    public EdgeClient getClientByID (String clientID) throws Exception {
+    public EdgeClient getClientByID(String clientID) throws Exception {
         for (EdgeClient client : this.registeredClients) {
             if (client.getId().equals(clientID)) {
                 return client;
@@ -234,7 +253,7 @@ public class Master {
         throw new Exception("No client found");
     }
 
-    public EdgeNode getNodeByID (String nodeID) throws Exception {
+    public EdgeNode getNodeByID(String nodeID) throws Exception {
         for (EdgeNode node : this.availableNodes) {
             if (node.getId().equals(nodeID)) {
                 return node;
@@ -243,9 +262,43 @@ public class Master {
         throw new Exception("No node found");
     }
 
+    /**
+     * Check for duplication of node within the list
+     *
+     * @param thisNode
+     * @return true if duplicated, false if it's unique (not in list yet)
+     */
+    private boolean checkDuplicateNodeInList(EdgeNode thisNode) {
+
+        //If there is a node that have the same name with thisNode in parameter, it's a duplicated
+        for (EdgeNode node : this.availableNodes) {
+            if (node.getId().equals(thisNode.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check for duplication of client within the list
+     *
+     * @param thisClient
+     * @return true if duplicated, false if it's unique (not in list yet)
+     */
+    private boolean checkDuplicateClientInList(EdgeClient thisClient) {
+
+        //If there is a node that have the same name with thisNode in parameter, it's a duplicated
+        for (EdgeClient client : this.registeredClients) {
+            if (client.getId().equals(thisClient.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Singleton method for getting the only instance of the class
+     *
      * @return The instance of the Master Class
      */
     public static Master getInstance() {
@@ -254,7 +307,6 @@ public class Master {
         }
         return instance;
     }
-
 
 
     public static void main(String[] args) {

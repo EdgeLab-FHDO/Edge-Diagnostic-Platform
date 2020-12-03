@@ -73,7 +73,8 @@
       "commands" : {
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
-        "assign_client $client_id" : "matchMaker assign_client $client_id"
+        "assign_client $client_id" : "matchMaker assign_client $client_id",
+        "update_node $node_as_json_string" : "matchMaker update_node $node_as_json_string"
       }
     },
     {

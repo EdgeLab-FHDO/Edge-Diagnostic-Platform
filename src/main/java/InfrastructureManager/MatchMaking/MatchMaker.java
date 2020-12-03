@@ -53,8 +53,10 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 setAlgorithm(new ScoreBasedMM());
 //                setAlgorithm(new RandomMatchMaking());
                 break;
+
             case "sbmm":
                 setAlgorithm(new ScoreBasedMM());
+
             default:
                 throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
@@ -108,6 +110,11 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         logger.info("[out function] \nresponse string: {} ", response);
         String[] command = response.split(" ");
         logger.info("after split response: {}", Arrays.toString(command));
+        /*
+        After split, command array gonna look like this:
+        [matchMaker, update_node, {"id":"node3","ipAddress":"68.131.232.215:30968","connected":true,"resource":50,"network":90}]
+        Parse them to the if and switch bunch below to execute different functions
+         */
         if (command[0].equals("matchMaker")) {
             try {
                 switch (command[1]) {
@@ -115,17 +122,22 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                         registerClient(command[2]);
                         logger.info("client registered, done with [outfunction]\n");
                         break;
+
                     case "register_node":
                         registerNode(command[2]);
                         logger.info("node registered, done with [outfunction]\n");
                         break;
+
                     case "assign_client":
                         assign(command[2]);
                         logger.info("client assigned, done with [outfunction]\n");
                         break;
+
                     case "update_node":
                         updateNode(command[2]);
                         logger.info("node updated, done with [outfunction]\n");
+                        break;
+
                     default:
                         throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
@@ -144,17 +156,21 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //Map the contents of the JSON file to a java object
             EdgeClient client = this.mapper.readValue(clientAsString, EdgeClient.class);
 
-            //Just for debugging purpose
-            String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(client);
-            logger.info("client after readValue from mapper: {}", clientPretty);
-            this.clientList.add(client);
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-
+            //If client is not registered (no duplication) -> moving on
+            if (!checkDuplicateClientInList(client)) {
+                //Just for debugging purpose
+                String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(client);
+                logger.info("client after readValue from mapper: {}", clientPretty);
+                this.clientList.add(client);
+                mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            } else {
+                logger.warn("this client has already been registered (duplicated ID exist)");
+            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
+
 
     /*
     -----------------------register node to a list--------------------------------------------------
@@ -163,12 +179,52 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         try {
             logger.info("RegisterNode - node as string: {} ", nodeAsString);
             EdgeNode node = this.mapper.readValue(nodeAsString, EdgeNode.class);
-            String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
-            logger.info("node after readValue from mapper: {}", nodePretty);
-            this.nodeList.add(node);
+
+            if (!checkDuplicateNodeInList(node)) {
+                String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
+                logger.info("node after readValue from mapper: {}", nodePretty);
+                this.nodeList.add(node);
+            } else {
+                logger.warn("this node has already been registered (duplicated ID exist)");
+            }
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Check for duplication of node within the list
+     *
+     * @param thisNode
+     * @return true if duplicated, false if it's unique (not in list yet)
+     */
+    private boolean checkDuplicateNodeInList(EdgeNode thisNode) {
+
+        //If there is a node that have the same name with thisNode in parameter, it's a duplicated
+        for (EdgeNode node : this.nodeList) {
+            if (node.getId().equals(thisNode.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check for duplication of client within the list
+     *
+     * @param thisClient
+     * @return true if duplicated, false if it's unique (not in list yet)
+     */
+    private boolean checkDuplicateClientInList(EdgeClient thisClient) {
+
+        //If there is a node that have the same name with thisNode in parameter, it's a duplicated
+        for (EdgeClient client : this.clientList) {
+            if (client.getId().equals(thisClient.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
