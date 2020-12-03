@@ -82,7 +82,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.info(theNode.toString());
             }
 
-            logger.info("assigned node info: {}", node);
+            logger.info("assigned node info: {}", node.toString());
+            logger.info("client info: {}", client.toString());
 
             if (node == null) {
                 logger.warn("no node in nodelist");
@@ -136,6 +137,11 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                     case "update_node":
                         updateNode(command[2]);
                         logger.info("node updated, done with [outfunction]\n");
+                        break;
+
+                    case "update_client":
+                        updateClient(command[2]);
+                        logger.info("client updated, done with [outfunction]\n");
                         break;
 
                     default:
@@ -236,15 +242,15 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //Map the contents of the JSON file to a java object
             EdgeNode newNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
             String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newNode);
-            logger.info("node after readValue from mapper: {}", nodePretty);
 
             //get updating node location
             Integer thisNodeLocation = null;
             String oldNodeID = newNode.getId();
-            logger.info("oldNodeID = {}\n newNode: {}", oldNodeID, nodePretty);
             for (EdgeNode oldNode : this.nodeList) {
                 logger.info("checking node: {}", oldNode.getId());
                 if (oldNode.getId().equalsIgnoreCase(oldNodeID)) {
+                    String oldNodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oldNode);
+                    logger.info("oldNode = {}\n newNode: {}", oldNodePretty, nodePretty);
                     logger.info("nodeID matched with new node [{}], leaving", newNode.getId());
                     thisNodeLocation = this.nodeList.indexOf(oldNode);
                     //get out when found, no need for further exploration
@@ -257,6 +263,43 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             }
 
             this.nodeList.set(thisNodeLocation, newNode);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+-----------------------update client to the list--------------------------------------------------
+*/
+    private void updateClient(String clientAsString) {
+        try {
+            logger.info("UpdateClient - client as string: {} ", clientAsString);
+            //Map the contents of the JSON file to a java object
+            EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
+            String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newClient);
+//            logger.info("client after readValue from mapper: {}", clientPretty);
+
+            //get updating client location
+            Integer thisClientLocation = null;
+            String oldClientID = newClient.getId();
+
+            for (EdgeClient client : this.clientList) {
+                logger.info("checking node: {}", client.getId());
+                if (client.getId().equalsIgnoreCase(oldClientID)) {
+                    String oldClientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(client);
+                    logger.info("oldClient: {}\n newNode: {}", oldClientPretty, clientPretty);
+                    logger.info("clientID matched with new node [{}], leaving", newClient.getId());
+                    thisClientLocation = this.clientList.indexOf(client);
+                    //get out when found, no need for further exploration
+                    break;
+                }
+            }
+            //updating process
+            if (thisClientLocation == null) {
+                logger.error("new client ID does not match with any client's ID in the system.");
+            }
+
+            this.clientList.set(thisClientLocation, newClient);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

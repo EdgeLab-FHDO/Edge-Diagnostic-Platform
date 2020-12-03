@@ -23,6 +23,7 @@ public class RestRouter {
                 post("/assign/:client_id", RestInput.assignClient);
                 //use getInstance() when output data ????
                 get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
+                put("/update", RestInput.updateClient);
             });
 
             get("/heartbeat", (request, response) -> {

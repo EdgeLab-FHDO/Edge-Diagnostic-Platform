@@ -60,12 +60,12 @@ public class EdgeNode {
     //TODO: edit this to accommodate new data parameter. Or just use pretty print tbh :))
     @Override
     public String toString() {
-        return "EdgeNode{" +
-                "id='" + id + '\'' +
-                ", ipAddress='" + ipAddress + '\'' +
-                ", connected=" + connected + '\'' +
-                ", resource=" + resource + '\'' +
-                ", network=" + network +
-                '}';
+        return "EdgeNode{\n" +
+                "  id : " + id + ",\n" +
+                "  ipAddress : " + ipAddress + ",\n" +
+                "  connected : " + connected + ",\n" +
+                "  resource : " + resource + ",\n" +
+                "  network : " + network +
+                "\n}";
     }
 }

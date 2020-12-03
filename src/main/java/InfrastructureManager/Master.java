@@ -14,8 +14,8 @@ import java.util.List;
 public class Master {
 
     private final List<Runner> runnerList;
-    private final List<EdgeNode> availableNodes;
-    private final List<EdgeClient> registeredClients;
+    private final List<EdgeNode> nodeList;
+    private final List<EdgeClient> clientList;
 
     private Thread mainThread;
     private Thread restThread;
@@ -30,8 +30,8 @@ public class Master {
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator();
         runnerList = configurator.getRunners();
-        registeredClients = new ArrayList<>();
-        availableNodes = new ArrayList<>();
+        clientList = new ArrayList<>();
+        nodeList = new ArrayList<>();
         /* Temporal made up nodes for testing */
         /* TODO: this is outdated, need to update when we are done defining node's characteristic
         availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
@@ -183,36 +183,42 @@ public class Master {
         throw new IllegalArgumentException("There is no runner configured for the given scenario");
     }
 
-    public List<EdgeNode> getAvailableNodes() {
-        return availableNodes;
+    public List<EdgeNode> getNodeList() {
+        return nodeList;
     }
 
     /*
-    Add node to a list (availableNodes)
+    Add node to a list (nodeList)
      */
     public void addNode(EdgeNode node) {
         if (checkDuplicateNodeInList(node)) {
             logger.warn("Node [{}] already exist, skip ", node.getId());
         } else {
-            this.availableNodes.add(node);
+            this.nodeList.add(node);
         }
     }
 
 
+    /**
+     * Update node in the list (nodeList) when things change
+     * @author Zero
+     * @param oldNodeID
+     * @param newNode
+     * @throws Exception
+     */
     /*
-    Update node in the list (availableNodes)
+
      */
     public void updateNode(String oldNodeID, EdgeNode newNode) throws Exception {
         //get updating node location
         Integer thisNodeLocation = null;
         logger.info("oldNodeID = {}\n newNode: {}", oldNodeID, newNode.toString());
 
-        //TODO: update to use getNodeByID function below
-        for (EdgeNode oldNode : this.availableNodes) {
+        for (EdgeNode oldNode : this.nodeList) {
             logger.info("checking node: {}", oldNode.getId());
             if (oldNode.getId().equalsIgnoreCase(oldNodeID)) {
                 logger.info("nodeID matched with new node [{}], leaving\n ", newNode.getId());
-                thisNodeLocation = this.availableNodes.indexOf(oldNode);
+                thisNodeLocation = this.nodeList.indexOf(oldNode);
                 //get out when found, no need for further exploration
                 break;
             }
@@ -222,7 +228,7 @@ public class Master {
             logger.error("new node ID does not match with any node's ID in the system.\n ");
             throw new Exception();
         }
-        this.availableNodes.set(thisNodeLocation, newNode);
+        this.nodeList.set(thisNodeLocation, newNode);
     }
 
     /*
@@ -236,16 +242,46 @@ public class Master {
         }
         //Add new client to the list
         else {
-            this.registeredClients.add(thisClient);
+            this.clientList.add(thisClient);
         }
 
+    }
+
+    /**
+     * Update client in our clientList when things change
+     * @author Zero
+     * @param oldClientID
+     * @param newClient
+     * @throws Exception
+     */
+
+    public void updateClient(String oldClientID, EdgeClient newClient) throws Exception {
+        //get updating client location
+        Integer clientLocation = null;
+        logger.info("oldClientID = {}\n newClient: {}", oldClientID, newClient.toString());
+
+        for (EdgeClient client : this.clientList) {
+            logger.info("checking client: {}", client.getId());
+            if (client.getId().equalsIgnoreCase(oldClientID)) {
+                logger.info("nodeID matched with new node [{}], leaving\n ", newClient.getId());
+                clientLocation = this.clientList.indexOf(client);
+                //get out when found, no need for further exploration
+                break;
+            }
+        }
+        //updating process
+        if (clientLocation == null) {
+            logger.error("new node ID does not match with any node's ID in the system.\n ");
+            throw new Exception();
+        }
+        this.clientList.set(clientLocation, newClient);
     }
 
     /*
     Find and return client whose ID match with clientID by iterating list of registeredClient
      */
     public EdgeClient getClientByID(String clientID) throws Exception {
-        for (EdgeClient client : this.registeredClients) {
+        for (EdgeClient client : this.clientList) {
             if (client.getId().equals(clientID)) {
                 return client;
             }
@@ -253,8 +289,9 @@ public class Master {
         throw new Exception("No client found");
     }
 
+
     public EdgeNode getNodeByID(String nodeID) throws Exception {
-        for (EdgeNode node : this.availableNodes) {
+        for (EdgeNode node : this.nodeList) {
             if (node.getId().equals(nodeID)) {
                 return node;
             }
@@ -264,14 +301,14 @@ public class Master {
 
     /**
      * Check for duplication of node within the list
-     *
+     * @author Zero
      * @param thisNode
      * @return true if duplicated, false if it's unique (not in list yet)
      */
     private boolean checkDuplicateNodeInList(EdgeNode thisNode) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
-        for (EdgeNode node : this.availableNodes) {
+        for (EdgeNode node : this.nodeList) {
             if (node.getId().equals(thisNode.getId())) {
                 return true;
             }
@@ -281,14 +318,14 @@ public class Master {
 
     /**
      * Check for duplication of client within the list
-     *
+     * @author Zero
      * @param thisClient
      * @return true if duplicated, false if it's unique (not in list yet)
      */
     private boolean checkDuplicateClientInList(EdgeClient thisClient) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
-        for (EdgeClient client : this.registeredClients) {
+        for (EdgeClient client : this.clientList) {
             if (client.getId().equals(thisClient.getId())) {
                 return true;
             }

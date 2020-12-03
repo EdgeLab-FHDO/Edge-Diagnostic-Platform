@@ -48,4 +48,13 @@ public class EdgeClient {
     public long getReqNetwork() {
         return reqNetwork;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "\n  id : " +  id +
+                ", \n  required_resource : " + reqResource +
+                ", \n  required_network : " + reqNetwork + 
+                "\n";
+    }
 }

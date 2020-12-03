@@ -57,6 +57,18 @@ public class RestInput implements MasterInput {
         return response.status();
     };
 
+    public static Route updateClient = (Request request, Response response) -> {
+        Logger logger = LoggerFactory.getLogger(RestInput.class);
+        String updatedClientAsString = request.body().replaceAll("\\s+", "");
+        //Map the contents of the JSON file to a java object
+        EdgeClient updatedClient = mapper.readValue(updatedClientAsString, EdgeClient.class);
+        //get the node's ID that we want to update. Only update the one with the same ID please y'all
+        String oldClientID = updatedClient.getId();
+        Master.getInstance().updateClient(oldClientID,updatedClient);
+        command = "update_client " + updatedClientAsString;
+        return response.status();
+    };
+
     @Override
     public String read() throws Exception {
         Logger logger = LoggerFactory.getLogger(RestInput.class);
