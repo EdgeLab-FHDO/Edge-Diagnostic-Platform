@@ -40,7 +40,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         //Initiating variable
         List<EdgeNode> acceptableNodesList = new ArrayList<>();
         EdgeNode bestNode = new EdgeNode();
-        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
+        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 10; // TODO: this should be dynamic
         //initiate temp/comparing  variable
