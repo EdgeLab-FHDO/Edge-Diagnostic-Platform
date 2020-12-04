@@ -12,7 +12,7 @@ public class EdgeClient {
     "id" : "client1",
     "reqNetwork" : "5",
     "reqResource" :"10",
-    "distance" : 60
+    "location" : 60
     }
 
      */

@@ -13,7 +13,8 @@ public class EdgeNode {
     "ipAddress": "68.131.232.215 : 30968",
     "connected" : true,
     "resource" : 100,
-    "network" : 100
+    "network" : 100,
+    "location" : 55
     }
 
      */

@@ -72,17 +72,18 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     */
     private void assign(String clientID) {
 
-        logger.info("\n assigning client to node \n -------------------------");
+        logger.info("assigning client to node \n ----------------------------------------------------------------------------------------------------");
         try {
             EdgeClient client = this.getClientByID(clientID);
             //match client with node in nodelist according to algorithm
             EdgeNode node = this.algorithm.match(client, this.nodeList);
+
             //list of node, for debugging purposes
             for (EdgeNode theNode : nodeList) {
                 logger.info(theNode.toString());
             }
 
-            logger.info("assigned node info: {}", node.toString());
+            logger.info("\n\n assigned node info: {}", node.toString());
             logger.info("client info: {}", client.toString());
 
             if (node == null) {
@@ -121,27 +122,27 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 switch (command[1]) {
                     case "register_client":
                         registerClient(command[2]);
-                        logger.info("client registered, done with [outfunction]\n");
+                        logger.info("client registered, done with [outfunction]\n\n");
                         break;
 
                     case "register_node":
                         registerNode(command[2]);
-                        logger.info("node registered, done with [outfunction]\n");
+                        logger.info("node registered, done with [outfunction]\n\n");
                         break;
 
                     case "assign_client":
                         assign(command[2]);
-                        logger.info("client assigned, done with [outfunction]\n");
+                        logger.info("client assigned, done with [outfunction]\n\n");
                         break;
 
                     case "update_node":
                         updateNode(command[2]);
-                        logger.info("node updated, done with [outfunction]\n");
+                        logger.info("node updated, done with [outfunction]\n\n");
                         break;
 
                     case "update_client":
                         updateClient(command[2]);
-                        logger.info("client updated, done with [outfunction]\n");
+                        logger.info("client updated, done with [outfunction]\n\n");
                         break;
 
                     default:
