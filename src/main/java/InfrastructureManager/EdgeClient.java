@@ -20,7 +20,7 @@ public class EdgeClient {
     private final long reqResource; //required computation resource
     private final long reqNetwork;  //required network bandwidth
     private final long location; //current client location, (ping will be calculated here, more info in score based match making (SBMM))
-
+    private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
     /*
     Normal class constructor
      */
@@ -30,16 +30,18 @@ public class EdgeClient {
         this.reqResource = Long.MAX_VALUE;
         this.reqNetwork = Long.MAX_VALUE;
         this.location = Long.MAX_VALUE;
+        this.message = "no message";
     }
 
     /*
     Change parameter from here for testing purpose
      */
-    public EdgeClient(String id, long reqRes, long reqNet, long location) {
+    public EdgeClient(String id, long reqRes, long reqNet, long location, String message) {
         this.id = id;
         this.reqResource = reqRes;
         this.reqNetwork = reqNet;
         this.location = location;
+        this.message = message;
     }
 
     public String getId() {
@@ -58,6 +60,8 @@ public class EdgeClient {
         return location;
     }
 
+    public String getMessage() {return message; }
+
 
     @Override
     public String toString() {
@@ -66,6 +70,7 @@ public class EdgeClient {
                 ", \n  required_resource : " + reqResource +
                 ", \n  required_network : " + reqNetwork +
                 ", \n  location : " + location +
+                ", \n  message : " + message +
                 "\n";
     }
 }

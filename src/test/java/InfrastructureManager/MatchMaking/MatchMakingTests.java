@@ -67,7 +67,7 @@ public class MatchMakingTests {
     public void assignNodeToClientCompleteTest() throws Exception {
 
 
-        Master.getInstance().addClient(new EdgeClient("client1", 100,101, 66));
+        Master.getInstance().addClient(new EdgeClient("client1", 100,101, 66, "nothing"));
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true, 123, 456,150));
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");

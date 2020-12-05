@@ -24,6 +24,7 @@ public class RestRouter {
                 //use getInstance() when output data ????
                 get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
                 put("/update", RestInput.updateClient);
+                put("/disconnect", RestInput.disconnectClient);
             });
 
             get("/heartbeat", (request, response) -> {

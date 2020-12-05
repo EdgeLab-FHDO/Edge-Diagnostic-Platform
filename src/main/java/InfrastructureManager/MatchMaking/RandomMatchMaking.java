@@ -6,6 +6,7 @@ import InfrastructureManager.Master;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +15,7 @@ public class RandomMatchMaking implements MatchMakingAlgorithm {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) {
+    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList, HashMap<String, HashMap<String,Long>> nodeHistory ) {
         logger.info("match making started - random \n");
         Random random = new Random();
         if (nodeList.isEmpty()) {

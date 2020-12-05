@@ -75,7 +75,8 @@
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
         "assign_client $client_id" : "matchMaker assign_client $client_id",
         "update_client $client_as_json_string" : "matchMaker update_client $client_as_json_string",
-        "update_node $node_as_json_string" : "matchMaker update_node $node_as_json_string"
+        "update_node $node_as_json_string" : "matchMaker update_node $node_as_json_string",
+        "disconnect_client $disconnected_body_as_json_string" : "matchMaker disconnect_client $disconnected_body_as_json_string"
       }
     },
     {
