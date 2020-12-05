@@ -3,6 +3,7 @@ package InfrastructureManager.MatchMaking;
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
 import InfrastructureManager.Master;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class RandomMatchMaking implements MatchMakingAlgorithm {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList, HashMap<String, HashMap<String,Long>> nodeHistory ) {
+    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList, Multimap<String, HashMap<String,Long>> nodeHistory ) {
         logger.info("match making started - random \n");
         Random random = new Random();
         if (nodeList.isEmpty()) {

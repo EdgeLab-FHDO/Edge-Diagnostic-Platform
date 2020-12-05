@@ -38,8 +38,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     //TODO: Figure out whether this history should be a global variable to share across all instances, or use it locally
 
     //Hashmap contain <NodeId, HashMap<ClientID, historyScore>>
-    private final HashMap<String, HashMap<String, Long>> nodeHistory = new HashMap<>();
-//    Multimap<String, HashMap<String,Long>> nodeHistory = ArrayListMultimap.create();
+//    private final HashMap<String, HashMap<String, Long>> nodeHistory = new HashMap<>();
+    Multimap<String, HashMap<String,Long>> nodeHistory = ArrayListMultimap.create();
 
     /*
     TODO: make logger for  debugging (use a boolean variable will be fine) to reduce the console output later on
@@ -238,9 +238,20 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //remove the coupling in mapping object
             this.mapping.remove(thisClientID, thisNodeID);
 
-            //Get node history
-            HashMap<String, Long> thisNodeHistory = nodeHistory.get(thisNodeID);
-            Long thisNodeHistoryWithClient = thisNodeHistory.get(thisClientID);
+            //Get node history (all clients connected)
+            Collection<HashMap<String, Long>> thisNodeHistory = nodeHistory.get(thisNodeID);
+
+            //Get the history with thisClientID
+            Long thisNodeHistoryWithClient = Long.MAX_VALUE;
+            HashMap<String, Long> pointingHash = new HashMap<>();
+            for (HashMap<String, Long> history : thisNodeHistory){
+                if (history.containsKey(thisClientID)){
+                    thisNodeHistoryWithClient = history.get(thisClientID);
+                    //Connect history hash to pointing hash, to update the value after calculation
+                    pointingHash = history;
+                    break;
+                }
+            }
 
             logger.info("\nAccessing path: getNode -> Client -> h_score \n {}    ->    {}     ->    {}", thisNodeID, thisClientID, thisNodeHistoryWithClient);
             //Calculate the score depends on reason disconnected
@@ -258,7 +269,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             }
 
             //Update this node's history
-            thisNodeHistory.put(thisClientID, thisNodeHistoryWithClient);
+            pointingHash.put(thisClientID,thisNodeHistoryWithClient);
+//            thisNodeHistory.put(thisClientID, thisNodeHistoryWithClient);
 
             //Print out for debugging purposes:
             Set<String> thisNodeList = nodeHistory.keySet();
@@ -350,14 +362,13 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(thisClient);
                 logger.info("client after readValue from mapper: {}", clientPretty);
                 this.clientList.add(thisClient);
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
             } else {
                 logger.warn("this client has already been registered (duplicated ID exist)");
             }
 
-            Set<String> thisNodeList = nodeHistory.keySet();
 
-            for (String thisNode : thisNodeList) {
+            for (EdgeNode thisNode : this.nodeList) {
+                String thisNodeID = thisNode.getId();
                 //Add client into the node history with default history value = 0;
                 HashMap<String, Long> clientMap = new HashMap<>();
                 /*
@@ -366,7 +377,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 changing 1 of them result into change all places
                  */
                 clientMap.put(thisClientID, 0L);
-                nodeHistory.put(thisNode, clientMap);
+                nodeHistory.put(thisNodeID, clientMap);
             }
             logger.info("nodeHistory: {} ",nodeHistory);
 

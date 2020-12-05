@@ -1,4 +1,4 @@
-package InfrastructureManager.MatchMaking;
+package InfrastructureManager.Configuration;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -55,10 +55,9 @@ public class testStuff {
         }
         System.out.println("stuff from fruit \n" + fruits); // [Bannana, Apple, Pear]}
 
-        // Iterating over entire Mutlimap
-        for (String value : myMultimap.values()) {
-            System.out.println(value);
-        }
+        System.out.println(myMultimap2);
+
+
     }
 
 

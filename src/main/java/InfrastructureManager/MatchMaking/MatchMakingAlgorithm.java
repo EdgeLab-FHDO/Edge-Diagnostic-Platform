@@ -2,6 +2,7 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
+import com.google.common.collect.Multimap;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.List;
  * Interface for match making with different algortihm
  */
 public interface MatchMakingAlgorithm {
-    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList, HashMap<String,HashMap<String,Long>> nodeHistory );
+    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList, Multimap<String,HashMap<String,Long>> nodeHistory );
 }
