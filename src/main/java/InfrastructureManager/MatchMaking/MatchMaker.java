@@ -39,7 +39,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
     //Hashmap contain <NodeId, HashMap<ClientID, historyScore>>
 //    private final HashMap<String, HashMap<String, Long>> nodeHistory = new HashMap<>();
-    Multimap<String, HashMap<String,Long>> nodeHistory = ArrayListMultimap.create();
+    Multimap<String, HashMap<String, Long>> nodeHistory = ArrayListMultimap.create();
 
     /*
     TODO: make logger for  debugging (use a boolean variable will be fine) to reduce the console output later on
@@ -126,7 +126,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 }
                 //DONE: mapping should take only client ID, because of object referencing
                 this.mapping.put(client.getId(), node.getId());
-                logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------",mapping);
+                logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
             }
         } catch (Exception e) {
             logger.error("error in assigning client");
@@ -200,8 +200,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //Initiate variables
             logger.info("mapping: {}", mapping);
             String thisNodeID = this.mapping.get(thisClientID);
-            if (thisNodeID == null){
-                logger.error("This client [{}] is not connected to any nodes in the system",thisClientID);
+            if (thisNodeID == null) {
+                logger.error("This client [{}] is not connected to any nodes in the system", thisClientID);
                 //TODO: create a boolean [DEBUG] variable to toggle between using exception to catch error or just skip
                 return;
             }
@@ -243,40 +243,32 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //Get the history with thisClientID
             Long thisNodeHistoryWithClient = Long.MAX_VALUE;
-            HashMap<String, Long> pointingHash = new HashMap<>();
-            for (HashMap<String, Long> history : thisNodeHistory){
-                if (history.containsKey(thisClientID)){
+            for (HashMap<String, Long> history : thisNodeHistory) {
+                if (history.containsKey(thisClientID)) {
                     thisNodeHistoryWithClient = history.get(thisClientID);
-                    //Connect history hash to pointing hash, to update the value after calculation
-                    pointingHash = history;
+                    logger.info("\nAccessing path: getNode -> Client -> before_score \n {}    ->    {}     ->    {}", thisNodeID, thisClientID, thisNodeHistoryWithClient);
+                    //Calculate the score depends on reason disconnected
+                    switch (message) {
+                        case "job_done" -> {
+                            thisNodeHistoryWithClient = thisNodeHistoryWithClient - 5;
+                        }
+                        case "job_failed" -> {
+                            thisNodeHistoryWithClient = thisNodeHistoryWithClient + 10;
+                        }
+                    }
+                    if (thisNodeHistoryWithClient < 0) {
+                        thisNodeHistoryWithClient = 0L;
+                    }
+                    history.put(thisClientID,thisNodeHistoryWithClient);
                     break;
                 }
             }
-
-            logger.info("\nAccessing path: getNode -> Client -> h_score \n {}    ->    {}     ->    {}", thisNodeID, thisClientID, thisNodeHistoryWithClient);
-            //Calculate the score depends on reason disconnected
-            switch (message) {
-                case "job_done" -> {
-                    thisNodeHistoryWithClient = thisNodeHistoryWithClient - 5;
-                }
-                case "job_failed" -> {
-                    thisNodeHistoryWithClient = thisNodeHistoryWithClient + 10;
-                }
-            }
-
-            if (thisNodeHistoryWithClient < 0) {
-                thisNodeHistoryWithClient = 0L;
-            }
-
-            //Update this node's history
-            pointingHash.put(thisClientID,thisNodeHistoryWithClient);
-//            thisNodeHistory.put(thisClientID, thisNodeHistoryWithClient);
 
             //Print out for debugging purposes:
             Set<String> thisNodeList = nodeHistory.keySet();
             logger.info("History after disconnecting:");
             for (String thisNodeInList : thisNodeList) {
-                logger.info("{}", nodeHistory);
+                logger.info("{} -> {}",thisNodeInList, nodeHistory.get(thisNodeInList));
             }
 
 
@@ -379,7 +371,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 clientMap.put(thisClientID, 0L);
                 nodeHistory.put(thisNodeID, clientMap);
             }
-            logger.info("nodeHistory: {} ",nodeHistory);
+            logger.info("nodeHistory: {} ", nodeHistory);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -405,8 +397,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             }
 
             //Add new node into our hashmap
-            nodeHistory.put(thisNodeID, null);
-            logger.info("nodeHistory: {} ",nodeHistory);
+            logger.info("nodeHistory: {} ", nodeHistory);
 
 
         } catch (JsonProcessingException e) {

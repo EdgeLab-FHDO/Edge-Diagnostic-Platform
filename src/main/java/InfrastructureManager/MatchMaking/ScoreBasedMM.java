@@ -2,13 +2,11 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Score-based match making algorithm.
@@ -26,7 +24,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     long network_Weight = 10;
     long ping_weight = 1;
     long history_weight = 10;
-    HashMap<String, HashMap<String, Long>> nodeHistory;
+    Multimap<String, HashMap<String, Long>> nodeHistory;
 
     /* big step
     TODO: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
@@ -50,7 +48,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     DONE: compare between "acceptable" node using score
      */
     @Override
-    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, HashMap<String, HashMap<String, Long>> thisNodeHistory) {
+    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, Multimap<String, HashMap<String, Long>> thisNodeHistory) {
         logger.info("match making started - Score based\n");
 
         //Initiating variable
@@ -60,7 +58,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 100000; // TODO: this should be dynamic
-        //May cause problem when multi thread.
+        //May cause problem when multi thread. Should use deep clone
         this.nodeHistory = thisNodeHistory;
 
         //initiate temp/comparing variable
@@ -69,17 +67,26 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         int totalNumberOfNode = nodeList.size();
 
         //Get client requirement (required resource, network)
+        String thisClientID = thisClient.getId();
         long require_resource = thisClient.getReqResource();
         long require_network = thisClient.getReqNetwork();
 
         //Get node's stats (ping, res, network, and history) and eliminate bad one
         for (EdgeNode thisNode : nodeList) {
             //List of comparing variables
+            String thisNodeID = thisNode.getId();
             long nodeResource = thisNode.getResource();
             long nodeNetwork = thisNode.getNetwork();
             boolean nodeIsConnected = thisNode.isConnected();
             long pingNumber = getPing(thisClient, thisNode);
-            long nodeHistoryWithClient = thisNodeHistory.get(thisNode.getId()).get(thisClient.getId());
+            long nodeHistoryWithClient = Long.MAX_VALUE;
+
+            Collection<HashMap<String, Long>> thisNodeHistoryList =  nodeHistory.get(thisNodeID);
+            for ( HashMap<String, Long> history : thisNodeHistoryList){
+                if (history.containsKey(thisClientID)){
+                    nodeHistoryWithClient = history.get(thisClientID);
+                }
+            }
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if ((nodeResource <= require_resource) || (nodeNetwork <= require_network) || !nodeIsConnected) {
