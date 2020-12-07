@@ -464,6 +464,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             long newNodeTotalResource = newNode.getTotalResource();
             String newNodeIP = newNode.getIpAddress();
             boolean newNodeConnect = newNode.isConnected();
+            long newNodeLocation = newNode.getLocation();
 
             //get updating node location
             Integer thisNodeLocation = null;
@@ -478,6 +479,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>> UPDATE FAILED <<<<<<<<<<<<<<<<<<<<<<<<< \nnew node ID does not match with any node's ID in the system.");
                 return;
             }
+            logger.info("[{}] before update\n{}",oldNodeID, oldNode.toString());
 
             //check whether this node is connected to a client or not
             boolean nodeIsAssigned = this.mapping.containsValue(oldNodeID);
@@ -515,8 +517,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.info("this node assigned clients : {}\nConsumed resource and network : {} - {} ",
                         assignedClientList, consumedResource, consumedNetwork);
                 logger.info("this [{}] info: \n", newNodeID);
-
-
             }  //when there is no clients assigned to the node
             else {
                 logger.info("this [{}] is not connected to any client");
@@ -532,24 +532,16 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 } else {
                     logger.info("no info about new available network");
                     newNodeResource = oldNodeResource;
-
                 }
             }
 
-            for (EdgeNode oldNode : this.nodeList) {
-                logger.info("checking node: {}", oldNode.getId());
-                if (oldNode.getId().equalsIgnoreCase(oldNodeID)) {
-                    String oldNodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oldNode);
-                    logger.info("oldNode = {}\n newNode: {}", oldNodePretty, nodePretty);
-                    logger.info("nodeID matched with new node [{}], leaving", newNode.getId());
-                    //get out when found, no need for further exploration
-                    break;
-                }
-            }
-
-
-
-            this.nodeList.set(thisNodeLocation, newNode);
+            /*
+            By the time we get to this step, we should have these parameter prepared
+            nodeID - nodeIP - nodeConnect - nodeResource - nodeTotalResource - nodeNetwork - nodeTotalNetwork - nodeLocation
+             */
+            EdgeNode updateNode = new EdgeNode(newNodeID,newNodeIP,newNodeConnect,newNodeResource,newNodeTotalResource,newNodeNetwork,newNodeTotalNetwork,newNodeLocation);
+            this.nodeList.set(thisNodeLocation, updateNode);
+            logger.info("[{}] after update\n{}",newNodeID, updateNode.toString());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

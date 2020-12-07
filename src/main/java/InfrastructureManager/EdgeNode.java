@@ -20,13 +20,13 @@ public class EdgeNode {
 
      */
     private final String id;
-    private final String ipAddress;
-    private final boolean connected;
-    private final long resource; //available computation resource on node
-    private final long network; // available network bandwidth on node
-    private final long location; //node's location, for ping calculation
-    private final long totalResource; //Maximum amount of resource the node have
-    private final long totalNetwork; // maximum amount of network bandwidth the node have
+    private String ipAddress;
+    private boolean connected;
+    private long resource; //available computation resource on node
+    private long network; // available network bandwidth on node
+    private long location; //node's location, for ping calculation
+    private long totalResource; //Maximum amount of resource the node have
+    private long totalNetwork; // maximum amount of network bandwidth the node have
 
     /*
    ------------------------Getter function--------------------------------
@@ -59,12 +59,37 @@ public class EdgeNode {
 
     public long getTotalNetwork() { return totalNetwork;}
 
+    public void setTotalNetwork( long inputTotalNetwork){
+        this.totalNetwork = inputTotalNetwork;
+    }
 
+    public void setResource(long resource) {
+        this.resource = resource;
+    }
 
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
+
+    public void setNetwork(long network) {
+        this.network = network;
+    }
+
+    public void setLocation(long location) {
+        this.location = location;
+    }
+
+    public void setTotalResource(long totalResource) {
+        this.totalResource = totalResource;
+    }
 
     /*
-    ------------------------Constructors --------------------------------
-     */
+            ------------------------Constructors --------------------------------
+             */
     public EdgeNode() {
         this.id = null;
         this.ipAddress = null;
