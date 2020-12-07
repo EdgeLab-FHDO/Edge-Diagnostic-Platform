@@ -7,6 +7,8 @@ import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -14,6 +16,7 @@ import spark.Route;
 import java.util.*;
 
 public class RestOutput extends MasterOutput {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static RestOutput instance = null;
 
@@ -95,12 +98,18 @@ public class RestOutput extends MasterOutput {
         this.limitNodes = new LinkedHashMap<>();
     }
 
+    /**
+     * Send client and its assigned node. No need to put JSON tbh, the ID itself is sufficient
+     * @param clientID
+     * @param nodeID
+     */
     private void createNodeResource(String clientID, String nodeID) {
         try {
-            EdgeClient client = Master.getInstance().getClientByID(clientID);
-            EdgeNode node = Master.getInstance().getNodeByID(nodeID);
-            String nodeAsJSON = this.mapper.writeValueAsString(node);
-            this.nodesToSend.put(client.getId(), nodeAsJSON);
+            logger.info("create node resource - nodeID : {} - clientID - {} ",nodeID,clientID);
+//            EdgeClient client = Master.getInstance().getClientByID(clientID);
+//            EdgeNode node = Master.getInstance().getNodeByID(nodeID);
+//            String nodeAsJSON = this.mapper.writeValueAsString(node);
+            this.nodesToSend.put(clientID, nodeID);
         } catch (Exception e) {
             e.printStackTrace();
         }

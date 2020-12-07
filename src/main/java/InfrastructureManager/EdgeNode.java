@@ -6,6 +6,7 @@ public class EdgeNode {
     TODO: update javadoc when changed
     EdgeClient class with client's parameters (resource, id, etc)
 
+    the variable from JSON must match the global variable below
     example for copy and paste:
 
     {
@@ -24,6 +25,8 @@ public class EdgeNode {
     private final long resource; //available computation resource on node
     private final long network; // available network bandwidth on node
     private final long location; //node's location, for ping calculation
+    private final long totalResource; //Maximum amount of resource the node have
+    private final long totalNetwork; // maximum amount of network bandwidth the node have
 
     /*
    ------------------------Getter function--------------------------------
@@ -52,6 +55,12 @@ public class EdgeNode {
         return location;
     }
 
+    public long getTotalResource() { return totalResource;}
+
+    public long getTotalNetwork() { return totalNetwork;}
+
+
+
 
     /*
     ------------------------Constructors --------------------------------
@@ -63,19 +72,24 @@ public class EdgeNode {
         this.resource = Long.MAX_VALUE;
         this.network = Long.MAX_VALUE;
         this.location = Long.MAX_VALUE;
+        this.totalResource = Long.MAX_VALUE;
+        this.totalNetwork = Long.MAX_VALUE;
+
     }
 
-    public EdgeNode(String id, String ip, boolean connected, long thisResource, long thisNetwork, long thisLocation) {
+    public EdgeNode(String id, String ip, boolean connected, long thisResource, long thisTotalResource, long thisNetwork, long thisTotalNetwork, long thisLocation) {
         this.id = id;
         this.ipAddress = ip;
         this.connected = connected;
         this.resource = thisResource;
         this.network = thisNetwork;
         this.location = thisLocation;
+        this.totalNetwork = thisTotalNetwork;
+        this.totalResource = thisTotalResource;
     }
 
 
-    //TODO: edit this to accommodate new data parameter. Or just use pretty print tbh :))
+    //TODO: edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
     public String toString() {
         return "EdgeNode{\n" +
@@ -83,7 +97,10 @@ public class EdgeNode {
                 "  ipAddress : " + ipAddress + ",\n" +
                 "  connected : " + connected + ",\n" +
                 "  resource : " + resource + ",\n" +
+                "  totalResource : " + totalResource + ",\n" +
                 "  network : " + network + ",\n" +
+                "  totalNetwork : " + totalNetwork + ",\n" +
                 "  location : " + location + "\n}" ;
+
     }
 }

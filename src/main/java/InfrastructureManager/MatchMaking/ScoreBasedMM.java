@@ -55,7 +55,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         List<EdgeNode> nodeList = new ArrayList<EdgeNode>(nodeListInput); //In case of multi threading
         List<EdgeNode> acceptableNodesList = new ArrayList<>();
         EdgeNode bestNode = new EdgeNode();
-        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
+        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE,Long.MAX_VALUE,Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 100000; // TODO: this should be dynamic
         //May cause problem when multi thread. Should use deep clone
