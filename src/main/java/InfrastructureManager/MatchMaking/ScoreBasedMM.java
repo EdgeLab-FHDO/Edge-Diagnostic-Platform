@@ -33,6 +33,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     TODO: History implementation, using SQL? Or keep throwing JSON object back and forward?
     DONE: Need to make sure there won't be no duplicate in nodeList (Id and Address)
     TODO: Weight should be dynamic later on
+    TODO: Implement time
 
      */
 

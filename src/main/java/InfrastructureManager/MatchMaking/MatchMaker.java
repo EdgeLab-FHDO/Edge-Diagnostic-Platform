@@ -33,10 +33,15 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
     //map - clientID, nodeID
-    private final Map<String, String> mapping;
+    private final HashMap<String, String> mapping;
     private static MatchMaker instance = null;
 
+    //History score, get time where was the client last connected to the node
+    HashMap <HashMap <String,String>, Long> connectedHistory = new HashMap<>();
+
     //History list of edge node and client
+    //TODO: implement a new class for history, using hashmap like this is too annoying
+    //TODO: implement timing in history (decay history score by time)
     //TODO: Figure out whether this history should be a global variable to share across all instances, or use it locally
 
     //Hashmap contain <NodeId, HashMap<ClientID, historyScore>>
@@ -129,6 +134,11 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 }
                 //DONE: mapping should take only client ID, because of object referencing
                 this.mapping.put(client.getId(), node.getId());
+                long assignedTime = System.currentTimeMillis();
+                HashMap<String,String>  assignedCouple = new HashMap<>();
+                assignedCouple.put(client.getId(), node.getId());
+                connectedHistory.put(assignedCouple,assignedTime);
+
                 logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
             }
         } catch (Exception e) {
