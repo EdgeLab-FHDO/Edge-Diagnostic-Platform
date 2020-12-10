@@ -117,7 +117,7 @@ public class EdgeNode {
     //TODO: edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
     public String toString() {
-        return "EdgeNode{\n" +
+        return  "EdgeNode {\n" +
                 "  id : " + id + ",\n" +
                 "  ipAddress : " + ipAddress + ",\n" +
                 "  connected : " + connected + ",\n" +

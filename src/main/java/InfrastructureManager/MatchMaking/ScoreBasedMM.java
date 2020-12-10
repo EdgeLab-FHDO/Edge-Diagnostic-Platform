@@ -27,7 +27,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     Multimap<String, HashMap<String, Long>> nodeHistory;
 
     /* big step
-    TODO: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
+    DONE: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
         Weight: 1 - 10 - 10 - 10
     DONE: implement slots (resource and network), this should be an attribute in edge client and edge note.
     TODO: History implementation, using SQL? Or keep throwing JSON object back and forward?
@@ -81,7 +81,6 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
             boolean nodeIsConnected = thisNode.isConnected();
             long pingNumber = getPing(thisClient, thisNode);
             long nodeHistoryWithClient = Long.MAX_VALUE;
-            thisnode.get
 
             Collection<HashMap<String, Long>> thisNodeHistoryList =  nodeHistory.get(thisNodeID);
             for ( HashMap<String, Long> history : thisNodeHistoryList){

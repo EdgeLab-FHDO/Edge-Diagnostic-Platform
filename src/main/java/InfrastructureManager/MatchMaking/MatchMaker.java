@@ -1,6 +1,7 @@
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.*;
+import InfrastructureManager.Utils.EdgeClientHistory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,13 +35,15 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeClient> clientList;
     //map - clientID, nodeID
     private final HashMap<String, String> mapping;
-    private static MatchMaker instance = null;
+
+    //A hashmap with client and its history. Used to fetch history related data
+    private HashMap<String, EdgeClientHistory> clientHistoryHashMap = new HashMap<>();
 
     //History score, get time where was the client last connected to the node
     HashMap <HashMap <String,String>, Long> connectedHistory = new HashMap<>();
 
     //History list of edge node and client
-    //TODO: implement a new class for history, using hashmap like this is too annoying
+    //DONE: implement a new class for history, using hashmap like this is too annoying
     //TODO: implement timing in history (decay history score by time)
     //TODO: Figure out whether this history should be a global variable to share across all instances, or use it locally
 
@@ -107,36 +110,46 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
         logger.info("assigning client to node \n ----------------------------------------------------------------------------------------------------");
         try {
-            EdgeClient client = this.getClientByID(clientID);
+            EdgeClient thisClient = this.getClientByID(clientID);
             //match client with node in nodelist according to algorithm
-            EdgeNode node = this.algorithm.match(client, this.nodeList, this.nodeHistory);
-
+            EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, this.nodeHistory);
+            String thisNodeID = thisNode.getId();
             //list of node, for debugging purposes
             for (EdgeNode theNode : nodeList) {
                 logger.info(theNode.toString());
             }
 
-            logger.info("\n\n assigned node info: {}", node.toString());
-            logger.info("client info: {}", client.toString());
+            logger.info("\n\n assigned node info: {}", thisNode.toString());
+            logger.info("client info: {}", thisClient.toString());
 
-            if (node == null) {
+            if (thisNode == null) {
                 logger.warn("no node in nodelist");
             } else {
-                logger.info("assign client [{}] to node [{}] ", client.getId(), node.getId());
+                logger.info("assign client [{}] to node [{}] ", thisClient.getId(), thisNode.getId());
                 //DONE: update node's data
-                if (!node.getId().equals("rejectNode")) {
-                    updateAfterAssigning(client.getId(), node.getId());
-                    command = "give_node " + client.getId() + " " + node.getId();
+                if (!thisNode.getId().equals("rejectNode")) {
+                    updateAfterAssigning(thisClient.getId(), thisNode.getId());
+                    command = "give_node " + thisClient.getId() + " " + thisNode.getId();
                 } else {
                     //no out command if we couldn't assign the client to any node. No need for further operation here
                     //TODO: maybe send a rejected response if this happen
                     command = "";
                 }
+
                 //DONE: mapping should take only client ID, because of object referencing
-                this.mapping.put(client.getId(), node.getId());
-                long assignedTime = System.currentTimeMillis();
+                this.mapping.put(thisClient.getId(), thisNode.getId());
+                long assignedTime = System.currentTimeMillis(); //Get current time to put in the list
+
+                //Get client history info
+                EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(clientID);
+
+                //Add client's connected time to history info package
+                clientHistoryInfo.setConnectedTimeForClient(clientID,thisNodeID,assignedTime);
+
+                logger.info("client history info: \n{}",clientHistoryInfo);
+
                 HashMap<String,String>  assignedCouple = new HashMap<>();
-                assignedCouple.put(client.getId(), node.getId());
+                assignedCouple.put(thisClient.getId(), thisNode.getId());
                 connectedHistory.put(assignedCouple,assignedTime);
 
                 logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
@@ -207,6 +220,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //we only need the ID and message of this object anyway
             EdgeClient pseudoClient = this.mapper.readValue(clientAsString, EdgeClient.class);
             String thisClientID = pseudoClient.getId();
+            long disconnectedTime = System.currentTimeMillis();
 
             //this is the one that registered in the list
             EdgeClient thisClient = getClientByID(thisClientID);
@@ -282,6 +296,13 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                     break;
                 }
             }
+
+            //Assign disconnect info
+            //Get client history info
+            EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(thisClientID);
+
+            //Add client's disconnected time to history info package
+            clientHistoryInfo.setConnectedTimeForClient(thisClientID,thisNodeID,disconnectedTime);
 
             //Print out for debugging purposes:
             Set<String> thisNodeList = nodeHistory.keySet();
@@ -370,27 +391,24 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //If client is not registered (no duplication) -> moving on
             if (!checkDuplicateClientInList(thisClient)) {
                 //Just for debugging purpose
-                String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(thisClient);
-                logger.info("client after readValue from mapper: {}", clientPretty);
+                logger.info("client after readValue from mapper: {}", thisClient.toString());
                 this.clientList.add(thisClient);
             } else {
                 logger.warn("this client has already been registered (duplicated ID exist)");
             }
 
-
+            //Initiating client history
+            EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
             for (EdgeNode thisNode : this.nodeList) {
                 String thisNodeID = thisNode.getId();
-                //Add client into the node history with default history value = 0;
-                HashMap<String, Long> clientMap = new HashMap<>();
-                /*
-                Have to do this step in this loop.
-                Do it outside will result in the same object got put in 3 different places, making
-                changing 1 of them result into change all places
-                 */
-                clientMap.put(thisClientID, 0L);
-                nodeHistory.put(thisNodeID, clientMap);
+                thisClientHistory.setHistoryMap(thisClientID,thisNodeID, 0L);
+                thisClientHistory.setConnectedMap(thisClientID,thisNodeID, 0L);
             }
-            logger.info("nodeHistory: {} ", nodeHistory);
+
+            //Put the client with its history in a HashMap, we can always update the history later on
+            // by fetching thisClientHistory stuff anyway
+            logger.info("this client history info: \n{}", thisClientHistory);
+            clientHistoryHashMap.put(thisClientID,thisClientHistory);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
