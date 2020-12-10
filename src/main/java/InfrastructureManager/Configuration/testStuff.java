@@ -21,41 +21,47 @@ public class testStuff {
 //            System.out.println(negative);
 //
 
-        Multimap<String, String> myMultimap = ArrayListMultimap.create();
-        HashMap<String, Long> hashTest = new HashMap<>();
-        HashMap<String, Long> hashTest1 = new HashMap<>();
-        Multimap<String, HashMap<String, Long>> myMultimap2 = ArrayListMultimap.create();
-        // Adding some key/value
-//            myMultimap.put("Fruits", "Bannana");
-//            myMultimap.put("Fruits", "Apple");
-//            myMultimap.put("Fruits", "Pear");
-//            myMultimap.put("Vegetables", "Carrot");
-//            myMultimap.put("Vegetables", "Carrot");
-//            myMultimap.put("Vegetables", "Carrot");
-        hashTest.put("client 1", 10L);
-        myMultimap2.put("Fruits", hashTest);
-        hashTest1.put("client 2", 100L);
-        myMultimap2.put("Fruits", hashTest1);
+        long up = 456;
+        long down = 1000;
 
-        // Getting values
-        Collection<HashMap<String, Long>> fruits = myMultimap2.get("Fruits");
-        System.out.println("stuff from fruit \n" + fruits); // [Bannana, Apple, Pear]
+        long upDown = up/down;
+        System.out.println(upDown);
 
-
-        //get client 1
-        for (HashMap<String, Long> client : fruits) {
-            if (client.containsKey("client 1")) {
-                Long getClient1 = client.get("client 1");
-                //update client 1
-                client.put("client 1", 200L);
-            }
-
-
+//        Multimap<String, String> myMultimap = ArrayListMultimap.create();
+//        HashMap<String, Long> hashTest = new HashMap<>();
+//        HashMap<String, Long> hashTest1 = new HashMap<>();
+//        Multimap<String, HashMap<String, Long>> myMultimap2 = ArrayListMultimap.create();
+//        // Adding some key/value
+////            myMultimap.put("Fruits", "Bannana");
+////            myMultimap.put("Fruits", "Apple");
+////            myMultimap.put("Fruits", "Pear");
+////            myMultimap.put("Vegetables", "Carrot");
+////            myMultimap.put("Vegetables", "Carrot");
+////            myMultimap.put("Vegetables", "Carrot");
+//        hashTest.put("client 1", 10L);
+//        myMultimap2.put("Fruits", hashTest);
+//        hashTest1.put("client 2", 100L);
+//        myMultimap2.put("Fruits", hashTest1);
 //
-        }
-        System.out.println("stuff from fruit \n" + fruits); // [Bannana, Apple, Pear]}
-
-        System.out.println(myMultimap2);
+//        // Getting values
+//        Collection<HashMap<String, Long>> fruits = myMultimap2.get("Fruits");
+//        System.out.println("stuff from fruit \n" + fruits); // [Bannana, Apple, Pear]
+//
+//
+//        //get client 1
+//        for (HashMap<String, Long> client : fruits) {
+//            if (client.containsKey("client 1")) {
+//                Long getClient1 = client.get("client 1");
+//                //update client 1
+//                client.put("client 1", 200L);
+//            }
+//
+//
+////
+//        }
+//        System.out.println("stuff from fruit \n" + fruits); // [Bannana, Apple, Pear]}
+//
+//        System.out.println(myMultimap2);
 
 
     }

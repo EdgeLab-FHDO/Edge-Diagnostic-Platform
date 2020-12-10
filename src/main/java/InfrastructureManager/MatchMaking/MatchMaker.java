@@ -5,8 +5,6 @@ import InfrastructureManager.Utils.EdgeClientHistory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +24,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * <p>
      * We must register all nodes before register client(s). Or else history calculate thingy will got null error
      */
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private MatchMakingAlgorithm algorithm;
     private final ObjectMapper mapper;
     private String command = "";
@@ -37,19 +35,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final HashMap<String, String> mapping;
 
     //A hashmap with client and its history. Used to fetch history related data
-    private HashMap<String, EdgeClientHistory> clientHistoryHashMap = new HashMap<>();
-
-    //History score, get time where was the client last connected to the node
-    HashMap <HashMap <String,String>, Long> connectedHistory = new HashMap<>();
+    private final HashMap<String, EdgeClientHistory> clientHistoryHashMap = new HashMap<>();
 
     //History list of edge node and client
     //DONE: implement a new class for history, using hashmap like this is too annoying
-    //TODO: implement timing in history (decay history score by time)
-    //TODO: Figure out whether this history should be a global variable to share across all instances, or use it locally
+    //DONE: implement timing in history (decay history score by time)
+    //DONE: Figure out whether this history should be a global variable to share across all instances, or use it locally
 
     //Hashmap contain <NodeId, HashMap<ClientID, historyScore>>
-//    private final HashMap<String, HashMap<String, Long>> nodeHistory = new HashMap<>();
-    Multimap<String, HashMap<String, Long>> nodeHistory = ArrayListMultimap.create();
 
     /*
     TODO: make logger for  debugging (use a boolean variable will be fine) to reduce the console output later on
@@ -64,7 +57,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         super(name);
 
         //Manually changed algorithm used here. -negative, can't use
-//        algorithmType = "sbmm";
         System.out.println("input for match making:  \nstart_rest_server \nstart_runner Runner_rest_in \nstart_runner Runner_match_m \n");
 
 
@@ -84,17 +76,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     public void setAlgorithmFromString(String algorithmType) {
         logger.info("Algorithm used: {}", algorithmType);
         switch (algorithmType.toLowerCase()) {
-            case "random":
-//                setAlgorithm(new ScoreBasedMM());
-                setAlgorithm(new RandomMatchMaking());
-                break;
-
-            case "sbmm":
-                setAlgorithm(new ScoreBasedMM());
-                break;
-
-            default:
-                throw new IllegalArgumentException("Invalid type for MatchMaker");
+            case "random" -> setAlgorithm(new RandomMatchMaking());
+            case "sbmm" -> setAlgorithm(new ScoreBasedMM());
+            default -> throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
     }
 
@@ -106,68 +90,62 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     -----------------------Assigning client to node--------------------------------------------------
     Single client to single node, not multiple in the same time
     */
-    private void assign(String clientID) {
+    private void assign(String thisClientID) {
 
-        logger.info("assigning client to node \n ----------------------------------------------------------------------------------------------------");
+        logger.info("\n------------------------------------assigning client to node ----------------------------------------------------------------");
         try {
-            EdgeClient thisClient = this.getClientByID(clientID);
-            //match client with node in nodelist according to algorithm
-            EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, this.nodeHistory);
-            String thisNodeID = thisNode.getId();
-            //list of node, for debugging purposes
-            for (EdgeNode theNode : nodeList) {
-                logger.info(theNode.toString());
-            }
+            EdgeClient thisClient = this.getClientByID(thisClientID);
+            EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(thisClientID);
 
-            logger.info("\n\n assigned node info: {}", thisNode.toString());
-            logger.info("client info: {}", thisClient.toString());
+            //Check whether thisClient has already been matched or not
 
-            if (thisNode == null) {
-                logger.warn("no node in nodelist");
+            if (mapping.containsKey(thisClientID)) {
+                String connectedNode = mapping.get(thisClientID);
+                logger.warn("this client is already connected with {}", connectedNode);
+                logger.info("client history info: \n{}", clientHistoryInfo);
+                logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
             } else {
-                logger.info("assign client [{}] to node [{}] ", thisClient.getId(), thisNode.getId());
+                //match client with node in nodelist according to algorithm
+                EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, clientHistoryInfo);
+                String thisNodeID = thisNode.getId();
+                //list of node, for debugging purposes
+                for (EdgeNode theNode : nodeList) {
+                    logger.debug("{}", theNode);
+                }
+                logger.info("assigned node info: \n{}", thisNode);
+                logger.info("client info: \n{}", thisClient);
+                logger.info("assign client [{}] to node [{}] ", thisClientID, thisNodeID);
                 //DONE: update node's data
                 if (!thisNode.getId().equals("rejectNode")) {
-                    updateAfterAssigning(thisClient.getId(), thisNode.getId());
-                    command = "give_node " + thisClient.getId() + " " + thisNode.getId();
+                    updateAfterAssigning(thisClientID, thisNodeID);
+                    command = "give_node " + thisClientID + " " + thisNodeID;
                 } else {
                     //no out command if we couldn't assign the client to any node. No need for further operation here
                     //TODO: maybe send a rejected response if this happen
                     command = "";
                 }
-
                 //DONE: mapping should take only client ID, because of object referencing
-                this.mapping.put(thisClient.getId(), thisNode.getId());
-                long assignedTime = System.currentTimeMillis(); //Get current time to put in the list
-
-                //Get client history info
-                EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(clientID);
-
-                //Add client's connected time to history info package
-                clientHistoryInfo.setConnectedTimeForClient(clientID,thisNodeID,assignedTime);
-
-                logger.info("client history info: \n{}",clientHistoryInfo);
-
-                HashMap<String,String>  assignedCouple = new HashMap<>();
-                assignedCouple.put(thisClient.getId(), thisNode.getId());
-                connectedHistory.put(assignedCouple,assignedTime);
-
-                logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
+                this.mapping.put(thisClientID, thisNodeID);
+                logger.info("client history info: \n{}", clientHistoryInfo);
+                logger.info("mapping map: {} \n ----------------------------done with assigning-------------------" +
+                        "-----------------------------------------------------------------------", mapping);
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             logger.error("error in assigning client");
             e.printStackTrace();
         }
+
     }
 
-    //TODO: update node data after disconnecting, remove it from mapper
+    //DONE: update node data after disconnecting, remove it from mapper
 
     /**
      * Update node's data after assigning.
      * We minus resourced occupied by client
      *
-     * @param thisClientID
-     * @param thisNodeID
+     * @param thisClientID client ID, in String
+     * @param thisNodeID   node ID, in String
      * @author Zero
      */
     private void updateAfterAssigning(String thisClientID, String thisNodeID) throws Exception {
@@ -182,25 +160,25 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
         //get node available resource
         //TODO: maybe use setter/getter rather than replace the whole object when update?
-        String node_IP = thisNode.getIpAddress();
-        boolean node_connect = thisNode.isConnected();
-        long node_Resource = thisNode.getResource();
-        long node_Network = thisNode.getNetwork();
-        long node_Location = thisNode.getLocation();
-        long node_Total_Resource = thisNode.getTotalResource();
-        long node_Total_Network = thisNode.getTotalNetwork();
-        int node_Location_in_list = this.nodeList.indexOf(thisNode);
+        String nodeIP = thisNode.getIpAddress();
+        boolean nodeConnect = thisNode.isConnected();
+        long nodeResource = thisNode.getResource();
+        long nodeNetwork = thisNode.getNetwork();
+        long nodeLocation = thisNode.getLocation();
+        long nodeTotalResource = thisNode.getTotalResource();
+        long nodeTotalNetwork = thisNode.getTotalNetwork();
+        int nodeLocationInList = this.nodeList.indexOf(thisNode);
 
         //Calculating occupied resource, network. This is the minus part mentioned in javadoc
-        node_Resource = node_Resource - usedResource;
-        node_Network = node_Network - usedNetwork;
+        nodeResource = nodeResource - usedResource;
+        nodeNetwork = nodeNetwork - usedNetwork;
 
         //node that we going to replace in our nodeList
-        EdgeNode updateNode = new EdgeNode(thisNodeID, node_IP, node_connect, node_Resource, node_Total_Resource, node_Network, node_Total_Network, node_Location);
+        EdgeNode updateNode = new EdgeNode(thisNodeID, nodeIP, nodeConnect, nodeResource, nodeTotalResource, nodeNetwork, nodeTotalNetwork, nodeLocation);
 
-        logger.info("Node [{}] before assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(node_Location_in_list).toString());
-        this.nodeList.set(node_Location_in_list, updateNode);
-        logger.info("Node [{}] after assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(node_Location_in_list).toString());
+        logger.info("Node [{}] before assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
+        this.nodeList.set(nodeLocationInList, updateNode);
+        logger.info("Node [{}] after assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
 
     }
 
@@ -211,7 +189,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * Update node's resources after disconnect with client (resource got freed up)
      * We plus used_resource by client to node.
      *
-     * @param clientAsString
+     * @param clientAsString JSON body of client when updating
      * @author Zero
      */
     private void updateAfterDisconnecting(String clientAsString) {
@@ -224,7 +202,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //this is the one that registered in the list
             EdgeClient thisClient = getClientByID(thisClientID);
-            logger.info("disconnected client [{}] : \n{}", thisClientID, thisClient.toString());
+            logger.info("disconnected client [{}] : \n{}", thisClientID, thisClient);
 
             //Initiate variables
             logger.info("mapping: {}", mapping);
@@ -262,54 +240,41 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //node that we going to replace in our nodeList
             EdgeNode updateNode = new EdgeNode(thisNodeID, nodeIP, nodeConnect, nodeResource, nodeTotalResource, nodeNetwork, nodeTotalNetwork, nodeLocation);
 
-            logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList).toString());
+            logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
 
             //update node's info
             this.nodeList.set(nodeLocationInList, updateNode);
-            logger.info("Node [{}] after disconnect from client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList).toString());
+            logger.info("Node [{}] after disconnect from client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
 
             //remove the coupling in mapping object
             this.mapping.remove(thisClientID, thisNodeID);
 
-            //Get node history (all clients connected)
-            Collection<HashMap<String, Long>> thisNodeHistory = nodeHistory.get(thisNodeID);
+            //---------------------------------------------HISTORY TIME-------------------------------------------------
+            EdgeClientHistory thisClientHistoryInfo = clientHistoryHashMap.get(thisClientID);
 
-            //Get the history with thisClientID
-            Long thisNodeHistoryWithClient;
-            for (HashMap<String, Long> history : thisNodeHistory) {
-                if (history.containsKey(thisClientID)) {
-                    thisNodeHistoryWithClient = history.get(thisClientID);
-                    logger.info("\nAccessing path: getNode -> Client -> before_score \n {}    ->    {}     ->    {}", thisNodeID, thisClientID, thisNodeHistoryWithClient);
-                    //Calculate the score depends on reason disconnected
-                    switch (message) {
-                        case "job_done" -> {
-                            thisNodeHistoryWithClient = thisNodeHistoryWithClient - 5;
-                        }
-                        case "job_failed" -> {
-                            thisNodeHistoryWithClient = thisNodeHistoryWithClient + 10;
-                        }
-                    }
-                    if (thisNodeHistoryWithClient < 0) {
-                        thisNodeHistoryWithClient = 0L;
-                    }
-                    history.put(thisClientID, thisNodeHistoryWithClient);
-                    break;
-                }
+            //Get score between thisClientID and thisNodeID
+            Long historyScore = thisClientHistoryInfo.getHistoryScore(thisClientID, thisNodeID);
+
+            //UPDATE HERE WHEN WE HAVE MORE MESSAGE
+            switch (message) {
+                case "job_done" -> historyScore = historyScore - 5;
+
+                case "job_failed" -> historyScore = historyScore + 10;
+            }
+            if (historyScore < 0) {
+                historyScore = 0L;
             }
 
-            //Assign disconnect info
-            //Get client history info
-            EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(thisClientID);
+            logger.info("History before disconnecting: \n{}", thisClientHistoryInfo);
+
+            //Put the new history score in history info package
+            thisClientHistoryInfo.setHistoryScoreForClient(thisClientID, thisNodeID, historyScore);
 
             //Add client's disconnected time to history info package
-            clientHistoryInfo.setConnectedTimeForClient(thisClientID,thisNodeID,disconnectedTime);
+            thisClientHistoryInfo.setConnectedTimeForClient(thisClientID, thisNodeID, disconnectedTime);
 
             //Print out for debugging purposes:
-            Set<String> thisNodeList = nodeHistory.keySet();
-            logger.info("History after disconnecting:");
-            for (String thisNodeInList : thisNodeList) {
-                logger.info("{} -> {}", thisNodeInList, nodeHistory.get(thisNodeInList));
-            }
+            logger.info("History after disconnecting: \n{}", thisClientHistoryInfo);
 
 
         } catch (Exception e) {
@@ -329,43 +294,43 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     public void out(String response) throws IllegalArgumentException {
 
         logger.info("[out function] \nresponse string: {} ", response);
-        String[] command = response.split(" ");
-        logger.info("after split response: {}", Arrays.toString(command));
+        String[] commandLine = response.split(" ");
+        logger.info("after split response: {}", Arrays.toString(commandLine));
         /*
         After split, command array gonna look like this:
         [matchMaker, update_node, {"id":"node3","ipAddress":"68.131.232.215:30968","connected":true,"resource":50,"network":90}]
         Parse them to the if and switch bunch below to execute different functions
          */
-        if (command[0].equals("matchMaker")) {
+        if (commandLine[0].equals("matchMaker")) {
             try {
-                switch (command[1]) {
+                switch (commandLine[1]) {
                     case "register_client":
-                        registerClient(command[2]);
+                        registerClient(commandLine[2]);
                         logger.info("client registered, done with [outfunction]\n\n");
                         break;
 
                     case "register_node":
-                        registerNode(command[2]);
+                        registerNode(commandLine[2]);
                         logger.info("node registered, done with [outfunction]\n\n");
                         break;
 
                     case "assign_client":
-                        assign(command[2]);
+                        assign(commandLine[2]);
                         logger.info("client assigned, done with [outfunction]\n\n");
                         break;
 
                     case "update_node":
-                        updateNode(command[2]);
+                        updateNode(commandLine[2]);
                         logger.info("node updated, done with [outfunction]\n\n");
                         break;
 
                     case "update_client":
-                        updateClient(command[2]);
+                        updateClient(commandLine[2]);
                         logger.info("client updated, done with [outfunction]\n\n");
                         break;
 
                     case "disconnect_client":
-                        updateAfterDisconnecting(command[2]);
+                        updateAfterDisconnecting(commandLine[2]);
                         logger.info("client disconnected, done with [outfunction]\n\n");
                         break;
 
@@ -391,7 +356,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //If client is not registered (no duplication) -> moving on
             if (!checkDuplicateClientInList(thisClient)) {
                 //Just for debugging purpose
-                logger.info("client after readValue from mapper: {}", thisClient.toString());
+                logger.info("client after readValue from mapper: {}", thisClient);
                 this.clientList.add(thisClient);
             } else {
                 logger.warn("this client has already been registered (duplicated ID exist)");
@@ -401,14 +366,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
             for (EdgeNode thisNode : this.nodeList) {
                 String thisNodeID = thisNode.getId();
-                thisClientHistory.setHistoryMap(thisClientID,thisNodeID, 0L);
-                thisClientHistory.setConnectedMap(thisClientID,thisNodeID, 0L);
+                thisClientHistory.setHistoryMap(thisClientID, thisNodeID, 0L);
+                thisClientHistory.setConnectedMap(thisClientID, thisNodeID, 0L);
             }
 
             //Put the client with its history in a HashMap, we can always update the history later on
             // by fetching thisClientHistory stuff anyway
             logger.info("this client history info: \n{}", thisClientHistory);
-            clientHistoryHashMap.put(thisClientID,thisClientHistory);
+            clientHistoryHashMap.put(thisClientID, thisClientHistory);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -423,20 +388,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         try {
             logger.info("RegisterNode - node as string: {} ", nodeAsString);
             EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
-            String thisNodeID = thisNode.getId();
-
             if (!checkDuplicateNodeInList(thisNode)) {
-                String nodePretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(thisNode);
-                logger.info("node after readValue from mapper: {}", nodePretty);
+                logger.info("node after readValue from mapper: {}", thisNode);
                 this.nodeList.add(thisNode);
             } else {
                 logger.warn("this node has already been registered (duplicated ID exist)");
             }
-
-            //Add new node into our hashmap
-            logger.info("nodeHistory: {} ", nodeHistory);
-
-
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -496,8 +453,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //get updating node location
             Integer thisNodeLocation = null;
-            String oldNodeID = newNodeID;
-            EdgeNode oldNode = getNodeByID(oldNodeID);
+            EdgeNode oldNode = getNodeByID(newNodeID);
             long oldNodeResource = oldNode.getResource();
             long oldNodeNetwork = oldNode.getNetwork();
             thisNodeLocation = this.nodeList.indexOf(oldNode);
@@ -507,14 +463,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>> UPDATE FAILED <<<<<<<<<<<<<<<<<<<<<<<<< \nnew node ID does not match with any node's ID in the system.");
                 return;
             }
-            logger.info("[{}] before update\n{}",oldNodeID, oldNode.toString());
+            logger.info("[{}] before update\n{}", newNodeID, oldNode);
 
             //check whether this node is connected to a client or not
-            boolean nodeIsAssigned = this.mapping.containsValue(oldNodeID);
+            boolean nodeIsAssigned = this.mapping.containsValue(newNodeID);
 
             //calculate used resources to update later on if that node is assigned to others
             if (nodeIsAssigned) {
-                ArrayList<String> assignedClientList = getAssignedClient(oldNodeID);
+                ArrayList<String> assignedClientList = getAssignedClient(newNodeID);
                 long consumedNetwork = 0;
                 long consumedResource = 0;
                 //Get total consumed resource and network
@@ -527,7 +483,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 }
 
                 //only update resource and network if we do have those variable in JSON body.
-                if (!(newNodeNetwork >= Long.MAX_VALUE)) {
+                if ((newNodeNetwork < Long.MAX_VALUE)) {
                     //there is info about new node available network
                     newNodeNetwork = newNodeNetwork - consumedNetwork;
                 } else {
@@ -535,7 +491,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                     newNodeNetwork = oldNodeNetwork;
                 }
 
-                if (!(newNodeResource >= Long.MAX_VALUE)) {
+                if ((newNodeResource < Long.MAX_VALUE)) {
                     //there is info about new node available resource
                     newNodeResource = newNodeResource - consumedResource;
                 } else {
@@ -547,15 +503,15 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.info("this [{}] info: \n", newNodeID);
             }  //when there is no clients assigned to the node
             else {
-                logger.info("this [{}] is not connected to any client");
-                if (!(newNodeNetwork >= Long.MAX_VALUE)) {
+                logger.info("this [{}] is not connected to any client", newNodeID);
+                if ((newNodeNetwork < Long.MAX_VALUE)) {
                     //there is info about new node available network
                 } else {
                     logger.info("no info about new available resource");
                     newNodeNetwork = oldNodeNetwork;
                 }
 
-                if (!(newNodeResource >= Long.MAX_VALUE)) {
+                if ((newNodeResource < Long.MAX_VALUE)) {
                     //there is info about new node available resource
                 } else {
                     logger.info("no info about new available network");
@@ -567,12 +523,10 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             By the time we get to this step, we should have these parameter prepared
             nodeID - nodeIP - nodeConnect - nodeResource - nodeTotalResource - nodeNetwork - nodeTotalNetwork - nodeLocation
              */
-            EdgeNode updateNode = new EdgeNode(newNodeID,newNodeIP,newNodeConnect,newNodeResource,newNodeTotalResource,newNodeNetwork,newNodeTotalNetwork,newNodeLocation);
+            EdgeNode updateNode = new EdgeNode(newNodeID, newNodeIP, newNodeConnect, newNodeResource, newNodeTotalResource, newNodeNetwork, newNodeTotalNetwork, newNodeLocation);
             this.nodeList.set(thisNodeLocation, updateNode);
-            logger.info("[{}] after update\n{}",newNodeID, updateNode.toString());
+            logger.info("[{}] after update\n{}", newNodeID, updateNode);
 
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -586,9 +540,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             logger.info("UpdateClient - client as string: {} ", clientAsString);
             //Map the contents of the JSON file to a java object
             EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
-            String clientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(newClient);
-//            logger.info("client after readValue from mapper: {}", clientPretty);
-
             //get updating client location
             Integer thisClientLocation = null;
             String oldClientID = newClient.getId();
@@ -596,8 +547,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             for (EdgeClient client : this.clientList) {
                 logger.info("checking node: {}", client.getId());
                 if (client.getId().equalsIgnoreCase(oldClientID)) {
-                    String oldClientPretty = this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(client);
-                    logger.info("oldClient: {}\n newNode: {}", oldClientPretty, clientPretty);
+                    logger.info("oldClient: {}\n newClient: {}", client, newClient);
                     logger.info("clientID matched with new node [{}], leaving", newClient.getId());
                     thisClientLocation = this.clientList.indexOf(client);
                     //get out when found, no need for further exploration
@@ -648,9 +598,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     ----------------------Just making sure input client are in client list---------------
      */
     private EdgeClient getClientByID(String clientID) throws Exception {
-        /*
-         TODO: Can be improve/ultilize if use straight EdgeClient rather than clientID, maybe i'm wrong cuz we are using string regex to get info from JSON file.
-         */
         for (EdgeClient thisClient : this.clientList) {
             if (thisClient.getId().equals(clientID)) {
                 return thisClient;
@@ -660,7 +607,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
     private EdgeNode getNodeByID(String nodeID) throws Exception {
-
         for (EdgeNode thisNode : this.nodeList) {
             if (thisNode.getId().equals(nodeID)) {
                 return thisNode;

@@ -2,6 +2,7 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
+import InfrastructureManager.Utils.EdgeClientHistory;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     long ping_weight = 1;
     long history_weight = 10;
     Multimap<String, HashMap<String, Long>> nodeHistory;
+    EdgeClientHistory clientHistory;
+    long deductScorePerSecond = 1;
 
     /* big step
     DONE: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
@@ -49,7 +52,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     DONE: compare between "acceptable" node using score
      */
     @Override
-    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, Multimap<String, HashMap<String, Long>> thisNodeHistory) {
+    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, EdgeClientHistory thisClientHistory) {
         logger.info("match making started - Score based\n");
 
         //Initiating variable
@@ -59,8 +62,11 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE,Long.MAX_VALUE,Long.MAX_VALUE); //return this if score not good
         long bestScore = 0;
         long qosThreeshold = 100000; // TODO: this should be dynamic
+
+        this.clientHistory = thisClientHistory;
+
         //May cause problem when multi thread. Should use deep clone
-        this.nodeHistory = thisNodeHistory;
+//        this.nodeHistory = thisNodeHistory;
 
         //initiate temp/comparing variable
 
@@ -80,14 +86,25 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
             long nodeNetwork = thisNode.getNetwork();
             boolean nodeIsConnected = thisNode.isConnected();
             long pingNumber = getPing(thisClient, thisNode);
-            long nodeHistoryWithClient = Long.MAX_VALUE;
+            long nodeHistoryWithClient = clientHistory.getHistoryScore(thisClientID,thisNodeID);
+            long lastConnectedTime = clientHistory.getConnectedTime(thisClientID,thisNodeID);
 
-            Collection<HashMap<String, Long>> thisNodeHistoryList =  nodeHistory.get(thisNodeID);
-            for ( HashMap<String, Long> history : thisNodeHistoryList){
-                if (history.containsKey(thisClientID)){
-                    nodeHistoryWithClient = history.get(thisClientID);
-                }
+            //Get elapsed time to reduce history score
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - lastConnectedTime;
+
+            //Deducting score: -1 score for every second (1000ms)
+            long deductingScore = deductScorePerSecond * elapsedTime/1000;
+            logger.info("time since last connected = {} ms, {} score deduct per second",elapsedTime, deductScorePerSecond);
+
+            long nodeHistoryScore = nodeHistoryWithClient - deductingScore;
+
+            if (nodeHistoryScore < 0){
+                nodeHistoryScore = 0;
             }
+            logger.info("node history score = {} = {} - {}",nodeHistoryScore,nodeHistoryWithClient,deductingScore);
+            //Update the score in the history info pack with this new score
+            clientHistory.setHistoryScoreForClient(thisClientID,thisNodeID,nodeHistoryScore);
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if ((nodeResource <= require_resource) || (nodeNetwork <= require_network) || !nodeIsConnected) {
@@ -100,14 +117,14 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
                 //DONE: change the criteria that we compare to resource + network + ping + history. Not just available resource like this
 
                 //calculate current node score and find best node
-                logger.info("calculating node [{}] score: ", thisNode.getId());
-                long thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryWithClient);
-                if (bestScore <= thisNodeScore) {
+                logger.info("calculating node [{}] score: ", thisNodeID);
+                long thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
+                //TODO: change this to debug
+                logger.debug("best node's score - this node score:  {} - {} ",bestScore, thisNodeScore);
+                if (bestScore < thisNodeScore) {
                     bestNode = thisNode;
+                    bestScore = thisNodeScore;
                 }
-
-                //Adding good nodes into a list? Should be redundant? Or hashmap? Or none at all?
-                acceptableNodesList.add(thisNode);
             }
 
         }
@@ -121,7 +138,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         if (bestScore < qosThreeshold) {
             return bestNode;
         } else {
-            logger.warn(">>>>>>>FAIL<<<<<<< \nThere is no node satisfy minimum quality of service, returning rejecting node.");
+            logger.warn(">>>>>>>FAIL<<<<<<< \nThere is no node satisfy minimum quality of service ({}), returning rejecting node.",qosThreeshold);
             return rejectNode;
         }
     }
@@ -138,7 +155,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
      * @return calculatedScore
      * @author Zero
      */
-    private long getScore(long nodeResource, long nodeNetwork, long pingNumber, long nodeHistoryWithClient) {
+    private long getScore(long nodeResource, long nodeNetwork, long pingNumber, long nodeHistoryScore) {
         //Initiate calculating variable
         long result = Long.MAX_VALUE;
 
@@ -146,9 +163,9 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
         The more resource, more network; the better
         The less ping, less history; the better
          */
-        long nodeScore = nodeResource * resource_Weight + nodeNetwork * network_Weight - pingNumber * ping_weight - nodeHistoryWithClient * history_weight;
+        long nodeScore = nodeResource * resource_Weight + nodeNetwork * network_Weight - pingNumber * ping_weight - nodeHistoryScore * history_weight;
         logger.info("node score {}   =   {} * {}   +    {} * {}   -    {} * {}    -   {} * {}",
-                nodeScore, nodeResource, resource_Weight, nodeNetwork, network_Weight, pingNumber, ping_weight, nodeHistoryWithClient, history_weight);
+                nodeScore, nodeResource, resource_Weight, nodeNetwork, network_Weight, pingNumber, ping_weight, nodeHistoryScore, history_weight);
         result = nodeScore;
         // compare with Long.MAX_VALUE because when network, resource or ping is wrong in some step, it gonna return Long.MAX_VALUE. Making the equation value very big
         if (result >= Long.MAX_VALUE) {
