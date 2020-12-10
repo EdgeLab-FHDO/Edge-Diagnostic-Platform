@@ -81,6 +81,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
             boolean nodeIsConnected = thisNode.isConnected();
             long pingNumber = getPing(thisClient, thisNode);
             long nodeHistoryWithClient = Long.MAX_VALUE;
+            thisnode.get
 
             Collection<HashMap<String, Long>> thisNodeHistoryList =  nodeHistory.get(thisNodeID);
             for ( HashMap<String, Long> history : thisNodeHistoryList){
