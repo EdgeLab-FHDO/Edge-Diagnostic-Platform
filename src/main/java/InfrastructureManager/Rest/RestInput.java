@@ -18,7 +18,7 @@ public class RestInput implements MasterInput {
         String clientAsString = request.body().replaceAll("\\s+", "");
         //Map the contents of the JSON file to a java object
         EdgeClient client = mapper.readValue(clientAsString, EdgeClient.class);
-        Master.getInstance().addClient(client);
+//        Master.getInstance().addClient(client);
         command = "register_client " + clientAsString;
         //if everythings go right, response.status() = 200
         return response.status();
@@ -32,7 +32,7 @@ public class RestInput implements MasterInput {
 //        logger.info("request: {}\nresponse: {}",request.body(),response.body());
         String nodeAsString = request.body().replaceAll("\\s+", "");
         EdgeNode node = mapper.readValue(nodeAsString, EdgeNode.class);
-        Master.getInstance().addNode(node);
+//        Master.getInstance().addNode(node);
         command = "register_node " + nodeAsString;
 
         //if everythings go right, response.status() = 200
@@ -64,8 +64,8 @@ public class RestInput implements MasterInput {
         //get the node's ID that we want to update. Only update the one with the same ID please, y'all
         String oldNodeID = updatedNode.getId();
 
-        //TODO: maybe delete this because we don't want it to go through master tbh.
-        Master.getInstance().updateNode(oldNodeID,updatedNode);
+        //DONE: maybe delete this because we don't want it to go through master tbh.
+//        Master.getInstance().updateNode(oldNodeID,updatedNode);
         command = "update_node " + updatedNodeAsString;
         return response.status();
     };
@@ -77,7 +77,7 @@ public class RestInput implements MasterInput {
         EdgeClient updatedClient = mapper.readValue(updatedClientAsString, EdgeClient.class);
         //get the node's ID that we want to update. Only update the one with the same ID please y'all
         String oldClientID = updatedClient.getId();
-        Master.getInstance().updateClient(oldClientID,updatedClient);
+//        Master.getInstance().updateClient(oldClientID,updatedClient);
         command = "update_client " + updatedClientAsString;
         return response.status();
     };

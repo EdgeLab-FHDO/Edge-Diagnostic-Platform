@@ -92,7 +92,7 @@ public class EdgeNode {
              */
     public EdgeNode() {
         this.id = null;
-        this.ipAddress = null;
+        this.ipAddress = "null";
         this.connected = false;
         this.resource = Long.MAX_VALUE;
         this.network = Long.MAX_VALUE;

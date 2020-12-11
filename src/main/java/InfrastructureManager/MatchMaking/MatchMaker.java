@@ -1,7 +1,7 @@
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.*;
-import InfrastructureManager.Utils.EdgeClientHistory;
+import InfrastructureManager.EdgeClientHistory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -92,7 +92,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     */
     private void assign(String thisClientID) {
 
-        logger.info("\n------------------------------------assigning client to node ----------------------------------------------------------------");
         try {
             EdgeClient thisClient = this.getClientByID(thisClientID);
             EdgeClientHistory clientHistoryInfo = clientHistoryHashMap.get(thisClientID);
@@ -103,7 +102,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 String connectedNode = mapping.get(thisClientID);
                 logger.warn("this client is already connected with {}", connectedNode);
                 logger.info("client history info: \n{}", clientHistoryInfo);
-                logger.info("mapping map: {} \n done with assigning ------------------------------------------------------------------------------------------", mapping);
+                logger.info("mapping map: {}", mapping);
             } else {
                 //match client with node in nodelist according to algorithm
                 EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, clientHistoryInfo);
@@ -127,8 +126,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 //DONE: mapping should take only client ID, because of object referencing
                 this.mapping.put(thisClientID, thisNodeID);
                 logger.info("client history info: \n{}", clientHistoryInfo);
-                logger.info("mapping map: {} \n ----------------------------done with assigning-------------------" +
-                        "-----------------------------------------------------------------------", mapping);
+                logger.info("mapping map: {}", mapping);
             }
         } catch (
                 Exception e) {
@@ -306,32 +304,50 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 switch (commandLine[1]) {
                     case "register_client":
                         registerClient(commandLine[2]);
-                        logger.info("client registered, done with [outfunction]\n\n");
+                        logger.info("""
+                                client registered, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     case "register_node":
                         registerNode(commandLine[2]);
-                        logger.info("node registered, done with [outfunction]\n\n");
+                        logger.info("""
+                                node registered, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     case "assign_client":
                         assign(commandLine[2]);
-                        logger.info("client assigned, done with [outfunction]\n\n");
+                        logger.info("""
+                                client assigned, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     case "update_node":
                         updateNode(commandLine[2]);
-                        logger.info("node updated, done with [outfunction]\n\n");
+                        logger.info("""
+                                node updated, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     case "update_client":
                         updateClient(commandLine[2]);
-                        logger.info("client updated, done with [outfunction]\n\n");
+                        logger.info("""
+                                client updated, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     case "disconnect_client":
                         updateAfterDisconnecting(commandLine[2]);
-                        logger.info("client disconnected, done with [outfunction]\n\n");
+                        logger.info("""
+                                client disconnected, done with [outfunction]
+                                ---------------------------------------------------------------------------------------
+                                """);
                         break;
 
                     default:
@@ -457,12 +473,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             long oldNodeResource = oldNode.getResource();
             long oldNodeNetwork = oldNode.getNetwork();
             thisNodeLocation = this.nodeList.indexOf(oldNode);
-            //updating process
-            if (thisNodeLocation == null) {
-                //TODO: this is rather redundance because getNodeByID would already did this job
-                logger.error(">>>>>>>>>>>>>>>>>>>>>>>>>>>> UPDATE FAILED <<<<<<<<<<<<<<<<<<<<<<<<< \nnew node ID does not match with any node's ID in the system.");
-                return;
-            }
+
             logger.info("[{}] before update\n{}", newNodeID, oldNode);
 
             //check whether this node is connected to a client or not
@@ -518,6 +529,21 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                     newNodeResource = oldNodeResource;
                 }
             }
+
+            //Reassign old value if there aren't any new value (default value = Long.MAX_VALUE when unassigned
+            if (newNodeIP.equalsIgnoreCase("null")) {
+                newNodeIP = oldNode.getIpAddress();
+            }
+            if (newNodeTotalResource >= Long.MAX_VALUE) {
+                newNodeTotalResource = oldNode.getTotalResource();
+            }
+            if (newNodeTotalNetwork >= Long.MAX_VALUE) {
+                newNodeTotalNetwork = oldNode.getTotalNetwork();
+            }
+            if (newNodeLocation >= Long.MAX_VALUE) {
+                newNodeLocation = oldNode.getLocation();
+            }
+
 
             /*
             By the time we get to this step, we should have these parameter prepared

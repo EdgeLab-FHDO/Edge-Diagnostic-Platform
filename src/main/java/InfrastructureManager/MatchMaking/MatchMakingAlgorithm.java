@@ -2,10 +2,8 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
-import InfrastructureManager.Utils.EdgeClientHistory;
-import com.google.common.collect.Multimap;
+import InfrastructureManager.EdgeClientHistory;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**

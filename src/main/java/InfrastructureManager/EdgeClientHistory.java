@@ -1,4 +1,4 @@
-package InfrastructureManager.Utils;
+package InfrastructureManager;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -153,9 +153,9 @@ public class EdgeClientHistory {
 
     private String id;
     //multimap with client id - nodeID,history score
-    private Multimap<String, HashMap<String, Long>> historyMap = ArrayListMultimap.create();;
+    private Multimap<String, HashMap<String, Long>> historyMap = ArrayListMultimap.create();
     //multimap with client id - nodeID,history score
-    private Multimap<String, HashMap<String, Long>> connectedMap = ArrayListMultimap.create();;
+    private Multimap<String, HashMap<String, Long>> connectedMap = ArrayListMultimap.create();
 
 
 

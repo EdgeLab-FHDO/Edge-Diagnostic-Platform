@@ -2,13 +2,10 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
-import InfrastructureManager.Master;
-import InfrastructureManager.Utils.EdgeClientHistory;
-import com.google.common.collect.Multimap;
+import InfrastructureManager.EdgeClientHistory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
