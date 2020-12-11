@@ -1,16 +1,30 @@
 package InfrastructureManager.NewREST;
 
 import InfrastructureManager.MasterOutput;
+import spark.*;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class toGET extends MasterOutput {
 
-    private Stack<String> toSend;
+    private final Stack<String> toSend;
 
-    public toGET(String name) {
+    public toGET(String name, String path) {
         super(name);
-        toSend = new Stack<>();
+        NewRouter.startRouter();
+        System.out.println("started");
+        this.toSend = new Stack<>();
+        Route GETResource = (Request request, Response response) -> {
+            response.type("application/json");
+            System.out.println("sending");
+            try {
+                return this.toSend.pop();
+            } catch (EmptyStackException e) {
+                return "";
+            }
+        };
+        Spark.get(path,GETResource);
     }
 
     @Override
@@ -20,6 +34,7 @@ public class toGET extends MasterOutput {
             try {
                 switch (command[1]) {
                     case "resource":
+                        System.out.println("Sending");
                         addResource(command[2]);
                         break;
                     default:
@@ -32,6 +47,10 @@ public class toGET extends MasterOutput {
     }
 
     private void addResource(String jsonBody) {
-
+        this.toSend.push(jsonBody);
+        System.out.println(jsonBody);
+        System.out.println("added to stack");
     }
+
+
 }

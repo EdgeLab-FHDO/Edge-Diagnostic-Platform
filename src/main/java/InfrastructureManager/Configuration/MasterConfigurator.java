@@ -7,6 +7,7 @@ import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
+import InfrastructureManager.NewREST.toGET;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
 import InfrastructureManager.Rest.RestRunner;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 public class MasterConfigurator {
 
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration.json";
+    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration2.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private List<String> scenarios;
@@ -99,6 +100,8 @@ public class MasterConfigurator {
                 return new SSHClient(outputData.getName());
             case "FileOutput" :
                 return new FileOutput(outputData.getName());
+            case "GenericGET":
+                return new toGET(outputData.getName(),outputData.getAddress());
             case "RestOutput":
                 RestOutput.setInstanceName(outputData.getName());
                 return RestOutput.getInstance();

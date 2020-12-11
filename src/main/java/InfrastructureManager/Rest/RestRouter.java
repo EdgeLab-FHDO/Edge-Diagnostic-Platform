@@ -31,6 +31,9 @@ public class RestRouter {
 
     public static RestRouter startRouter(int port) {
         Spark.port(port);
+
         return new RestRouter(port);
     }
+
+
 }

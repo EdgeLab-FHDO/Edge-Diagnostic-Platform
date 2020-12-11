@@ -7,6 +7,7 @@
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
+        {"type": "GenericGET","name": "get", "address": "/get_test"},
         {"type": "MasterUtility","name": "util"}
       ]
     },
@@ -22,9 +23,9 @@
     },
     {
       "in" : "console_in",
-      "out" : "rest_out",
+      "out" : "get",
       "commands" : {
-        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
+        "get_test" : "toGet resource {\"name\": \"example\",\n\"number\": 874}"
       }
     }
   ]
