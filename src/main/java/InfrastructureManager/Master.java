@@ -206,6 +206,17 @@ public class Master {
         throw new Exception("No node found");
     }
 
+    public void startRunners() {
+        for (Runner runner : runnerList) {
+            if (runner.getName().equals("Runner_console_in")) {
+                mainThread = new Thread(runner,"MainRunner");
+                mainThread.start();
+            } else {
+                new Thread(runner, runner.getName()).start();
+            }
+        }
+    }
+
 
     /**
      * Singleton method for getting the only instance of the class
@@ -221,7 +232,7 @@ public class Master {
 
 
     public static void main(String[] args) {
-        Master.getInstance().startMainRunner();
+        Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {

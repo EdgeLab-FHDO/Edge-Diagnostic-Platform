@@ -7,6 +7,7 @@ import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
+import InfrastructureManager.NewREST.RestServerRunner;
 import InfrastructureManager.NewREST.toGET;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
@@ -101,6 +102,8 @@ public class MasterConfigurator {
             case "FileOutput" :
                 return new FileOutput(outputData.getName());
             case "GenericGET":
+                RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
+                activateRestRunner = true;
                 return new toGET(outputData.getName(),outputData.getAddress());
             case "RestOutput":
                 RestOutput.setInstanceName(outputData.getName());
@@ -123,8 +126,8 @@ public class MasterConfigurator {
             case "MatchMaker":
                 return new MatchMaker(inputData.getName(),type.length > 1 ? type[1] : "random");
             case "RestInput":
-                RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
-                activateRestRunner = true;
+                //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
+                //activateRestRunner = true;
                 return new RestInput();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
@@ -185,7 +188,8 @@ public class MasterConfigurator {
         }
         if (activateRestRunner) {
             try {
-                result.add(RestRunner.getRestRunner());
+                //result.add(RestRunner.getRestRunner());
+                result.add(RestServerRunner.getRestServerRunner());
             } catch (Exception e) {
                 e.printStackTrace();
             }

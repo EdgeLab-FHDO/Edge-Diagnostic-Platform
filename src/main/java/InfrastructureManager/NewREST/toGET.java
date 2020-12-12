@@ -1,30 +1,25 @@
 package InfrastructureManager.NewREST;
 
 import InfrastructureManager.MasterOutput;
+import InfrastructureManager.Rest.RestRunner;
 import spark.*;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+import static spark.Spark.get;
+
 public class toGET extends MasterOutput {
 
     private final Stack<String> toSend;
+    private final String path;
+    private boolean isActivated;
 
     public toGET(String name, String path) {
         super(name);
-        NewRouter.startRouter();
-        System.out.println("started");
         this.toSend = new Stack<>();
-        Route GETResource = (Request request, Response response) -> {
-            response.type("application/json");
-            System.out.println("sending");
-            try {
-                return this.toSend.pop();
-            } catch (EmptyStackException e) {
-                return "";
-            }
-        };
-        Spark.get(path,GETResource);
+        this.path = path;
+        this.isActivated = false;
     }
 
     @Override
@@ -34,7 +29,6 @@ public class toGET extends MasterOutput {
             try {
                 switch (command[1]) {
                     case "resource":
-                        System.out.println("Sending");
                         addResource(command[2]);
                         break;
                     default:
@@ -46,11 +40,30 @@ public class toGET extends MasterOutput {
         }
     }
 
-    private void addResource(String jsonBody) {
-        this.toSend.push(jsonBody);
-        System.out.println(jsonBody);
-        System.out.println("added to stack");
+    private void activate() {
+        try {
+            if (RestServerRunner.getRestServerRunner().isRunning()) {
+                get(this.path,(Request request, Response response) -> {
+                    response.type("application/json");
+                    try {
+                        return this.toSend.pop();
+                    } catch (EmptyStackException e) {
+                        return "";
+                    }
+                });
+                this.isActivated = true;
+            } else {
+                throw new IllegalStateException("Rest Server is not running");
+            }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
-
+    private void addResource(String jsonBody) {
+        if (!this.isActivated) {
+            this.activate();
+        }
+        this.toSend.push(jsonBody);
+    }
 }

@@ -1,13 +1,11 @@
 {
   "ioData": {
       "inputs": [
-        {"type": "ConsoleInput","name": "console_in"},
-        {"type": "RestInput","name": "rest_in", "port": 4567}
+        {"type": "ConsoleInput","name": "console_in"}
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "RestOutput","name": "rest_out"},
-        {"type": "GenericGET","name": "get", "address": "/get_test"},
+        {"type": "GenericGET","name": "get", "address": "/get_test","port": 4897},
         {"type": "MasterUtility","name": "util"}
       ]
     },
