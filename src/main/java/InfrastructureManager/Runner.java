@@ -99,9 +99,7 @@ public class Runner implements Runnable{
                 }
             }
         } catch (Exception e) {
-           if (!e.getMessage().equals("No command exception")) {
-               e.printStackTrace();
-           }
+            e.printStackTrace();
         }
     }
 

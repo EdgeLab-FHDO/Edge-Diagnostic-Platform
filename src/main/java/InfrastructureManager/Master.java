@@ -232,7 +232,7 @@ public class Master {
 
 
     public static void main(String[] args) {
-        Master.getInstance().startMainRunner();
+        Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {

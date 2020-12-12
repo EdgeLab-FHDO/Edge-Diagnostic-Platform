@@ -8,7 +8,6 @@ import spark.Route;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-import static spark.Spark.awaitInitialization;
 import static spark.Spark.post;
 
 public class FromPOST implements MasterInput {
@@ -45,9 +44,7 @@ public class FromPOST implements MasterInput {
             activate();
         }
         String reading = getReading();
-        if (this.commands.peek() == null) {
-            block = true;
-        }
+        block = this.commands.peek() == null;
         return reading;
     }
 
@@ -73,13 +70,14 @@ public class FromPOST implements MasterInput {
 
     private void activate() {
         try {
-            if (RestServerRunner.getRestServerRunner().isRunning()) {
-                post(this.path, this.POSTHandler);
-            } else {
-                throw new IllegalStateException("Rest Server is not running");
+            while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
+                synchronized (RestServerRunner.ServerRunning) {
+                    RestServerRunner.ServerRunning.wait();
+                }
             }
+            post(this.path, this.POSTHandler);
             this.isActivated = true;
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | InterruptedException e) {
             e.printStackTrace();
         }
     }

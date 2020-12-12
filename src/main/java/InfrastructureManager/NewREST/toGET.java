@@ -3,6 +3,7 @@ package InfrastructureManager.NewREST;
 import InfrastructureManager.MasterOutput;
 import spark.Request;
 import spark.Response;
+import spark.Route;
 
 import java.util.EmptyStackException;
 import java.util.Stack;
@@ -11,9 +12,18 @@ import static spark.Spark.get;
 
 public class toGET extends MasterOutput {
 
-    private final Stack<String> toSend;
+    private Stack<String> toSend;
     private final String path;
     private boolean isActivated;
+
+    private final Route GETHandler = (Request request, Response response) -> {
+        response.type("application/json");
+        try {
+            return this.toSend.pop();
+        } catch (EmptyStackException e) {
+            return "";
+        }
+    };
 
     public toGET(String name, String path) {
         super(name);
@@ -42,20 +52,14 @@ public class toGET extends MasterOutput {
 
     private void activate() {
         try {
-            if (RestServerRunner.getRestServerRunner().isRunning()) {
-                get(this.path,(Request request, Response response) -> {
-                    response.type("application/json");
-                    try {
-                        return this.toSend.pop();
-                    } catch (EmptyStackException e) {
-                        return "";
-                    }
-                });
-                this.isActivated = true;
-            } else {
-                throw new IllegalStateException("Rest Server is not running");
+            while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
+                synchronized (RestServerRunner.ServerRunning) {
+                    RestServerRunner.ServerRunning.wait();
+                }
             }
-        } catch (IllegalStateException e) {
+            get(this.path, this.GETHandler);
+            this.isActivated = true;
+        } catch (IllegalStateException | InterruptedException e) {
             e.printStackTrace();
         }
     }

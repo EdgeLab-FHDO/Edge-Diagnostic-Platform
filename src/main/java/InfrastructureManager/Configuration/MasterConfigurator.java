@@ -12,7 +12,6 @@ import InfrastructureManager.NewREST.RestServerRunner;
 import InfrastructureManager.NewREST.toGET;
 import InfrastructureManager.Rest.RestInput;
 import InfrastructureManager.Rest.RestOutput;
-import InfrastructureManager.Rest.RestRunner;
 import InfrastructureManager.SSH.SSHClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -182,7 +181,7 @@ public class MasterConfigurator {
         if (activateRestRunner) {
             try {
                 //result.add(RestRunner.getRestRunner());
-                result.add(RestServerRunner.getRestServerRunner());
+                result.add(RestServerRunner.getInstance());
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             }

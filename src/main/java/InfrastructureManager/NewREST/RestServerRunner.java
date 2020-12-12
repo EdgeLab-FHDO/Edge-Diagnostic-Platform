@@ -12,6 +12,8 @@ public class RestServerRunner extends Runner {
 
     private final int port;
     private final String heartbeatPath = "/heartbeat";
+    public static final Object ServerRunning =new Object();
+
     private static RestServerRunner restRunner = null;
 
     private RestServerRunner(String name, int port) {
@@ -37,6 +39,9 @@ public class RestServerRunner extends Runner {
             startServer();
         }
         awaitInitialization();
+        synchronized (ServerRunning) {
+            ServerRunning.notifyAll();
+        }
     }
 
     /**
@@ -65,7 +70,7 @@ public class RestServerRunner extends Runner {
      * Method for getting the Singleton REST Server instance.
      * @throws IllegalStateException If `configure()` method has not been called yet
      */
-    public static RestServerRunner getRestServerRunner() throws IllegalStateException {
+    public static RestServerRunner getInstance() throws IllegalStateException {
         if(restRunner == null) {
             throw new IllegalStateException("Rest Server is not configured");
         }
