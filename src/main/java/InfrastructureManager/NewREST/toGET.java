@@ -5,29 +5,28 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.EmptyStackException;
-import java.util.Stack;
+import java.util.*;
 
 import static spark.Spark.get;
 
 public class toGET extends MasterOutput {
 
-    private Stack<String> toSend;
+    private Queue<String> toSend;
     private final String path;
     private boolean isActivated;
 
     private final Route GETHandler = (Request request, Response response) -> {
         response.type("application/json");
         try {
-            return this.toSend.pop();
-        } catch (EmptyStackException e) {
+            return this.toSend.remove();
+        } catch (NoSuchElementException e) {
             return "";
         }
     };
 
     public toGET(String name, String path) {
         super(name);
-        this.toSend = new Stack<>();
+        this.toSend = new ArrayDeque<>();
         this.path = path;
         this.isActivated = false;
     }
@@ -68,6 +67,6 @@ public class toGET extends MasterOutput {
         if (!this.isActivated) {
             this.activate();
         }
-        this.toSend.push(jsonBody);
+        this.toSend.offer(jsonBody);
     }
 }

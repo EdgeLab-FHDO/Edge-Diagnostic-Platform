@@ -12,7 +12,7 @@ import static spark.Spark.post;
 
 public class FromPOST implements MasterInput {
 
-    private Queue<String> commands;
+    private Queue<String> toRead;
 
     private String command;
     private final String path;
@@ -24,7 +24,7 @@ public class FromPOST implements MasterInput {
 
     private final Route POSTHandler = (Request request, Response response) -> {
         String bodyAsString = request.body().replaceAll("\\s+","");
-        this.commands.offer(this.command + " " + bodyAsString);
+        this.toRead.offer(this.command + " " + bodyAsString);
         unBlock();
         return response.status();
     };
@@ -33,7 +33,7 @@ public class FromPOST implements MasterInput {
         this.command = command;
         this.path = path;
         this.isActivated = false;
-        this.commands = new ArrayDeque<>();
+        this.toRead = new ArrayDeque<>();
         this.blockLock = new Object();
         this.block = true;
     }
@@ -44,7 +44,7 @@ public class FromPOST implements MasterInput {
             activate();
         }
         String reading = getReading();
-        block = this.commands.peek() == null;
+        block = this.toRead.peek() == null;
         return reading;
     }
 
@@ -58,7 +58,7 @@ public class FromPOST implements MasterInput {
                 }
             }
         }
-        return this.commands.poll();
+        return this.toRead.poll();
     }
 
     private void unBlock() {
