@@ -1,8 +1,8 @@
 package InfrastructureManager.NewREST;
 
 import InfrastructureManager.MasterOutput;
-import InfrastructureManager.Rest.RestRunner;
-import spark.*;
+import spark.Request;
+import spark.Response;
 
 import java.util.EmptyStackException;
 import java.util.Stack;

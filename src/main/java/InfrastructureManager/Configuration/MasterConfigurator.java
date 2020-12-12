@@ -7,6 +7,7 @@ import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
+import InfrastructureManager.NewREST.FromPOST;
 import InfrastructureManager.NewREST.RestServerRunner;
 import InfrastructureManager.NewREST.toGET;
 import InfrastructureManager.Rest.RestInput;
@@ -125,6 +126,10 @@ public class MasterConfigurator {
                 return new ConsoleInput();
             case "MatchMaker":
                 return new MatchMaker(inputData.getName(),type.length > 1 ? type[1] : "random");
+            case "GenericPOST":
+                RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
+                activateRestRunner = true;
+                return new FromPOST(inputData.getAddress(),"test");
             case "RestInput":
                 //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 //activateRestRunner = true;
@@ -173,6 +178,16 @@ public class MasterConfigurator {
         String runnerName = "Runner_";
         fillInputInstances();
         fillOutputInstances();
+
+        if (activateRestRunner) {
+            try {
+                //result.add(RestRunner.getRestRunner());
+                result.add(RestServerRunner.getRestServerRunner());
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            }
+        }
+
         for (String inputName : this.data.getConnectedInputs()) {
             runnerOutputs = getOutputs(inputName);
             if (this.scenarios.contains(inputName)) {
@@ -186,14 +201,7 @@ public class MasterConfigurator {
                 result.add(runner);
             }
         }
-        if (activateRestRunner) {
-            try {
-                //result.add(RestRunner.getRestRunner());
-                result.add(RestServerRunner.getRestServerRunner());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
         return result;
     }
 
