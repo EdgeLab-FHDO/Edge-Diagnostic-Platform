@@ -6,13 +6,11 @@ import spark.Spark;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static spark.Spark.get;
+import static spark.Spark.*;
 
 public class RestServerRunner extends Runner {
-    private final int port;
 
-    private final int retryAttempt = 10;
-    private final String host = "localhost";
+    private final int port;
     private final String heartbeatPath = "/heartbeat";
     private static RestServerRunner restRunner = null;
 
@@ -21,46 +19,34 @@ public class RestServerRunner extends Runner {
         this.port = port;
     }
 
+    /**
+     * Starts the REST server on the defined port, creates the route for the heartbeat check.
+     */
     private void startServer() {
         Spark.port(this.port);
+        initExceptionHandler(Throwable::printStackTrace); //Print the exception is an error happens when starting
         get(heartbeatPath, (request, response) -> response.status());
     }
 
     /**
-     * Starter for the server if it's not started yet, the system would wait up to 10s for the server to start
-     * Made public for Testing purpose
+     * Wrapper method for starting the server, that checks whether the server is up or not before trying to start it
+     * It also waits until the server is ready before returning (If the server was already running returns immediately)
      */
-    public void startServerIfNotRunning() throws InterruptedException {
-        try {
-            if(!serverIsRunning()) {
-                startServer();
-            }
-        } catch (IllegalStateException e) {
-            throw e;
+    private void startServerIfNotRunning() {
+        if(!serverIsRunning()) {
+            startServer();
         }
-
-        waitForServerToRun();
+        awaitInitialization();
     }
 
-    private void waitForServerToRun() throws InterruptedException {
-        int tries = retryAttempt;
-        while(tries > 0) {
-            if(!serverIsRunning()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw e;
-                }
-            } else {
-                return;
-            }
-            tries--;
-        }
-    }
-
+    /**
+     * Sends an HTTP request to the defined heartbeat path, to check health of the server
+     * @return true if the server is running normally (response 200), false otherwise
+     */
     private boolean serverIsRunning(){
         try{
-            HttpURLConnection con = (HttpURLConnection)new URL("http",host, port, heartbeatPath).openConnection();
+            String host = "localhost";
+            HttpURLConnection con = (HttpURLConnection)new URL("http", host, port, heartbeatPath).openConnection();
             return con.getResponseCode()==200;
         }catch(Exception e){
             return false;
@@ -68,15 +54,16 @@ public class RestServerRunner extends Runner {
     }
 
     /**
-     * Method for stoping the static Spark instance and sets server to null after Spark is stopped
+     * Method for stopping the static Spark instance
      */
-    public void killServer() {
+    private void killServer() {
         Spark.stop();
         Spark.awaitStop();
     }
 
     /**
-     * Method for getting the Singleton REST Runner instance or set from Configuration if not available
+     * Method for getting the Singleton REST Server instance.
+     * @throws IllegalStateException If `configure()` method has not been called yet
      */
     public static RestServerRunner getRestServerRunner() throws IllegalStateException {
         if(restRunner == null) {
@@ -86,7 +73,7 @@ public class RestServerRunner extends Runner {
     }
 
     /**
-     * Method for getting the Singleton REST Runner instance or set from parameter if not available
+     * Configure name and port to the rest server singleton. This should be called before getting the instance (`getRestServerRunner`)
      */
     public static void configure(String name, int port) {
         if(restRunner == null) {
@@ -96,12 +83,7 @@ public class RestServerRunner extends Runner {
 
     @Override
     public void run() {
-        try {
-            this.startServerIfNotRunning();
-            System.out.println("waaa");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.startServerIfNotRunning();
         running = true;
     }
 
