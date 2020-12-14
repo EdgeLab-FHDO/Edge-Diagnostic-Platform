@@ -3,8 +3,9 @@
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "RestInput","name": "rest_in", "port": 4567},
-        {"type": "MatchMaker-sbmm","name": "match_m"},
-        {"type": "Scenario", "name": "dummy"}
+        {"type": "MatchMaker-score","name": "match_m"},
+        {"type": "Scenario", "name": "scoreBased"}
+
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
@@ -120,6 +121,39 @@
 
     {
       "in" : "dummy",
+      "out" : "util",
+      "commands" : {
+        "exit" : "util exit",
+        "start_rest_server" : "util runRunner RestServer",
+        "start_runner $runner_name" : "util runRunner $runner_name"
+      }
+    },
+
+    {
+      "in" : "scoreBased",
+      "out" : "console_out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution"
+      }
+    },
+
+    {
+      "in" : "scoreBased",
+      "out" : "match_m",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
+        "assign_client $client_id" : "matchMaker assign_client $client_id",
+        "update_client $client_as_json_string" : "matchMaker update_client $client_as_json_string",
+        "update_node $node_as_json_string" : "matchMaker update_node $node_as_json_string",
+        "disconnect_client $disconnected_body_as_json_string" : "matchMaker disconnect_client $disconnected_body_as_json_string"
+      }
+    },
+
+    {
+      "in" : "scoreBased",
       "out" : "util",
       "commands" : {
         "exit" : "util exit",

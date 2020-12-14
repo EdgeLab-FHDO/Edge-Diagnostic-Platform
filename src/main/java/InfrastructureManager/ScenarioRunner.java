@@ -22,7 +22,7 @@ public class ScenarioRunner extends Runner {
         this.scenario = null;
         this.currentEvent = 0;
 
-        System.out.println("Scenario load input, copy and paste the line below so you don't have to look for them in wiki: \nload_scenario src/main/resources/scenarios/dummyScenario.json\nrun_scenario");
+        System.out.println("Scenario load input, copy and paste the line below so you don't have to look for them in wiki: \nload_scenario src/main/resources/scenarios/scoreBasedScenario.json\nrun_scenario");
     }
 
     /**
