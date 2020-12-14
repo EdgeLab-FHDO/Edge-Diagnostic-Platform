@@ -77,7 +77,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         logger.info("Algorithm used: {}", algorithmType);
         switch (algorithmType.toLowerCase()) {
             case "random" -> setAlgorithm(new RandomMatchMaking());
-            case "sbmm" -> setAlgorithm(new ScoreBasedMM());
+            case "sbmm" -> setAlgorithm(new ScoreBasedMatchMaking());
             default -> throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
     }
@@ -157,7 +157,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
 
         //get node available resource
-        //TODO: maybe use setter/getter rather than replace the whole object when update?
         String nodeIP = thisNode.getIpAddress();
         boolean nodeConnect = thisNode.isConnected();
         long nodeResource = thisNode.getResource();
@@ -177,11 +176,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         logger.info("Node [{}] before assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
         this.nodeList.set(nodeLocationInList, updateNode);
         logger.info("Node [{}] after assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
-
     }
 
-
-//TODO: everytime we register a node, we also register that node to our hashmap as key.
 
     /**
      * Update node's resources after disconnect with client (resource got freed up)
@@ -220,7 +216,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             String message = pseudoClient.getMessage();
 
             //get node available resource
-            //TODO: maybe use setter/getter rather than replace the whole object when update?
             String nodeIP = thisNode.getIpAddress();
             boolean nodeConnect = thisNode.isConnected();
             long nodeResource = thisNode.getResource();
@@ -602,6 +597,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         }
         //fetch the command that was changed by function [assign] above,
         String toSend = command;
+        logger.info("THIS IS THE COMMANNDDDDDD IN READDDDDD {}", command);
         //this line to reset command (class variable) to empty
 
         command = "";

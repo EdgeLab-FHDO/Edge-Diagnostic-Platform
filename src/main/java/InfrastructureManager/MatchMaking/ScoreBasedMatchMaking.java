@@ -16,7 +16,7 @@ import java.util.*;
  *
  * @author Zero
  */
-public class ScoreBasedMM implements MatchMakingAlgorithm {
+public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
 
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -36,10 +36,9 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
     DONE: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
         Weight: 1 - 10 - 10 - 10
     DONE: implement slots (resource and network), this should be an attribute in edge client and edge note.
-    TODO: History implementation, using SQL? Or keep throwing JSON object back and forward?
     DONE: Need to make sure there won't be no duplicate in nodeList (Id and Address)
     TODO: Weight should be dynamic later on
-    TODO: Implement time
+    DONE: Implement time
 
      */
 
@@ -132,7 +131,7 @@ public class ScoreBasedMM implements MatchMakingAlgorithm {
 
         }
 
-        //TODO: implement threshold, quality of service
+        //DONE: implement threshold, quality of service
         //Check whether it's good enough to match, or we just return the rejectedNode
         if (numberOfUnqualified >= totalNumberOfNode) {
             logger.warn("""
