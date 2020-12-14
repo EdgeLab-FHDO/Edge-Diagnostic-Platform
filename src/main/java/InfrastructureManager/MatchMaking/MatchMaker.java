@@ -77,7 +77,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         logger.info("Algorithm used: {}", algorithmType);
         switch (algorithmType.toLowerCase()) {
             case "random" -> setAlgorithm(new RandomMatchMaking());
-            case "sbmm" -> setAlgorithm(new ScoreBasedMatchMaking());
+            case "score" -> setAlgorithm(new ScoreBasedMatchMaking());
             default -> throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
     }
@@ -591,7 +591,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      */
     @Override
     public String read() throws Exception {
-        //TODO: using global variable [command] may fck things up when doing multi-thread.
         if (command.isEmpty()) {
             throw new Exception("No command exception");
         }
@@ -652,7 +651,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             if (theNode.equals(nodeID)) {
                 //Add the client that is assigned to nodeID to the return list
                 returnClientList.add(thisClient);
-                //TODO: change this to debug
                 logger.debug("adding client {} to list\n {}", thisClient, returnClientList);
             }
         }
