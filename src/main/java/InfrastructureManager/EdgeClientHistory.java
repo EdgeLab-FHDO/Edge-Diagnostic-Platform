@@ -67,7 +67,7 @@ public class EdgeClientHistory {
         // idea: maybe use guava Tablemap, or maybe HashBasedTable (but this is basically Map<C,Map<K,V>>...will test later)
         for (HashMap<String, Long> theList : clientHistoryMapList) {
             if (theList.containsKey(nodeID)) {
-                //replace with new score    
+                //replace with new score
                 theList.put(nodeID, nodeHistoryScore);
                 break;
             }
@@ -126,7 +126,7 @@ public class EdgeClientHistory {
 
         if (connectedTime >= Long.MAX_VALUE) {
             try {
-                throw new Exception("can't find connected time in the map.");
+                throw new Exception("can't find " + nodeID +" in the map.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
