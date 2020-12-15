@@ -130,7 +130,7 @@ public class MasterConfigurator {
                 CustomCommandIO data = (CustomCommandIO)inputData;
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new FromPOST(data.getAddress(),data.getCommand());
+                return new FromPOST(data.getAddress(),data.getCommand(),data.getInformation());
             case "RestInput":
                 //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 //activateRestRunner = true;

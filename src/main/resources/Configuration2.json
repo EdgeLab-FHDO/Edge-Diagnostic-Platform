@@ -3,11 +3,8 @@
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897,
-          "command" :  "test",
-          "information": {
-            "one" : "one",
-            "two" : "two"
-          },
+          "command" :  "test $name $number",
+          "information": ["name", "number"],
           "@IOType" : "CustomCommand"
         }
       ],
@@ -38,7 +35,7 @@
       "in" : "rest_in",
       "out" : "console_out",
       "commands" : {
-        "test $json" : "console $json"
+        "test $name $number" : "console $name $number"
       }
     }
   ]

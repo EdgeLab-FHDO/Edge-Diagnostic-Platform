@@ -1,26 +1,28 @@
 package InfrastructureManager.Configuration.RawData;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CustomCommandIO extends IOConfigData {
-    private String command;
-    private Map<String,String> information;
+    private final String command;
+    private final List<String> information;
 
-    public CustomCommandIO() {
+    @JsonCreator
+    public CustomCommandIO(@JsonProperty("command") String command) {
         super();
-        this.command = null;
-        this.information = new HashMap<>();
+        this.command = command;
+        this.information = new ArrayList<>();
     }
 
     public String getCommand() {
         return command;
     }
 
-    public Map<String, String> getInformation() {
-        return information;
+    public List<String> getInformation() {
+        return this.information;
     }
 }
