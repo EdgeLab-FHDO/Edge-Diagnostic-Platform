@@ -12,9 +12,9 @@ import static spark.Spark.post;
 
 public class FromPOST implements MasterInput {
 
-    private Queue<String> toRead;
+    private final Queue<String> toRead;
 
-    private String command;
+    private final String command;
     private final String path;
 
     private boolean isActivated;
@@ -22,12 +22,7 @@ public class FromPOST implements MasterInput {
     private final Object blockLock;
     private volatile boolean block;
 
-    private final Route POSTHandler = (Request request, Response response) -> {
-        String bodyAsString = request.body().replaceAll("\\s+","");
-        this.toRead.offer(this.command + " " + bodyAsString);
-        unBlock();
-        return response.status();
-    };
+    private final Route POSTHandler;
 
     public FromPOST(String path, String command) {
         this.command = command;
@@ -36,6 +31,12 @@ public class FromPOST implements MasterInput {
         this.toRead = new ArrayDeque<>();
         this.blockLock = new Object();
         this.block = true;
+        this.POSTHandler = (Request request, Response response) -> {
+            String bodyAsString = request.body().replaceAll("\\s+","");
+            this.toRead.offer(this.command + " " + bodyAsString);
+            unBlock();
+            return response.status();
+        };
     }
 
     @Override

@@ -1,11 +1,19 @@
 package InfrastructureManager.Configuration.RawData;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "@IOType", defaultImpl = IOConfigData.class)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = CustomCommandIO.class, name = "CustomCommand"),
+})
 public class IOConfigData {
 
-    private final String type;
-    private final String name;
-    private final String address;
-    private final int port;
+    protected final String type;
+    protected final String name;
+    protected final String address;
+    protected final int port;
 
     public IOConfigData() {
         this.type = null;

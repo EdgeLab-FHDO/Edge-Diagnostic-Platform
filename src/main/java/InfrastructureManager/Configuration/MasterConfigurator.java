@@ -1,6 +1,7 @@
 package InfrastructureManager.Configuration;
 
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
+import InfrastructureManager.Configuration.RawData.CustomCommandIO;
 import InfrastructureManager.Configuration.RawData.ConnectionConfigData;
 import InfrastructureManager.Configuration.RawData.IOConfigData;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
@@ -126,9 +127,10 @@ public class MasterConfigurator {
             case "MatchMaker":
                 return new MatchMaker(inputData.getName(),type.length > 1 ? type[1] : "random");
             case "GenericPOST":
+                CustomCommandIO data = (CustomCommandIO)inputData;
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new FromPOST(inputData.getAddress(),"test");
+                return new FromPOST(data.getAddress(),data.getCommand());
             case "RestInput":
                 //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 //activateRestRunner = true;

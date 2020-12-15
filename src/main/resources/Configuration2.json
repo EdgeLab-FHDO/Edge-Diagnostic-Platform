@@ -2,7 +2,14 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897}
+        {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897,
+          "command" :  "test",
+          "information": {
+            "one" : "one",
+            "two" : "two"
+          },
+          "@IOType" : "CustomCommand"
+        }
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
