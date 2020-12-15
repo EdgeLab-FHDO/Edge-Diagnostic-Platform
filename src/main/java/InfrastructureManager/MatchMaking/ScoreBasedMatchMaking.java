@@ -18,9 +18,8 @@ import java.util.*;
  */
 public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
 
-
+    //TODO: Weight should be dynamic
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    // TODO: this should be dynamic
     private static final long ACCEPTABLE_PING = 300; //use this as parameter before put them in the calculation
     private static final long RESOURCE_WEIGHT = 10;
     private static final long NETWORK_WEIGHT = 10;
@@ -32,34 +31,22 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
     EdgeClientHistory clientHistory;
     long deductScorePerSecond = 1;
 
-    /* big step
-    DONE: Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
-        Weight: 1 - 10 - 10 - 10
-    DONE: implement slots (resource and network), this should be an attribute in edge client and edge note.
-    DONE: Need to make sure there won't be no duplicate in nodeList (Id and Address)
-    TODO: Weight should be dynamic later on
-    DONE: Implement time
 
-     */
-
-    /*
-    TODO: implement visibility: blind-inacc-accurate. This rather connected to "input" analyze,
-     take the input and somehow "blur" the info by introduce some deviant (multiply by 5-30%, so we get the estimation)
-
-     */
-
-    /* small step
-    DONE: match base on available resources
-    DONE: eliminate nodes that can't accommodate client (not enough resources, network etc)
-    DONE: compare between "acceptable" node using score
+    /**
+     * score base match making function. Finding the best node to accomodate the client from a list of nodes.
+     *
+     * @param thisClient        client ID
+     * @param nodeListInput     list of nodes
+     * @param thisClientHistory client's history profile
+     * @return best node to connect to client
      */
     @Override
-    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, EdgeClientHistory thisClientHistory) {
+    public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput, EdgeClientHistory thisClientHistory) throws Exception {
         logger.info("""
-                
-                ----------------------------MATCH MAKING - SCORE BASED--------------------
-                R_weight, N_weight, D_weight, H_weight, QOS_threshold
-                {}      , {}      , {}      , {}      , {}    """
+                                        
+                        ----------------------------MATCH MAKING - SCORE BASED--------------------
+                        R_weight, N_weight, D_weight, H_weight, QOS_threshold
+                        {}      , {}      , {}      , {}      , {}    """
                 , RESOURCE_WEIGHT, NETWORK_WEIGHT, PING_WEIGHT, HISTORY_WEIGHT, QOS_THRESHOLD);
 
         //Initiating variable
@@ -71,7 +58,6 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
         this.clientHistory = thisClientHistory;
 
         //initiate temp/comparing variable
-
         int numberOfUnqualified = 0; //to count the number of node we have been ruled out during iteration
         int totalNumberOfNode = nodeList.size();
 
@@ -109,36 +95,56 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             clientHistory.setHistoryScoreForClient(thisClientID, thisNodeID, nodeHistoryScore);
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
-            if ((nodeResource <= reqResource) || (nodeNetwork <= reqNetwork) || !nodeIsConnected || pingNumber > ACCEPTABLE_PING) {
+            if (nodeResource <= reqResource) {
+                logger.debug("[{}] doesn't have enough resource {}/{}", thisNodeID, nodeResource, reqResource);
+                //next iteration if these requirement is not fullfill
                 numberOfUnqualified++;
-                //Skip this node if it doesn't have enough resources, network or not connected
-                logger.info("[{}] is skipped due to lacking of some criterion: failed case: {}/{} \n resources ( {} / {} ) --- network ( {} / {} ) --- connected : {} --- ping ( {} / {} )",
-                        thisNode.getId(), numberOfUnqualified, totalNumberOfNode, nodeResource, reqResource, nodeNetwork, reqNetwork, nodeIsConnected, pingNumber, ACCEPTABLE_PING);
-            } else {
-                //Find the one with the most available resources
-                //DONE: change the criteria that we compare to resource + network + ping + history. Not just available resource like this
+                continue;
+            }
+            if (nodeNetwork <= reqNetwork) {
+                logger.debug("[{}] doesn't have enough network bandwidth {}/{}", thisNodeID, nodeNetwork, reqNetwork);
+                numberOfUnqualified++;
+                continue;
+            }
+            if (!nodeIsConnected) {
+                logger.debug("[{}] is not connected", thisNodeID);
+                numberOfUnqualified++;
+                continue;
+            }
+            if (pingNumber > ACCEPTABLE_PING) {
+                logger.debug("[{}] is too far away from client, ping number is not acceptable: {} > {}", thisNodeID, pingNumber, ACCEPTABLE_PING);
+                numberOfUnqualified++;
+                continue;
+            }
 
-                //calculate current node score and find best node
-                logger.info("calculating [{}] score: ", thisNodeID);
-                long thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
-                //TODO: change this to debug
-                logger.debug("best node's score - this node score:  {} - {} ", bestScore, thisNodeScore);
-                if (bestScore < thisNodeScore) {
-                    bestNode = thisNode;
-                    bestScore = thisNodeScore;
-                }
+            //calculate current node score and find best node
+            logger.info("calculating [{}] score: ", thisNodeID);
+            long thisNodeScore = 0;
+            try {
+                thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //compare it to the best score yet, if this node score is bigger then we will set it as new bestNode
+            logger.debug("best node's score - this node score:  {} - {} ", bestScore, thisNodeScore);
+            if (bestScore < thisNodeScore) {
+                bestNode = thisNode;
+                bestScore = thisNodeScore;
             }
 
         }
 
-        //DONE: implement threshold, quality of service
         //Check whether it's good enough to match, or we just return the rejectedNode
         if (numberOfUnqualified >= totalNumberOfNode) {
             logger.warn("""
                     >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
                     No nodes in system satisfy required parameters (Network, Resource, Distance)
                     """);
-            return rejectNode;
+            throw new Exception("""
+                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                    No nodes in system satisfy required parameters (Network, Resource, Distance)
+                    """);
         }
         if (bestScore < QOS_THRESHOLD) {
             return bestNode;
@@ -147,8 +153,12 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
                     >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
                     There is no node satisfy minimum quality of service ({}), returning rejecting node.
                     """, QOS_THRESHOLD);
-            return rejectNode;
+            throw new Exception("""
+                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                    There is no node in list satisfy minimum quality of service
+                    """);
         }
+
     }
 
 
@@ -157,13 +167,13 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
      * Weight: 1 - 10 - 10 - 10
      * Calculate node score after get rid of the bad nodes. Used this when we do have to iterate all nodes in the list for match making.
      *
-     * @param nodeResource  node's available resource
-     * @param nodeNetwork node's available network
-     * @param pingNumber distance between node and client
+     * @param nodeResource node's available resource
+     * @param nodeNetwork  node's available network
+     * @param pingNumber   distance between node and client
      * @return calculatedScore
      * @author Zero
      */
-    private long getScore(long nodeResource, long nodeNetwork, long pingNumber, long nodeHistoryScore) {
+    private long getScore(long nodeResource, long nodeNetwork, long pingNumber, long nodeHistoryScore) throws Exception {
         //Initiate calculating variable
         long result;
 
@@ -178,6 +188,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
         // compare with Long.MAX_VALUE because when network, resource or ping is wrong in some step, it gonna return Long.MAX_VALUE. Making the equation value very big
         if (result >= Long.MAX_VALUE) {
             logger.warn("this nodeScore value is too huge, something is wrong with either input number or the weight");
+            throw new Exception(" node score exceed Long.MAX_VALUE, something is wrong here");
         }
         return result;
     }
@@ -192,7 +203,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
      * We can use this function for naive method implementation :))
      *
      * @param thisClient matching client
-     * @param thisNode matching node
+     * @param thisNode   matching node
      * @return pingResult - (network) distance between node and client
      * @author Zero
      */
@@ -217,9 +228,9 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
         //checking for irregularity before sending out. This step is rather redundant since this would NEVER happen.
         if (pingResult < 0) {
             logger.error("""
-                    -------------------------------GETTING PING FAILED----------------------------
-                    [{}] location - {}, [{}] location - {} 
-                    ping is negative? Something fishy here, returning super big ping number"""
+                            -------------------------------GETTING PING FAILED----------------------------
+                            [{}] location - {}, [{}] location - {} 
+                            ping is negative? Something fishy here, returning super big ping number"""
                     , thisNode.getId(), thisNode.getLocation(), thisClient.getId(), thisClient.getLocation());
             return Long.MAX_VALUE;
         } else return pingResult;
