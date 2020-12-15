@@ -377,8 +377,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
             for (EdgeNode thisNode : this.nodeList) {
                 String thisNodeID = thisNode.getId();
-                thisClientHistory.setHistoryMap(thisClientID, thisNodeID, 0L);
-                thisClientHistory.setConnectedMap(thisClientID, thisNodeID, 0L);
+                thisClientHistory.setHistoryScoreForClient(thisClientID, thisNodeID, 0L);
+                thisClientHistory.setConnectedTimeForClient(thisClientID, thisNodeID, 0L);
+//                thisClientHistory.setConnectedMap(thisClientID, thisNodeID, 0L);
             }
 
             //Put the client with its history in a HashMap, we can always update the history later on
