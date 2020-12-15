@@ -143,27 +143,24 @@ public class EdgeClientHistory {
      * @return the time client last connected to node in long
      */
 
-    public Long getConnectedTime(String clientID, String nodeID) {
+    public Long getConnectedTime(String clientID, String nodeID) throws Exception {
         Long connectedTime = Long.MAX_VALUE;
 
         //get nodeAndTime list
         Collection<HashMap<String, Long>> nodeAndTimeList = this.connectedMap.get(clientID);
-
+        boolean isNodeInTheMap = false;
         //get the correct nodeAndTime coupling
         for (HashMap<String, Long> nodeAndTime : nodeAndTimeList) {
             if (nodeAndTime.containsKey(nodeID)) {
                 //Get connected time
                 connectedTime = nodeAndTime.get(nodeID);
+                isNodeInTheMap = true;
                 break;
             }
         }
 
-        if (connectedTime >= Long.MAX_VALUE) {
-            try {
-                throw new Exception("can't find " + nodeID + " in the map.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!isNodeInTheMap) {
+            throw new Exception("can't find [" + nodeID + "] in the map.");
         }
 
         return connectedTime;
@@ -176,26 +173,24 @@ public class EdgeClientHistory {
      * @param nodeID   node's ID in string
      * @return history score of node to client
      */
-    public Long getHistoryScore(String clientID, String nodeID) {
+    public Long getHistoryScore(String clientID, String nodeID) throws Exception {
         Long historyScore = Long.MAX_VALUE;
         //get nodeAndSCore list
         Collection<HashMap<String, Long>> nodeAndScoreList = this.historyMap.get(clientID);
+        boolean isNodeInTheMap = false;
 
         //get the correct nodeAndScore coupling
         for (HashMap<String, Long> nodeAndScore : nodeAndScoreList) {
             if (nodeAndScore.containsKey(nodeID)) {
                 //get history score
                 historyScore = nodeAndScore.get(nodeID);
+                isNodeInTheMap = true;
                 break;
             }
         }
 
-        if (historyScore >= Long.MAX_VALUE) {
-            try {
-                throw new Exception("Can't find the history's score in the map");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (!isNodeInTheMap) {
+            throw new Exception("Can't find [" + nodeID + "] history's score in the map");
         }
 
         return historyScore;
