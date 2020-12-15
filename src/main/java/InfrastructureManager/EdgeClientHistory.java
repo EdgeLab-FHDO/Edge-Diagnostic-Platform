@@ -10,8 +10,10 @@ import java.util.*;
 /**
  * This class is dedicated to fetch history related info.
  * From get history score, to history time to calculate the score.
- * Implemented function : get historyScore - get ConnectedTime
+ * Important function :
  * Also set historyMap and set ConnectedMap
+ *
+ * @author Zero
  */
 public class EdgeClientHistory {
     private String id;
@@ -51,11 +53,21 @@ public class EdgeClientHistory {
         this.historyMap.put(clientID, nodeAndScore);
     }
 
+
+    /**
+     * Assign update history score into this client's history with the node
+     *
+     * @param clientID         clientID in String
+     * @param nodeID           node's ID in String
+     * @param nodeHistoryScore score that we want to update
+     */
     public void setHistoryScoreForClient(String clientID, String nodeID, Long nodeHistoryScore) {
         Collection<HashMap<String, Long>> clientHistoryMapList = this.historyMap.get(clientID);
+        //TODO: check a better way for iterating the list.
+        // idea: maybe use guava Tablemap, or maybe HashBasedTable (but this is basically Map<C,Map<K,V>>...will test later)
         for (HashMap<String, Long> theList : clientHistoryMapList) {
             if (theList.containsKey(nodeID)) {
-                //replace with new score
+                //replace with new score    
                 theList.put(nodeID, nodeHistoryScore);
                 break;
             }

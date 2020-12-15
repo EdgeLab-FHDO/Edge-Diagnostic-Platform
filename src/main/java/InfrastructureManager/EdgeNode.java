@@ -86,10 +86,6 @@ public class EdgeNode {
     public void setTotalResource(long totalResource) {
         this.totalResource = totalResource;
     }
-
-    /*
-            ------------------------Constructors --------------------------------
-             */
     public EdgeNode() {
         this.id = null;
         this.ipAddress = "null";
