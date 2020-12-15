@@ -16,7 +16,7 @@ public class FromPOST implements MasterInput {
     private final Queue<String> toRead;
 
     private final String path;
-
+    private final List<String> toParse;
     private boolean isActivated;
 
     private final Object blockLock;
@@ -25,16 +25,22 @@ public class FromPOST implements MasterInput {
     private final Route POSTHandler;
 
 
-    public FromPOST(String path, String command, final List<String> toParse) {
+    public FromPOST(String path, String command, List<String> toParse) {
         this.path = path;
+        this.toParse = toParse;
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
         this.blockLock = new Object();
         this.block = true;
         this.POSTHandler = (Request request, Response response) -> {
-            UnknownJSONObject o = new UnknownJSONObject(request.body(), toParse);
-            this.toRead.offer(this.substituteCommand(command,o));
-            unBlock();
+            UnknownJSONObject o = new UnknownJSONObject(request.body());
+            try {
+                this.toRead.offer(this.substituteCommand(command,o));
+            } catch (IllegalArgumentException e) {
+                response.status(500);
+            } finally {
+                unBlock();
+            }
             return response.status();
         };
     }
@@ -49,7 +55,12 @@ public class FromPOST implements MasterInput {
             reading = splitCommand[i];
             if (reading.matches("\\$.*")) {
                 cleanValueName = reading.replaceFirst("\\$","");
-                finalCommand.append(object.getValue(cleanValueName));
+                if (toParse.contains(cleanValueName)) {
+                    finalCommand.append(object.getValue(cleanValueName));
+                } else {
+                    throw new IllegalArgumentException("Argument in command was not defined to be parsed");
+                }
+
             } else {
                 finalCommand.append(reading);
             }
