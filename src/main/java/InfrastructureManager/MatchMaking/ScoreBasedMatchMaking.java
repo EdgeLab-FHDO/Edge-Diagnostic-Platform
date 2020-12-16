@@ -99,7 +99,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             logger.info("node history score = {} = {} - {}", nodeHistoryScore, nodeHistoryWithClient, deductingScore);
             //Update the score in the history info pack with this new score
             clientHistory.setHistoryScoreForClient(thisClientID, thisNodeID, nodeHistoryScore);
-            clientHistory.setConnectedTimeForClient(thisClientID,thisNodeID,currentTime);
+            clientHistory.setConnectedTimeForClient(thisClientID, thisNodeID, currentTime);
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if (nodeResource <= reqResource) {
@@ -127,11 +127,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             //calculate current node score and find best node
             logger.info("calculating [{}] score: ", thisNodeID);
             long thisNodeScore = 0;
-            try {
-                thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
 
             //compare it to the best score yet, if this node score is bigger then we will set it as new bestNode
             logger.debug("best node's score - this node score:  {} - {} ", bestScore, thisNodeScore);
@@ -214,7 +210,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
      * @return pingResult - (network) distance between node and client
      * @author Zero
      */
-    public long getPing(EdgeClient thisClient, EdgeNode thisNode) {
+    public long getPing(EdgeClient thisClient, EdgeNode thisNode) throws Exception {
         long pingResult = -1;
 
         //Initiate variables for node and client, ready for calculation
@@ -236,10 +232,11 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
         if (pingResult < 0) {
             logger.error("""
                             -------------------------------GETTING PING FAILED----------------------------
-                            [{}] location - {}, [{}] location - {} 
-                            ping is negative? Something fishy here, returning super big ping number"""
+                            [{}] location - {} || [{}] location - {} 
+                            ping is negative? Something fishy here, exception incoming"""
                     , thisNode.getId(), thisNode.getLocation(), thisClient.getId(), thisClient.getLocation());
-            return Long.MAX_VALUE;
+            throw new Exception("-------------------------------GETTING PING FAILED----------------------------\n" +
+                    "["+thisNode.getId()+"] location - "+thisNode.getLocation()+"|| ["+thisClient.getId()+"] location - "+thisClient.getLocation());
         } else return pingResult;
     }
 }
