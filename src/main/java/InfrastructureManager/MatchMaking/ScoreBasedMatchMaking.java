@@ -71,6 +71,9 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
 
         //Get node's stats (ping, res, network, and history) and eliminate bad one
         for (EdgeNode thisNode : nodeList) {
+
+            //TODO: Maybe having a class contain all the references to the info rather than create the variable in this class
+            // doing so will make any change in node/client (cause by other class)  will be reflected in the variable in this class too
             //List of comparing variables
             String thisNodeID = thisNode.getId();
             long nodeResource = thisNode.getResource();
