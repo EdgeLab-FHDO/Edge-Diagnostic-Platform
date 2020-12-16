@@ -477,7 +477,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //calculate used resources to update later on if that node is assigned to others
             if (nodeIsAssigned) {
-                ArrayList<String> assignedClientList = getAssignedClient(newNodeID);
+                ArrayList<String> assignedClientList = getAssignedClientsInList(newNodeID);
                 long consumedNetwork = 0;
                 long consumedResource = 0;
                 //Get total consumed resource and network
@@ -644,7 +644,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * @return list of client assigned to nodeID
      * @author Zero
      */
-    private ArrayList<String> getAssignedClient(String nodeID) {
+    private ArrayList<String> getAssignedClientsInList(String nodeID) {
         Set<String> assignedClientList = this.mapping.keySet();
         ArrayList<String> returnClientList = new ArrayList<>();
         for (String thisClient : assignedClientList) {
