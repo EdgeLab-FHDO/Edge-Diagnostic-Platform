@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.Semaphore;
 
 /**
  * Score-based match making algorithm.
@@ -49,17 +50,19 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
                         {}      , {}      , {}      , {}      , {}    """
                 , RESOURCE_WEIGHT, NETWORK_WEIGHT, PING_WEIGHT, HISTORY_WEIGHT, QOS_THRESHOLD);
 
+
         //Initiating variable
         List<EdgeNode> nodeList = new ArrayList<>(nodeListInput); //In case of multi threading
-        EdgeNode bestNode = new EdgeNode();
-        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE); //return this if score not good
-        long bestScore = 0;
-
         this.clientHistory = thisClientHistory;
+
+        //return this if score not good, currently unused
+        EdgeNode rejectNode = new EdgeNode("rejectNode", "000.000.000.000", false, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE);
 
         //initiate temp/comparing variable
         int numberOfUnqualified = 0; //to count the number of node we have been ruled out during iteration
         int totalNumberOfNode = nodeList.size();
+        long bestScore = 0;
+        EdgeNode bestNode = new EdgeNode();
 
         //Get client requirement (required resource, network)
         String thisClientID = thisClient.getId();
@@ -93,11 +96,12 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             logger.info("node history score = {} = {} - {}", nodeHistoryScore, nodeHistoryWithClient, deductingScore);
             //Update the score in the history info pack with this new score
             clientHistory.setHistoryScoreForClient(thisClientID, thisNodeID, nodeHistoryScore);
+            clientHistory.setConnectedTimeForClient(thisClientID,thisNodeID,currentTime);
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if (nodeResource <= reqResource) {
                 logger.debug("[{}] doesn't have enough resource {}/{}", thisNodeID, nodeResource, reqResource);
-                //next iteration if these requirement is not fullfill
+                //next iteration if these requirement is not fulfill
                 numberOfUnqualified++;
                 continue;
             }
