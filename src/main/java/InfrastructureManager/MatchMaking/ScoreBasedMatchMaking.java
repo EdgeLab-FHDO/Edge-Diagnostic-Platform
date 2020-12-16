@@ -225,7 +225,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             locationResult = thisNodeLocation - thisClientLocation;
         }
 
-        //introduce noise or visibility here. Or just do it in the match function above, don't know.
+        //introduce noise or visibility will be in match function
         pingResult = locationResult;
 
         //checking for irregularity before sending out. This step is rather redundant since this would NEVER happen.
