@@ -190,11 +190,12 @@ public class Master {
     /*
     Add node to a list (nodeList)
      */
-    public void addNode(EdgeNode node) {
-        if (checkDuplicateNodeInList(node)) {
-            logger.warn("Node [{}] already exist, skip ", node.getId());
+    public void addNode(EdgeNode thisNode) throws Exception {
+        if (checkNodeInList(thisNode)) {
+            logger.warn("Node [{}] already exist, skip ", thisNode.getId());
+            throw new Exception("Node [" + thisNode.getId() + "] already exist, skip");
         } else {
-            this.nodeList.add(node);
+            this.nodeList.add(thisNode);
         }
     }
 
@@ -237,7 +238,7 @@ public class Master {
     public void addClient(EdgeClient thisClient) {
 
         //Check whether this client has already been registered
-        if (checkDuplicateClientInList(thisClient)) {
+        if (checkClientInList(thisClient)) {
             logger.warn("Client: [{}] already exist, skip ", thisClient.getId());
         }
         //Add new client to the list
@@ -258,7 +259,7 @@ public class Master {
     public void updateClient(String oldClientID, EdgeClient newClient) throws Exception {
         //get updating client location
         Integer clientLocation = null;
-        logger.info("oldClientID = {}\n newClient: {}", oldClientID, newClient.toString());
+        logger.info("oldClientID = {}\n newClient: {}", oldClientID, newClient);
 
         for (EdgeClient client : this.clientList) {
             logger.info("checking client: {}", client.getId());
@@ -271,8 +272,8 @@ public class Master {
         }
         //updating process
         if (clientLocation == null) {
-            logger.error("new node ID does not match with any node's ID in the system.\n ");
-            throw new Exception();
+            logger.error("new node ID does not match with any node's ID in the system. ");
+            throw new Exception("new node ID does not match with any node's ID in the system.");
         }
         this.clientList.set(clientLocation, newClient);
     }
@@ -305,7 +306,7 @@ public class Master {
      * @param thisNode
      * @return true if duplicated, false if it's unique (not in list yet)
      */
-    private boolean checkDuplicateNodeInList(EdgeNode thisNode) {
+    private boolean checkNodeInList(EdgeNode thisNode) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
         for (EdgeNode node : this.nodeList) {
@@ -322,7 +323,7 @@ public class Master {
      * @param thisClient
      * @return true if duplicated, false if it's unique (not in list yet)
      */
-    private boolean checkDuplicateClientInList(EdgeClient thisClient) {
+    private boolean checkClientInList(EdgeClient thisClient) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
         for (EdgeClient client : this.clientList) {
