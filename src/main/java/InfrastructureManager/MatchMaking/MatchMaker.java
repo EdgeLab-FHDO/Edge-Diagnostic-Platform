@@ -366,7 +366,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             String thisClientID = thisClient.getId();
 
             //If client is not registered (no duplication) -> moving on
-            if (!checkDuplicateClientInList(thisClient)) {
+            if (!checkClientInList(thisClient)) {
                 //Just for debugging purpose
                 logger.info("client after readValue from mapper: {}", thisClient);
                 this.clientList.add(thisClient);
@@ -401,7 +401,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         try {
             logger.info("RegisterNode - node as string: {} ", nodeAsString);
             EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
-            if (!checkDuplicateNodeInList(thisNode)) {
+            if (!checkNodeInList(thisNode)) {
                 logger.info("node after readValue from mapper: {}", thisNode);
                 this.nodeList.add(thisNode);
             } else {
@@ -418,7 +418,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * @param thisNode
      * @return true if duplicated, false if it's unique (not in list yet)
      */
-    private boolean checkDuplicateNodeInList(EdgeNode thisNode) {
+    private boolean checkNodeInList(EdgeNode thisNode) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
         for (EdgeNode node : this.nodeList) {
@@ -435,7 +435,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * @param thisClient
      * @return true if duplicated, false if it's unique (not in list yet)
      */
-    private boolean checkDuplicateClientInList(EdgeClient thisClient) {
+    private boolean checkClientInList(EdgeClient thisClient) {
 
         //If there is a node that have the same name with thisNode in parameter, it's a duplicated
         for (EdgeClient client : this.clientList) {
