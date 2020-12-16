@@ -227,7 +227,7 @@ public class Master {
         //updating process
         if (thisNodeLocation == null) {
             logger.error("new node ID does not match with any node's ID in the system.\n ");
-            throw new Exception();
+            throw new Exception("new node ID does not match with any node's ID in the system.\n");
         }
         this.nodeList.set(thisNodeLocation, newNode);
     }
