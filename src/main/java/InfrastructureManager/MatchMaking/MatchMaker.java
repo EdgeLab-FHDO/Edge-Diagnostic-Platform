@@ -103,6 +103,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.warn("this client is already connected with {}", connectedNode);
                 logger.info("client history info: \n{}", clientHistoryInfo);
                 logger.info("mapping map: {}", mapping);
+                throw new Exception("this ["+thisClientID+"] is already connected with " + connectedNode);
             } else {
                 //match client with node in nodelist according to algorithm
                 EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, clientHistoryInfo);
