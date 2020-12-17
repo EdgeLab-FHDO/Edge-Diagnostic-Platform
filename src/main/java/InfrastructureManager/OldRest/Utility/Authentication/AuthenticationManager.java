@@ -1,7 +1,7 @@
 package InfrastructureManager.OldRest.Utility.Authentication;
 
-import InfrastructureManager.NewREST.Authentication.RESTAuthenticator;
-import InfrastructureManager.NewREST.Authentication.DummyAuthentication;
+import InfrastructureManager.REST.Authentication.RESTAuthenticator;
+import InfrastructureManager.REST.Authentication.DummyAuthentication;
 import spark.*;
 import static spark.Spark.*;
 

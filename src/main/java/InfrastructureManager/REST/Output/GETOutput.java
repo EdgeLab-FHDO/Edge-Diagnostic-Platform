@@ -1,6 +1,7 @@
-package InfrastructureManager.NewREST;
+package InfrastructureManager.REST.Output;
 
 import InfrastructureManager.MasterOutput;
+import InfrastructureManager.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -9,7 +10,7 @@ import java.util.*;
 
 import static spark.Spark.get;
 
-public class toGET extends MasterOutput {
+public class GETOutput extends MasterOutput {
 
     private Queue<String> toSend;
     private final String path;
@@ -24,7 +25,7 @@ public class toGET extends MasterOutput {
         }
     };
 
-    public toGET(String name, String path) {
+    public GETOutput(String name, String path) {
         super(name);
         this.toSend = new ArrayDeque<>();
         this.path = path;

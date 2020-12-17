@@ -8,9 +8,9 @@ import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
-import InfrastructureManager.NewREST.FromPOST;
-import InfrastructureManager.NewREST.RestServerRunner;
-import InfrastructureManager.NewREST.toGET;
+import InfrastructureManager.REST.Input.POSTInput;
+import InfrastructureManager.REST.RestServerRunner;
+import InfrastructureManager.REST.Output.GETOutput;
 import InfrastructureManager.OldRest.RestInput;
 import InfrastructureManager.OldRest.RestOutput;
 import InfrastructureManager.SSH.SSHClient;
@@ -105,7 +105,7 @@ public class MasterConfigurator {
             case "GenericGET":
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new toGET(outputData.getName(),outputData.getAddress());
+                return new GETOutput(outputData.getName(),outputData.getAddress());
             case "RestOutput":
                 RestOutput.setInstanceName(outputData.getName());
                 return RestOutput.getInstance();
@@ -130,7 +130,7 @@ public class MasterConfigurator {
                 CustomCommandIO data = (CustomCommandIO)inputData;
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new FromPOST(data.getAddress(),data.getCommand(),data.getInformation());
+                return new POSTInput(data.getAddress(),data.getCommand(),data.getInformation());
             case "RestInput":
                 //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
                 //activateRestRunner = true;

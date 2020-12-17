@@ -1,7 +1,7 @@
-package InfrastructureManager.NewREST;
+package InfrastructureManager.REST;
 
-import InfrastructureManager.NewREST.Authentication.DummyAuthentication;
-import InfrastructureManager.NewREST.Authentication.RESTAuthenticator;
+import InfrastructureManager.REST.Authentication.DummyAuthentication;
+import InfrastructureManager.REST.Authentication.RESTAuthenticator;
 import InfrastructureManager.Runner;
 import spark.Filter;
 import spark.Request;

@@ -1,4 +1,4 @@
-package InfrastructureManager.NewREST.Authentication;
+package InfrastructureManager.REST.Authentication;
 
 public class DummyAuthentication implements RESTAuthenticator {
     @Override

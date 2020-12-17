@@ -1,6 +1,7 @@
-package InfrastructureManager.NewREST;
+package InfrastructureManager.REST.Input;
 
 import InfrastructureManager.MasterInput;
+import InfrastructureManager.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -11,7 +12,7 @@ import java.util.Queue;
 
 import static spark.Spark.post;
 
-public class FromPOST implements MasterInput {
+public class POSTInput implements MasterInput {
 
     private final Queue<String> toRead;
 
@@ -25,7 +26,7 @@ public class FromPOST implements MasterInput {
     private final Route POSTHandler;
 
 
-    public FromPOST(String path, String command, List<String> toParse) {
+    public POSTInput(String path, String command, List<String> toParse) {
         this.path = path;
         this.toParse = toParse;
         this.isActivated = false;
