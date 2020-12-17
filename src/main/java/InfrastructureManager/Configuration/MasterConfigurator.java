@@ -28,7 +28,7 @@ import java.util.Map;
  * object and gives the master the different elements based on that (Commands, and Runners)
  */
 public class MasterConfigurator {
-
+    //TODO : Make it changeable
     private final String CONFIG_FILE_PATH = "src/main/resources/Configuration2.json";
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
@@ -36,7 +36,7 @@ public class MasterConfigurator {
     private Map<String,MasterOutput> outputInstances;
     private boolean activateRestRunner = false;
     //TODO: consider making it a singleton
-
+    //TODO: Remove Old REST implementation
 
     public MasterConfigurator() {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality

@@ -16,13 +16,20 @@ import static spark.Spark.*;
 public class RestServerRunner extends Runner {
 
     private final int port;
-    private final String heartbeatPath = "/heartbeat";
-    private RESTAuthenticator authenticator;
-    private final Filter authenticationHandler;
-    public static final Object ServerRunning =new Object();
+    private final String heartbeatPath = "/heartbeat"; //Path where the hearbeath is defined to check if server is up (always in localhost)
 
-    private static RestServerRunner restRunner = null;
+    private final RESTAuthenticator authenticator; //For future authentication implementations
+    private final Filter authenticationHandler; //Handler for authentication to the server
 
+    public static final Object ServerRunning =new Object(); //Guarded Block to synchronize all threads that depend on the server
+
+    private static RestServerRunner restRunner = null; //Singleton implementation
+
+    /**
+     * Create a new server, private according to singleton implementation
+     * @param name Name of the output as defined in MasterOutput abstract class
+     * @param port Port where the server will be exposed
+     */
     private RestServerRunner(String name, int port) {
         super(name);
         this.port = port;
@@ -35,7 +42,7 @@ public class RestServerRunner extends Runner {
     }
 
     /**
-     * Starts the REST server on the defined port, creates the route for the heartbeat check.
+     * Starts the REST server on the defined port, creates the route for the heartbeat check and performs the authentication.
      */
     private void startServer() {
         Spark.port(this.port);
@@ -73,7 +80,7 @@ public class RestServerRunner extends Runner {
     }
 
     /**
-     * Method for stopping the static Spark instance
+     * Method for stopping the static Spark instance (embedded web server)
      */
     private void killServer() {
         Spark.stop();
@@ -92,7 +99,9 @@ public class RestServerRunner extends Runner {
     }
 
     /**
-     * Configure name and port to the rest server singleton. This should be called before getting the instance (`getRestServerRunner`)
+     * Configure name and port to the rest server singleton.
+     * If called more than once will just configure the server once and the other times just return.
+     * This should be called before getting the instance (`getRestServerRunner`)
      */
     public static void configure(String name, int port) {
         if(restRunner == null) {

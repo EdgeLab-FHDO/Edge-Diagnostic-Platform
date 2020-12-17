@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Queue;
 
 import static spark.Spark.post;
-
+//TODO: Comment and javadoc
 public class POSTInput implements MasterInput {
 
     private final Queue<String> toRead;
@@ -59,6 +59,7 @@ public class POSTInput implements MasterInput {
                 if (toParse.contains(cleanValueName)) {
                     finalCommand.append(object.getValue(cleanValueName));
                 } else {
+                    //TODO: Handle exception
                     throw new IllegalArgumentException("Argument in command was not defined to be parsed");
                 }
 
