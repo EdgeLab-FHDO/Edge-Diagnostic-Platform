@@ -1,7 +1,7 @@
 package InfrastructureManager;
 
-import InfrastructureManager.Rest.RestOutput;
-import InfrastructureManager.Rest.RestRunner;
+import InfrastructureManager.OldRest.RestOutput;
+import InfrastructureManager.OldRest.RestRunner;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.*;

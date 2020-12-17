@@ -11,8 +11,8 @@ import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.NewREST.FromPOST;
 import InfrastructureManager.NewREST.RestServerRunner;
 import InfrastructureManager.NewREST.toGET;
-import InfrastructureManager.Rest.RestInput;
-import InfrastructureManager.Rest.RestOutput;
+import InfrastructureManager.OldRest.RestInput;
+import InfrastructureManager.OldRest.RestOutput;
 import InfrastructureManager.SSH.SSHClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

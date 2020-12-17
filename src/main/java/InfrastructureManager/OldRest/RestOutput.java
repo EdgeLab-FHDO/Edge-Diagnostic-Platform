@@ -1,4 +1,4 @@
-package InfrastructureManager.Rest;
+package InfrastructureManager.OldRest;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
@@ -6,7 +6,6 @@ import InfrastructureManager.Master;
 import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import spark.Request;
 import spark.Response;
 import spark.Route;

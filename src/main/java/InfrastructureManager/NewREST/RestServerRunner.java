@@ -1,6 +1,11 @@
 package InfrastructureManager.NewREST;
 
+import InfrastructureManager.NewREST.Authentication.DummyAuthentication;
+import InfrastructureManager.NewREST.Authentication.RESTAuthenticator;
 import InfrastructureManager.Runner;
+import spark.Filter;
+import spark.Request;
+import spark.Response;
 import spark.Spark;
 
 import java.net.HttpURLConnection;
@@ -12,6 +17,8 @@ public class RestServerRunner extends Runner {
 
     private final int port;
     private final String heartbeatPath = "/heartbeat";
+    private RESTAuthenticator authenticator;
+    private final Filter authenticationHandler;
     public static final Object ServerRunning =new Object();
 
     private static RestServerRunner restRunner = null;
@@ -19,6 +26,12 @@ public class RestServerRunner extends Runner {
     private RestServerRunner(String name, int port) {
         super(name);
         this.port = port;
+        this.authenticator = new DummyAuthentication();
+        this.authenticationHandler = (Request request, Response response) -> {
+            if (!authenticator.authenticate()) {
+                halt(401, "Request not authorized");
+            }
+        };
     }
 
     /**
@@ -27,6 +40,7 @@ public class RestServerRunner extends Runner {
     private void startServer() {
         Spark.port(this.port);
         initExceptionHandler(Throwable::printStackTrace); //Print the exception is an error happens when starting
+        before(this.authenticationHandler);
         get(heartbeatPath, (request, response) -> response.status());
     }
 

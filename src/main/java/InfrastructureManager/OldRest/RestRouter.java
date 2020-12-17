@@ -1,6 +1,6 @@
-package InfrastructureManager.Rest;
+package InfrastructureManager.OldRest;
 
-import InfrastructureManager.Rest.Utility.Authentication.AuthenticationManager;
+import InfrastructureManager.OldRest.Utility.Authentication.AuthenticationManager;
 import spark.Spark;
 
 import static spark.Spark.*;

@@ -1,4 +1,4 @@
-package InfrastructureManager.Rest;
+package InfrastructureManager.OldRest;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
