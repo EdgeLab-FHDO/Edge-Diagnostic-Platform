@@ -50,6 +50,7 @@ public class POSTInput implements MasterInput {
                 unBlock(); //Unblock the input so it returns something to the master
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
+                response.body(e.getMessage());
                 response.status(500); //If argument not found, return internal error in response
             }
             return response.status();

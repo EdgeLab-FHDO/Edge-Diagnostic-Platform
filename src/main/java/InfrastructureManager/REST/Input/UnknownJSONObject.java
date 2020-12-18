@@ -28,8 +28,9 @@ public class UnknownJSONObject {
      * Right now, supports parameters with string, boolean, floating point and integer values (Not arrays or objects)
      * @param fieldName Name of a parameter in the JSON object
      * @return String representation of the value of the parameter
+     * @throws IllegalArgumentException if the parameter type is not supported (Array, JSON object, null)
      */
-    public String getValue(String fieldName) {
+    public String getValue(String fieldName) throws IllegalArgumentException {
         JsonNode node = tree.get(fieldName);
         if (node == null) {
             return null;
@@ -41,8 +42,7 @@ public class UnknownJSONObject {
             case NUMBER:
                 return node.asText();
             default:
-                //TODO: Throw exception instead
-                return null;
+                throw new IllegalArgumentException("Unsupported JSON parameter type");
         }
     }
 
