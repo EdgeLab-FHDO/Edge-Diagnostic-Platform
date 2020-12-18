@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class Master {
 
+    private static String configPath = "src/main/resources/Configuration.json";
+
     private final List<Runner> runnerList;
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
@@ -25,18 +27,10 @@ public class Master {
      * Gets the master configured according to the config file.
      */
     private Master() {
-        MasterConfigurator configurator = new MasterConfigurator();
+        MasterConfigurator configurator = new MasterConfigurator(configPath);
         runnerList = configurator.getRunners();
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
-        /* Temporal made up nodes for testing */
-        /*
-        availableNodes.add(new EdgeNode("node1", "192.168.0.1",true));
-        availableNodes.add(new EdgeNode("node2", "192.168.0.2",true));
-        availableNodes.add(new EdgeNode("node3", "192.168.0.3",true));
-        availableNodes.add(new EdgeNode("node4", "192.168.0.4",true));
-        availableNodes.add(new EdgeNode("node5", "192.168.0.5",true));
-        /*---------------------------------------------------------*/
     }
 
 
@@ -229,9 +223,12 @@ public class Master {
         return instance;
     }
 
-
+    public static void changeConfigPath(String configPath) {
+        Master.configPath = configPath;
+    }
 
     public static void main(String[] args) {
+        Master.changeConfigPath("src/main/resources/Configuration2.json");
         Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();

@@ -28,8 +28,7 @@ import java.util.Map;
  * object and gives the master the different elements based on that (Commands, and Runners)
  */
 public class MasterConfigurator {
-    //TODO : Make it changeable
-    private final String CONFIG_FILE_PATH = "src/main/resources/Configuration2.json";
+
     private MasterConfigurationData data; //Configuration File Interface
     private Map<String,MasterInput> inputInstances;
     private List<String> scenarios;
@@ -38,11 +37,11 @@ public class MasterConfigurator {
     //TODO: consider making it a singleton
     //TODO: Remove Old REST implementation
 
-    public MasterConfigurator() {
+    public MasterConfigurator(String configurationFilePath) {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
         try {
             //Map the contents of the JSON file to a java object
-            this.data = mapper.readValue(new File(CONFIG_FILE_PATH), MasterConfigurationData.class);
+            this.data = mapper.readValue(new File(configurationFilePath), MasterConfigurationData.class);
             this.inputInstances = new HashMap<>();
             this.outputInstances = new HashMap<>();
             this.scenarios = new ArrayList<>();
