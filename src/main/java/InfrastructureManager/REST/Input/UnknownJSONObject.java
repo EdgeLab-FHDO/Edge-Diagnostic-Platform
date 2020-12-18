@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class UnknownJSONObject {
 
     private final JsonNode tree;
+    private final String body;
 
     /**
      * Constructor of the class
@@ -18,7 +19,8 @@ public class UnknownJSONObject {
      */
     public UnknownJSONObject(String jsonBody) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        this.tree = mapper.readTree(jsonBody); //Create JSON node
+        this.body = jsonBody;
+        this.tree = mapper.readTree(this.body); //Create JSON node
     }
 
     /**
@@ -42,5 +44,13 @@ public class UnknownJSONObject {
                 //TODO: Throw exception instead
                 return null;
         }
+    }
+
+    /**
+     * Get the json body of the object as string
+     * @return Body as string
+     */
+    public String getBody() {
+        return body;
     }
 }
