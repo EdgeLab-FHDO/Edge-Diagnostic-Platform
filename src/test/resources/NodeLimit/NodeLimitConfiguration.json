@@ -1,19 +1,15 @@
 {
   "ioData": {
-      "inputs": [
-        {"type": "ConsoleInput","name": "console_in"},
-        {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897,
-          "command" :  "test $name $number",
-          "information": ["name", "number"],
-          "@IOType" : "CustomCommand"
-        }
-      ],
-      "outputs": [
-        {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "GenericGET","name": "get", "address": "/get_test","port": 4897},
-        {"type": "MasterUtility","name": "util"}
-      ]
-    },
+    "inputs": [
+      {"type": "ConsoleInput","name": "console_in"},
+      {"type":  "NodeResourceLimiter", "name": "limit"}
+    ],
+    "outputs": [
+      {"type": "ConsoleOutput","name": "console_out"},
+      {"type": "GenericGET","name": "rest_limit", "address": "/limit","port": 4567},
+      {"type":  "NodeResourceLimiter", "name": "limit"}
+    ]
+  },
   "connections" : [
     {
       "in" : "console_in",
@@ -26,16 +22,16 @@
     },
     {
       "in" : "console_in",
-      "out" : "get",
+      "out" : "limit",
       "commands" : {
-        "get_test" : "toGet resource {\"name\": \"example\",\n\"number\": 874}"
+        "limit_node $tag $CPU_limit" : "limit cores $tag $CPU_limit"
       }
     },
     {
-      "in" : "rest_in",
-      "out" : "console_out",
+      "in" : "limit",
+      "out" : "rest_limit",
       "commands" : {
-        "test $name $number" : "console $name $number"
+        "set_limits $limits" : "toGET resource $limits"
       }
     }
   ]

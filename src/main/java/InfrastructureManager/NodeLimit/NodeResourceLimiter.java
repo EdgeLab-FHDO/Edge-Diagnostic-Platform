@@ -5,12 +5,13 @@ import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
 
-    private final Map<String,String> limitNodes;
+    private Map<String,String> limitNodes;
 
     private final ObjectMapper mapper;
 
@@ -46,9 +47,10 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
                         addToLimitList(command[2], command[3],period);
                         break;
                     default:
+                        throw new IllegalArgumentException("Invalid command for NodeLimiter");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - RESTOutput");
+                throw new IllegalArgumentException("Arguments missing for command - NodeLimiter");
             }
         }
     }
@@ -80,5 +82,12 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
             block = false;
             blockLock.notifyAll();
         }
+    }
+
+    /**
+     * Reset the output, used for testing purposes
+     */
+    public void resetOutput() {
+        this.limitNodes = new LinkedHashMap<>();
     }
 }
