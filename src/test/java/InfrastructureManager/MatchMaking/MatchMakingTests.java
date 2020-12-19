@@ -29,6 +29,7 @@ public class MatchMakingTests {
                 setBaseUri(testIp).
                 setPort(port).
                 build();
+        Master.resetInstance();
         Master.changeConfigPath("src/test/resources/MatchMaking/MatchMakingConfiguration.json");
         Master.getInstance().startRunnerThread("RestServer");
     }

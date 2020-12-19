@@ -24,6 +24,7 @@ public class NodeLimitTests {
                 setBaseUri(testIp).
                 setPort(port).
                 build();
+        Master.resetInstance();
         Master.changeConfigPath("src/test/resources/NodeLimit/NodeLimitConfiguration.json");
         Master.getInstance().startRunnerThread("RestServer");
     }

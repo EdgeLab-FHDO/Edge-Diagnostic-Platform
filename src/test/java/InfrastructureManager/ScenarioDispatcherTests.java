@@ -16,7 +16,7 @@ public class ScenarioDispatcherTests {
     @BeforeClass
     public static void configureMaster() {
         Master.changeConfigPath("src/test/resources/ScenarioResources/ScenarioConfiguration.json");
-        waitFor(1000);
+        Master.resetInstance();
     }
 
     @Test

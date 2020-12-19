@@ -227,6 +227,10 @@ public class Master {
         Master.configPath = configPath;
     }
 
+    public static void resetInstance() {
+        instance = null;
+    }
+
     public static void main(String[] args) {
         Master.changeConfigPath("src/main/resources/Configuration2.json");
         Master.getInstance().startRunners();
