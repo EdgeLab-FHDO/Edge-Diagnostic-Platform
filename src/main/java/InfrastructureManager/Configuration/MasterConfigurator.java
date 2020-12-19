@@ -5,6 +5,7 @@ import InfrastructureManager.Configuration.RawData.*;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
+import InfrastructureManager.NodeLimit.NodeResourceLimiter;
 import InfrastructureManager.REST.Input.POSTInput;
 import InfrastructureManager.REST.Output.ParametrizedGETOutput;
 import InfrastructureManager.REST.RestServerRunner;
@@ -107,6 +108,8 @@ public class MasterConfigurator {
                 }
             case "MatchMaker" :
                 return new MatchMaker(outputData.getName(),type.length > 1 ? type[1] : "random");
+            case "NodeResourceLimiter" :
+                return new NodeResourceLimiter(outputData.getName());
             case "AdvantEdgeClient" :
                 return new AdvantEdgeClient(outputData.getName(),outputData.getAddress() ,port != 0 ? port : 80);
             default:
@@ -120,6 +123,8 @@ public class MasterConfigurator {
         switch (type[0]) {
             case "ConsoleInput":
                 return new ConsoleInput();
+            case "NodeResourceLimiter" :
+                return new NodeResourceLimiter(inputData.getName());
             case "MatchMaker":
                 return new MatchMaker(inputData.getName(),type.length > 1 ? type[1] : "random");
             case "GenericPOST":
