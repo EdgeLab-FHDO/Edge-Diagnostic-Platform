@@ -9,9 +9,15 @@ import java.io.PrintStream;
 
 public class ScenarioDispatcherTests {
     ScenarioDispatcher dispatcher = new ScenarioDispatcher("scenario_dispatcher");
-    final String SCENARIO_PATH = "src/test/resources/dummyScenario.json";
+    final String SCENARIO_PATH = "src/test/resources/ScenarioResources/dummyScenario.json";
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @BeforeClass
+    public static void configureMaster() {
+        Master.changeConfigPath("src/test/resources/ScenarioResources/ScenarioConfiguration.json");
+        waitFor(1000);
+    }
 
     @Test
     public void loadScenarioFromFileTest() {
@@ -62,7 +68,7 @@ public class ScenarioDispatcherTests {
         System.setOut(System.out);
     }
 
-    public void waitFor(long waitingTime) {
+    public static void waitFor(long waitingTime) {
         long start = System.currentTimeMillis();
         while (true) {
             if (System.currentTimeMillis() - start >= waitingTime) {

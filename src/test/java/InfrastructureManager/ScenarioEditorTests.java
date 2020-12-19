@@ -60,21 +60,21 @@ public class ScenarioEditorTests {
 
     @Test
     public void saveToFileTest(){
-        File scenarioFile = new File("src/test/resources/" + scenarioName + ".json");
+        File scenarioFile = new File("src/test/resources/ScenarioResources/" + scenarioName + ".json");
         if (scenarioFile.exists()) { //Delete the last test file, each time a test is run
             scenarioFile.delete();
         }
         editor.out("editor create " + scenarioName);
         editor.out("editor addEvent test_event0 1000");
         editor.out("editor addEvent test_event1 2000");
-        editor.out("editor toFile src/test/resources/");
+        editor.out("editor toFile src/test/resources/ScenarioResources/");
 
         Assert.assertTrue(scenarioFile.exists());
     }
 
     @Test
     public void loadFromFileTest() {
-        editor.out("editor fromFile src/test/resources/dummyScenario.json");
+        editor.out("editor fromFile src/test/resources/ScenarioResources/dummyScenario.json");
         String expected = "deploy_application" + "node_request" + "update_gui";
         StringBuilder result = new StringBuilder();
         for (Event e : editor.getScenario().getEventList()) {

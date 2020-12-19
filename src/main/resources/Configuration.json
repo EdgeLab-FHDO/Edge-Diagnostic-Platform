@@ -2,13 +2,11 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "RestInput","name": "rest_in", "port": 4567},
         {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "Scenario", "name": "dummy"}
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
         {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 10500},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
@@ -90,29 +88,6 @@
         "run_scenario" : "dispatcher run",
         "pause_scenario" : "dispatcher pause",
         "resume_scenario" : "dispatcher resume"
-      }
-    },
-    {
-      "in" : "rest_in",
-      "out" : "match_m",
-      "commands" : {
-        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
-        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
-        "assign_client $client_id" : "matchMaker assign_client $client_id"
-      }
-    },
-    {
-      "in" : "match_m",
-      "out" : "rest_out",
-      "commands" : {
-        "give_node $client_id $node_id": "restOut sendNode $client_id $node_id"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "rest_out",
-      "commands" : {
-        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
       }
     },
     {
