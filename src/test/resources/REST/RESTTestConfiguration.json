@@ -2,15 +2,21 @@
   "ioData": {
     "inputs": [
       {"type": "ConsoleInput","name": "console_in"},
-      {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897,
-        "command" :  "test $name $number",
+      {"type": "GenericPOST","name": "rest_in1","address": "/post_test1","port": 4567,
+        "command" :  "test1 $body",
+        "information": [],
+        "@IOType" : "CustomCommand"
+      },
+      {"type": "GenericPOST","name": "rest_in2","address": "/post_test2","port": 4567,
+        "command" :  "test2 $name $number",
         "information": ["name", "number"],
         "@IOType" : "CustomCommand"
       }
     ],
     "outputs": [
       {"type": "ConsoleOutput","name": "console_out"},
-      {"type": "GenericGET","name": "get", "address": "/get_test","port": 4897},
+      {"type": "GenericGET","name": "get1", "address": "/get_test1","port": 4897},
+      {"type": "GenericGET","name": "get2", "address": "/get_test2/:id","port": 4897},
       {"type": "MasterUtility","name": "util"}
     ]
   },
