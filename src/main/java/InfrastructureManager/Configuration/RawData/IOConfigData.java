@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "@IOType", defaultImpl = IOConfigData.class)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = CustomCommandIO.class, name = "CustomCommand"),
+        @JsonSubTypes.Type(value = CustomCommandIO.class, name = "CustomCommand")
 })
 public class IOConfigData {
 

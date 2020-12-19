@@ -17,14 +17,14 @@ import static spark.Spark.get;
 public class GETOutput extends MasterOutput {
 
     private Queue<String> toSend;//FIFO Queue to store data
-    private final String path;
+    protected final String path;
 
-    private boolean isActivated; //To check if REST server is running
+    protected boolean isActivated; //To check if REST server is running
 
     /**
      * Spark route to handle incoming GET requests, reads from the defined queue and creates the resource
      */
-    private final Route GETHandler = (Request request, Response response) -> {
+    protected Route GETHandler = (Request request, Response response) -> {
         response.type("application/json");
         try {
             return this.toSend.remove();
@@ -75,7 +75,7 @@ public class GETOutput extends MasterOutput {
      * the REST server is already running.
      * Only runs once at the beginning
      */
-    private void activate() {
+    protected void activate() {
         try {
             while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
                 synchronized (RestServerRunner.ServerRunning) {
@@ -94,7 +94,7 @@ public class GETOutput extends MasterOutput {
      * Checks first if the route has been created (Output is activated)
      * @param jsonBody JSON body that will be a GET resource
      */
-    private void addResource(String jsonBody) {
+    protected void addResource(String jsonBody) {
         if (!this.isActivated) {
             this.activate();
         }

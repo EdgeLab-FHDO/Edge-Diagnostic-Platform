@@ -11,7 +11,6 @@
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "GenericGET","name": "get", "address": "/get_test","port": 4897},
-        {"type": "GenericGET","name": "get2", "address": "/get_node/:client_id","port": 4897},
         {"type": "MasterUtility","name": "util"}
       ]
     },
@@ -29,17 +28,9 @@
       "in" : "console_in",
       "out" : "get",
       "commands" : {
-        "get_test" : "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+        "get_test" : "toGet resource {\"name\": \"example\",\n\"number\": 874}"
       }
     },
-    {
-      "in" : "console_in",
-      "out" : "get2",
-      "commands" : {
-        "get2_test" : "toGET resource client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true}"
-      }
-    },
-
     {
       "in" : "rest_in",
       "out" : "console_out",

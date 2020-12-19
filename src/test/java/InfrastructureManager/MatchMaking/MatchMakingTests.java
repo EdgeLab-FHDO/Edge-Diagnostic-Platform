@@ -4,8 +4,7 @@ import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
 import InfrastructureManager.Master;
-import InfrastructureManager.OldRest.RestOutput;
-import InfrastructureManager.OldRest.RestRunner;
+import InfrastructureManager.REST.Output.GETOutput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.*;
@@ -16,8 +15,10 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
+//TODO: Create config file and fix test
 public class MatchMakingTests {
     private final MatchMaker matchMaker = new MatchMaker("match_m","random");
+    private GETOutput restOut = new GETOutput("rest_out","");
     private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
 
@@ -30,7 +31,8 @@ public class MatchMakingTests {
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        RestRunner.getRestRunner("RestRunner", port).startServerIfNotRunning();
+        Master.changeConfigPath("src/test/resources/MatchMaking/MatchMakingConfiguration.json");
+        Master.getInstance().startRunnerThread("RestServer");
     }
 
 
@@ -65,7 +67,6 @@ public class MatchMakingTests {
 
     @Test
     public void assignNodeToClientCompleteTest() throws Exception {
-
 
         Master.getInstance().addClient(new EdgeClient("client1"));
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true));

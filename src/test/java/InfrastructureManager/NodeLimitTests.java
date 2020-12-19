@@ -1,7 +1,5 @@
 package InfrastructureManager;
 
-import InfrastructureManager.OldRest.RestOutput;
-import InfrastructureManager.OldRest.RestRunner;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.*;
@@ -9,6 +7,7 @@ import org.junit.rules.ExpectedException;
 
 import static io.restassured.RestAssured.given;
 
+//TODO: Create config file and fix test
 public class NodeLimitTests {
     private static RestOutput output = RestOutput.getInstance();
     private static RequestSpecification requestSpec;

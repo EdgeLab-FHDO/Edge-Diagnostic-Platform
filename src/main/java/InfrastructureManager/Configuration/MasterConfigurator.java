@@ -1,18 +1,14 @@
 package InfrastructureManager.Configuration;
 
 import InfrastructureManager.AdvantEdge.AdvantEdgeClient;
-import InfrastructureManager.Configuration.RawData.CustomCommandIO;
-import InfrastructureManager.Configuration.RawData.ConnectionConfigData;
-import InfrastructureManager.Configuration.RawData.IOConfigData;
-import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.Configuration.RawData.*;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.REST.Input.POSTInput;
+import InfrastructureManager.REST.Output.ParametrizedGETOutput;
 import InfrastructureManager.REST.RestServerRunner;
 import InfrastructureManager.REST.Output.GETOutput;
-import InfrastructureManager.OldRest.RestInput;
-import InfrastructureManager.OldRest.RestOutput;
 import InfrastructureManager.SSH.SSHClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +31,6 @@ public class MasterConfigurator {
     private Map<String,MasterOutput> outputInstances;
     private boolean activateRestRunner = false;
     //TODO: consider making it a singleton
-    //TODO: Remove Old REST implementation
 
     public MasterConfigurator(String configurationFilePath) {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
@@ -104,10 +99,12 @@ public class MasterConfigurator {
             case "GenericGET":
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new GETOutput(outputData.getName(),outputData.getAddress());
-            case "RestOutput":
-                RestOutput.setInstanceName(outputData.getName());
-                return RestOutput.getInstance();
+                String param = getRESTPathParameter(outputData.getAddress());
+                if (param == null) {
+                    return new GETOutput(outputData.getName(),outputData.getAddress());
+                } else {
+                    return new ParametrizedGETOutput(outputData.getName(), outputData.getAddress(), param);
+                }
             case "MatchMaker" :
                 return new MatchMaker(outputData.getName(),type.length > 1 ? type[1] : "random");
             case "AdvantEdgeClient" :
@@ -130,10 +127,6 @@ public class MasterConfigurator {
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
                 return new POSTInput(data.getAddress(),data.getCommand(),data.getInformation());
-            case "RestInput":
-                //RestRunner.getRestRunner("RestServer",port != 0 ? port : 4567);
-                //activateRestRunner = true;
-                return new RestInput();
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
@@ -166,6 +159,14 @@ public class MasterConfigurator {
         return result;
     }
 
+    private String getRESTPathParameter(String address) {
+        if (address.matches(".*/:\\w*$")) {
+            return address.substring(address.indexOf("/:") + 2);
+        } else {
+            return null;
+        }
+    }
+
 
     /**
      * Based on the configuration file, returns the runners that the master should use
@@ -181,7 +182,6 @@ public class MasterConfigurator {
 
         if (activateRestRunner) {
             try {
-                //result.add(RestRunner.getRestRunner());
                 result.add(RestServerRunner.getInstance());
             } catch (IllegalStateException e) {
                 e.printStackTrace();

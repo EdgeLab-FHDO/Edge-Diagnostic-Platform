@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.OldRest;
 
 import InfrastructureManager.EdgeClient;
@@ -43,3 +44,5 @@ public class RestInput implements MasterInput {
         return executed;
     }
 }
+
+ */

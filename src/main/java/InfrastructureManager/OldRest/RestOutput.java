@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.OldRest;
 
 import InfrastructureManager.EdgeClient;
@@ -27,7 +28,7 @@ public class RestOutput extends MasterOutput {
         String clientID = request.params(":client_id").replaceAll("\\s+","");
         response.type("application/json");
         String response_body = this.nodesToSend.get(clientID);
-        return response_body;
+        return response_body; 
     };
 
     private RestOutput(String name) {
@@ -105,3 +106,5 @@ public class RestOutput extends MasterOutput {
         }
     }
 }
+
+ */

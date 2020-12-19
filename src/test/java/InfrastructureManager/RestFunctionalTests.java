@@ -1,6 +1,5 @@
 package InfrastructureManager;
 
-import InfrastructureManager.OldRest.RestRunner;
 import org.junit.*;
 
 import io.restassured.builder.RequestSpecBuilder;
@@ -9,6 +8,7 @@ import io.restassured.specification.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+//TODO: Delete
 public class RestFunctionalTests {
     private static RequestSpecification requestSpec;
     private static String testIp = "http://localhost";
