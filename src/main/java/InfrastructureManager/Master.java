@@ -232,7 +232,9 @@ public class Master {
     }
 
     public static void main(String[] args) {
-        Master.changeConfigPath("src/main/resources/Configuration2.json");
+        if (args.length > 0) {
+            Master.changeConfigPath(args[0]);
+        }
         Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();
