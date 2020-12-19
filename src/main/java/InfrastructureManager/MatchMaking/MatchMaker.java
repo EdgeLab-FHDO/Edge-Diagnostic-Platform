@@ -20,6 +20,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient,EdgeNode> mapping;
 
+    /*
+    Guarded block and boolean to make the input block until there is content to send to the master
+     */
+    private final Object blockLock;
+    private volatile boolean block;
+
     public MatchMaker(String name, String algorithmType) {
         super(name);
         setAlgorithmFromString(algorithmType);
@@ -28,6 +34,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
         this.mapping = new HashMap<>();
+
+        this.blockLock = new Object();
+        this.block = true;
     }
 
     public void setAlgorithmFromString(String algorithmType) {
@@ -52,7 +61,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 System.out.println("No node to assign");
             } else {
                 this.mapping.put(client,node);
-                command = "give_node " + client.getId() + " " + node.getId();
+                String nodeAsJSON = this.mapper.writeValueAsString(node);
+                command = "give_node " + client.getId() + " " + nodeAsJSON;
+                unBlock();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,13 +113,34 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
     @Override
-    public String read() throws Exception {
-        if (command.isEmpty()) {
-            throw new Exception("No command exception");
-        }
-        String toSend = command;
+    public String read(){
+        String toSend = getReading();
         command = "";
+        block = true;
         return toSend;
+    }
+
+    private String getReading() {
+        while (block) {
+            synchronized (blockLock) {
+                try {
+                    blockLock.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return this.command;
+    }
+
+    /**
+     * Unblock the reading, so a value can be returned to the master
+     */
+    private void unBlock() {
+        synchronized (blockLock) {
+            block = false;
+            blockLock.notifyAll();
+        }
     }
 
     public List<EdgeNode> getNodeList() {

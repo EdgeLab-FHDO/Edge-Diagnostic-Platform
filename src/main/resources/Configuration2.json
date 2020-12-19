@@ -2,17 +2,30 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "GenericPOST","name": "rest_in","address": "/post_test","port": 4897,
-          "command" :  "test $name $number",
-          "information": ["name", "number"],
+        {"type": "MatchMaker-Random","name": "match_m"},
+        {"type": "GenericPOST","name": "client_in_rest","address": "/client/register","port": 4567,
+          "command" :  "register_client $body",
+          "information": [],
+          "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "node_in_rest","address": "/node/register","port": 4567,
+          "command" :  "register_node $body",
+          "information": [],
+          "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "assignment_rest","address": "/client/assign","port": 4567,
+          "command" :  "assign_client $id",
+          "information": ["id"],
           "@IOType" : "CustomCommand"
         }
+
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "GenericGET","name": "get", "address": "/get_test","port": 4897},
-        {"type": "GenericGET","name": "get2", "address": "/get_node/:client_id","port": 4897},
-        {"type": "MasterUtility","name": "util"}
+        {"type": "GenericGET","name": "get", "address": "/get_test","port": 4567},
+        {"type": "GenericGET","name": "get2", "address": "/client/get_node/:client_id","port": 4567},
+        {"type": "MasterUtility","name": "util"},
+        {"type": "MatchMaker-Random","name": "match_m"}
       ]
     },
   "connections" : [
@@ -26,25 +39,31 @@
       }
     },
     {
-      "in" : "console_in",
-      "out" : "get",
+      "in" : "client_in_rest",
+      "out" : "match_m",
       "commands" : {
-        "get_test" : "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
       }
     },
     {
-      "in" : "console_in",
+      "in" : "node_in_rest",
+      "out" : "match_m",
+      "commands" : {
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "assignment_rest",
+      "out" : "match_m",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "match_m",
       "out" : "get2",
       "commands" : {
-        "get2_test" : "toGET resource client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true}"
-      }
-    },
-
-    {
-      "in" : "rest_in",
-      "out" : "console_out",
-      "commands" : {
-        "test $name $number" : "console $name $number"
+        "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
       }
     }
   ]
