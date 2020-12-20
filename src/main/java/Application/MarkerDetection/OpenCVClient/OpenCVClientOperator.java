@@ -42,6 +42,8 @@ public class OpenCVClientOperator {
 
     private static OpenCVClientOperator instance = null;
 
+    private boolean debugMode = true; //TODO make this available when starting application
+
     private OpenCVClientOperator() {
         mapper = new ObjectMapper();
         ipLock = new Semaphore(1);
@@ -182,7 +184,6 @@ public class OpenCVClientOperator {
 
             detector.setIds(ids);
             detector.setCorners(corners);
-            System.out.println("Detected in Server");
         } catch (IOException | InterruptedException e) {
             stopConnection();
             throw new RemoteExecutionException(e);
@@ -191,17 +192,19 @@ public class OpenCVClientOperator {
 
     public void detectMarkerInClient() {
         detector.detect(subject);
-        System.out.println("Detected in Client");
     }
 
     public void markerDetection() {
         Mat result;
+        long startTime = System.nanoTime();
+        String location = "Client";
         subject = ImageProcessor.getImageMat(fileName);
 
         try {
             serverLock.acquire();
             if(utilizeServer) {
                 detectMarkerInServer();
+                location = "Server";
             } else {
                 detectMarkerInClient();
             }
@@ -215,5 +218,11 @@ public class OpenCVClientOperator {
 
         result = detector.drawDetectedMarkers(subject);
         ImageProcessor.writeImage(resultFileName, result);
+
+        long endTime = System.nanoTime();
+
+        if(debugMode) {
+            System.out.println("Detected in " + location + " Execution Time: " + ((endTime-startTime)/1000000) + "ms");
+        }
     }
 }

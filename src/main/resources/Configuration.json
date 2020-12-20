@@ -69,7 +69,8 @@
       "commands" : {
         "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
         "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
-        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name",
+        "ae_update_nw_char $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS"
       }
     },
     {
@@ -100,14 +101,6 @@
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
         "assign_client $client_id" : "matchMaker assign_client $client_id"
-      }
-    },
-    {
-      "in" : "rest_in",
-      "out" : "console_out",
-      "commands" : {
-        "register_client $client_as_json_string" : "console registered $client_as_json_string_registered",
-        "register_node $node_as_json_string" : "console registered $node_as_json_string_registered"
       }
     },
     {
