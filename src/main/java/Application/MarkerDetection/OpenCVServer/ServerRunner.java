@@ -1,4 +1,4 @@
-package Application.OpenCVServer;
+package Application.MarkerDetection.OpenCVServer;
 
 
 import Application.Utilities.RemoteExecutionException;

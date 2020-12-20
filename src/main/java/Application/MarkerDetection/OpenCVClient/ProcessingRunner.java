@@ -1,4 +1,4 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
 
 public class ProcessingRunner implements Runnable {
     //TODO implement and use exit and running values
@@ -14,6 +14,11 @@ public class ProcessingRunner implements Runnable {
     public void run() {
         while(true) {
             activeOperator.markerDetection();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

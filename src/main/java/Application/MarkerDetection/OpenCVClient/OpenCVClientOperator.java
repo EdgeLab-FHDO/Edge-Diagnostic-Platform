@@ -1,4 +1,4 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
 
 import Application.Utilities.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,10 +31,10 @@ public class OpenCVClientOperator {
     public Semaphore serverLock;
 
     //Server Communication Properties
-    private boolean utilizeServer;
+    public boolean utilizeServer;
     private String ip;
     private int port;
-    private boolean connected;
+    public boolean connected;
 
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
@@ -165,6 +165,7 @@ public class OpenCVClientOperator {
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
+
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
@@ -181,6 +182,7 @@ public class OpenCVClientOperator {
 
             detector.setIds(ids);
             detector.setCorners(corners);
+            System.out.println("Detected in Server");
         } catch (IOException | InterruptedException e) {
             stopConnection();
             throw new RemoteExecutionException(e);
@@ -189,11 +191,13 @@ public class OpenCVClientOperator {
 
     public void detectMarkerInClient() {
         detector.detect(subject);
+        System.out.println("Detected in Client");
     }
 
     public void markerDetection() {
         Mat result;
         subject = ImageProcessor.getImageMat(fileName);
+
         try {
             serverLock.acquire();
             if(utilizeServer) {

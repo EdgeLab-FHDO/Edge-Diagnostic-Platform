@@ -4,13 +4,14 @@
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "RestInput","name": "rest_in", "port": 4567},
         {"type": "MatchMaker-Random","name": "match_m"},
-        {"type": "Scenario", "name": "dummy"}
+        {"type": "Scenario", "name": "dummy"},
+        {"type": "Scenario", "name": "run_open_cv_demo"}
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 10500},
+        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 80},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "MatchMaker-Random","name": "match_m"},
@@ -102,6 +103,21 @@
       }
     },
     {
+      "in" : "rest_in",
+      "out" : "console_out",
+      "commands" : {
+        "register_client $client_as_json_string" : "console registered $client_as_json_string_registered",
+        "register_node $node_as_json_string" : "console registered $node_as_json_string_registered"
+      }
+    },
+    {
+      "in" : "match_m",
+      "out" : "console_out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
       "in" : "match_m",
       "out" : "rest_out",
       "commands" : {
@@ -129,6 +145,23 @@
       "out" : "match_m",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "run_open_cv_demo",
+      "out" : "util",
+      "commands" : {
+        "start_rest_server" : "util runRunner RestServer",
+        "start_runner $runner_name" : "util runRunner $runner_name"
+      }
+    },
+    {
+      "in" : "run_open_cv_demo",
+      "out" : "advant_e",
+      "commands" : {
+        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
+        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
       }
     }
   ]

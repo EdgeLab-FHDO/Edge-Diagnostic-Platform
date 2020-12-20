@@ -1,4 +1,6 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
+
+import javax.sound.midi.SysexMessage;
 
 public class ConnectionEvaluator {
     private boolean evaluation;

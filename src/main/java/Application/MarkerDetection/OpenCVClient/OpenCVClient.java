@@ -1,4 +1,4 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
 
 import Application.Utilities.OpenCVUtil;
 
@@ -15,16 +15,16 @@ public class OpenCVClient {
 
         try {
             activeOperator.setupClientRunners(args);
+            activeClient.heartBeatThread = new Thread(activeOperator.beatRunner, "HeartBeatThread");
+            activeClient.heartBeatThread.start();
             activeClient.masterCommunicationThread = new Thread(activeOperator.masterCommunicationRunner, "MasterCommunicationThread");
             activeClient.masterCommunicationThread.start();
             activeClient.processingThread = new Thread(activeOperator.processingRunner, "ProcessingThread");
             activeClient.processingThread.start();
-            activeClient.heartBeatThread = new Thread(activeOperator.beatRunner, "HeartBeatThread");
-            activeClient.heartBeatThread.start();
 
+            activeClient.heartBeatThread.join();
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
-            activeClient.heartBeatThread.join();
         } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
         }

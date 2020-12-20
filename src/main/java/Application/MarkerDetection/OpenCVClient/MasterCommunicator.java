@@ -1,4 +1,4 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
 
 import java.io.IOException;
 import java.net.ConnectException;
