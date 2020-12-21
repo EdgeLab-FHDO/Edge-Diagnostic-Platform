@@ -107,6 +107,11 @@ deployment:
                                     id: 158bddcd-f340-41b7-92d6-23c04d6b348a
                                     name: fog1
                                     type: FOG
+                                    geoData:
+                                        location: null
+                                        path: null
+                                        eopMode: ""
+                                        velocity: null
                                     processes:
                                         -
                                             id: 076eb81a-8cf7-40bd-8a15-d30733fee446
@@ -117,8 +122,7 @@ deployment:
                                             userChartAlternateValues: null
                                             userChartGroup: null
                                             image: 'meep-docker-registry:30001/opencv-server'
-                                            environment: 'SERVER_ID=13,SERVER_IP=edge-app1,MASTER_URL=https://localhost:4567,BEAT_COMMAND=node/register,CONNECTED=true,PORT=10300'
-                                            commandArguments: '-c, export; ./server_exe.sh -i server13 -a edge-app1 -m http://172.17.0.1:4567 -b /node/register -p 10300;'
+                                            commandArguments: '-c, export; ./limit.sh -v -a 172.17.0.1:4567/node/limit; ./server_exe.sh -i server13 -a edge-app1 -m http://172.17.0.1:4567 -b /node/register -p 10300;'
                                             commandExe: /bin/bash
                                             serviceConfig:
                                                 name: edge-app1
@@ -138,8 +142,12 @@ deployment:
                                                 packetLoss: 0
                                             placementId: ""
                                     netChar:
+                                        latency: 0
                                         throughputDl: 1000
                                         throughputUl: 1000
+                                        latencyVariation: 0
+                                        packetLoss: 0
+                                    label: fog1
                                 -
                                     id: 35d57900-ebe3-47a2-b655-5f1fe4834b7c
                                     name: ue1
@@ -149,24 +157,12 @@ deployment:
                                             id: 0e8f7063-91f0-4cb7-b82a-84babf25163d
                                             name: ue-app1
                                             type: UE-APP
-                                            isExternal: false
-                                            userChartLocation: null
-                                            userChartAlternateValues: null
-                                            userChartGroup: null
                                             image: 'meep-docker-registry:30001/opencv-client'
-                                            environment: ""
-                                            commandArguments: '-c, export; ./client_exe.sh  -i client13 -m http://172.17.0.1:4567 -b /client/register -s /client/get_node/;'
+                                            commandArguments: '-c, export; ./client_exe.sh -i client13 -m http://172.17.0.1:4567 -b /client/register -s /client/get_node/;'
                                             commandExe: /bin/bash
-                                            serviceConfig: null
-                                            gpuConfig: null
-                                            externalConfig: null
                                             netChar:
-                                                latency: 0
-                                                latencyVariation: 0
                                                 throughputDl: 1000
                                                 throughputUl: 1000
-                                                packetLoss: 0
-                                            placementId: ""
                                     netChar:
                                         throughputDl: 1000
                                         throughputUl: 1000
