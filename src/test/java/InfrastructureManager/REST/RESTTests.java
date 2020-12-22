@@ -35,7 +35,7 @@ public class RESTTests {
     }
 
     @Test
-    public void POSTInputWithBodyInCommandTest() {
+    public void POSTInputWithBodyInCommandTest() throws InterruptedException {
         String path ="/post_test1";
         POSTInput in = new POSTInput(path,"test1 $body", Collections.emptyList());
         String expected = "test1 " + JSONExample;
@@ -52,7 +52,7 @@ public class RESTTests {
     }
 
     @Test
-    public void POSTInputWithParametersInCommandTest() {
+    public void POSTInputWithParametersInCommandTest() throws InterruptedException {
         String path = "/post_test2";
         POSTInput in2 = new POSTInput(path, "test2 $name $number", List.of("name","number"));
         String expected = "test2 example 874";

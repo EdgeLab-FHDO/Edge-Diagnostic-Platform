@@ -50,7 +50,7 @@ public class MatchMakingTests {
     }
 
     @Test
-    public void matchMakerAsInputTest() {
+    public void matchMakerAsInputTest() throws InterruptedException {
         String node = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
         String expected = "give_node client1 " + node;
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
@@ -67,7 +67,7 @@ public class MatchMakingTests {
     }
 
     @Test
-    public void assignNodeToClientCompleteTest() {
+    public void assignNodeToClientCompleteTest() throws InterruptedException {
 
         String path = "/client/get_node/:client_id";
         ParametrizedGETOutput output = new ParametrizedGETOutput("rest_out",path, "client_id");
