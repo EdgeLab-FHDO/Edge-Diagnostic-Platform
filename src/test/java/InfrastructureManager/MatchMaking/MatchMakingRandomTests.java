@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class MatchMakingTests {
+public class MatchMakingRandomTests {
     private final MatchMaker matchMaker = new MatchMaker("match_m","random");
     private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
@@ -65,15 +65,13 @@ public class MatchMakingTests {
 
     @Test
     public void assignNodeToClientCompleteTest() throws Exception {
-
-
         Master.getInstance().addClient(new EdgeClient("client1", 100,101, 66, "nothing"));
         Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true, 123, 456,150, 200, 55));
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         matchMaker.out("matchMaker assign_client client1");
         RestOutput.getInstance().out(Master.getInstance().execute(matchMaker.read(),commandSet));
-        String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
+        String expected = "node1";
 
         String response = given().spec(requestSpec)
                 .when().get("/client/get_node/client1")
