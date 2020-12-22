@@ -1,7 +1,6 @@
 package InfrastructureManager;
 
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

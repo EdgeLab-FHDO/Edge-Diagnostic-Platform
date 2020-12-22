@@ -1,52 +1,39 @@
 package InfrastructureManager.SSH;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class SSHClientTests {
 
     private final SSHClient client = new SSHClient("test_ssh");
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
+        var e = Assert.assertThrows(exceptionClass, () -> client.out(command));
+        Assert.assertEquals(expectedMessage, e.getMessage());
+    }
 
     @Test
     public void invalidCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid command for SSHClient");
-        client.out("ssh notACommand");
+        assertException(IllegalArgumentException.class, "ssh notACommand", "Invalid command for SSHClient");
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command - SSHClient");
-        client.out("ssh setup"); //Missing the parameters
+        assertException(IllegalArgumentException.class, "ssh setup", "Arguments missing for command - SSHClient");
     }
 
     @Test
     public void executeCommandNeedsToHaveDisplayFlag() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Wrong Display parameter in SSHClient execute command");
-        client.out("ssh execute ls"); //Missing the parameters
+        assertException(IllegalArgumentException.class, "ssh execute ls", "Wrong Display parameter in SSHClient execute command");
     }
 
     @Test
     public void clientHasToBeSetUpBeforeExecuting(){
-        exceptionRule.expect(IllegalStateException.class);
-        exceptionRule.expectMessage("SSH Client has not been set up");
-        client.out("ssh execute -f ls");
+        assertException(IllegalStateException.class, "ssh execute -f ls", "SSH Client has not been set up");
     }
 
     @Test
     public void clientHasToBeSetUpBeforeSendingFiles(){
-        exceptionRule.expect(IllegalStateException.class);
-        exceptionRule.expectMessage("SSH Client has not been set up");
-        client.out("ssh sendFile file1 /home/file2");
+        assertException(IllegalStateException.class, "ssh sendFile file1 /home/file2", "SSH Client has not been set up");
     }
-
-
-
-
 }

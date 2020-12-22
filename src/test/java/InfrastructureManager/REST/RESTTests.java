@@ -35,24 +35,36 @@ public class RESTTests {
     }
 
     @Test
-    public void POSTInputWithBodyInCommandTest() throws InterruptedException {
+    public void POSTInputWithBodyInCommandTest() {
         String path ="/post_test1";
         POSTInput in = new POSTInput(path,"test1 $body", Collections.emptyList());
         String expected = "test1 " + JSONExample;
-        Thread t = new Thread(()-> given().spec(requestSpec).body(JSONExample).post(path));
+        Thread t = new Thread(()-> {
+            given().spec(requestSpec).body(JSONExample).post(path);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         t.start();
-        Thread.sleep(20);
         Assert.assertEquals(expected, in.read());
     }
 
     @Test
-    public void POSTInputWithParametersInCommandTest() throws InterruptedException {
+    public void POSTInputWithParametersInCommandTest() {
         String path = "/post_test2";
         POSTInput in2 = new POSTInput(path, "test2 $name $number", List.of("name","number"));
         String expected = "test2 example 874";
-        Thread t = new Thread(()-> given().spec(requestSpec).body(JSONExample).post(path));
+        Thread t = new Thread(()-> {
+            given().spec(requestSpec).body(JSONExample).post(path);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         t.start();
-        Thread.sleep(20);
         Assert.assertEquals(expected, in2.read());
     }
 
