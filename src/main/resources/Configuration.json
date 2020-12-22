@@ -31,6 +31,7 @@
         {"type": "FileOutput", "name": "file_out"},
         {"type": "GenericGET","name": "rest_limit", "address": "/limit","port": 4567},
         {"type": "GenericGET","name": "get2", "address": "/client/get_node/:client_id","port": 4567},
+        {"type": "GenericGET","name": "get_test", "address": "/get_test","port": 4567},
         {"type": "MasterUtility","name": "util"},
         {"type": "MatchMaker-Random","name": "match_m"},
         {"type":  "NodeResourceLimiter", "name": "limit"}
@@ -166,6 +167,14 @@
       "out" : "rest_limit",
       "commands" : {
         "set_limits $limits" : "toGET resource $limits"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "get_test",
+      "commands" : {
+        "test_get" : "toGET resource {\"name\":\"example\",\"number\":874}",
+        "test_get2" : "toGET resource {\"name\":\"other\",\"number\":123}"
       }
     }
   ]

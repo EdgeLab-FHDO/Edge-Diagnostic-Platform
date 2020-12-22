@@ -6,8 +6,6 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.*;
-
 import static spark.Spark.get;
 
 /**
@@ -16,7 +14,7 @@ import static spark.Spark.get;
  */
 public class GETOutput extends MasterOutput {
 
-    private Queue<String> toSend;//FIFO Queue to store data
+    private String toSend;
     protected final String path;
 
     protected boolean isActivated; //To check if REST server is running
@@ -26,11 +24,7 @@ public class GETOutput extends MasterOutput {
      */
     protected Route GETHandler = (Request request, Response response) -> {
         response.type("application/json");
-        try {
-            return this.toSend.remove();
-        } catch (NoSuchElementException e) {
-            return "";
-        }
+        return this.toSend;
     };
 
     /**
@@ -40,7 +34,7 @@ public class GETOutput extends MasterOutput {
      */
     public GETOutput(String name, String path) {
         super(name);
-        this.toSend = new ArrayDeque<>();
+        this.toSend = "";
         this.path = path;
         this.isActivated = false;
     }
@@ -98,6 +92,6 @@ public class GETOutput extends MasterOutput {
         if (!this.isActivated) {
             this.activate();
         }
-        this.toSend.offer(jsonBody);
+        this.toSend = jsonBody;
     }
 }
