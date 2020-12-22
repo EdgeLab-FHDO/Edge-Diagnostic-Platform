@@ -593,7 +593,11 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         return clientList;
     }
 
-    public HashMap<String, EdgeClientHistory> getClientHistoryMap() { return clientHistoryHashMap;};
+    public HashMap<String, EdgeClientHistory> getClientHistoryMap() {
+        return clientHistoryHashMap;
+    }
+
+    ;
 
     public Map<String, String> getMapping() {
         return mapping;

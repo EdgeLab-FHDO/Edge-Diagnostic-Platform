@@ -54,13 +54,13 @@ public class MatchMakingNaiveTest {
         matchMaker.out("matchMaker assign_client client1");
         //Should still be node 1, the distance haven't change yet
         String thisShouldBeNode1Again = matchMaker.getMapping().get("client1");
-        Assert.assertEquals("node1",thisShouldBeNode1Again);
+        Assert.assertEquals("node1", thisShouldBeNode1Again);
 
         //Assign client 2
         matchMaker.out("matchMaker assign_client client2");
         String thisShouldBeNode2 = matchMaker.getMapping().get("client2");
         //Should be node 2 because node2 is closer to client 2 than others
-        Assert.assertEquals("node2",thisShouldBeNode2);
+        Assert.assertEquals("node2", thisShouldBeNode2);
 
         //Disconnect client 2
         matchMaker.out("matchMaker disconnect_client {\"id\":\"client2\",\"message\":\"job_failed\"}");
@@ -69,7 +69,7 @@ public class MatchMakingNaiveTest {
         matchMaker.out("matchMaker assign_client client2");
         String thisShouldBeNode1ForThis = matchMaker.getMapping().get("client2");
         //Should be node 1 because node1 is closer to client 2 than others
-        Assert.assertEquals("node1",thisShouldBeNode1ForThis);
+        Assert.assertEquals("node1", thisShouldBeNode1ForThis);
 
     }
 

@@ -126,13 +126,13 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             //Check whether it's good enough to match, or we just return the rejectedNode
             if (numberOfUnqualified >= totalNumberOfNode) {
                 logger.warn("""
-                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                    No nodes in system satisfy required parameters (Network, Resource, Distance)
-                    """);
+                        >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                        No nodes in system satisfy required parameters (Network, Resource, Distance)
+                        """);
                 throw new Exception("""
-                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                    No nodes in system satisfy required parameters (Network, Resource, Distance)
-                    """);
+                        >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                        No nodes in system satisfy required parameters (Network, Resource, Distance)
+                        """);
             }
 
             //calculate current node score and find best node
@@ -237,7 +237,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
                             ping is negative? Something fishy here, exception incoming"""
                     , thisNode.getId(), thisNode.getLocation(), thisClient.getId(), thisClient.getLocation());
             throw new Exception("-------------------------------GETTING PING FAILED----------------------------\n" +
-                    "["+thisNode.getId()+"] location - "+thisNode.getLocation()+"|| ["+thisClient.getId()+"] location - "+thisClient.getLocation());
+                    "[" + thisNode.getId() + "] location - " + thisNode.getLocation() + "|| [" + thisClient.getId() + "] location - " + thisClient.getLocation());
         } else return pingResult;
     }
 }
