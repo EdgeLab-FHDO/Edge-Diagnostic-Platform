@@ -108,14 +108,6 @@ public class MatchMakingScoreTest {
         Assert.assertEquals("node2",thisShouldBeNode2);
     }
 
-
-    @Test
-    public void registerClientTest() {
-        matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
-        String expected = matchMaker.getClientList().get(0).getId();
-        Assert.assertEquals("client1", expected);
-    }
-
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 }

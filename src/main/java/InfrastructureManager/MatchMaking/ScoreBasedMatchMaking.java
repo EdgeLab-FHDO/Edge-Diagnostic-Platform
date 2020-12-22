@@ -123,6 +123,17 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
                 numberOfUnqualified++;
                 continue;
             }
+            //Check whether it's good enough to match, or we just return the rejectedNode
+            if (numberOfUnqualified >= totalNumberOfNode) {
+                logger.warn("""
+                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                    No nodes in system satisfy required parameters (Network, Resource, Distance)
+                    """);
+                throw new Exception("""
+                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
+                    No nodes in system satisfy required parameters (Network, Resource, Distance)
+                    """);
+            }
 
             //calculate current node score and find best node
             logger.info("calculating [{}] score: ", thisNodeID);
@@ -138,17 +149,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
 
         }
 
-        //Check whether it's good enough to match, or we just return the rejectedNode
-        if (numberOfUnqualified >= totalNumberOfNode) {
-            logger.warn("""
-                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                    No nodes in system satisfy required parameters (Network, Resource, Distance)
-                    """);
-            throw new Exception("""
-                    >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                    No nodes in system satisfy required parameters (Network, Resource, Distance)
-                    """);
-        }
+
         if (bestScore < QOS_THRESHOLD) {
             return bestNode;
         } else {

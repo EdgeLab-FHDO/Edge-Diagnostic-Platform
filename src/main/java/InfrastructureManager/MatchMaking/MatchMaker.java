@@ -62,6 +62,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         switch (algorithmType.toLowerCase()) {
             case "random" -> setAlgorithm(new RandomMatchMaking());
             case "score" -> setAlgorithm(new ScoreBasedMatchMaking());
+            case "naive" -> setAlgorithm(new NaiveMatchMaking());
             default -> throw new IllegalArgumentException("Invalid type for MatchMaker");
         }
     }
