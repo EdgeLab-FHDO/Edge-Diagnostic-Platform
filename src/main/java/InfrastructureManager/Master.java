@@ -94,7 +94,9 @@ public class Master {
             ScenarioRunner scenarioRunner = getRunner(scenario);
             if (!scenarioRunner.isRunning()) { //If running then leave it running
                 scenarioRunner.setScenario(scenario, startTime);
-                new Thread(scenarioRunner).start(); // Run the scenario in another thread
+                Thread t = new Thread(scenarioRunner, scenarioRunner.getName()); // Run the scenario in another thread
+                runningThreads.add(t);
+                t.start();
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -205,7 +207,7 @@ public class Master {
             if (runner.getName().equals("Runner_console_in")) {
                 mainThread = new Thread(runner,"MainRunner");
                 runningThreads.add(mainThread);
-            } else {
+            } else if (runner.getClass() != ScenarioRunner.class) {
                 runningThreads.add(new Thread(runner, runner.getName()));
             }
         }
