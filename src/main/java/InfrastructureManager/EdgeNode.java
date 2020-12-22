@@ -27,7 +27,7 @@ public class EdgeNode {
     private long totalNetwork; // maximum amount of network bandwidth the node have
 
     /*
-   ------------------------Getter function--------------------------------
+   ------------------------Getter & setter function--------------------------------
     */
     public String getId() {
         return id;
@@ -53,11 +53,15 @@ public class EdgeNode {
         return location;
     }
 
-    public long getTotalResource() { return totalResource;}
+    public long getTotalResource() {
+        return totalResource;
+    }
 
-    public long getTotalNetwork() { return totalNetwork;}
+    public long getTotalNetwork() {
+        return totalNetwork;
+    }
 
-    public void setTotalNetwork( long inputTotalNetwork){
+    public void setTotalNetwork(long inputTotalNetwork) {
         this.totalNetwork = inputTotalNetwork;
     }
 
@@ -84,6 +88,7 @@ public class EdgeNode {
     public void setTotalResource(long totalResource) {
         this.totalResource = totalResource;
     }
+
     public EdgeNode() {
         this.id = null;
         this.ipAddress = "null";
@@ -111,7 +116,7 @@ public class EdgeNode {
     //edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
     public String toString() {
-        return  "EdgeNode {\n" +
+        return "EdgeNode {\n" +
                 "  id : " + id + ",\n" +
                 "  ipAddress : " + ipAddress + ",\n" +
                 "  connected : " + connected + ",\n" +
@@ -119,7 +124,7 @@ public class EdgeNode {
                 "  totalResource : " + totalResource + ",\n" +
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
-                "  location : " + location + "\n}" ;
+                "  location : " + location + "\n}";
 
     }
 }

@@ -4,6 +4,7 @@
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "RestInput","name": "rest_in", "port": 4567},
         {"type": "MatchMaker-score","name": "match_m"},
+        {"type": "Scenario", "name": "dummy"},
         {"type": "Scenario", "name": "scoreBased"}
 
       ],
