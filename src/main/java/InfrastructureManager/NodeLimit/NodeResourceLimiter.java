@@ -30,7 +30,7 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
     }
 
     @Override
-    public String read() throws Exception {
+    public String read() throws InterruptedException, JsonProcessingException {
         String toSend = "set_limits " + getReading();
         block = true;
         return toSend;
@@ -61,14 +61,10 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
         unBlock();
     }
 
-    private String getReading() throws JsonProcessingException {
+    private String getReading() throws JsonProcessingException, InterruptedException {
         while (block) {
             synchronized (blockLock) {
-                try {
-                    blockLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                blockLock.wait();
             }
         }
         return this.mapper.writeValueAsString(this.limitNodes);

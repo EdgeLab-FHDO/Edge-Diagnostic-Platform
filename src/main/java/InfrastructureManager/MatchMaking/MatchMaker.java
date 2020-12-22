@@ -113,21 +113,17 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
     @Override
-    public String read(){
+    public String read() throws InterruptedException {
         String toSend = getReading();
         command = "";
         block = true;
         return toSend;
     }
 
-    private String getReading() {
+    private String getReading() throws InterruptedException {
         while (block) {
             synchronized (blockLock) {
-                try {
-                    blockLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                blockLock.wait();
             }
         }
         return this.command;

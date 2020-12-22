@@ -1,5 +1,6 @@
 package InfrastructureManager.REST.Input;
 
+import InfrastructureManager.Master;
 import InfrastructureManager.MasterInput;
 import InfrastructureManager.REST.RestServerRunner;
 import spark.Request;
@@ -96,7 +97,7 @@ public class POSTInput implements MasterInput {
      * @return Command to trigger events in the master
      */
     @Override
-    public String read() {
+    public String read() throws InterruptedException {
         if (!isActivated) {
             activate();
         }
@@ -109,14 +110,10 @@ public class POSTInput implements MasterInput {
      * Get the commands to send to the master from the internal FIFO queue, block if nothing available
      * @return Command from the queue
      */
-    private String getReading() {
+    private String getReading() throws InterruptedException {
         while (block) {
             synchronized (blockLock) {
-                try {
-                    blockLock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                blockLock.wait();
             }
         }
         return this.toRead.poll();

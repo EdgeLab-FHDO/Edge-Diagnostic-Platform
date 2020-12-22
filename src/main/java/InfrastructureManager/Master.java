@@ -14,6 +14,8 @@ public class Master {
     private static String configPath = "src/main/resources/Configuration.json";
 
     private final List<Runner> runnerList;
+    private final List<Thread> runningThreads;
+
     private final List<EdgeNode> availableNodes;
     private final List<EdgeClient> registeredClients;
 
@@ -29,6 +31,7 @@ public class Master {
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator(configPath);
         runnerList = configurator.getRunners();
+        runningThreads = new ArrayList<>();
         registeredClients = new ArrayList<>();
         availableNodes = new ArrayList<>();
     }
@@ -42,11 +45,8 @@ public class Master {
      * Method for exiting the program, by exiting each running runner
      */
     public void exitAll() {
-        for (Runner runner : runnerList) {
-            if (runner.isRunning()){
-                runner.exit();
-            }
-        }
+        runningThreads.forEach(Thread::interrupt);
+        runnerList.stream().filter(Runner::isRunning).forEach(Runner::exit);
     }
 
     /**
@@ -204,11 +204,12 @@ public class Master {
         for (Runner runner : runnerList) {
             if (runner.getName().equals("Runner_console_in")) {
                 mainThread = new Thread(runner,"MainRunner");
-                mainThread.start();
+                runningThreads.add(mainThread);
             } else {
-                new Thread(runner, runner.getName()).start();
+                runningThreads.add(new Thread(runner, runner.getName()));
             }
         }
+        runningThreads.forEach(Thread::start);
     }
 
 
@@ -235,6 +236,7 @@ public class Master {
         if (args.length > 0) {
             Master.changeConfigPath(args[0]);
         }
+        //Master.changeConfigPath("src/test/resources/REST/RESTTestConfiguration.json");
         Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();
