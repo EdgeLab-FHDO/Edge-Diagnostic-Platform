@@ -3,11 +3,9 @@ FROM ubuntu:16.04
 
 #setup tools
 COPY bash/OpenCVCommon/install.sh install.sh
-COPY bash/NodeLimit/limit_docker.sh limit.sh
 COPY resources/OpenCV/opencv-450.jar /gen/opencv-450.jar
 COPY resources/OpenCV/libopencv_java450.so /gen/libopencv_java450.so
 RUN chmod +x install.sh && sync && ./install.sh && rm install.sh
-RUN chmod +x limit.sh
 
 #copy and build codes
 COPY bash/OpenCVCommon/build_classes.sh build_classes.sh
