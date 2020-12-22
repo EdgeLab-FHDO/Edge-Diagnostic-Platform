@@ -2,8 +2,6 @@ package InfrastructureManager;
 
 public class EdgeNode {
     /*
-    TODO: update client's requirements
-    TODO: update javadoc when changed
     EdgeClient class with client's parameters (resource, id, etc)
 
     the variable from JSON must match the global variable below
@@ -110,7 +108,7 @@ public class EdgeNode {
     }
 
 
-    //TODO: edit this when add new data parameter, left and right side must be exact in order to print things out.
+    //edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
     public String toString() {
         return  "EdgeNode {\n" +

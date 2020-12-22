@@ -37,18 +37,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     //A hashmap with client and its history. Used to fetch history related data
     private final HashMap<String, EdgeClientHistory> clientHistoryHashMap = new HashMap<>();
 
-    //History list of edge node and client
-    //DONE: implement a new class for history, using hashmap like this is too annoying
-    //DONE: implement timing in history (decay history score by time)
-    //DONE: Figure out whether this history should be a global variable to share across all instances, or use it locally
-
-    //Hashmap contain <NodeId, HashMap<ClientID, historyScore>>
-
-    /*
-    TODO: make logger for  debugging (use a boolean variable will be fine) to reduce the console output later on
-    TODO: update client and node's data after assigned.
-     */
-
 
     /*
     -----------------------start_match_m start from here--------------------------------------------------
@@ -56,12 +44,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     public MatchMaker(String name, String algorithmType) {
         super(name);
 
-        //Manually changed algorithm used here. -negative, can't use
         System.out.println("input for match making:  \nstart_rest_server \nstart_runner Runner_rest_in \nstart_runner Runner_match_m \n");
-
-
         setAlgorithmFromString(algorithmType);
-
         //initiate variables
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
@@ -88,7 +72,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
     /*
     -----------------------Assigning client to node--------------------------------------------------
-    Single client to single node, not multiple in the same time
+    MATCH MAKING ACTION, single client to single node, not multiple in the same time.
     */
     private void assign(String thisClientID) {
 
@@ -103,14 +87,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 logger.warn("this client is already connected with {}", connectedNode);
                 logger.info("client history info: \n{}", clientHistoryInfo);
                 logger.info("mapping map: {}", mapping);
-                throw new Exception("this ["+thisClientID+"] is already connected with " + connectedNode);
+                throw new Exception("this [" + thisClientID + "] is already connected with " + connectedNode);
             } else {
                 //match client with node in nodelist according to algorithm
                 EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, clientHistoryInfo);
                 String thisNodeID = thisNode.getId();
                 //list of node, for debugging purposes
                 for (EdgeNode theNode : nodeList) {
-                    logger.debug("{}", theNode);
+                    logger.info("{}", theNode);
                 }
                 logger.info("assigned node info: \n{}", thisNode);
                 logger.info("client info: \n{}", thisClient);
@@ -204,7 +188,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             String thisNodeID = this.mapping.get(thisClientID);
             if (thisNodeID == null) {
                 logger.error("This client [{}] is not connected to any nodes in the system", thisClientID);
-                //TODO: create a boolean [DEBUG] variable to toggle between using exception to catch error or just skip
                 return;
             }
             EdgeNode thisNode = getNodeByID(thisNodeID);
@@ -322,22 +305,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                                 """);
                         break;
 
-                    case "update_node":
-                        updateNode(commandLine[2]);
-                        logger.info("""
-                                node updated, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
-                        break;
-
-                    case "update_client":
-                        updateClient(commandLine[2]);
-                        logger.info("""
-                                client updated, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
-                        break;
-
                     case "disconnect_client":
                         updateAfterDisconnecting(commandLine[2]);
                         logger.info("""
@@ -355,7 +322,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         }
     }
 
-    /*
+
+    /**
+     * register client to the clientList if this client is not register in the system
+     * Update the client's info in the list if this client already registered
+     *
+     * @param clientAsString JSON body of client when updating
+     */
+       /*
     -----------------------register client to a list--------------------------------------------------
      */
     private void registerClient(String clientAsString) {
@@ -365,13 +339,17 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             EdgeClient thisClient = this.mapper.readValue(clientAsString, EdgeClient.class);
             String thisClientID = thisClient.getId();
 
-            //If client is not registered (no duplication) -> moving on
+            //Check whether client is already register or not
+            //If not -> add client to the list, else update client info
             if (!checkClientInList(thisClient)) {
-                //Just for debugging purpose
                 logger.info("client after readValue from mapper: {}", thisClient);
                 this.clientList.add(thisClient);
-            } else {
-                logger.warn("this client has already been registered (duplicated ID exist)");
+            }
+
+            //Update client info if this client is already in the list
+            else {
+                logger.info("this client has already been registered, updating {} stats", thisClientID);
+                updateClient(clientAsString);
             }
 
             //Initiating client history
@@ -394,6 +372,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
 
+    /**
+     * register node to the nodeList if this node is not register in the system
+     * Update the node's info in the list if this client already registered
+     *
+     * @param nodeAsString JSON body of node as String
+     */
     /*
     -----------------------register node to a list--------------------------------------------------
      */
@@ -401,11 +385,17 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         try {
             logger.info("RegisterNode - node as string: {} ", nodeAsString);
             EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
+
+            //Check whether node is already register or not
+            //If not -> add node to the list, else node client info
             if (!checkNodeInList(thisNode)) {
                 logger.info("node after readValue from mapper: {}", thisNode);
                 this.nodeList.add(thisNode);
-            } else {
-                logger.warn("this node has already been registered (duplicated ID exist)");
+            }
+            //Update node info if this client is already in the list
+            else {
+                logger.info("this node has already been registered, updating {} stats", thisNode.getId());
+                updateNode(nodeAsString);
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -432,7 +422,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     /**
      * Check for duplication of client within the list
      *
-     * @param thisClient
+     * @param thisClient the client we want to check whether it is in the list or not
      * @return true if duplicated, false if it's unique (not in list yet)
      */
     private boolean checkClientInList(EdgeClient thisClient) {
@@ -558,34 +548,24 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     /*
 -----------------------update client to the list--------------------------------------------------
 */
-    private void updateClient(String clientAsString) {
-        try {
-            logger.info("UpdateClient - client as string: {} ", clientAsString);
-            //Map the contents of the JSON file to a java object
-            EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
-            //get updating client location
-            Integer thisClientLocation = null;
-            String oldClientID = newClient.getId();
+    private void updateClient(String clientAsString) throws JsonProcessingException {
+        //Map the contents of the JSON file to a java object
+        EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
+        //get updating client location
+        Integer thisClientLocation = null;
+        String oldClientID = newClient.getId();
 
-            for (EdgeClient client : this.clientList) {
-                logger.info("checking node: {}", client.getId());
-                if (client.getId().equalsIgnoreCase(oldClientID)) {
-                    logger.info("oldClient: {}\n newClient: {}", client, newClient);
-                    logger.info("clientID matched with new node [{}], leaving", newClient.getId());
-                    thisClientLocation = this.clientList.indexOf(client);
-                    //get out when found, no need for further exploration
-                    break;
-                }
+        for (EdgeClient client : this.clientList) {
+            logger.info("checking [{}] in list for updating ", client.getId());
+            if (client.getId().equalsIgnoreCase(oldClientID)) {
+                logger.info("oldClient: {}\n newClient: {}", client, newClient);
+                logger.info("old clientID matched with new clientID [{}], leaving", newClient.getId());
+                thisClientLocation = this.clientList.indexOf(client);
+                //get out when found, no need for further exploration
+                break;
             }
-            //updating process
-            if (thisClientLocation == null) {
-                logger.error("new client ID does not match with any client's ID in the system.");
-            }
-            this.clientList.set(thisClientLocation, newClient);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
         }
+        this.clientList.set(thisClientLocation, newClient);
     }
 
     /*/
@@ -598,7 +578,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         }
         //fetch the command that was changed by function [assign] above,
         String toSend = command;
-        logger.info("THIS IS THE COMMANNDDDDDD IN READDDDDD {}", command);
         //this line to reset command (class variable) to empty
 
         command = "";

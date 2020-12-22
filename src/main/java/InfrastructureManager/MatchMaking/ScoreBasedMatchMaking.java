@@ -103,23 +103,23 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if (nodeResource <= reqResource) {
-                logger.debug("[{}] doesn't have enough resource {}/{}", thisNodeID, nodeResource, reqResource);
+                logger.info("[{}] doesn't have enough resource {}/{}", thisNodeID, nodeResource, reqResource);
                 //next iteration if these requirement is not fulfill
                 numberOfUnqualified++;
                 continue;
             }
             if (nodeNetwork <= reqNetwork) {
-                logger.debug("[{}] doesn't have enough network bandwidth {}/{}", thisNodeID, nodeNetwork, reqNetwork);
+                logger.info("[{}] doesn't have enough network bandwidth {}/{}", thisNodeID, nodeNetwork, reqNetwork);
                 numberOfUnqualified++;
                 continue;
             }
             if (!nodeIsConnected) {
-                logger.debug("[{}] is not connected", thisNodeID);
+                logger.info("[{}] is not connected", thisNodeID);
                 numberOfUnqualified++;
                 continue;
             }
             if (pingNumber > ACCEPTABLE_PING) {
-                logger.debug("[{}] is too far away from client, ping number is not acceptable: {} > {}", thisNodeID, pingNumber, ACCEPTABLE_PING);
+                logger.info("[{}] is too far away from client, ping number is not acceptable: {} > {}", thisNodeID, pingNumber, ACCEPTABLE_PING);
                 numberOfUnqualified++;
                 continue;
             }
@@ -130,7 +130,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
             thisNodeScore = getScore(nodeResource, nodeNetwork, pingNumber, nodeHistoryScore);
 
             //compare it to the best score yet, if this node score is bigger then we will set it as new bestNode
-            logger.debug("best node's score - this node score:  {} - {} ", bestScore, thisNodeScore);
+            logger.info("best node's score - this node score:  {} - {} ", bestScore, thisNodeScore);
             if (bestScore < thisNodeScore) {
                 bestNode = thisNode;
                 bestScore = thisNodeScore;
