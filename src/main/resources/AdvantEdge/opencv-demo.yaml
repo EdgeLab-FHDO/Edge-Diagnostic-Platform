@@ -122,7 +122,7 @@ deployment:
                                             userChartAlternateValues: null
                                             userChartGroup: null
                                             image: 'meep-docker-registry:30001/opencv-server'
-                                            commandArguments: '-c, export; ./limit.sh -v -a 172.17.0.1:4567/node/limit; ./server_exe.sh -i server13 -a edge-app1 -m http://172.17.0.1:4567 -b /node/register -p 10300;'
+                                            commandArguments: '-c, export; ./server_exe.sh -i server13 -a edge-app1 -m http://172.17.0.1:4567 -b /node/register -p 10300;'
                                             commandExe: /bin/bash
                                             serviceConfig:
                                                 name: edge-app1
