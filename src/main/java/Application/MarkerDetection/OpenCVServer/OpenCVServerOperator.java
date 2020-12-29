@@ -1,4 +1,4 @@
-package Application.OpenCVServer;
+package Application.MarkerDetection.OpenCVServer;
 
 import java.io.*;
 import java.net.*;
@@ -35,6 +35,7 @@ public class OpenCVServerOperator {
 
     private OpenCVServerOperator() {
         //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
+        //TODO send actual connected status as heartbeat
         fileName= "read.png";
         detector = new DetectMarker();
         connected = false;
@@ -143,7 +144,7 @@ public class OpenCVServerOperator {
         }
 
         String beatUrl = masterUrl + beatCommand;
-        String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + "\", \"connected\": " + connected + "}";
+        String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
     }
 }

@@ -1,4 +1,4 @@
-package Application.OpenCVClient;
+package Application.MarkerDetection.OpenCVClient;
 
 import Application.Utilities.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,16 +31,18 @@ public class OpenCVClientOperator {
     public Semaphore serverLock;
 
     //Server Communication Properties
-    private boolean utilizeServer;
+    public boolean utilizeServer;
     private String ip;
     private int port;
-    private boolean connected;
+    public boolean connected;
 
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
     public ProcessingRunner processingRunner;
 
     private static OpenCVClientOperator instance = null;
+
+    private boolean debugMode = true; //TODO make this available when starting application
 
     private OpenCVClientOperator() {
         mapper = new ObjectMapper();
@@ -165,6 +167,7 @@ public class OpenCVClientOperator {
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
+
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
@@ -193,11 +196,15 @@ public class OpenCVClientOperator {
 
     public void markerDetection() {
         Mat result;
+        long startTime = System.nanoTime();
+        String location = "Client";
         subject = ImageProcessor.getImageMat(fileName);
+
         try {
             serverLock.acquire();
             if(utilizeServer) {
                 detectMarkerInServer();
+                location = "Server";
             } else {
                 detectMarkerInClient();
             }
@@ -211,5 +218,11 @@ public class OpenCVClientOperator {
 
         result = detector.drawDetectedMarkers(subject);
         ImageProcessor.writeImage(resultFileName, result);
+
+        long endTime = System.nanoTime();
+
+        if(debugMode) {
+            System.out.println("Detected in " + location + " Execution Time: " + ((endTime-startTime)/1000000) + "ms");
+        }
     }
 }

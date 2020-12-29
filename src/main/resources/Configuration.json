@@ -4,6 +4,7 @@
         {"type": "ConsoleInput","name": "console_in"},
         {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "Scenario", "name": "dummy"},
+        {"type": "Scenario", "name": "run_open_cv_demo"},
         {"type":  "NodeResourceLimiter", "name": "limit"},
         {"type": "GenericPOST","name": "client_in_rest","address": "/client/register","port": 4567,
           "command" :  "register_client $body",
@@ -25,12 +26,11 @@
           "information": ["name", "number"],
           "@IOType" : "CustomCommand"
         }
-
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
         {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 10500},
+        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 80},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
         {"type": "SSHClient","name": "ssh"},
@@ -93,7 +93,8 @@
       "commands" : {
         "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
         "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
-        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name",
+        "ae_update_nw_char $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS"
       }
     },
     {
@@ -156,6 +157,13 @@
     },
     {
       "in" : "match_m",
+      "out" : "console_out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
+      "in" : "match_m",
       "out" : "get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
@@ -188,6 +196,23 @@
       "out" : "console_out",
       "commands" : {
         "test $name $number": "console $name $number"
+      }
+    },
+    {
+      "in" : "run_open_cv_demo",
+      "out" : "util",
+      "commands" : {
+        "start_rest_server" : "util runRunner RestServer",
+        "start_runner $runner_name" : "util runRunner $runner_name"
+      }
+    },
+    {
+      "in" : "run_open_cv_demo",
+      "out" : "advant_e",
+      "commands" : {
+        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
+        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
+        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
       }
     }
   ]
