@@ -11,7 +11,6 @@ public class ConsoleOutput extends MasterOutput {
     public ConsoleOutput(String name) {
         super(name);
     }
-    //TODO process multiple variables
     /**
      * Method for outputting to the console
      * @param response Message to be outputted to the console, the command has to be preceded by "console"

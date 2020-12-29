@@ -2,21 +2,45 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "RestInput","name": "rest_in", "port": 4567},
         {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "Scenario", "name": "dummy"},
-        {"type": "Scenario", "name": "run_open_cv_demo"}
+        {"type": "Scenario", "name": "run_open_cv_demo"},
+        {"type":  "NodeResourceLimiter", "name": "limit"},
+        {"type": "GenericPOST","name": "client_in_rest","address": "/client/register","port": 4567,
+          "command" :  "register_client $body",
+          "information": [],
+          "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "node_in_rest","address": "/node/register","port": 4567,
+          "command" :  "register_node $body",
+          "information": [],
+          "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "assignment_rest","address": "/client/assign","port": 4567,
+          "command" :  "assign_client $id",
+          "information": ["id"],
+          "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "post_test","address": "/post_test","port": 4567,
+          "command" :  "test $name $number",
+          "information": ["name", "number"],
+          "@IOType" : "CustomCommand"
+        }
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "RestOutput","name": "rest_out"},
         {"type": "MasterUtility","name": "util"},
         {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 80},
         {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
         {"type": "ScenarioEditor","name": "scenario_editor"},
-        {"type": "MatchMaker-Random","name": "match_m"},
         {"type": "SSHClient","name": "ssh"},
-        {"type": "FileOutput", "name": "file_out"}
+        {"type": "FileOutput", "name": "file_out"},
+        {"type": "GenericGET","name": "rest_limit", "address": "/limit","port": 4567},
+        {"type": "GenericGET","name": "get2", "address": "/client/get_node/:client_id","port": 4567},
+        {"type": "GenericGET","name": "get_test", "address": "/get_test","port": 4567},
+        {"type": "MasterUtility","name": "util"},
+        {"type": "MatchMaker-Random","name": "match_m"},
+        {"type":  "NodeResourceLimiter", "name": "limit"}
       ]
     },
   "connections" : [
@@ -95,36 +119,6 @@
       }
     },
     {
-      "in" : "rest_in",
-      "out" : "match_m",
-      "commands" : {
-        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string",
-        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string",
-        "assign_client $client_id" : "matchMaker assign_client $client_id"
-      }
-    },
-    {
-      "in" : "match_m",
-      "out" : "console_out",
-      "commands" : {
-        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
-      }
-    },
-    {
-      "in" : "match_m",
-      "out" : "rest_out",
-      "commands" : {
-        "give_node $client_id $node_id": "restOut sendNode $client_id $node_id"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "rest_out",
-      "commands" : {
-        "limit_node $tag $CPU_limit" : "restOut limit $tag $CPU_limit"
-      }
-    },
-    {
       "in" : "dummy",
       "out" : "console_out",
       "commands" : {
@@ -138,6 +132,70 @@
       "out" : "match_m",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "client_in_rest",
+      "out" : "match_m",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "node_in_rest",
+      "out" : "match_m",
+      "commands" : {
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "assignment_rest",
+      "out" : "match_m",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "match_m",
+      "out" : "console_out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
+      "in" : "match_m",
+      "out" : "get2",
+      "commands" : {
+        "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "limit",
+      "commands" : {
+        "limit_node $tag $CPU_limit" : "limit cores $tag $CPU_limit"
+      }
+    },
+    {
+      "in" : "limit",
+      "out" : "rest_limit",
+      "commands" : {
+        "set_limits $limits" : "toGET resource $limits"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "get_test",
+      "commands" : {
+        "test_get" : "toGET resource {\"name\":\"example\",\"number\":874}",
+        "test_get2" : "toGET resource {\"name\":\"other\",\"number\":123}"
+      }
+    },
+    {
+      "in" : "post_test",
+      "out" : "console_out",
+      "commands" : {
+        "test $name $number": "console $name $number"
       }
     },
     {

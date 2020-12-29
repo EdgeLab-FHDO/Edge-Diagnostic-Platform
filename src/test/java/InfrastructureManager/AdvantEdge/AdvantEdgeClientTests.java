@@ -1,9 +1,9 @@
 package InfrastructureManager.AdvantEdge;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,20 +82,19 @@ public class AdvantEdgeClientTests {
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
+        var e = Assert.assertThrows(exceptionClass, () -> client.out(command));
+        Assert.assertEquals(expectedMessage, e.getMessage());
+    }
+
 
     @Test
     public void invalidCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid command for AdvantEdgeClient");
-        client.out("advantEdge notACommand");
+        assertException(IllegalArgumentException.class, "advantEdge notACommand","Invalid command for AdvantEdgeClient");
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command - AdvantEdgeClient");
-        client.out("advantEdge create"); //Missing the name and path
+        assertException(IllegalArgumentException.class, "advantEdge create", "Arguments missing for command - AdvantEdgeClient");
     }
 }

@@ -92,21 +92,19 @@ public class FileOutputTests {
         }
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
+        var e = Assert.assertThrows(exceptionClass, () -> fileOutput.out(command));
+        Assert.assertEquals(expectedMessage, e.getMessage());
+    }
 
     @Test
     public void invalidCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid command for FileOutput");
-        fileOutput.out("file_out notACommand");
+        assertException(IllegalArgumentException.class, "file_out notACommand", "Invalid command for FileOutput");
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command - FileOutput");
-        fileOutput.out("file_out encoding"); //Missing the encoding name
+        assertException(IllegalArgumentException.class, "file_out encoding", "Arguments missing for command - FileOutput");
     }
 
     private void assertFileContent(File file, String expected) throws IOException {
