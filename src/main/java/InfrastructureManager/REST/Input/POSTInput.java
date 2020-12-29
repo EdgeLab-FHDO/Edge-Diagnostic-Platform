@@ -116,15 +116,13 @@ public class POSTInput implements MasterInput {
      */
     private void activate() {
         try {
-            while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
-                synchronized (RestServerRunner.ServerRunning) { //TODO: Sync block
-                    RestServerRunner.ServerRunning.wait();
-                }
-            }
+            RestServerRunner.serverCheck.acquire();
             post(this.path, this.POSTHandler);
             this.isActivated = true;
         } catch (IllegalStateException | InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            RestServerRunner.serverCheck.release();
         }
     }
 }

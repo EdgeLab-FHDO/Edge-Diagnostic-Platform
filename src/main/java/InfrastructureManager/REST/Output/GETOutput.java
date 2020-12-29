@@ -71,15 +71,13 @@ public class GETOutput extends MasterOutput {
      */
     protected void activate() {
         try {
-            while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
-                synchronized (RestServerRunner.ServerRunning) { //TODO: Sync block
-                    RestServerRunner.ServerRunning.wait();
-                }
-            }
+            RestServerRunner.serverCheck.acquire();
             get(this.path, this.GETHandler);
             this.isActivated = true;
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            RestServerRunner.serverCheck.release();
         }
     }
 

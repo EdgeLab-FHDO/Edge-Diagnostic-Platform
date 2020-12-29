@@ -10,6 +10,7 @@ import spark.Spark;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.Semaphore;
 
 import static spark.Spark.*;
 
@@ -21,8 +22,7 @@ public class RestServerRunner extends Runner {
     private final RESTAuthenticator authenticator; //For future authentication implementations
     private final Filter authenticationHandler; //Handler for authentication to the server
 
-    public static final Object ServerRunning =new Object(); //Guarded Block to synchronize all threads that depend on the server
-
+    public static final Semaphore serverCheck = new Semaphore(1);
     private static RestServerRunner restRunner = null; //Singleton implementation
 
     /**
@@ -30,8 +30,9 @@ public class RestServerRunner extends Runner {
      * @param name Name of the output as defined in MasterOutput abstract class
      * @param port Port where the server will be exposed
      */
-    private RestServerRunner(String name, int port) {
+    private RestServerRunner(String name, int port) throws InterruptedException {
         super(name);
+        serverCheck.acquire();
         this.port = port;
         this.authenticator = new DummyAuthentication();
         this.authenticationHandler = (Request request, Response response) -> {
@@ -60,9 +61,7 @@ public class RestServerRunner extends Runner {
             startServer();
         }
         awaitInitialization();
-        synchronized (ServerRunning) { //TODO: Sync block
-            ServerRunning.notifyAll();
-        }
+        serverCheck.release();
     }
 
     /**
@@ -105,7 +104,12 @@ public class RestServerRunner extends Runner {
      */
     public static void configure(String name, int port) {
         if(restRunner == null) {
-            restRunner = new RestServerRunner(name, port);
+            try {
+                restRunner = new RestServerRunner(name, port);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                restRunner = null;
+            }
         }
     }
 
