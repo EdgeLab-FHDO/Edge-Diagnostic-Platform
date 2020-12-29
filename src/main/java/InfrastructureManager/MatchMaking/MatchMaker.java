@@ -141,23 +141,14 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         long usedResource = thisClient.getReqResource();
         long usedNetwork = thisClient.getReqNetwork();
 
-
-        //get node available resource
-        String nodeIP = thisNode.getIpAddress();
-        boolean nodeConnect = thisNode.isConnected();
-        long nodeResource = thisNode.getResource();
-        long nodeNetwork = thisNode.getNetwork();
-        long nodeLocation = thisNode.getLocation();
-        long nodeTotalResource = thisNode.getTotalResource();
-        long nodeTotalNetwork = thisNode.getTotalNetwork();
+        //Get node location in list to replace later on
         int nodeLocationInList = this.nodeList.indexOf(thisNode);
-
-        //Calculating occupied resource, network. This is the minus part mentioned in javadoc
-        nodeResource = nodeResource - usedResource;
-        nodeNetwork = nodeNetwork - usedNetwork;
-
         //node that we going to replace in our nodeList
-        EdgeNode updateNode = new EdgeNode(thisNodeID, nodeIP, nodeConnect, nodeResource, nodeTotalResource, nodeNetwork, nodeTotalNetwork, nodeLocation);
+        EdgeNode updateNode = new EdgeNode(thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
+
+        //accounting usedResource (resource - usedResource)
+        updateNode.updateComputingResource(usedResource);
+        updateNode.updateNetworkBandwidth(usedNetwork);
 
         logger.info("Node [{}] before assigned to client [{}]: \n{}", thisNodeID, thisClientID, this.nodeList.get(nodeLocationInList));
         this.nodeList.set(nodeLocationInList, updateNode);
@@ -187,6 +178,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             //Initiate variables
             logger.info("mapping: {}", mapping);
             String thisNodeID = this.mapping.get(thisClientID);
+
+            //TODO: Throw an exception when thisNodeID is null
             if (thisNodeID == null) {
                 logger.error("This client [{}] is not connected to any nodes in the system", thisClientID);
                 return;
@@ -247,7 +240,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //Put the new history score in history info package
             thisClientHistoryInfo.setHistoryScoreForClient(thisClientID, thisNodeID, historyScore);
-
             //Add client's disconnected time to history info package
             thisClientHistoryInfo.setConnectedTimeForClient(thisClientID, thisNodeID, disconnectedTime);
 
@@ -355,17 +347,20 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
             //Initiating client history
             EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
+
             for (EdgeNode thisNode : this.nodeList) {
                 String thisNodeID = thisNode.getId();
-                thisClientHistory.setHistoryScoreForClient(thisClientID, thisNodeID, 0L);
-                thisClientHistory.setConnectedTimeForClient(thisClientID, thisNodeID, 0L);
-//                thisClientHistory.setConnectedMap(thisClientID, thisNodeID, 0L);
+                thisClientHistory.setHistoryScore(thisNodeID,0L);
+                thisClientHistory.setLastConnectedTime(thisNodeID,0L);
             }
+
+            //assign the history above to this client's history
+            thisClient.setClientHistory(thisClientHistory);
 
             //Put the client with its history in a HashMap, we can always update the history later on
             // by fetching thisClientHistory stuff anyway
-            logger.info("this client history info: \n{}", thisClientHistory);
-            clientHistoryHashMap.put(thisClientID, thisClientHistory);
+            logger.info("this client history info: \n{}", thisClient.getClientHistory());
+            clientHistoryHashMap.put(thisClientID, thisClient.getClientHistory());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -435,6 +430,18 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             }
         }
         return false;
+    }
+
+    private void updateNode1(String nodeAsString) throws Exception {
+        logger.info("UpdateNode - node as string: {} ", nodeAsString);
+        //Map the contents of the JSON file to a java object
+        EdgeNode newNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
+
+        //newNode's data
+        String newNodeID = newNode.getId();
+
+        //Get updating node location in list
+        nodeList.indexOf(getNodeByID(newNodeID));
     }
 
     /*

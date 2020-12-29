@@ -9,8 +9,13 @@
         </encoder>
     </appender>
 
-    <root level="OFF">
-        <appender-ref ref="STDOUT" />
+    <logger
+            name="InfrastructureManager.MatchMaking.ScoreBasedMatchMaking"
+            level="DEBUG"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
     </root>
+
 
 </configuration>
