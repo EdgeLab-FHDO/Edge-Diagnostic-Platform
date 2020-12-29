@@ -5,9 +5,9 @@ import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
 
@@ -15,24 +15,18 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
 
     private final ObjectMapper mapper;
 
-    /*
-    Guarded block and boolean to make the input block until there is content to send to the master
-     */
-    private final Object blockLock;
-    private volatile boolean block;
+    private Semaphore readingLock;
 
     public NodeResourceLimiter(String name) {
         super(name);
         this.mapper = new ObjectMapper();
         this.limitNodes = new LinkedHashMap<>();
-        this.blockLock = new Object();
-        this.block = true;
+        this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
     }
 
     @Override
     public String read() throws InterruptedException, JsonProcessingException {
         String toSend = "set_limits " + getReading();
-        block = true;
         return toSend;
     }
 
@@ -58,26 +52,12 @@ public class NodeResourceLimiter  extends MasterOutput implements MasterInput {
     private void addToLimitList(String tag, String limit, String period_ms) {
         int quota_ms = (int) (Double.parseDouble(limit) * Integer.parseInt(period_ms));
         this.limitNodes.put(tag, quota_ms + "_" + period_ms);
-        unBlock();
+        readingLock.release();
     }
 
     private String getReading() throws JsonProcessingException, InterruptedException {
-        while (block) {
-            synchronized (blockLock) {
-                blockLock.wait();
-            }
-        }
+        readingLock.acquire();
         return this.mapper.writeValueAsString(this.limitNodes);
-    }
-
-    /**
-     * Unblock the reading, so a value can be returned to the master
-     */
-    private void unBlock() {
-        synchronized (blockLock) {
-            block = false;
-            blockLock.notifyAll();
-        }
     }
 
     /**

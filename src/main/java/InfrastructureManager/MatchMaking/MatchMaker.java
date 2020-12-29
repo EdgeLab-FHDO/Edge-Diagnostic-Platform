@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 
 public class MatchMaker extends MasterOutput implements MasterInput {
@@ -20,11 +21,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient,EdgeNode> mapping;
 
-    /*
-    Guarded block and boolean to make the input block until there is content to send to the master
-     */
-    private final Object blockLock;
-    private volatile boolean block;
+    private final Semaphore readingLock;
 
     public MatchMaker(String name, String algorithmType) {
         super(name);
@@ -35,8 +32,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         this.clientList = new ArrayList<>();
         this.mapping = new HashMap<>();
 
-        this.blockLock = new Object();
-        this.block = true;
+        this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
     }
 
     public void setAlgorithmFromString(String algorithmType) {
@@ -63,7 +59,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 this.mapping.put(client,node);
                 String nodeAsJSON = this.mapper.writeValueAsString(node);
                 command = "give_node " + client.getId() + " " + nodeAsJSON;
-                unBlock();
+                readingLock.release();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,27 +112,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     public String read() throws InterruptedException {
         String toSend = getReading();
         command = "";
-        block = true;
         return toSend;
     }
 
     private String getReading() throws InterruptedException {
-        while (block) {
-            synchronized (blockLock) {
-                blockLock.wait();
-            }
-        }
+        readingLock.acquire();
         return this.command;
-    }
-
-    /**
-     * Unblock the reading, so a value can be returned to the master
-     */
-    private void unBlock() {
-        synchronized (blockLock) {
-            block = false;
-            blockLock.notifyAll();
-        }
     }
 
     public List<EdgeNode> getNodeList() {

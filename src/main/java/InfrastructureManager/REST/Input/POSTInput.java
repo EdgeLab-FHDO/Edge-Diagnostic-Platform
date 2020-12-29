@@ -26,7 +26,6 @@ public class POSTInput implements MasterInput {
 
     //Semaphore pair to coordinate internal blocking waiting for input on the requests
     private final Semaphore readingLock;
-    private final Semaphore writingLock;
 
     private final Route POSTHandler;
 
@@ -42,20 +41,15 @@ public class POSTInput implements MasterInput {
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
         this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
-        this.writingLock = new Semaphore(1); // Binary semaphore
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
-                this.writingLock.acquire();
                 this.toRead.offer(this.substituteCommand(command,o));
-                this.readingLock.release();
-                //unBlock(); //Unblock the input so it returns something to the master
+                this.readingLock.release(); // Allow the reading part to unblock
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
                 response.status(500); //If argument not found, return internal error in response
-            } finally {
-                this.writingLock.release();
             }
             return response.status();
         };
@@ -112,10 +106,8 @@ public class POSTInput implements MasterInput {
      * @return Command from the queue
      */
     private String getReading() throws InterruptedException {
-        String reading;
         readingLock.acquire();
-        reading = this.toRead.poll();
-        return reading;
+        return this.toRead.poll();
     }
 
     /**
