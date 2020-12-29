@@ -46,8 +46,9 @@ public class EdgeNode {
         return totalNetwork;
     }
 
-    public void setTotalNetwork(long inputTotalNetwork) {
-        this.totalNetwork = inputTotalNetwork;
+    public void setTotalNetwork(long thisTotalComputingResource) {
+        this.totalNetwork = thisTotalComputingResource;
+        this.network = thisTotalComputingResource;
     }
 
     public void setIpAddress(String ipAddress) {
@@ -58,8 +59,13 @@ public class EdgeNode {
         this.connected = connected;
     }
 
-    public void setTotalResource(long totalResource) {
-        this.totalResource = totalResource;
+    public void setTotalResource(long thisTotalNetworkBandwidth) {
+        this.totalResource = thisTotalNetworkBandwidth;
+        this.resource = thisTotalNetworkBandwidth;
+    }
+
+    public void setLocation(long Location) {
+        this.location = location;
     }
 
     public EdgeNode() {
@@ -84,11 +90,12 @@ public class EdgeNode {
         this.totalResource = thisTotalComputingResource;
     }
 
-    public void updateComputingResource(Long usedComputingResource){
-        this.resource = resource - usedComputingResource;
+    public void updateComputingResource(Long usedComputingResource) {
+        resource = resource - usedComputingResource;
     }
-    public void updateNetworkBandwidth(Long usedNetworkBandwidth){
-        this.network = network - usedNetworkBandwidth;
+
+    public void updateNetworkBandwidth(Long usedNetworkBandwidth) {
+        network = network - usedNetworkBandwidth;
     }
 
 

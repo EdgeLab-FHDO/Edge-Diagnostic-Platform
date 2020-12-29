@@ -3,9 +3,9 @@ package InfrastructureManager;
 public class EdgeClient {
 
     private final String id;
-    private final long reqResource; //required computation resource
-    private final long reqNetwork;  //required network bandwidth
-    private final long location; //current client location, (ping will be calculated here, more info in score based match making (SBMM))
+    private long reqResource; //required computation resource
+    private long reqNetwork;  //required network bandwidth
+    private long location; //current client location, (ping will be calculated here, more info in score based match making (SBMM))
     private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
     private EdgeClientHistory clientHistory;
 
@@ -44,8 +44,21 @@ public class EdgeClient {
 
     public String getMessage() {return message; }
 
+
     public void setClientHistory(EdgeClientHistory clientHistory) {
         this.clientHistory = clientHistory;
+    }
+
+    public void setReqResource(long reqResource) {
+        this.reqResource = reqResource;
+    }
+
+    public void setReqNetwork(long reqNetwork) {
+        this.reqNetwork = reqNetwork;
+    }
+
+    public void setLocation(long location) {
+        this.location = location;
     }
 
     public EdgeClientHistory getClientHistory(){return clientHistory;}
