@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 
 public class MatchMaker extends MasterOutput implements MasterInput {
@@ -20,6 +21,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     private final List<EdgeClient> clientList;
     private final Map<EdgeClient,EdgeNode> mapping;
 
+    private final Semaphore readingLock;
+
     public MatchMaker(String name, String algorithmType) {
         super(name);
         setAlgorithmFromString(algorithmType);
@@ -28,6 +31,8 @@ public class MatchMaker extends MasterOutput implements MasterInput {
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
         this.mapping = new HashMap<>();
+
+        this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
     }
 
     public void setAlgorithmFromString(String algorithmType) {
@@ -52,7 +57,9 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 System.out.println("No node to assign");
             } else {
                 this.mapping.put(client,node);
-                command = "give_node " + client.getId() + " " + node.getId();
+                String nodeAsJSON = this.mapper.writeValueAsString(node);
+                command = "give_node " + client.getId() + " " + nodeAsJSON;
+                readingLock.release();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,13 +109,15 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
     @Override
-    public String read() throws Exception {
-        if (command.isEmpty()) {
-            throw new Exception("No command exception");
-        }
-        String toSend = command;
+    public String read() throws InterruptedException {
+        String toSend = getReading();
         command = "";
         return toSend;
+    }
+
+    private String getReading() throws InterruptedException {
+        readingLock.acquire();
+        return this.command;
     }
 
     public List<EdgeNode> getNodeList() {

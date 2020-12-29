@@ -1,7 +1,6 @@
 package InfrastructureManager;
 
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -9,9 +8,15 @@ import java.io.PrintStream;
 
 public class ScenarioDispatcherTests {
     ScenarioDispatcher dispatcher = new ScenarioDispatcher("scenario_dispatcher");
-    final String SCENARIO_PATH = "src/test/resources/dummyScenario.json";
+    final String SCENARIO_PATH = "src/test/resources/ScenarioResources/dummyScenario.json";
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+
+    @BeforeClass
+    public static void configureMaster() {
+        Master.changeConfigPath("src/test/resources/ScenarioResources/ScenarioConfiguration.json");
+        Master.resetInstance();
+    }
 
     @Test
     public void loadScenarioFromFileTest() {
@@ -24,32 +29,34 @@ public class ScenarioDispatcherTests {
         Assert.assertEquals(result.toString(),expected);
     }
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     @Test
     public void invalidCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid command for ScenarioDispatcher");
-        dispatcher.out("dispatcher notACommand");
+        String command = "dispatcher notACommand";
+        String expected = "Invalid command for ScenarioDispatcher";
+        assertException(IllegalArgumentException.class,command,expected);
     }
     @Test
     public void incompleteCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command  - ScenarioDispatcher");
-        dispatcher.out("dispatcher fromFile"); //Missing the name
+        String command = "dispatcher fromFile";
+        String expected = "Arguments missing for command  - ScenarioDispatcher";
+        assertException(IllegalArgumentException.class,command,expected);
     }
     @Test
     public void wrongRunWithDelayCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Invalid run command");
-        dispatcher.out("dispatcher run -d wrongCommand");
+        String command = "dispatcher run -d wrongCommand";
+        String expected = "Invalid run command";
+        assertException(IllegalArgumentException.class,command,expected);
     }
     @Test
     public void incompleteRunWithDelayCommandThrowsException() {
-        exceptionRule.expect(IllegalArgumentException.class);
-        exceptionRule.expectMessage("Arguments missing for command  - ScenarioDispatcher");
-        dispatcher.out("dispatcher run -d"); //Missing one argument
+        String command = "dispatcher run -d";
+        String expected = "Arguments missing for command  - ScenarioDispatcher";
+        assertException(IllegalArgumentException.class,command,expected);
+    }
+
+    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
+        var e = Assert.assertThrows(exceptionClass, () -> dispatcher.out(command));
+        Assert.assertEquals(expectedMessage, e.getMessage());
     }
 
     @Before //For testing the Standard Output
@@ -62,7 +69,7 @@ public class ScenarioDispatcherTests {
         System.setOut(System.out);
     }
 
-    public void waitFor(long waitingTime) {
+    public static void waitFor(long waitingTime) {
         long start = System.currentTimeMillis();
         while (true) {
             if (System.currentTimeMillis() - start >= waitingTime) {

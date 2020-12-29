@@ -72,7 +72,7 @@ public class Runner implements Runnable{
                 try {
                     pauseLock.wait(); //Runner Pauses until is notified by other thread
                 } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
+                    exit = true;
                 }
             }
         }
@@ -98,10 +98,11 @@ public class Runner implements Runnable{
                     }
                 }
             }
-        } catch (Exception e) {
-           if (!e.getMessage().equals("No command exception")) {
-               e.printStackTrace();
-           }
+        } catch (InterruptedException e) {
+            exit = true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

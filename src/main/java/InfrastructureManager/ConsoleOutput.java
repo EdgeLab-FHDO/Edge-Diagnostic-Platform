@@ -19,7 +19,10 @@ public class ConsoleOutput extends MasterOutput {
         String[] command = response.split(" ");
         if (command[0].equals("console")) { //The commands must come like "console command"
             try {
-                System.out.println(command[1]);
+                //System.out.println(command[1]);
+                for (int i = 1; i < command.length; i++) {
+                    System.out.println(command[i]);
+                }
             } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("Arguments missing for command - ConsoleOutput");
             }
