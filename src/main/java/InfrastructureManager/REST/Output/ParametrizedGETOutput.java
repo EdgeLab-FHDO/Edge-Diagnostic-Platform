@@ -41,7 +41,6 @@ public class ParametrizedGETOutput extends GETOutput {
 
     @Override
     protected void activate() {
-
         this.GETHandler = (Request request, Response response) -> {
             response.type("application/json");
             String parameterFromRequest = request.params(":" + this.parameter);

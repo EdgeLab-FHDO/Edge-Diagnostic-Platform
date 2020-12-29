@@ -19,7 +19,13 @@
           "command" :  "assign_client $id",
           "information": ["id"],
           "@IOType" : "CustomCommand"
+        },
+        {"type": "GenericPOST","name": "post_test","address": "/post_test","port": 4567,
+          "command" :  "test $name $number",
+          "information": ["name", "number"],
+          "@IOType" : "CustomCommand"
         }
+
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
@@ -175,6 +181,13 @@
       "commands" : {
         "test_get" : "toGET resource {\"name\":\"example\",\"number\":874}",
         "test_get2" : "toGET resource {\"name\":\"other\",\"number\":123}"
+      }
+    },
+    {
+      "in" : "post_test",
+      "out" : "console_out",
+      "commands" : {
+        "test $name $number": "console $name $number"
       }
     }
   ]

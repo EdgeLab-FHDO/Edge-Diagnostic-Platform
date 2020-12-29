@@ -60,7 +60,7 @@ public class RestServerRunner extends Runner {
             startServer();
         }
         awaitInitialization();
-        synchronized (ServerRunning) {
+        synchronized (ServerRunning) { //TODO: Sync block
             ServerRunning.notifyAll();
         }
     }

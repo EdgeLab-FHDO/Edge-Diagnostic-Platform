@@ -72,7 +72,7 @@ public class GETOutput extends MasterOutput {
     protected void activate() {
         try {
             while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
-                synchronized (RestServerRunner.ServerRunning) {
+                synchronized (RestServerRunner.ServerRunning) { //TODO: Sync block
                     RestServerRunner.ServerRunning.wait();
                 }
             }

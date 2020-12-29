@@ -1,6 +1,5 @@
 package InfrastructureManager.REST.Input;
 
-import InfrastructureManager.Master;
 import InfrastructureManager.MasterInput;
 import InfrastructureManager.REST.RestServerRunner;
 import spark.Request;
@@ -10,6 +9,7 @@ import spark.Route;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 import static spark.Spark.post;
 
@@ -23,11 +23,10 @@ public class POSTInput implements MasterInput {
     private final String path; //Path where the post handler will listen
     private final List<String> toParse; //List of argument that will be searched for in the json body
     private boolean isActivated; //To synchronize with the rest server
-    /*
-    Guarded block and boolean to make the input block until there is content to send to the master
-     */
-    private final Object blockLock;
-    private volatile boolean block;
+
+    //Semaphore pair to coordinate internal blocking waiting for input on the requests
+    private final Semaphore readingLock;
+    private final Semaphore writingLock;
 
     private final Route POSTHandler;
 
@@ -42,17 +41,21 @@ public class POSTInput implements MasterInput {
         this.toParse = toParse;
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
-        this.blockLock = new Object();
-        this.block = true;
+        this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
+        this.writingLock = new Semaphore(1); // Binary semaphore
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
+                this.writingLock.acquire();
                 this.toRead.offer(this.substituteCommand(command,o));
-                unBlock(); //Unblock the input so it returns something to the master
+                this.readingLock.release();
+                //unBlock(); //Unblock the input so it returns something to the master
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
                 response.status(500); //If argument not found, return internal error in response
+            } finally {
+                this.writingLock.release();
             }
             return response.status();
         };
@@ -60,7 +63,7 @@ public class POSTInput implements MasterInput {
 
     /**
      * Method to create the command that will be sent to the master by extracting information from the request body
-     * In the defined command, all parameters with '$' will be substituted and whatever doesnt use the symbol
+     * In the defined command, all parameters with '$' will be substituted and whatever doesn't use the symbol
      * will be copied to the final command. Finally, if the command had the "$body" parameter, the entire JSON
      * body will be substituted
      * @param rawCommand Command as read from the configuration of the input
@@ -101,9 +104,7 @@ public class POSTInput implements MasterInput {
         if (!isActivated) {
             activate();
         }
-        String reading = getReading();
-        block = this.toRead.peek() == null;
-        return reading;
+        return getReading();
     }
 
     /**
@@ -111,22 +112,10 @@ public class POSTInput implements MasterInput {
      * @return Command from the queue
      */
     private String getReading() throws InterruptedException {
-        while (block) {
-            synchronized (blockLock) {
-                blockLock.wait();
-            }
-        }
-        return this.toRead.poll();
-    }
-
-    /**
-     * Unblock the reading, so a value can be returned to the master
-     */
-    private void unBlock() {
-        synchronized (blockLock) {
-            block = false;
-            blockLock.notifyAll();
-        }
+        String reading;
+        readingLock.acquire();
+        reading = this.toRead.poll();
+        return reading;
     }
 
     /**
@@ -136,7 +125,7 @@ public class POSTInput implements MasterInput {
     private void activate() {
         try {
             while (!RestServerRunner.getInstance().isRunning()) { //Wait for the REST server to run
-                synchronized (RestServerRunner.ServerRunning) {
+                synchronized (RestServerRunner.ServerRunning) { //TODO: Sync block
                     RestServerRunner.ServerRunning.wait();
                 }
             }
@@ -146,6 +135,4 @@ public class POSTInput implements MasterInput {
             e.printStackTrace();
         }
     }
-
-
 }
