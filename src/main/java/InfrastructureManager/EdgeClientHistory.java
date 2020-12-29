@@ -1,7 +1,7 @@
 package InfrastructureManager;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+
+import InfrastructureManager.MatchMaking.Exception.NoNodeFoundInHistoryException;
 
 import java.util.*;
 
@@ -52,11 +52,10 @@ public class EdgeClientHistory {
     }
 
 
-    public Long getConnectedTime(String nodeID) throws Exception {
-        //TODO: custom exception for this
+    public Long getConnectedTime(String nodeID) throws NoNodeFoundInHistoryException {
         //if node is not in the map
         if (!this.nodeLastConnectedTimeHash.containsKey(nodeID)){
-            throw new Exception("can't find [" + nodeID + "] in the last connected map.");
+            throw new NoNodeFoundInHistoryException("can't find [" + nodeID + "] in the last connected map.");
         }
 
         return nodeLastConnectedTimeHash.get(nodeID);
@@ -68,16 +67,13 @@ public class EdgeClientHistory {
      * @param nodeID node's ID in string
      * @return history score of node to client
      */
-    public Long getHistoryScore(String nodeID) throws Exception {
-        //TODO: custom exception for this
+    public Long getHistoryScore(String nodeID) throws NoNodeFoundInHistoryException {
         //If node is not in the map
         if (!nodeHistoryScoreHash.containsKey(nodeID)) {
-            throw new Exception("Can't find [" + nodeID + "] history's score in the map");
+            throw new NoNodeFoundInHistoryException("Can't find [" + nodeID + "] history's score in the map");
         }
         return nodeHistoryScoreHash.get(nodeID);
     }
-
-
 
 
     @Override

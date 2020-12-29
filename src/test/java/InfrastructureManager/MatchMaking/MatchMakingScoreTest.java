@@ -31,7 +31,7 @@ public class MatchMakingScoreTest {
     }
 
     @Test
-    public void registerAndUpdateNodeTest() {
+    public void registerAndUpdateNodeTest() throws Exception {
         //Register 3 node
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}");
         matchMaker.out("matchMaker register_node {\"id\":\"node2\",\"ipAddress\":\"92.183.84.109:42589\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":33}");
@@ -51,7 +51,7 @@ public class MatchMakingScoreTest {
     }
 
     @Test
-    public void registerAndUpdateClientTest() {
+    public void registerAndUpdateClientTest() throws Exception {
         matchMaker.out("matchMaker register_client {\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}");
         matchMaker.out("matchMaker register_client {\"id\":\"client2\",\"reqNetwork\":20,\"reqResource\":40,\"location\":42}");
         //Add 1 duplication, client list should not change much
@@ -88,8 +88,8 @@ public class MatchMakingScoreTest {
 
         //job failed -> client 1 score with node 1 should be 10
         matchMaker.out("matchMaker disconnect_client {\"id\":\"client1\",\"message\":\"job_failed\"}");
-        EdgeClientHistory client1History = matchMaker.getClientHistoryMap().get("client1");
-        long thisShouldBe10  = client1History.getHistoryScore("client1","node1");
+        EdgeClientHistory client1History = matchMaker.getClientList().get(0).getClientHistory();
+        long thisShouldBe10  = client1History.getHistoryScore("node1");
         Assert.assertEquals(10,thisShouldBe10);
         //wait 2s to see history change ( from 10 score -> 8 score )
         try {
@@ -100,7 +100,7 @@ public class MatchMakingScoreTest {
         //Re assign client 1
         matchMaker.out("matchMaker assign_client client1");
         //2s passed, clint1-node1 score should be 8
-        long thisShouldBe8  =  matchMaker.getClientHistoryMap().get("client1").getHistoryScore("client1","node1");
+        long thisShouldBe8  =  matchMaker.getClientList().get(0).getClientHistory().getHistoryScore("node1");
         Assert.assertEquals(8,thisShouldBe8);
 
         //Client 1 should connect to node 2 now cuz node 2 have better score

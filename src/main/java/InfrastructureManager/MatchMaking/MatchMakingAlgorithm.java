@@ -12,5 +12,5 @@ import java.util.List;
 
 //TODO: better abstraction/definition for match making algorithm (for better inheritance)
 public interface MatchMakingAlgorithm {
-    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList, EdgeClientHistory clientHistory ) throws Exception;
+    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList) throws Exception;
 }

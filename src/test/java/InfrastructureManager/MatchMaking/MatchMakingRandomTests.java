@@ -35,14 +35,14 @@ public class MatchMakingRandomTests {
 
 
     @Test
-    public void registerNodeTest() {
+    public void registerNodeTest() throws Exception {
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         String expected = matchMaker.getNodeList().get(0).getId();
         Assert.assertEquals(expected, "node1");
     }
 
     @Test
-    public void registerClientTest() {
+    public void registerClientTest() throws Exception {
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         String expected = matchMaker.getClientList().get(0).getId();
         Assert.assertEquals(expected, "client1");
@@ -66,7 +66,7 @@ public class MatchMakingRandomTests {
     @Test
     public void assignNodeToClientCompleteTest() throws Exception {
         Master.getInstance().addClient(new EdgeClient("client1", 100,101, 66, "nothing"));
-        Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true, 123, 456,150, 200, 55));
+        Master.getInstance().addNode(new EdgeNode("node1","192.168.0.1",true, 456, 200, 55));
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         matchMaker.out("matchMaker assign_client client1");
@@ -83,14 +83,14 @@ public class MatchMakingRandomTests {
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
-    public void invalidCommandThrowsException() {
+    public void invalidCommandThrowsException() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Invalid command for MatchMaker");
         matchMaker.out("matchMaker notACommand");
     }
 
     @Test
-    public void incompleteCommandThrowsException() {
+    public void incompleteCommandThrowsException() throws Exception {
         exceptionRule.expect(IllegalArgumentException.class);
         exceptionRule.expectMessage("Arguments missing for command - MatchMaker");
         matchMaker.out("matchMaker register_client"); //Missing the client

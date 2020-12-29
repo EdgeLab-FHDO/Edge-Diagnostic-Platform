@@ -14,7 +14,7 @@ public class RandomMatchMaking implements MatchMakingAlgorithm {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList, EdgeClientHistory nodeHistory ) {
+    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) {
         logger.info("match making started - random \n");
         Random random = new Random();
         if (nodeList.isEmpty()) {

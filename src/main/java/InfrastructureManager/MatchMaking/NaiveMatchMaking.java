@@ -3,6 +3,7 @@ package InfrastructureManager.MatchMaking;
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeClientHistory;
 import InfrastructureManager.EdgeNode;
+import InfrastructureManager.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ public class NaiveMatchMaking implements MatchMakingAlgorithm {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList, EdgeClientHistory nodeHistory) throws Exception {
+    public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) throws NoNodeSatisfyRequirementException {
         logger.info("----------------------------MATCH MAKING - NAIVE--------------------");
         long closestDistance = Long.MAX_VALUE;
         long clientLocation = client.getLocation();
@@ -50,14 +51,12 @@ public class NaiveMatchMaking implements MatchMakingAlgorithm {
                 continue;
             }
             if (numberOfUnqualified >= nodeList.size()) {
-                logger.warn("""
-                        >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                        No nodes in system satisfy required parameters (Network, Resource, Distance)
-                        """);
-                throw new Exception("""
-                        >>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<  
-                        No nodes in system satisfy required parameters (Network, Resource, Distance)
-                        """);
+                logger.warn("\n" +
+                        ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
+                        "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
+                throw new NoNodeSatisfyRequirementException("\n" +
+                        ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
+                        "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
             }
 
             logger.info("{} and {} distance = {} - {} = {} ", thisNode.getId(), client.getId(), thisNode.getLocation(), clientLocation, distance);

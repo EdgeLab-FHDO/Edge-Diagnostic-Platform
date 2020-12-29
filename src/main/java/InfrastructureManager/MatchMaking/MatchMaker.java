@@ -2,6 +2,7 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.*;
 import InfrastructureManager.EdgeClientHistory;
+import InfrastructureManager.MatchMaking.Exception.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -90,7 +91,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 throw new Exception("this [" + thisClientID + "] is already connected with " + connectedNode);
             } else {
                 //match client with node in nodelist according to algorithm
-                EdgeNode thisNode = this.algorithm.match(thisClient, this.nodeList, clientHistoryInfo);
+                EdgeNode thisNode = this.algorithm.match(thisClient, nodeList);
                 String thisNodeID = thisNode.getId();
                 //list of node, for debugging purposes
                 for (EdgeNode theNode : nodeList) {
@@ -162,96 +163,89 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * @param clientAsString JSON body of client when updating
      * @author Zero
      */
-    private void updateAfterDisconnecting(String clientAsString) {
-        try {
-            //get client ID and disconnect reason:
-            //we only need the ID and message of this object anyway
-            EdgeClient pseudoClient = this.mapper.readValue(clientAsString, EdgeClient.class);
-            String message = pseudoClient.getMessage();
-            String thisClientID = pseudoClient.getId();
-            long disconnectedTime = System.currentTimeMillis();
+    private void updateAfterDisconnecting(String clientAsString) throws JsonProcessingException, MatchMakingException,InfrastructureException{
+        //get client ID and disconnect reason:
+        //we only need the ID and message of this object anyway
+        EdgeClient pseudoClient = this.mapper.readValue(clientAsString, EdgeClient.class);
+        String message = pseudoClient.getMessage();
+        String thisClientID = pseudoClient.getId();
+        long disconnectedTime = System.currentTimeMillis();
 
-            //this is the one that registered in the list
-            EdgeClient thisClient = getClientByID(thisClientID);
-            logger.info("disconnected client [{}] : \n{}", thisClientID, thisClient);
+        //this is the one that registered in the list
+        EdgeClient thisClient = getClientByID(thisClientID);
+        logger.info("disconnected client [{}] : \n{}", thisClientID, thisClient);
 
-            //Initiate variables
-            logger.info("mapping: {}", mapping);
+        //Initiate variables
+        logger.info("mapping: {}", mapping);
 
-            //TODO: Throw an exception when can't find client in the mapping
-            if (!mapping.containsKey(thisClientID)) {
-                logger.error("This client [{}] is not connected to any nodes in the system", thisClientID);
-                throw new Exception("This client [" + thisClientID + "] is not connected to any nodes in the system");
-            }
-            //Get node that assigned to client
-            String thisNodeID = this.mapping.get(thisClientID);
-            EdgeNode thisNode = getNodeByID(thisNodeID);
+        //TODO: Throw an exception when can't find client in the mapping
+        if (!mapping.containsKey(thisClientID)) {
+            logger.error("This client [{}] is not connected to any nodes in the system", thisClientID);
+            throw new ClientNotAssignedException("This client [" + thisClientID + "] is not connected to any nodes in the system");
+        }
+        //Get node that assigned to client
+        String thisNodeID = this.mapping.get(thisClientID);
+        EdgeNode thisNode = getNodeByID(thisNodeID);
 
-            //remove the coupling in mapping object
-            this.mapping.remove(thisClientID, thisNodeID);
+        //remove the coupling in mapping object
+        this.mapping.remove(thisClientID, thisNodeID);
 
-            logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
+        logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
 
             /*
             -----------------------------UPDATING NODE INFO----------------------------------------------------------
              */
-            //If node is still assigned to other client
-            boolean nodeIsAssigned = mapping.containsValue(thisNodeID);
-            long usedResource = 0;
-            long usedNetwork = 0;
+        //If node is still assigned to other client
+        boolean nodeIsAssigned = mapping.containsValue(thisNodeID);
+        long usedResource = 0;
+        long usedNetwork = 0;
 
-            //Then calculate the accumulated resource & network by other clients
-            if (nodeIsAssigned){
-                ArrayList<String> assignedClients = getAssignedClientsInList(thisNodeID);
-                for ( String client : assignedClients){
-                    thisClient = getClientByID(client);
-                    usedNetwork =  usedNetwork + thisClient.getReqNetwork();
-                    usedResource = usedResource + thisClient.getReqResource();
-                }
+        //Then calculate the accumulated resource & network by other clients
+        if (nodeIsAssigned) {
+            ArrayList<String> assignedClients = getAssignedClientsInList(thisNodeID);
+            for (String client : assignedClients) {
+                thisClient = getClientByID(client);
+                usedNetwork = usedNetwork + thisClient.getReqNetwork();
+                usedResource = usedResource + thisClient.getReqResource();
             }
+        }
 
-            //Reset resource and network values
-            thisNode.setTotalResource(thisNode.getTotalResource());
-            thisNode.setTotalNetwork(thisNode.getTotalNetwork());
+        //Reset resource and network values
+        thisNode.setTotalResource(thisNode.getTotalResource());
+        thisNode.setTotalNetwork(thisNode.getTotalNetwork());
 
-            //Update resource and network values
-            thisNode.updateNetworkBandwidth(usedNetwork);
-            thisNode.updateComputingResource(usedResource);
-            logger.info("Node [{}] after disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
+        //Update resource and network values
+        thisNode.updateNetworkBandwidth(usedNetwork);
+        thisNode.updateComputingResource(usedResource);
+        logger.info("Node [{}] after disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
 
              /*
             -----------------------------HISTORY UPDATE--------------------------------------------------------------
              */
-            EdgeClientHistory thisClientHistoryInfo = thisClient.getClientHistory();
+        EdgeClientHistory thisClientHistoryInfo = thisClient.getClientHistory();
 
-            //Get score between thisClientID and thisNodeID
-            Long historyScore = thisClientHistoryInfo.getHistoryScore(thisNodeID);
+        //Get score between thisClientID and thisNodeID
+        Long historyScore = thisClientHistoryInfo.getHistoryScore(thisNodeID);
 
-            //UPDATE HERE WHEN WE HAVE MORE MESSAGE
-            switch (message) {
-                case "job_done" -> historyScore = historyScore - 5;
+        //UPDATE HERE WHEN WE HAVE MORE MESSAGE
+        switch (message) {
+            case "job_done" -> historyScore = historyScore - 5;
 
-                case "job_failed" -> historyScore = historyScore + 10;
-            }
-            if (historyScore < 0) {
-                historyScore = 0L;
-            }
-
-            logger.info("History before disconnecting: \n{}", thisClientHistoryInfo);
-
-            //Put the new history score in history info package
-            thisClientHistoryInfo.setHistoryScore(thisNodeID, historyScore);
-            //Add client's disconnected time to history info package
-            thisClientHistoryInfo.setLastConnectedTime(thisNodeID,disconnectedTime);
-
-            //Print out for debugging purposes:
-            logger.info("History after disconnecting: \n{}", thisClientHistoryInfo);
-
-
-        } catch (Exception e) {
-            logger.error("error in disconnecting client");
-            e.printStackTrace();
+            case "job_failed" -> historyScore = historyScore + 10;
         }
+        if (historyScore < 0) {
+            historyScore = 0L;
+        }
+
+        logger.info("History before disconnecting: \n{}", thisClientHistoryInfo);
+
+        //Put the new history score in history info package
+        thisClientHistoryInfo.setHistoryScore(thisNodeID, historyScore);
+        //Add client's disconnected time to history info package
+        thisClientHistoryInfo.setLastConnectedTime(thisNodeID, disconnectedTime);
+
+        //Print out for debugging purposes:
+        logger.info("History after disconnecting: \n{}", thisClientHistoryInfo);
 
     }
 
@@ -262,7 +256,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     We have spliting regex from response string here.
      */
     @Override
-    public void out(String response) throws Exception {
+    public void out(String response) throws InfrastructureException, JsonProcessingException, MatchMakingException {
 
         logger.info("[out function] \nresponse string: {} ", response);
         String[] commandLine = response.split(" ");
@@ -326,47 +320,45 @@ public class MatchMaker extends MasterOutput implements MasterInput {
        /*
     -----------------------register client to a list--------------------------------------------------
      */
-    private void registerClient(String clientAsString) {
-        try {
-            logger.info("RegisterClient - client as string : {} ", clientAsString);
-            //Map the contents of the JSON file to a java object
-            EdgeClient thisClient = this.mapper.readValue(clientAsString, EdgeClient.class);
-            String thisClientID = thisClient.getId();
+    private void registerClient(String clientAsString) throws JsonProcessingException, NoClientFoundException, ClientAlreadyAssignedException {
+        logger.info("RegisterClient - client as string : {} ", clientAsString);
+        //Map the contents of the JSON file to a java object
+        EdgeClient thisClient = this.mapper.readValue(clientAsString, EdgeClient.class);
+        String thisClientID = thisClient.getId();
 
-            //Check whether client is already register or not
-            //If not -> add client to the list, else update client info
-            if (!checkClientInList(thisClient)) {
-                logger.info("client after readValue from mapper: {}", thisClient);
-                this.clientList.add(thisClient);
-            }
 
-            //Update client info if this client is already in the list
-            else {
-                logger.info("this client has already been registered, updating {} stats", thisClientID);
-                updateClient(clientAsString);
-            }
-
-            //Initiating client history
-            EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
-
-            for (EdgeNode thisNode : this.nodeList) {
-                String thisNodeID = thisNode.getId();
-                thisClientHistory.setHistoryScore(thisNodeID, 0L);
-                thisClientHistory.setLastConnectedTime(thisNodeID, 0L);
-            }
-
-            //assign the history above to this client's history
-            thisClient.setClientHistory(thisClientHistory);
-
-            //Put the client with its history in a HashMap, we can always update the history later on
-            // by fetching thisClientHistory stuff anyway
-            logger.info("this client history info: \n{}", thisClient.getClientHistory());
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        //Check whether client is already register or not
+        //If not -> add client to the list, else update client info
+        if (!checkClientInList(thisClient)) {
+            logger.info("client after readValue from mapper: {}", thisClient);
+            this.clientList.add(thisClient);
         }
+        //Update client info if this client is already in the list
+        else {
+            //No update client that already been mapped to a node
+            if (mapping.containsKey(thisClientID)) {
+                String mappedNode = mapping.get(thisClientID);
+                throw new ClientAlreadyAssignedException("[" + thisClientID + "] already been assigned to [" + mappedNode + "]");
+            }
+            logger.info("this client has already been registered, updating {} stats", thisClientID);
+            updateClient(clientAsString);
+        }
+
+        //Initiating client history
+        EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
+
+        for (EdgeNode thisNode : this.nodeList) {
+            String thisNodeID = thisNode.getId();
+            thisClientHistory.setHistoryScore(thisNodeID, 0L);
+            thisClientHistory.setLastConnectedTime(thisNodeID, 0L);
+        }
+
+        //assign the history above to this client's history
+        thisClient.setClientHistory(thisClientHistory);
+
+        //Put the client with its history in a HashMap, we can always update the history later on
+        // by fetching thisClientHistory stuff anyway
+        logger.info("this client history info: \n{}", thisClient.getClientHistory());
     }
 
 
@@ -379,24 +371,20 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     /*
     -----------------------register node to a list--------------------------------------------------
      */
-    private void registerNode(String nodeAsString) throws Exception {
-        try {
-            logger.info("RegisterNode - node as string: {} ", nodeAsString);
-            EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
+    private void registerNode(String nodeAsString) throws JsonProcessingException, NoClientFoundException, NoNodeFoundException {
+        logger.info("RegisterNode - node as string: {} ", nodeAsString);
+        EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
 
-            //Check whether node is already register or not
-            //If not -> add node to the list, else node client info
-            if (!checkNodeInList(thisNode)) {
-                logger.info("node after readValue from mapper: {}", thisNode);
-                this.nodeList.add(thisNode);
-            }
-            //Update node info if this client is already in the list
-            else {
-                logger.info("this node has already been registered, updating {} stats", thisNode.getId());
-                updateNode(nodeAsString);
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        //Check whether node is already register or not
+        //If not -> add node to the list, else node client info
+        if (!checkNodeInList(thisNode)) {
+            logger.info("node after readValue from mapper: {}", thisNode);
+            this.nodeList.add(thisNode);
+        }
+        //Update node info if this client is already in the list
+        else {
+            logger.info("this node has already been registered, updating {} stats", thisNode.getId());
+            updateNode(nodeAsString);
         }
     }
 
@@ -441,7 +429,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
      * @param nodeAsString JSON string of updating node
      * @throws Exception
      */
-    private void updateNode(String nodeAsString) throws Exception {
+    private void updateNode(String nodeAsString) throws JsonProcessingException, NoNodeFoundException, NoClientFoundException {
         logger.info("UpdateNode - node as string: {} ", nodeAsString);
         //Map the contents of the JSON file to a java object
         EdgeNode newNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
@@ -496,7 +484,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
 
     }
 
-    private void updateClient(String clientAsString) throws Exception {
+    private void updateClient(String clientAsString) throws JsonProcessingException, NoClientFoundException {
         //Map the contents of the JSON file to a java object
         EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
         //get updating client location
@@ -528,6 +516,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     This happen after assign (or match making), sending command such as [give_node client1 node1] to the server (i guess)
      */
     @Override
+    //TODO: Custom exception needed here
     public String read() throws Exception {
         if (command.isEmpty()) {
             throw new Exception("No command exception");
@@ -555,22 +544,22 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     /*
     ----------------------Just making sure input client are in client list---------------
      */
-    private EdgeClient getClientByID(String clientID) throws Exception {
+    private EdgeClient getClientByID(String clientID) throws NoClientFoundException {
         for (EdgeClient thisClient : this.clientList) {
             if (thisClient.getId().equals(clientID)) {
                 return thisClient;
             }
         }
-        throw new Exception("can not find this [clientID] in the list");
+        throw new NoClientFoundException("can not find this [clientID] in the list");
     }
 
-    private EdgeNode getNodeByID(String nodeID) throws Exception {
+    private EdgeNode getNodeByID(String nodeID) throws NoNodeFoundException {
         for (EdgeNode thisNode : this.nodeList) {
             if (thisNode.getId().equals(nodeID)) {
                 return thisNode;
             }
         }
-        throw new Exception("can not find this [nodeID] in the list");
+        throw new NoNodeFoundException("can not find this [nodeID] in the list");
     }
 
     /**

@@ -2,6 +2,7 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
+import InfrastructureManager.MatchMaking.ScoreBasedMatchMaking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
