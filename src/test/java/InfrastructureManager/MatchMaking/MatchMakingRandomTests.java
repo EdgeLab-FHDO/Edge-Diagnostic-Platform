@@ -2,7 +2,7 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Master;
-import InfrastructureManager.REST.Output.ParametrizedGETOutput;
+import InfrastructureManager.Rest.Output.ParametrizedGETOutput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class MatchMakingTests {
+public class MatchMakingRandomTests {
     private final MatchMaker matchMaker = new MatchMaker("match_m","random");
     private final CommandSet commandSet= new CommandSet();
     private static RequestSpecification requestSpec;
@@ -49,15 +49,15 @@ public class MatchMakingTests {
         Assert.assertEquals(expected, "client1");
     }
 
-    @Test
-    public void matchMakerAsInputTest() throws InterruptedException {
-        String node = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
-        String expected = "give_node client1 " + node;
-        matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
-        matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
-        matchMaker.out("matchMaker assign_client client1");
-        Assert.assertEquals(expected,matchMaker.read());
-    }
+//    @Test
+//    public void matchMakerAsInputTest() throws InterruptedException {
+//        String node = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
+//        String expected = "give_node client1 " + node;
+//        matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
+//        matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
+//        matchMaker.out("matchMaker assign_client client1");
+//        Assert.assertEquals(expected,matchMaker.read());
+//    }
 
     @Before
     public void setCommands() {
@@ -66,22 +66,22 @@ public class MatchMakingTests {
         this.commandSet.set(commands);
     }
 
-    @Test
-    public void assignNodeToClientCompleteTest() throws InterruptedException {
-
-        String path = "/client/get_node/:client_id";
-        ParametrizedGETOutput output = new ParametrizedGETOutput("rest_out",path, "client_id");
-        matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
-        matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
-        matchMaker.out("matchMaker assign_client client1");
-        output.out(Master.getInstance().execute(matchMaker.read(),commandSet));
-        String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
-
-        String response = given().spec(requestSpec)
-                .when().get("/client/get_node/client1")
-                .asString();
-        Assert.assertEquals(expected, response);
-    }
+//    @Test
+//    public void assignNodeToClientCompleteTest() throws InterruptedException {
+//
+//        String path = "/client/get_node/:client_id";
+//        ParametrizedGETOutput output = new ParametrizedGETOutput("rest_out",path, "client_id");
+//        matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
+//        matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
+//        matchMaker.out("matchMaker assign_client client1");
+//        output.out(Master.getInstance().execute(matchMaker.read(),commandSet));
+//        String expected = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
+//
+//        String response = given().spec(requestSpec)
+//                .when().get("/client/get_node/client1")
+//                .asString();
+//        Assert.assertEquals(expected, response);
+//    }
 
     @Test
     public void invalidCommandThrowsException() {
@@ -90,11 +90,11 @@ public class MatchMakingTests {
         Assert.assertEquals(e.getMessage(),"Invalid command for MatchMaker");
     }
 
-    @Test
-    public void incompleteCommandThrowsException() {
-        var e = Assert.assertThrows(IllegalArgumentException.class, () ->
-                matchMaker.out("matchMaker register_client"));
-        Assert.assertEquals(e.getMessage(),"Arguments missing for command - MatchMaker");
-    }
+//    @Test
+//    public void incompleteCommandThrowsException() {
+//        var e = Assert.assertThrows(IllegalArgumentException.class, () ->
+//                matchMaker.out("matchMaker register_client"));
+//        Assert.assertEquals(e.getMessage(),"Arguments missing for command - MatchMaker");
+//    }
 
 }

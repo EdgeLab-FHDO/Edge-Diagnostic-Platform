@@ -2,7 +2,7 @@
   "ioData": {
       "inputs": [
         {"type": "ConsoleInput","name": "console_in"},
-        {"type": "MatchMaker-Random","name": "match_m"},
+        {"type": "MatchMaker-Score","name": "match_m"},
         {"type": "Scenario", "name": "dummy"},
         {"type": "Scenario", "name": "run_open_cv_demo"},
         {"type":  "NodeResourceLimiter", "name": "limit"},
@@ -16,6 +16,11 @@
           "information": [],
           "@IOType" : "CustomCommand"
         },
+        {"type": "GenericPOST","name": "disconnect_client_in_rest","address": "/client/disconnect","port": 4567,
+          "command" :  "disconnect_client $body",
+          "information": [],
+          "@IOType" : "CustomCommand"
+        },
         {"type": "GenericPOST","name": "assignment_rest","address": "/client/assign","port": 4567,
           "command" :  "assign_client $id",
           "information": ["id"],
@@ -26,6 +31,9 @@
           "information": ["name", "number"],
           "@IOType" : "CustomCommand"
         }
+
+
+
       ],
       "outputs": [
         {"type": "ConsoleOutput","name": "console_out"},
@@ -146,6 +154,13 @@
       "out" : "match_m",
       "commands" : {
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "disconnect_client_in_rest",
+      "out" : "match_m",
+      "commands" : {
+        "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
       }
     },
     {

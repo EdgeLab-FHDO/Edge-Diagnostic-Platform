@@ -1,5 +1,8 @@
 package InfrastructureManager;
 
+import InfrastructureManager.MatchMaking.Exception.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 public abstract class MasterOutput {
     private final String name;
 
@@ -15,5 +18,5 @@ public abstract class MasterOutput {
         return name;
     }
 
-    public abstract void out (String response) throws IllegalArgumentException;
+    public abstract void out (String response) throws Exception;
 }

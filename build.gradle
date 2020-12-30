@@ -3,7 +3,7 @@ plugins {
     //Makes the app runnable on CL (gradle run)
     id 'application'
 }
-application{
+application {
     //Necessary configuration for application plugin, path to the main method
     mainClassName 'InfrastructureManager.Master'
 }
@@ -44,4 +44,12 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured:4.3.1'
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.github.tomakehurst:wiremock-jre8:2.27.2'
+
+    //Dependencies for slf4j, for logging purpose
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+// https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+// https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 }

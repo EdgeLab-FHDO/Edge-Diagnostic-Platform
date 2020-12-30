@@ -1,5 +1,5 @@
 {
-  "name": "dummy",
+  "name": "scoreBased",
   "eventList": [
     {
       "command": "start_rest_server",
@@ -42,11 +42,11 @@
       "executionTime": 8500
     },
     {
-      "command": "update_node {\"id\":\"node1\",\"connected\":true,\"totalResource\":250,\"totalNetwork\":300,\"location\":46}",
+      "command": "register_node {\"id\":\"node1\",\"connected\":true,\"totalResource\":250,\"totalNetwork\":300,\"location\":46}",
       "executionTime": 9000
     },
     {
-      "command": "update_node {\"id\":\"node1\",\"connected\":true,\"resource\":150,\"network\":120}",
+      "command": "register_node {\"id\":\"node1\",\"connected\":true,\"resource\":150,\"network\":120}",
       "executionTime": 9500
     },
     {
@@ -54,7 +54,7 @@
       "executionTime": 10000
     },
     {
-      "command": "update_client {\"id\":\"client1\",\"reqNetwork\":110,\"reqResource\":80,\"location\":76}",
+      "command": "register_client {\"id\":\"client1\",\"reqNetwork\":110,\"reqResource\":80,\"location\":76}",
       "executionTime": 10500
     },
     {
