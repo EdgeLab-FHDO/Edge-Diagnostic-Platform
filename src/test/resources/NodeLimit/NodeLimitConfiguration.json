@@ -1,0 +1,38 @@
+{
+  "ioData": {
+    "inputs": [
+      {"type": "ConsoleInput","name": "console_in"},
+      {"type":  "NodeResourceLimiter", "name": "limit"}
+    ],
+    "outputs": [
+      {"type": "ConsoleOutput","name": "console_out"},
+      {"type": "GenericGET","name": "rest_limit", "address": "/limit","port": 4567},
+      {"type":  "NodeResourceLimiter", "name": "limit"}
+    ]
+  },
+  "connections" : [
+    {
+      "in" : "console_in",
+      "out" : "util",
+      "commands" : {
+        "exit" : "util exit",
+        "start_rest_server" : "util runRunner RestServer",
+        "start_runner $runner_name" : "util runRunner $runner_name"
+      }
+    },
+    {
+      "in" : "console_in",
+      "out" : "limit",
+      "commands" : {
+        "limit_node $tag $CPU_limit" : "limit cores $tag $CPU_limit"
+      }
+    },
+    {
+      "in" : "limit",
+      "out" : "rest_limit",
+      "commands" : {
+        "set_limits $limits" : "toGET resource $limits"
+      }
+    }
+  ]
+}
