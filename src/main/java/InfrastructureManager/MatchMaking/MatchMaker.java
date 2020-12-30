@@ -269,34 +269,22 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                 switch (commandLine[1]) {
                     case "register_client":
                         registerClient(commandLine[2]);
-                        logger.info("""
-                                client registered, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
+                        logger.info("client registered, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                         break;
 
                     case "register_node":
                         registerNode(commandLine[2]);
-                        logger.info("""
-                                node registered, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
+                        logger.info("node registered, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                         break;
 
                     case "assign_client":
                         assign(commandLine[2]);
-                        logger.info("""
-                                client assigned, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
+                        logger.info("client assigned, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                         break;
 
                     case "disconnect_client":
                         updateAfterDisconnecting(commandLine[2]);
-                        logger.info("""
-                                client disconnected, done with [outfunction]
-                                ---------------------------------------------------------------------------------------
-                                """);
+                        logger.info("client disconnected, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                         break;
 
                     default:

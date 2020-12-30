@@ -41,11 +41,9 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
      */
     @Override
     public EdgeNode match(EdgeClient thisClient, List<EdgeNode> nodeListInput) throws NoNodeSatisfyRequirementException, NoNodeFoundInHistoryException {
-        logger.info("""
-                                        
-                        ----------------------------MATCH MAKING - SCORE BASED--------------------
-                        R_weight, N_weight, D_weight, H_weight, QOS_threshold
-                        {}      , {}      , {}      , {}      , {}    """
+        logger.info("----------------------------MATCH MAKING - SCORE BASED--------------------\n" +
+                        "R_weight, N_weight, D_weight, H_weight, QOS_threshold\n" +
+                        "{}      , {}      , {}      , {}      , {}    "
                 , RESOURCE_WEIGHT, NETWORK_WEIGHT, PING_WEIGHT, HISTORY_WEIGHT, QOS_THRESHOLD);
 
 
