@@ -11,6 +11,9 @@ application {
 group 'de.fh-dortmund'
 version '0.5'
 
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14
+
 jar {
     //Include the Main-Class Attribute so that the generated jar is executable using java -jar
     manifest {
