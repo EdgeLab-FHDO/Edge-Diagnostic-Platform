@@ -1,7 +1,7 @@
-package InfrastructureManager.REST.Input;
+package InfrastructureManager.Rest.Input;
 
 import InfrastructureManager.MasterInput;
-import InfrastructureManager.REST.RestServerRunner;
+import InfrastructureManager.Rest.RestServerRunner;
 import spark.Request;
 import spark.Response;
 import spark.Route;

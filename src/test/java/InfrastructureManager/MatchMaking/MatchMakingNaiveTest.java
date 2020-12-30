@@ -1,9 +1,7 @@
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.Configuration.CommandSet;
-import InfrastructureManager.EdgeClientHistory;
-import InfrastructureManager.EdgeNode;
-import InfrastructureManager.Rest.RestRunner;
+import InfrastructureManager.Master;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
@@ -17,15 +15,18 @@ public class MatchMakingNaiveTest {
     private static RequestSpecification requestSpec;
 
     @BeforeClass
-    public static void startServer() throws Exception { //Before all tests
+    public static void startServer() { //Before all tests
         String testIp = "http://localhost";
         int port = 4567;
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        RestRunner.getRestRunner("RestRunner", port).startServerIfNotRunning();
+        Master.resetInstance();
+        Master.changeConfigPath("src/test/resources/MatchMaking/MatchMakingConfiguration.json");
+        Master.getInstance().startRunnerThread("RestServer");
     }
+
 
 
     @Test

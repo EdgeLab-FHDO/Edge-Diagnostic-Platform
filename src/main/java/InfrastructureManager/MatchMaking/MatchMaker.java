@@ -76,7 +76,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     }
 
 
-    private void assign(String thisClientID) throws Exception {
+    private void assign(String thisClientID) throws InfrastructureException, MatchMakingException {
          /*
         -----------------------Assigning client to node--------------------------------------------------
         MATCH MAKING ACTION, single client to single node, not multiple in the same time.
@@ -90,7 +90,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             logger.warn("this client is already connected with {}", connectedNode);
             logger.info("client history info: \n{}", clientHistoryInfo);
             logger.info("mapping map: {}", mapping);
-            throw new ClientAlreadyAssignedException("this [" + thisClientID + "] is already connected with " + "[" + connectedNode + "]") ;
+            throw new ClientAlreadyAssignedException("this [" + thisClientID + "] is already connected with " + "[" + connectedNode + "]");
         }
         //If thisClient has not been matched with any node, then we match it
         else {
@@ -254,7 +254,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     We have spliting regex from response string here.
      */
     @Override
-    public void out(String response) throws Exception {
+    public void out(String response) {
 
         logger.info("[out function] \nresponse string: {} ", response);
         String[] commandLine = response.split(" ");
@@ -302,8 +302,12 @@ public class MatchMaker extends MasterOutput implements MasterInput {
                     default:
                         throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
-            } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - MatchMaker");
+            } catch (InfrastructureException e) {
+                e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            } catch (MatchMakingException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -481,7 +485,7 @@ public class MatchMaker extends MasterOutput implements MasterInput {
             logger.debug("there are no new total network bandwidth to update, reuse the old one");
             newNode.setTotalNetwork(oldNode.getTotalNetwork());
         }
-        if (newNode.getLocation() == 0  ) {
+        if (newNode.getLocation() == 0) {
             logger.debug("there are no new location to update, reuse the old one");
             newNode.setLocation(oldNode.getLocation());
         }

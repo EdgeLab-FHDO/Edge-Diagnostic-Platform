@@ -3,6 +3,8 @@ package InfrastructureManager.MatchMaking;
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
 import InfrastructureManager.EdgeClientHistory;
+import InfrastructureManager.MatchMaking.Exception.NoNodeFoundInHistoryException;
+import InfrastructureManager.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 
 import java.util.List;
 
@@ -12,5 +14,5 @@ import java.util.List;
 
 //TODO: better abstraction/definition for match making algorithm (for better inheritance)
 public interface MatchMakingAlgorithm {
-    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList) throws Exception;
+    EdgeNode match (EdgeClient client, List<EdgeNode> nodeList) throws NoNodeSatisfyRequirementException, NoNodeFoundInHistoryException;
 }
