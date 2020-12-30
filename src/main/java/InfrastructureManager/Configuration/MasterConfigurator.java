@@ -33,7 +33,7 @@ public class MasterConfigurator {
     //TODO: consider making it a singleton
 
 
-    public MasterConfigurator(String configPath) {
+    public MasterConfigurator() {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
         try {
             //Map the contents of the JSON file to a java object

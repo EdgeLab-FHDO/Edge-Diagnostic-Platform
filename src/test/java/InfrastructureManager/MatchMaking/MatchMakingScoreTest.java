@@ -47,7 +47,7 @@ public class MatchMakingScoreTest {
         EdgeNode node3 = matchMaker.getNodeList().get(2);
         //Node 3 resource should be 105
         long node3Resource = node3.getResource();
-        Assert.assertEquals(105, node3Resource);
+        Assert.assertEquals(200, node3Resource);
     }
 
     @Test

@@ -29,7 +29,7 @@ public class Master {
      * Gets the master configured according to the config file.
      */
     private Master() {
-        MasterConfigurator configurator = new MasterConfigurator(configPath);
+        MasterConfigurator configurator = new MasterConfigurator();
         runnerList = configurator.getRunners();
         runningThreads = new ArrayList<>();
         registeredClients = new ArrayList<>();
