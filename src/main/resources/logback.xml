@@ -12,8 +12,14 @@
     <logger
             name="InfrastructureManager.MatchMaking.ScoreBasedMatchMaking"
             level="DEBUG"/>
+    <logger
+            name="InfrastructureManager.MatchMaking.MatchMaker"
+            level="DEBUG"/>
+    <logger
+            name="InfrastructureManager.MatchMaking.ScoreBasedMatchMaking"
+            level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="OFF">
         <appender-ref ref="STDOUT"/>
     </root>
 

@@ -16,14 +16,12 @@ public class RestRouter {
             path("/node", () -> {
                 post("/register", RestInput.registerNode);
                 get("/limit", RestOutput.getInstance().sendLimitInfo);
-                put("/update",RestInput.updateNode);
             });
             path("/client", () -> {
                 post("/register", RestInput.registerClient);
                 post("/assign/:client_id", RestInput.assignClient);
                 //use getInstance() when output data ????
                 get("/get_node/:client_id", RestOutput.getInstance().sendNodeInfo);
-                put("/update", RestInput.updateClient);
                 put("/disconnect", RestInput.disconnectClient);
             });
 

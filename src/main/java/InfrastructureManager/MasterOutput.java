@@ -18,5 +18,5 @@ public abstract class MasterOutput {
         return name;
     }
 
-    public abstract void out (String response) throws InfrastructureException, JsonProcessingException, MatchMakingException;
+    public abstract void out (String response) throws Exception;
 }

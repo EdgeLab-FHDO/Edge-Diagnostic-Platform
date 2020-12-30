@@ -64,7 +64,7 @@ public class EdgeNode {
         this.resource = thisTotalNetworkBandwidth;
     }
 
-    public void setLocation(long Location) {
+    public void setLocation(long location) {
         this.location = location;
     }
 
@@ -72,11 +72,11 @@ public class EdgeNode {
         this.id = null;
         this.ipAddress = "null";
         this.connected = false;
-        this.resource = Long.MAX_VALUE;
-        this.network = Long.MAX_VALUE;
-        this.location = Long.MAX_VALUE;
-        this.totalResource = Long.MAX_VALUE;
-        this.totalNetwork = Long.MAX_VALUE;
+        this.resource = 0;
+        this.network = 0;
+        this.totalResource = 0;
+        this.totalNetwork = 0;
+        this.location = 0;
     }
 
     public EdgeNode(String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation) {
@@ -85,9 +85,9 @@ public class EdgeNode {
         this.connected = connected;
         this.resource = thisTotalComputingResource;
         this.network = thisTotalNetworkBandwidth;
-        this.location = thisLocation;
         this.totalNetwork = thisTotalNetworkBandwidth;
         this.totalResource = thisTotalComputingResource;
+        this.location = thisLocation;
     }
 
     public void updateComputingResource(Long usedComputingResource) {
@@ -111,6 +111,5 @@ public class EdgeNode {
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
                 "  location : " + location + "\n}";
-
     }
 }
