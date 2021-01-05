@@ -3,6 +3,7 @@ package InfrastructureManager;
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -196,10 +197,29 @@ public class Master {
     }
 
     public static void main(String[] args) {
+        boolean autostart = true;
         if (args.length > 0) {
-            Master.changeConfigPath(args[0]);
+            List<String> argList = Arrays.asList(args);
+            if (argList.contains("--autostart=false")){
+                autostart = false;
+                System.out.println("autostart turned off");
+            }
+            try {
+                if (argList.contains("-c")) {
+                    Master.changeConfigPath(args[argList.indexOf("-c") + 1]);
+                    System.out.println("changed path");
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new IllegalArgumentException("\"-c\" was used but no path was indicated for the config file");
+            }
         }
-        Master.getInstance().startRunners();
+        if (autostart) {
+            Master.getInstance().startRunners();
+            System.out.println("autostart");
+        }
+        else {
+            Master.getInstance().startMainRunner();
+        }
         try {
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {
