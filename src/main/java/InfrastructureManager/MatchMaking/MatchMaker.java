@@ -47,7 +47,6 @@ public class MatchMaker extends MasterOutput implements MasterInput {
     public MatchMaker(String name, String algorithmType) {
         super(name);
 
-        System.out.println("input for match making:  \nstart_rest_server \nstart_runner Runner_rest_in \nstart_runner Runner_match_m \n");
         setAlgorithmFromString(algorithmType);
         //initiate variables
         this.mapper = new ObjectMapper();

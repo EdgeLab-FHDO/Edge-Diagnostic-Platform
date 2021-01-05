@@ -2,9 +2,9 @@ package InfrastructureManager.Rest;
 
 import InfrastructureManager.Master;
 import InfrastructureManager.MasterOutput;
-import InfrastructureManager.Rest.Input.POSTInput;
-import InfrastructureManager.Rest.Output.GETOutput;
-import InfrastructureManager.Rest.Output.ParametrizedGETOutput;
+import InfrastructureManager.REST.Input.POSTInput;
+import InfrastructureManager.REST.Output.GETOutput;
+import InfrastructureManager.REST.Output.ParametrizedGETOutput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;

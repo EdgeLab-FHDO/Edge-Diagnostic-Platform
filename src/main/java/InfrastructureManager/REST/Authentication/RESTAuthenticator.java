@@ -1,4 +1,4 @@
-package InfrastructureManager.Rest.Authentication;
+package InfrastructureManager.REST.Authentication;
 
 /**
  * Interface to create different authenticators for REST requests

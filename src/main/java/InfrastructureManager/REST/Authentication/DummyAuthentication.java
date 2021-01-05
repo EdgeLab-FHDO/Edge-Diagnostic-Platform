@@ -1,4 +1,4 @@
-package InfrastructureManager.Rest.Authentication;
+package InfrastructureManager.REST.Authentication;
 
 /**
  * Implementation of RESTAuthenticator interface to server as a placeholder until real authentication is

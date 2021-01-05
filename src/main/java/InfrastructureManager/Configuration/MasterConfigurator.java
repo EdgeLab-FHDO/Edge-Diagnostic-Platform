@@ -6,10 +6,10 @@ import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.NodeLimit.NodeResourceLimiter;
-import InfrastructureManager.Rest.Input.POSTInput;
-import InfrastructureManager.Rest.Output.ParametrizedGETOutput;
-import InfrastructureManager.Rest.RestServerRunner;
-import InfrastructureManager.Rest.Output.GETOutput;
+import InfrastructureManager.REST.Input.POSTInput;
+import InfrastructureManager.REST.Output.ParametrizedGETOutput;
+import InfrastructureManager.REST.RestServerRunner;
+import InfrastructureManager.REST.Output.GETOutput;
 import InfrastructureManager.SSH.SSHClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

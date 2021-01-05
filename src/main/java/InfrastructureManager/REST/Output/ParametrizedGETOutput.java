@@ -1,4 +1,4 @@
-package InfrastructureManager.Rest.Output;
+package InfrastructureManager.REST.Output;
 
 import spark.Request;
 import spark.Response;
