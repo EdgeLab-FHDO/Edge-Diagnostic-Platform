@@ -2,7 +2,6 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +14,6 @@ public class Master {
 
     private final List<Runner> runnerList;
     private final List<Thread> runningThreads;
-
-    private final List<EdgeNode> availableNodes;
-    private final List<EdgeClient> registeredClients;
 
     private Thread mainThread;
     private Thread restThread;
@@ -32,8 +28,6 @@ public class Master {
         MasterConfigurator configurator = new MasterConfigurator(configPath);
         runnerList = configurator.getRunners();
         runningThreads = new ArrayList<>();
-        registeredClients = new ArrayList<>();
-        availableNodes = new ArrayList<>();
     }
 
 
@@ -164,42 +158,9 @@ public class Master {
                 if (scenarioRunner.getScenarioName().equalsIgnoreCase(scenario.getName())){
                     return scenarioRunner;
                 }
-            } catch (Exception e) {
-                continue;
-            }
+            } catch (Exception ignored) {}
         }
         throw new IllegalArgumentException("There is no runner configured for the given scenario");
-    }
-
-    public List<EdgeNode> getAvailableNodes() {
-        return availableNodes;
-    }
-
-    public void addNode(EdgeNode node) {
-        this.availableNodes.add(node);
-    }
-
-
-    public void addClient(EdgeClient client) {
-        this.registeredClients.add(client);
-    }
-
-    public EdgeClient getClientByID (String clientID) throws Exception {
-        for (EdgeClient client : this.registeredClients) {
-            if (client.getId().equals(clientID)) {
-                return client;
-            }
-        }
-        throw new Exception("No client found");
-    }
-
-    public EdgeNode getNodeByID (String nodeID) throws Exception {
-        for (EdgeNode node : this.availableNodes) {
-            if (node.getId().equals(nodeID)) {
-                return node;
-            }
-        }
-        throw new Exception("No node found");
     }
 
     public void startRunners() {
@@ -238,7 +199,6 @@ public class Master {
         if (args.length > 0) {
             Master.changeConfigPath(args[0]);
         }
-        //Master.changeConfigPath("src/test/resources/REST/RESTTestConfiguration.json");
         Master.getInstance().startRunners();
         try {
             Master.getInstance().getMainThread().join();
