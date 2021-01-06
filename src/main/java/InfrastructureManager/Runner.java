@@ -155,6 +155,11 @@ public class Runner implements Runnable{
         return paused;
     }
 
+    public String getInputName() {
+        //return this.input.getName();
+        return ""; //TODO:CHANGE to up
+    }
+
     /**
      * Determines if an object is equal to a runner. Bases the comparison on runner names
      * @param o Object to be compared to

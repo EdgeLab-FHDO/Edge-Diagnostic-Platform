@@ -4,9 +4,12 @@ import java.util.concurrent.Semaphore;
 
 public abstract class MasterInput {
 
+    private final String name;
     private final Semaphore readingLock; //Binary semaphore to implement blocking on inputs
+    private Runner runner;
 
-    public MasterInput() {
+    public MasterInput(String name) {
+        this.name = name;
         this.readingLock = new Semaphore(0); // starts without permits so it will block until input is available
     }
 
@@ -30,6 +33,18 @@ public abstract class MasterInput {
     protected String getReading() throws InterruptedException {
         this.readingLock.acquire();
         return getSingleReading();
+    }
+
+    public void setRunner(Runner runner) {
+        this.runner = runner;
+    }
+
+    public Runner getRunner() {
+        return runner;
+    }
+
+    public String getName() {
+        return name;
     }
 
     protected abstract String getSingleReading();

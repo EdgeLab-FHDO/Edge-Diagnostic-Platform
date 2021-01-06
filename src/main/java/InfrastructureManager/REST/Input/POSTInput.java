@@ -32,7 +32,7 @@ public class POSTInput extends MasterInput {
      * @param toParse List of parameters in the JSON that the input will search for
      */
     public POSTInput(String path, String command, List<String> toParse) {
-        super();
+        super("POST{" + path + "}"); // TODO: CHANGE TO RECEIVE NAME IN CONSTRUCTOR
         this.path = path;
         this.toParse = toParse;
         this.isActivated = false;
