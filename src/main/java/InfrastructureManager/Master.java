@@ -202,12 +202,10 @@ public class Master {
             List<String> argList = Arrays.asList(args);
             if (argList.contains("--autostart=false")){
                 autostart = false;
-                System.out.println("autostart turned off");
             }
             try {
                 if (argList.contains("-c")) {
                     Master.changeConfigPath(args[argList.indexOf("-c") + 1]);
-                    System.out.println("changed path");
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("\"-c\" was used but no path was indicated for the config file");
@@ -215,7 +213,6 @@ public class Master {
         }
         if (autostart) {
             Master.getInstance().startRunners();
-            System.out.println("autostart");
         }
         else {
             Master.getInstance().startMainRunner();
