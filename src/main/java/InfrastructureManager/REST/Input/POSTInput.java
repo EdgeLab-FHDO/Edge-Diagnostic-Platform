@@ -9,23 +9,19 @@ import spark.Route;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Semaphore;
 
 import static spark.Spark.post;
 
 /**
  * Class to represent data coming from POST requests, it can be configured to extract parameters from the request body json
  */
-public class POSTInput implements MasterInput {
+public class POSTInput extends MasterInput {
 
     private final Queue<String> toRead;
 
     private final String path; //Path where the post handler will listen
     private final List<String> toParse; //List of argument that will be searched for in the json body
     private boolean isActivated; //To synchronize with the rest server
-
-    //Semaphore pair to coordinate internal blocking waiting for input on the requests
-    private final Semaphore readingLock;
 
     private final Route POSTHandler;
 
@@ -36,16 +32,15 @@ public class POSTInput implements MasterInput {
      * @param toParse List of parameters in the JSON that the input will search for
      */
     public POSTInput(String path, String command, List<String> toParse) {
+        super();
         this.path = path;
         this.toParse = toParse;
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
-        this.readingLock = new Semaphore(0); // Binary semaphore, starts without permits so it will block until a request is made
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
-                this.toRead.offer(this.substituteCommand(command,o));
-                this.readingLock.release(); // Allow the reading part to unblock
+                this.storeReadingAndUnblock(this.substituteCommand(command,o));
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
@@ -90,7 +85,7 @@ public class POSTInput implements MasterInput {
     }
 
     /**
-     * MasterInput implementation, blocks whenever there is nothing to send
+     * MasterInputInterface implementation, blocks whenever there is nothing to send
      * @return Command to trigger events in the master
      */
     @Override
@@ -102,12 +97,21 @@ public class POSTInput implements MasterInput {
     }
 
     /**
-     * Get the commands to send to the master from the internal FIFO queue, block if nothing available
+     * Get the commands to send to the master from the internal FIFO queue
      * @return Command from the queue
      */
-    private String getReading() throws InterruptedException {
-        readingLock.acquire();
+    @Override
+    protected String getSingleReading() {
         return this.toRead.poll();
+    }
+
+    /**
+     * Store reading to be sent in the FIFO queue
+     * @param reading Command to be sent
+     */
+    @Override
+    protected void storeSingleReading(String reading) {
+        this.toRead.offer(reading);
     }
 
     /**

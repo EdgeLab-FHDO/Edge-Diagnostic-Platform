@@ -27,7 +27,7 @@ import java.util.Map;
 public class MasterConfigurator {
 
     private MasterConfigurationData data; //Configuration File Interface
-    private Map<String,MasterInput> inputInstances;
+    private Map<String, MasterInputInterface> inputInstances;
     private List<String> scenarios;
     private Map<String,MasterOutput> outputInstances;
     private boolean activateRestRunner = false;
@@ -51,13 +51,13 @@ public class MasterConfigurator {
      * Extracts data from the configuration file to assign different input instances to their names
      */
     private void fillInputInstances() {
-        MasterInput input;
+        MasterInputInterface input;
         for (IOConfigData inputData : this.data.getIoData().getInputs()) {
             if (inputData.getType().equals("Scenario")) {
                 this.scenarios.add(inputData.getName());
             } else {
                 if (this.outputInstances.containsKey(inputData.getName())) {
-                    input = (MasterInput) this.outputInstances.get(inputData.getName());
+                    input = (MasterInputInterface) this.outputInstances.get(inputData.getName());
                 } else {
                     input = this.getInputFromData(inputData);
                 }
@@ -117,7 +117,7 @@ public class MasterConfigurator {
         }
     }
 
-    private MasterInput getInputFromData(IOConfigData inputData) throws IllegalArgumentException {
+    private MasterInputInterface getInputFromData(IOConfigData inputData) throws IllegalArgumentException {
         int port = inputData.getPort();
         String[] type = inputData.getType().split("-");
         switch (type[0]) {
@@ -131,13 +131,14 @@ public class MasterConfigurator {
                 CustomCommandIO data = (CustomCommandIO)inputData;
                 RestServerRunner.configure("RestServer",port != 0 ? port : 4567);
                 activateRestRunner = true;
-                return new POSTInput(data.getAddress(),data.getCommand(),data.getInformation());
+                //TODO:CHANGE
+                return (MasterInputInterface) new POSTInput(data.getAddress(),data.getCommand(),data.getInformation());
             default:
                 throw new IllegalArgumentException("Invalid input in Configuration");
         }
     }
 
-    private MasterInput getInput(String inputName) {
+    private MasterInputInterface getInput(String inputName) {
         return this.inputInstances.get(inputName);
     }
 
@@ -179,7 +180,7 @@ public class MasterConfigurator {
      */
     public List<Runner> getRunners(){
         List<Runner> result = new ArrayList<>();
-        MasterInput runnerInput;
+        MasterInputInterface runnerInput;
         MasterOutput[] runnerOutputs;
         String runnerName = "Runner_";
         fillInputInstances();

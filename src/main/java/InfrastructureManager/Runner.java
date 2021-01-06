@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class Runner implements Runnable{
     protected String name;
-    protected MasterInput input;
+    protected MasterInputInterface input;
     protected MasterOutput[] outputs;
     protected Map<String, CommandSet> configuredCommands;
 
@@ -33,10 +33,10 @@ public class Runner implements Runnable{
      * Constructor of the class, normally configured based on raw data (RunnerConfigData) by the
      * MasterConfigurator
      * @param name Name of the runner
-     * @param input Input of the runner (MasterInput object)
+     * @param input Input of the runner (MasterInputInterface object)
      * @param outputs 1 or more MasterOutput objects to be defined as outputs of the runner
      */
-    public Runner(String name,MasterInput input, MasterOutput...outputs) {
+    public Runner(String name, MasterInputInterface input, MasterOutput...outputs) {
         this(name);
         this.configuredCommands = new HashMap<>();
         this.input = input;

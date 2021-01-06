@@ -3,9 +3,9 @@ package InfrastructureManager;
 import java.util.Scanner;
 
 /**
- * Class representing input from the console as a form of MasterInput
+ * Class representing input from the console as a form of MasterInputInterface
  */
-public class ConsoleInput implements MasterInput{
+public class ConsoleInput implements MasterInputInterface {
     private final Scanner IN = new Scanner(System.in);
 
     /**

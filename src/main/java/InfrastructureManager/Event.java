@@ -3,10 +3,10 @@ package InfrastructureManager;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 /**
- * MasterInput class representing an Event (Triggered in the scenarios)
+ * MasterInputInterface class representing an Event (Triggered in the scenarios)
  * The definition of the event objects comes from a JSON file
  */
-public class Event implements MasterInput {
+public class Event implements MasterInputInterface {
 
     private String command; //Command to be executed in the master
     private long executionTime; //Execution time relative to the scenario start (in ms)
@@ -38,7 +38,7 @@ public class Event implements MasterInput {
     }
 
     /**
-     * Read implementation according to MasterInput Interface
+     * Read implementation according to MasterInputInterface Interface
      * @return The defined command of the event
      */
     @Override

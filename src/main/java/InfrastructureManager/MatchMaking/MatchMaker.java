@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 
 
-public class MatchMaker extends MasterOutput implements MasterInput {
+public class MatchMaker extends MasterOutput implements MasterInputInterface {
     /**
      * When implement new function. There are 3 things we need to do.
      * <p>
