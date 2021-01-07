@@ -12,7 +12,8 @@
         "update_gui" : "console GUIUpdateExecution" ,
         "node_request" : "console matchMakingExecution" ,
         "save_statistics" : "console LoggerExecution" ,
-        "show_statistics" : "console GUIUpdateExecution"
+        "show_statistics" : "console GUIUpdateExecution",
+        "test $param" : "console $param"
       }
     }
   ]

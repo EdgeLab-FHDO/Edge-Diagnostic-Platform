@@ -1,11 +1,8 @@
 package InfrastructureManager;
 
-import InfrastructureManager.Configuration.CommandSet;
-
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Class implementing the Runnable interface to be run in different threads by the master.

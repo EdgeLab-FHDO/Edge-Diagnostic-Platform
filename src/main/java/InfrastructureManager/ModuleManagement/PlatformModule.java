@@ -29,6 +29,10 @@ public abstract class PlatformModule {
 
     protected void setInputs(MasterInput... inputs) {
         this.inputs = inputs;
+        for (MasterInput input : this.inputs) {
+            Runner runner = new Runner(input.getName(),input);
+            input.setRunner(runner);
+        }
     }
 
     protected void setOutputs(MasterOutput... outputs) {

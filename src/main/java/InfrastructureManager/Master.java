@@ -48,6 +48,10 @@ public class Master {
         runnerList.stream().filter(Runner::isRunning).forEach(Runner::exit);
     }
 
+    public void startAllModules() {
+        modules.forEach(PlatformModule::start);
+    }
+
     /**
      * Method for starting the main runner thread, declared in the config file
      */
@@ -217,7 +221,7 @@ public class Master {
         }
         if (autostart) {
             Master.changeConfigPath("src/main/resources/NewConfiguration.json");
-            Master.getInstance().startRunners();
+            Master.getInstance().startAllModules();
         }
         else {
             Master.getInstance().startMainRunner();
