@@ -50,7 +50,7 @@ public class ScenarioRunner extends Runner {
     public void runOperation() {
         Event current = this.scenario.getEventList().get(currentEvent);
         waitForEvent(current);
-        this.input = current;
+        this.inputInterface = current;
         super.runOperation();
         currentEvent++;
         if (currentEvent == this.scenario.getEventList().size()) {

@@ -1,18 +1,15 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.Configuration.CommandSet;
-import InfrastructureManager.Connection;
-import InfrastructureManager.MasterInput;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.*;
 import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
-import InfrastructureManager.Runner;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-public class Module {
+public abstract class Module {
 
-    public enum ModuleState { INITIAL, PAUSED, RUNNING };
+    public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
     protected MasterInput[] inputs;
     protected MasterOutput[] outputs;
@@ -51,14 +48,11 @@ public class Module {
     }
 
     public void start() {
-        fillRunners();
-        connectRunners();
+        configureRunners();
         fillThreads();
         inputRunnerThreads.forEach(Thread::start);
         state = ModuleState.RUNNING;
     }
-
-
 
     public void pause() {
         inputRunners.forEach(Runner::pause);
@@ -83,19 +77,36 @@ public class Module {
         return Arrays.stream(inputs).map(MasterInput::getName).anyMatch(inputName::equals);
     }
 
-    private void fillRunners() {
-        Arrays.stream(inputs).filter(i -> inputConnections.containsKey(i.getName()))
-                .map(MasterInput::getRunner).forEach(inputRunners::add);
-    }
-
-    private void connectRunners() {
-        for (String input : inputConnections.keySet()) {
-            for (Runner r : inputRunners) {
-                if (r.getInputName().equals(input)) {
-                    //TODO: SEND CONNECTIONS TO RUNNER
-                }
+    private void configureRunners() {
+        for (MasterInput in : inputs) {
+            if (inputConnections.containsKey(in.getName())) {
+                Runner runner = in.getRunner();
+                runner.setConnections(inputConnections.get(in.getName()));
+                runner.setRunOperation(setRunnerOperation());
+                inputRunners.add(runner);
             }
         }
+    }
+
+    //This can be overriden for different modules
+    protected BiConsumer<Runner,String> setRunnerOperation() {
+        return (runner,fromInput) -> {
+            Master master = Master.getInstance();
+            try {
+                for (Connection c : runner.getConnections()) {
+                    String mapping = master.execute(fromInput,c.getCommands());
+                    if (mapping != null) {
+                        try {
+                            c.getOut().out(mapping);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
 

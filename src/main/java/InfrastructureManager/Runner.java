@@ -2,8 +2,10 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Class implementing the Runnable interface to be run in different threads by the master.
@@ -11,40 +13,31 @@ import java.util.Map;
  * Each runner, has input and outputs which allow for static configuration of the master
  */
 public class Runner implements Runnable{
-    protected String name;
-    protected MasterInputInterface input;
-    protected MasterOutput[] outputs;
-    protected Map<String, CommandSet> configuredCommands;
 
-    protected final Object pauseLock = new Object(); //In order to pause the runnable
+    private BiConsumer<Runner,String> runOperation;
+
+    protected String name;
+    protected MasterInput input;
+    protected List<Connection> connections;
+
+
+    protected final Semaphore pauseBlock;
     protected volatile boolean paused = false; //Flag to check status and be able to pause
     protected volatile boolean exit = false; //Flag to check status and be able to exit
     protected volatile boolean running = false; //Flag to see runner status
 
-    /**
-     * Constructor of the class, for runners with no inputs or outputs
-     * @param name Name of the runner
-     */
-    public Runner(String name) {
+    public Runner(String name, MasterInput input) {
         this.name = name;
-    }
-
-    /**
-     * Constructor of the class, normally configured based on raw data (RunnerConfigData) by the
-     * MasterConfigurator
-     * @param name Name of the runner
-     * @param input Input of the runner (MasterInputInterface object)
-     * @param outputs 1 or more MasterOutput objects to be defined as outputs of the runner
-     */
-    public Runner(String name, MasterInputInterface input, MasterOutput...outputs) {
-        this(name);
-        this.configuredCommands = new HashMap<>();
         this.input = input;
-        this.outputs = outputs;
+        this.pauseBlock = new Semaphore(0);
     }
 
-    public void setConfiguredCommands(Map<String, CommandSet> configuredCommands) {
-        this.configuredCommands = configuredCommands;
+    public void setConnections(List<Connection> connections) {
+        this.connections = connections;
+    }
+
+    public List<Connection> getConnections() {
+        return connections;
     }
 
     /**
@@ -56,8 +49,14 @@ public class Runner implements Runnable{
         running = true;
         exit = false;
         while (!exit) {
-            checkPause();
-            runOperation();
+            try {
+                checkPause();
+                runOperation.accept(this,input.read());
+            } catch (InterruptedException e) {
+                exit = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         running = false;
     }
@@ -65,45 +64,15 @@ public class Runner implements Runnable{
     /**
      * Method to poll for the status of the pause variables, and pause the runner if needed
      */
-    private void checkPause() {
+    private void checkPause() throws InterruptedException {
         if (paused) {
             running = false;
-            synchronized (pauseLock) { //Access the shared flag resource
-                try {
-                    pauseLock.wait(); //Runner Pauses until is notified by other thread
-                } catch (InterruptedException interruptedException) {
-                    exit = true;
-                }
-            }
+            pauseBlock.acquire();
         }
     }
 
-    /**
-     * Method to run the basic master operation consisting of
-     * 1. Reading from Input
-     * 2. Mapping the command
-     * 3. Sending to output(s)
-     */
-    protected void runOperation() {
-        Master master = Master.getInstance();
-        try {
-            String fromInput = input.read();
-            for (MasterOutput output : outputs) {
-                String mapping = master.execute(fromInput,configuredCommands.get(output.getName()));
-                if (mapping != null) {
-                    try {
-                        output.out(mapping);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            exit = true;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void setRunOperation(BiConsumer<Runner,String> runOperation) {
+        this.runOperation = runOperation;
     }
 
     /**
@@ -124,11 +93,9 @@ public class Runner implements Runnable{
      * When called, if the runner is paused then is resumed
      */
     public void resume() {
-        synchronized (pauseLock) {
-            paused = false;
-            running = true;
-            pauseLock.notifyAll(); //Notifies using the shared resource
-        }
+        paused = false;
+        running = true;
+        pauseBlock.release();
     }
 
     /**
@@ -155,10 +122,6 @@ public class Runner implements Runnable{
         return paused;
     }
 
-    public String getInputName() {
-        //return this.input.getName();
-        return ""; //TODO:CHANGE to up
-    }
 
     /**
      * Determines if an object is equal to a runner. Bases the comparison on runner names
