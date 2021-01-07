@@ -1,13 +1,13 @@
 {
   "modules": [
-    {"type": "ConsoleModule", "name": "module1"},
-    {"type": "ConsoleModule", "name": "module2"}
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"}
   ],
 
   "connections" : [
     {
-      "in" : "module1.in",
-      "out" : "module2.out",
+      "in" : "console.in",
+      "out" : "console.out",
       "commands" : {
         "deploy_application" : "console helmChartExecution" ,
         "update_gui" : "console GUIUpdateExecution" ,
@@ -15,6 +15,13 @@
         "save_statistics" : "console LoggerExecution" ,
         "show_statistics" : "console GUIUpdateExecution",
         "test $param" : "console $param"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "util.out",
+      "commands" : {
+        "exit" : "util exit"
       }
     }
   ]
