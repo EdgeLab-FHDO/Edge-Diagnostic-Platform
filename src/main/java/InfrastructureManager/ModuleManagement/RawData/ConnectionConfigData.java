@@ -1,4 +1,4 @@
-package InfrastructureManager.Configuration.RawData;
+package InfrastructureManager.ModuleManagement.RawData;
 
 import java.util.Map;
 

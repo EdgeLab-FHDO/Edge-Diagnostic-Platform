@@ -19,14 +19,28 @@ public abstract class PlatformModule {
     private final List<Runner> inputRunners;
     private volatile ModuleState state;
 
-    protected PlatformModule(String name, MasterInput[] inputs, MasterOutput[] outputs) {
+    protected PlatformModule(String name) {
         this.name = name;
-        this.inputs = inputs;
-        this.outputs = outputs;
         this.state = ModuleState.INITIAL;
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
         this.inputConnections = new HashMap<>();
+    }
+
+    protected void setInputs(MasterInput... inputs) {
+        this.inputs = inputs;
+    }
+
+    protected void setOutputs(MasterOutput... outputs) {
+        this.outputs = outputs;
+    }
+
+    public MasterInput[] getInputs() {
+        return inputs;
+    }
+
+    public MasterOutput[] getOutputs() {
+        return outputs;
     }
 
     public String getName() {
@@ -37,9 +51,15 @@ public abstract class PlatformModule {
         return state;
     }
 
-    public void addConnection(String inputName, List<Connection> connections) {
+    public void addConnection(String inputName, Connection connection) {
         if (hasInput(inputName)) {
-            inputConnections.put(inputName,connections);
+            if (inputConnections.containsKey(inputName)) {
+                inputConnections.get(inputName).add(connection);
+            } else {
+                List<Connection> list = new ArrayList<>();
+                list.add(connection);
+                inputConnections.put(inputName,list);
+            }
         } else {
             throw new IncorrectInputException("Input not defined in module!");
         }
