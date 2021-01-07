@@ -1,12 +1,13 @@
 {
   "modules": [
-    {"type": "ConsoleModule", "name": "module1"}
+    {"type": "ConsoleModule", "name": "module1"},
+    {"type": "ConsoleModule", "name": "module2"}
   ],
 
   "connections" : [
     {
       "in" : "module1.in",
-      "out" : "module1.out",
+      "out" : "module2.out",
       "commands" : {
         "deploy_application" : "console helmChartExecution" ,
         "update_gui" : "console GUIUpdateExecution" ,

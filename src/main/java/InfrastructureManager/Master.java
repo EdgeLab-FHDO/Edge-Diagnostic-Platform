@@ -44,8 +44,7 @@ public class Master {
      * Method for exiting the program, by exiting each running runner
      */
     public void exitAll() {
-        runningThreads.forEach(Thread::interrupt);
-        runnerList.stream().filter(Runner::isRunning).forEach(Runner::exit);
+        modules.forEach(PlatformModule::stop);
     }
 
     public void startAllModules() {
@@ -226,10 +225,11 @@ public class Master {
         else {
             Master.getInstance().startMainRunner();
         }
-        try {
+        /*try {
+
             Master.getInstance().getMainThread().join();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }
