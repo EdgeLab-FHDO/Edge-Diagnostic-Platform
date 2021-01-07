@@ -1,5 +1,7 @@
 package InfrastructureManager.Configuration.RawData;
 
+import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,12 +12,14 @@ import java.util.Set;
  */
 public class MasterConfigurationData {
 
-    private final IORawData ioData;
+    //private final IORawData ioData;
+    private final List<ModuleConfigData> modules;
     private final List<ConnectionConfigData> connections;
 
     public MasterConfigurationData() {
         //Initialize all values in null;
-        ioData = null;
+        //ioData = null;
+        modules = null;
         connections = null;
     }
 
@@ -33,7 +37,12 @@ public class MasterConfigurationData {
         return result;
     }
 
+    public List<ModuleConfigData> getModules() {
+        return modules;
+    }
+
     public IORawData getIoData() {
-        return ioData;
+        return null;
+        //return ioData;
     }
 }

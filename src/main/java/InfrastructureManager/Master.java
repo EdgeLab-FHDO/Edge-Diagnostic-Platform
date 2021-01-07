@@ -2,6 +2,8 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
+import InfrastructureManager.ModuleManagement.PlatformModule;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Master {
 
     private final List<Runner> runnerList;
     private final List<Thread> runningThreads;
+    private final List<PlatformModule> modules;
 
     private Thread mainThread;
     private Thread restThread;
@@ -28,6 +31,7 @@ public class Master {
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator(configPath);
         runnerList = configurator.getRunners();
+        modules = configurator.getModules();
         runningThreads = new ArrayList<>();
     }
 

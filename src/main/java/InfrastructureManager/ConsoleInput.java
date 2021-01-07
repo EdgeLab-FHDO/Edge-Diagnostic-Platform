@@ -5,8 +5,20 @@ import java.util.Scanner;
 /**
  * Class representing input from the console as a form of MasterInputInterface
  */
-public class ConsoleInput implements MasterInputInterface {
+public class ConsoleInput extends MasterInput {
     private final Scanner IN = new Scanner(System.in);
+
+    public ConsoleInput(String name) {
+        super(name);
+    }
+
+    @Override
+    protected String getSingleReading() {
+        return null;
+    }
+
+    @Override
+    protected void storeSingleReading(String reading){}
 
     /**
      * Method for reading from the console

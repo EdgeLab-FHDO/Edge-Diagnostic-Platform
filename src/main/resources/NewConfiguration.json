@@ -1,0 +1,19 @@
+{
+  "modules": [
+    {"type": "TestModule", "name": "module1"}
+  ],
+
+  "connections" : [
+    {
+      "in" : "module1.in",
+      "out" : "module1.out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution" ,
+        "save_statistics" : "console LoggerExecution" ,
+        "show_statistics" : "console GUIUpdateExecution"
+      }
+    }
+  ]
+}

@@ -5,9 +5,8 @@ import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public abstract class Module {
+public abstract class PlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
@@ -20,7 +19,7 @@ public abstract class Module {
     private final List<Runner> inputRunners;
     private volatile ModuleState state;
 
-    protected Module(String name, MasterInput[] inputs, MasterOutput[] outputs) {
+    protected PlatformModule(String name, MasterInput[] inputs, MasterOutput[] outputs) {
         this.name = name;
         this.inputs = inputs;
         this.outputs = outputs;

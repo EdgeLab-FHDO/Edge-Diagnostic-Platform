@@ -5,6 +5,8 @@ import InfrastructureManager.Configuration.RawData.*;
 import InfrastructureManager.*;
 import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
+import InfrastructureManager.ModuleManagement.ModuleFactory;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.NodeLimit.NodeResourceLimiter;
 import InfrastructureManager.REST.Input.POSTInput;
 import InfrastructureManager.REST.Output.ParametrizedGETOutput;
@@ -50,7 +52,7 @@ public class MasterConfigurator {
     /**
      * Extracts data from the configuration file to assign different input instances to their names
      */
-    private void fillInputInstances() {
+    /*private void fillInputInstances() {
         MasterInputInterface input;
         for (IOConfigData inputData : this.data.getIoData().getInputs()) {
             if (inputData.getType().equals("Scenario")) {
@@ -64,12 +66,12 @@ public class MasterConfigurator {
                 this.inputInstances.put(inputData.getName(), input);
             }
         }
-    }
+    }*/
 
     /**
      * Extracts output data from the configuration file, including ports
      */
-    private void fillOutputInstances() {
+    /*private void fillOutputInstances() {
         MasterOutput output;
         for (IOConfigData outputData : this.data.getIoData().getOutputs()) {
             if (this.inputInstances.containsKey(outputData.getName())) { //If an instance is input and output
@@ -79,9 +81,9 @@ public class MasterConfigurator {
             }
             this.outputInstances.put(outputData.getName(), output);
         }
-    }
+    }*/
 
-    private MasterOutput getOutputFromData(IOConfigData outputData) throws IllegalArgumentException {
+    /*private MasterOutput getOutputFromData(IOConfigData outputData) throws IllegalArgumentException {
         int port = outputData.getPort();
         String[] type = outputData.getType().split("-");
         switch (type[0]) {
@@ -163,15 +165,15 @@ public class MasterConfigurator {
             }
         }
         return result;
-    }
+    }*/
 
-    private String getRESTPathParameter(String address) {
-        if (address.matches(".*/:\\w*$")) {
-            return address.substring(address.indexOf("/:") + 2);
-        } else {
-            return null;
-        }
-    }
+    //private String getRESTPathParameter(String address) {
+    //    if (address.matches(".*/:\\w*$")) {
+    //        return address.substring(address.indexOf("/:") + 2);
+    //    } else {
+    //        return null;
+    //    }
+    //}
 
 
     /**
@@ -179,7 +181,7 @@ public class MasterConfigurator {
      * @return ArrayList of Runner objects for the master to run
      */
     public List<Runner> getRunners(){
-        List<Runner> result = new ArrayList<>();
+        /*List<Runner> result = new ArrayList<>();
         MasterInputInterface runnerInput;
         MasterOutput[] runnerOutputs;
         String runnerName = "Runner_";
@@ -208,7 +210,14 @@ public class MasterConfigurator {
             }
         }
 
-        return result;
+        return result;*/
+        return null;
+    }
+
+    public List<PlatformModule> getModules() {
+        ModuleFactory factory = new ModuleFactory(this.data);
+        List<PlatformModule> disconnectedModules = factory.getModules();
+        return null;
     }
 
 }
