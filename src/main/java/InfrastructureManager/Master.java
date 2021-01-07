@@ -216,6 +216,7 @@ public class Master {
             }
         }
         if (autostart) {
+            Master.changeConfigPath("src/main/resources/NewConfiguration.json");
             Master.getInstance().startRunners();
         }
         else {

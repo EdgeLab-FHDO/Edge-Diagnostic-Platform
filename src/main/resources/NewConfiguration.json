@@ -1,6 +1,6 @@
 {
   "modules": [
-    {"type": "TestModule", "name": "module1"}
+    {"type": "ConsoleModule", "name": "module1"}
   ],
 
   "connections" : [

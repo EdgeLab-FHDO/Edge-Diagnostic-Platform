@@ -17,7 +17,7 @@ public class ScenarioRunner extends Runner {
      * @param outputs 1 or more MasterOutput objects to be defined as outputs of the runner
      */
     public ScenarioRunner(String name,String scenarioName, MasterOutput...outputs) {
-        super(name,null,outputs);
+        super(name,null);
         this.scenarioName = scenarioName;
         this.scenario = null;
         this.currentEvent = 0;
@@ -46,7 +46,7 @@ public class ScenarioRunner extends Runner {
      * specific to run events as inputs. A different event in the list is run, each time this
      * method is called
      */
-    @Override
+    /*@Override
     public void runOperation() {
         Event current = this.scenario.getEventList().get(currentEvent);
         waitForEvent(current);
@@ -56,7 +56,7 @@ public class ScenarioRunner extends Runner {
         if (currentEvent == this.scenario.getEventList().size()) {
             exit();
         }
-    }
+    }*/
 
     @Override
     public void exit() {

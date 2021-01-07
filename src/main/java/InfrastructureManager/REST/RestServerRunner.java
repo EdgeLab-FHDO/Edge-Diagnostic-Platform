@@ -31,7 +31,7 @@ public class RestServerRunner extends Runner {
      * @param port Port where the server will be exposed
      */
     private RestServerRunner(String name, int port) throws InterruptedException {
-        super(name);
+        super(name,null); //TODO
         serverCheck.acquire();
         this.port = port;
         this.authenticator = new DummyAuthentication();
