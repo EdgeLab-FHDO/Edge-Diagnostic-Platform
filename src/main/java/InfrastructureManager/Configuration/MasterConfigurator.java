@@ -7,6 +7,7 @@ import InfrastructureManager.FileOutput.FileOutput;
 import InfrastructureManager.MatchMaking.MatchMaker;
 import InfrastructureManager.ModuleManagement.ModuleConnector;
 import InfrastructureManager.ModuleManagement.ModuleFactory;
+import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.NodeLimit.NodeResourceLimiter;
 import InfrastructureManager.REST.Input.POSTInput;
@@ -216,10 +217,9 @@ public class MasterConfigurator {
     }
 
     public List<PlatformModule> getModules() {
-        ModuleFactory factory = new ModuleFactory(this.data);
-        List<PlatformModule> disconnectedModules = factory.getModules();
-        ModuleConnector connector = new ModuleConnector(this.data, disconnectedModules);
-        return connector.getConnectedModules();
+        ModuleManager manager = ModuleManager.getInstance();
+        manager.initialize(this.data);
+        return manager.getModules();
     }
 
 }

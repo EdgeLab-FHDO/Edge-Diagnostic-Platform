@@ -12,10 +12,13 @@ import java.util.Optional;
 
 public class ModuleConnector {
     private final List<ConnectionConfigData> data;
-    private final List<PlatformModule> modules;
+    private List<PlatformModule> modules;
 
-    public ModuleConnector(MasterConfigurationData data, List<PlatformModule> modules) {
+    public ModuleConnector(MasterConfigurationData data) {
         this.data = data.getConnections();
+    }
+
+    public void setModules(List<PlatformModule> modules) {
         this.modules = modules;
     }
 
