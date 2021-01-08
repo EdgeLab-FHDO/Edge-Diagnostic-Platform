@@ -75,21 +75,25 @@ public abstract class PlatformModule {
         fillThreads();
         inputRunnerThreads.forEach(Thread::start);
         state = ModuleState.RUNNING;
+        System.out.println("STARTED MODULE: " + name);
     }
 
     public void pause() {
         inputRunners.forEach(Runner::pause);
         state = ModuleState.PAUSED;
+        System.out.println("PAUSED: " + name);
     }
 
     public void resume() {
         inputRunners.forEach(Runner::resume);
         state = ModuleState.RUNNING;
+        System.out.println("RESUMED: " + name);
     }
 
     public void stop() {
         inputRunnerThreads.forEach(Thread::interrupt);
         inputRunners.forEach(Runner::exit);
+        System.out.println("STOPPED: " + name);
     }
 
     private void fillThreads() {
@@ -131,6 +135,4 @@ public abstract class PlatformModule {
             }
         };
     }
-
-
 }

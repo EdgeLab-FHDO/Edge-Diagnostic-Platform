@@ -2,6 +2,7 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
+import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 
 import java.util.ArrayList;
@@ -49,6 +50,53 @@ public class Master {
 
     public void startAllModules() {
         modules.forEach(PlatformModule::start);
+    }
+
+    public void startModule(String moduleName) {
+        try {
+            findModuleByName(moduleName).start();
+        } catch (ModuleNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pauseModule(String moduleName) {
+        try {
+            PlatformModule moduleToPause = findModuleByName(moduleName);
+            if (moduleToPause.getState() == PlatformModule.ModuleState.RUNNING) {
+                moduleToPause.pause();
+            }
+        } catch (ModuleNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pauseAllModules() {
+        modules.stream().filter(m -> m.getState() == PlatformModule.ModuleState.RUNNING)
+                .forEach(PlatformModule::pause);
+    }
+
+    public void resumeModule(String moduleName) {
+        try {
+            PlatformModule moduleToResume = findModuleByName(moduleName);
+            if (moduleToResume.getState() == PlatformModule.ModuleState.PAUSED) {
+                moduleToResume.resume();
+            }
+        } catch (ModuleNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void resumeAllModules() {
+        modules.stream().filter(m -> m.getState() == PlatformModule.ModuleState.PAUSED)
+                .forEach(PlatformModule::resume);
+    }
+
+    private PlatformModule findModuleByName(String moduleName) throws ModuleNotFoundException {
+        return modules.stream().filter(m -> m.getName()
+                .equals(moduleName))
+                .findFirst()
+                .orElseThrow(() -> new ModuleNotFoundException("Module " + moduleName + " was not found"));
     }
 
     /**
