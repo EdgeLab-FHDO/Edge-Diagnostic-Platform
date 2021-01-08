@@ -1,4 +1,7 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Utility;
+
+import InfrastructureManager.Master;
+import InfrastructureManager.MasterOutput;
 
 /**
  * Class implementing MasterOutput, for utilities within the master
@@ -19,15 +22,10 @@ public class MasterUtility extends MasterOutput {
         String[] command = response.split(" ");
         if (command[0].equals("util")) {
             try {
-                switch (command[1]){
-                    case "exit" :
-                        Master.getInstance().exitAll();
-                        break;
-                    case "runRunner":
-                        Master.getInstance().startRunnerThread(command[2]);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid Command for Utility Output");
+                switch (command[1]) {
+                    case "exit" -> Master.getInstance().exitAll();
+                    case "runRunner" -> Master.getInstance().startRunnerThread(command[2]);
+                    default -> throw new IllegalArgumentException("Invalid Command for Utility Output");
                 }
             } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("Arguments missing for command - MasterUtility");

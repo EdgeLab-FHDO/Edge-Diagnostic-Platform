@@ -1,6 +1,9 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Console;
+
+import InfrastructureManager.MasterOutput;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,18 +23,14 @@ public class ConsoleOutput extends MasterOutput {
     public void out(String response) {
         String[] command = response.split(" ");
         if (command[0].equals("console")) { //The commands must come like "console command"
-            List<String> contents = new ArrayList<>();
-
-            for(int i = 1; i < command.length; i++) {
-                contents.add(command[i]);
-            }
-
-            String contentString = String.join(" ", contents);
-
-            if(contentString == "") {
+            try {
+                StringBuilder result = new StringBuilder(" ");
+                for (int i = 1; i < command.length; i++) {
+                    result.append(command[i]).append(" ");
+                }
+                System.out.println(result.toString().trim());
+            } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("Arguments missing for command - ConsoleOutput");
-            } else {
-                System.out.println(contentString);
             }
         }
     }

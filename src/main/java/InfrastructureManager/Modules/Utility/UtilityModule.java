@@ -1,6 +1,5 @@
 package InfrastructureManager.Modules.Utility;
 
-import InfrastructureManager.MasterUtility;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 
 public class UtilityModule extends PlatformModule {

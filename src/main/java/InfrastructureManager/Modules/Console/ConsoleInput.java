@@ -1,4 +1,6 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Console;
+
+import InfrastructureManager.MasterInput;
 
 import java.util.Scanner;
 
