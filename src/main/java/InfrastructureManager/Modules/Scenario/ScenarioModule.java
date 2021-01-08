@@ -11,6 +11,7 @@ import java.util.function.BiConsumer;
 public class ScenarioModule extends PlatformModule {
 
     private final ObjectMapper mapper;
+    private Scenario scenario;
 
     public ScenarioModule(String name, String path) {
         super(name);
@@ -27,22 +28,26 @@ public class ScenarioModule extends PlatformModule {
     }
 
     public void startScenario(long startTime) {
-        Scenario scenario = (Scenario) inputs[0];
+        if (!inputRunnerThreads.isEmpty() && !inputRunnerThreads.get(0).isAlive()) {
+            inputRunnerThreads.set(0,new Thread(inputRunners.get(0)));
+            inputRunnerThreads.get(0).start();
+        }
+        scenario = (Scenario) inputs[0];
         scenario.setStartTime(startTime);
         scenario.start();
         scenario.next(); //Unblock the scenario
     }
 
     public void stopScenario() {
-        this.inputRunners.forEach(Runner::exit);
+        scenario.stop();
     }
 
     public void pauseScenario() {
-        this.inputRunners.forEach(Runner::pause);
+        scenario.pause();
     }
 
     public void resumeScenario() {
-        this.inputRunners.forEach(Runner::resume);
+        scenario.resume();
     }
 
     private Scenario scenarioFromFile(String path) throws IOException {
@@ -55,10 +60,6 @@ public class ScenarioModule extends PlatformModule {
             Scenario scenario = (Scenario)input;
             super.setRunnerOperation().accept(runner, input);
             scenario.next();
-            if (scenario.isFinished()) {
-                runner.exit();
-                System.out.println("FINISHED SCENARIO: " + scenario.getName());
-            }
         };
     }
 }

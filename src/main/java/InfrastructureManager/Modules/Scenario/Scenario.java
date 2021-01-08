@@ -10,14 +10,15 @@ import java.util.List;
 /**
  * Class representing an scenario, as an object with a name and a list of events
  */
-@JsonIgnoreProperties({"startTime","command","current", "finished"})
+@JsonIgnoreProperties({"startTime","command","current", "pausedTime", "resumedTime"})
 public class Scenario extends MasterInput {
 
     private final List<Event> eventList;
     private long startTime;
     private String command;
     private int currentIndex;
-    private volatile boolean finished;
+    private long pausedTime;
+    private long resumedTime;
 
     /**
      * Constructor of the class
@@ -29,7 +30,8 @@ public class Scenario extends MasterInput {
         this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
         this.command = null;
         this.currentIndex = 0;
-        this.finished = false;
+        this.pausedTime = 0L;
+        this.resumedTime = 0L;
     }
 
     @Override
@@ -93,14 +95,30 @@ public class Scenario extends MasterInput {
 
     public void start() {
         currentIndex = -1;
-        finished = false;
+    }
+
+    public void pause() {
+        this.pausedTime = System.currentTimeMillis();
+        this.getRunner().pause();
+    }
+
+    public void resume() {
+        this.resumedTime = System.currentTimeMillis();
+        this.getRunner().resume();
+    }
+
+    public void stop() {
+        this.pausedTime = 0L;
+        this.resumedTime = 0L;
+        currentIndex = -1;
+        this.getRunner().exit();
+        System.out.println("FINISHED SCENARIO: " + this.getName());
     }
 
     public void next() {
         currentIndex++;
         if (currentIndex == eventList.size()) {
-            finished = true;
-            currentIndex = -1;
+            stop();
             return;
         }
         Event currentEvent = eventList.get(currentIndex);
@@ -108,16 +126,12 @@ public class Scenario extends MasterInput {
         storeReadingAndUnblock(currentEvent.getCommand());
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
     /**
      * Wait for executing the states according to their relative execution times
      * @param e Event to be waited for
      */
     private void waitForEvent (Event e) {
-        long absoluteTime = this.getStartTime() + e.getExecutionTime();
+        long absoluteTime = this.getStartTime() + (resumedTime - pausedTime) + e.getExecutionTime();
         try {
             Thread.sleep(absoluteTime - System.currentTimeMillis());
         } catch (InterruptedException ie) {

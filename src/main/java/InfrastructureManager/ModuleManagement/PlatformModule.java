@@ -14,9 +14,9 @@ public abstract class PlatformModule {
     protected MasterOutput[] outputs;
     protected Map<String, List<Connection>> inputConnections;
     protected final List<Runner> inputRunners;
+    protected final List<Thread> inputRunnerThreads;
 
     private final String name;
-    private final List<Thread> inputRunnerThreads;
     private volatile ModuleState state;
 
     protected PlatformModule(String name) {
