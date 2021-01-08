@@ -18,17 +18,13 @@ public class ModuleConnector {
         this.data = data.getConnections();
     }
 
-    public void setModules(List<PlatformModule> modules) {
+    public void connectModules(List<PlatformModule> modules) {
         this.modules = modules;
-    }
-
-    public List<PlatformModule> getConnectedModules() {
-        modules.forEach(this::connectModule);
-        return modules;
+        modules.forEach(this::connectSingleModule);
     }
 
 
-    private void connectModule(PlatformModule module) {
+    private void connectSingleModule(PlatformModule module) {
         String moduleName = module.getName();
 
         for (ConnectionConfigData connectionData : data) {
