@@ -1,5 +1,6 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.MasterOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
  * - Save Scenarios to JSON Files
  * - Load Scenarios from JSON Files
  */
-public class ScenarioEditor extends MasterOutput{
+public class ScenarioEditor extends MasterOutput {
 
     private Scenario scenario;
     private final ObjectMapper mapper;

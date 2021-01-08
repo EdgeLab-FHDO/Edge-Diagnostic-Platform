@@ -4,10 +4,9 @@ import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
-import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
+import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -195,11 +194,5 @@ public class Master {
         else {
             Master.getInstance().startModule("Console");
         }
-        /*try {
-
-            Master.getInstance().getMainThread().join();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 }

@@ -1,9 +1,7 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Scenario;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
-import java.io.IOException;
+import InfrastructureManager.Master;
+import InfrastructureManager.MasterOutput;
 
 /**
  * Scenario Handling class that is an Output of the master

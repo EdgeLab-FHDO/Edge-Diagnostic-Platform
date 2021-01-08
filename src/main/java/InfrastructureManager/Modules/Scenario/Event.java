@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.Scenario;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;

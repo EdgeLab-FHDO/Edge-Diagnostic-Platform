@@ -6,8 +6,6 @@ import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConf
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
-import InfrastructureManager.Scenario;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;

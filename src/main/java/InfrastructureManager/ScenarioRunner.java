@@ -1,5 +1,8 @@
 package InfrastructureManager;
 
+import InfrastructureManager.Modules.Scenario.Event;
+import InfrastructureManager.Modules.Scenario.Scenario;
+
 /**
  * Subclass of Runner specific to run scenarios
  */
