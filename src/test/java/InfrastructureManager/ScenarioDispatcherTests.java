@@ -1,4 +1,4 @@
-package InfrastructureManager;
+/*package InfrastructureManager;
 
 import org.junit.*;
 
@@ -104,3 +104,4 @@ public class ScenarioDispatcherTests {
 
     }
 }
+*/

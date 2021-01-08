@@ -1,20 +1,15 @@
 {
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
-    {"type": "ConsoleModule", "name": "console2"},
+    {"type": "ScenarioModule", "name": "dummy", "path": "src/main/resources/scenarios/dummy.json"},
     {"type": "UtilityModule", "name": "util"}
   ],
 
   "connections" : [
     {
       "in" : "console.in",
-      "out" : "console2.out",
+      "out" : "console.out",
       "commands" : {
-        "deploy_application" : "console helmChartExecution" ,
-        "update_gui" : "console GUIUpdateExecution" ,
-        "node_request" : "console matchMakingExecution" ,
-        "save_statistics" : "console LoggerExecution" ,
-        "show_statistics" : "console GUIUpdateExecution",
         "test $param" : "console $param"
       }
     },
@@ -25,6 +20,24 @@
         "exit" : "util exit",
         "pause $module" : "util pauseModule $module",
         "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "dummy.scenario",
+      "out" : "console.out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "dummy.dispatcher",
+      "commands" : {
+        "run_scenario" : "dispatcher run",
+        "pause_scenario" : "dispatcher pause",
+        "resume_scenario" : "dispatcher resume"
       }
     }
   ]

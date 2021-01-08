@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
  */
 public class Runner implements Runnable{
 
-    private BiConsumer<Runner,String> runOperation;
+    private BiConsumer<Runner,MasterInput> runOperation;
 
     protected String name;
     protected MasterInput input;
@@ -48,11 +48,9 @@ public class Runner implements Runnable{
         while (!exit) {
             try {
                 checkPause();
-                runOperation.accept(this,input.read());
+                runOperation.accept(this,input);
             } catch (InterruptedException e) {
                 exit = true;
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         running = false;
@@ -68,7 +66,7 @@ public class Runner implements Runnable{
         }
     }
 
-    public void setRunOperation(BiConsumer<Runner,String> runOperation) {
+    public void setRunOperation(BiConsumer<Runner,MasterInput> runOperation) {
         this.runOperation = runOperation;
     }
 

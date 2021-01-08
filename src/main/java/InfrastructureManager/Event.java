@@ -1,50 +1,31 @@
 package InfrastructureManager;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * MasterInputInterface class representing an Event (Triggered in the scenarios)
  * The definition of the event objects comes from a JSON file
  */
-public class Event implements MasterInputInterface {
+public class Event{
 
     private String command; //Command to be executed in the master
-    private long executionTime; //Execution time relative to the scenario start (in ms)
-
-    /**
-     * Default constructor of the class, initializes values
-     */
-    public Event() { //This is needed for Jackson to create the object
-        this.command = null;
-        this.executionTime = 0;
-    }
+    private final long executionTime; //Execution time relative to the scenario start (in ms)
 
     /**
      * Constructor of the class
      * @param command Command of the event (To be interpreted by the master)
      * @param executionTime Execution time of the event in milliseconds, relative to the start of the scenario
      */
-    public Event(String command, long executionTime) {
+    @JsonCreator
+    public Event(@JsonProperty("command") String command, @JsonProperty("executionTime") long executionTime) {
         this.command = command;
         this.executionTime = executionTime;
     }
 
-    /**
-     * Setter for the command field
-     * @param command Command to be set up in the event
-     */
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    /**
-     * Read implementation according to MasterInputInterface Interface
-     * @return The defined command of the event
-     */
-    @Override
-    @JsonGetter("command")
-    public String read() {
-        return this.command;
+    public String getCommand() {
+        return command;
     }
 
     /**

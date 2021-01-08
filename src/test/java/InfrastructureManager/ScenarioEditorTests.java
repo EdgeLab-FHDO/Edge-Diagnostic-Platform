@@ -1,4 +1,4 @@
-package InfrastructureManager;
+/*package InfrastructureManager;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -103,3 +103,4 @@ public class ScenarioEditorTests {
         assertException(IllegalArgumentException.class, "editor create", "Arguments missing for command  - ScenarioEditor");
     }
 }
+*/

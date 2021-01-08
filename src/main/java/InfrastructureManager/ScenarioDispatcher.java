@@ -17,9 +17,9 @@ public class ScenarioDispatcher extends MasterOutput {
     private Scenario scenario;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher(String name) {
+    public ScenarioDispatcher(String name, Scenario scenario) {
         super(name);
-        this.scenario = null;
+        this.scenario = scenario;
     }
 
     /**
@@ -38,9 +38,6 @@ public class ScenarioDispatcher extends MasterOutput {
         if (command[0].equals("dispatcher")) {
             try {
                 switch (command[1]) {
-                    case "fromFile":
-                        scenarioFromFile(command[2]);
-                        break;
                     case "run" :
                         if (command.length > 2 && command[2].equals("-d")) {
                             long startTime = 0;
@@ -105,18 +102,6 @@ public class ScenarioDispatcher extends MasterOutput {
         Master.getInstance().runScenario(this.scenario, startTime);
     }
 
-    /**
-     * Method for loading a scenario from a JSON file
-     * @param path Path of the file
-     */
-    private void scenarioFromFile(String path){
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            this.scenario = mapper.readValue(new File(path),Scenario.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Get the scenario assigned to this dispatcher

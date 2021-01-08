@@ -1,6 +1,7 @@
 package InfrastructureManager;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,33 +9,41 @@ import java.util.List;
 /**
  * Class representing an scenario, as an object with a name and a list of events
  */
-public class Scenario {
+@JsonIgnoreProperties({"startTime","command","current", "finished"})
+public class Scenario extends MasterInput {
 
-    private final String name;
     private final List<Event> eventList;
-    @JsonIgnore
     private long startTime;
-
-    public Scenario() { //Needed for Jackson
-        this(null);
-    }
+    private String command;
+    private int currentIndex;
+    private volatile boolean finished;
 
     /**
      * Constructor of the class
      * @param name Name of the new scenario
      */
-    public Scenario(String name) {
-        this.name = name;
+    public Scenario(@JsonProperty("name") String name) {
+        super(name + ".scenario");
         this.eventList = new ArrayList<>();
         this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
+        this.command = null;
+        this.currentIndex = 0;
+        this.finished = false;
     }
 
-    /**
-     * Get the name of the current scenario
-     * @return Name of the scenario
-     */
-    public String getName() {
-        return name;
+    @Override
+    protected String getSingleReading() {
+        return this.command;
+    }
+
+    @Override
+    protected void storeSingleReading(String reading) {
+        this.command = reading;
+    }
+
+    @Override
+    public String read() throws Exception {
+        return this.getReading();
     }
 
     /**
@@ -79,5 +88,39 @@ public class Scenario {
      */
     public void deleteEvent(int index) {
         this.eventList.remove(index);
+    }
+
+    public void start() {
+        currentIndex = -1;
+        finished = false;
+    }
+
+    public void next() {
+        currentIndex++;
+        if (currentIndex == eventList.size()) {
+            finished = true;
+            currentIndex = -1;
+            return;
+        }
+        Event currentEvent = eventList.get(currentIndex);
+        waitForEvent(currentEvent);
+        storeReadingAndUnblock(currentEvent.getCommand());
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    /**
+     * Wait for executing the states according to their relative execution times
+     * @param e Event to be waited for
+     */
+    private void waitForEvent (Event e) {
+        long absoluteTime = this.getStartTime() + e.getExecutionTime();
+        try {
+            Thread.sleep(absoluteTime - System.currentTimeMillis());
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
     }
 }

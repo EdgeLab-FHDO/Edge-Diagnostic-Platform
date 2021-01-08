@@ -19,8 +19,9 @@ public class ScenarioEditor extends MasterOutput{
     private Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(String name) {
+    public ScenarioEditor(String name, Scenario scenario) {
         super(name);
+        this.scenario = scenario;
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }

@@ -13,10 +13,10 @@ public abstract class PlatformModule {
     protected MasterInput[] inputs;
     protected MasterOutput[] outputs;
     protected Map<String, List<Connection>> inputConnections;
+    protected final List<Runner> inputRunners;
 
     private final String name;
     private final List<Thread> inputRunnerThreads;
-    private final List<Runner> inputRunners;
     private volatile ModuleState state;
 
     protected PlatformModule(String name) {
@@ -120,10 +120,11 @@ public abstract class PlatformModule {
     }
 
     //This can be overriden for different modules
-    protected BiConsumer<Runner,String> setRunnerOperation() {
-        return (runner,fromInput) -> {
-            Master master = Master.getInstance();
+    protected BiConsumer<Runner,MasterInput> setRunnerOperation() {
+        return (runner,input) -> {
             try {
+                String fromInput = input.read();
+                Master master = Master.getInstance();
                 for (Connection c : runner.getConnections()) {
                     String mapping = master.execute(fromInput,c.getCommands());
                     if (mapping != null) {
