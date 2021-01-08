@@ -37,6 +37,7 @@ public abstract class PlatformModule {
 
     protected void setOutputs(MasterOutput... outputs) {
         this.outputs = outputs;
+        reportStateToOutputs();
     }
 
     public MasterInput[] getInputs() {
@@ -75,18 +76,21 @@ public abstract class PlatformModule {
         fillThreads();
         inputRunnerThreads.forEach(Thread::start);
         state = ModuleState.RUNNING;
+        reportStateToOutputs();
         System.out.println("STARTED MODULE: " + name);
     }
 
     public void pause() {
         inputRunners.forEach(Runner::pause);
         state = ModuleState.PAUSED;
+        reportStateToOutputs();
         System.out.println("PAUSED: " + name);
     }
 
     public void resume() {
         inputRunners.forEach(Runner::resume);
         state = ModuleState.RUNNING;
+        reportStateToOutputs();
         System.out.println("RESUMED: " + name);
     }
 
@@ -124,7 +128,7 @@ public abstract class PlatformModule {
                     String mapping = master.execute(fromInput,c.getCommands());
                     if (mapping != null) {
                         try {
-                            c.getOut().out(mapping);
+                            c.getOut().write(mapping);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -134,5 +138,9 @@ public abstract class PlatformModule {
                 e.printStackTrace();
             }
         };
+    }
+
+    private void reportStateToOutputs() {
+        Arrays.stream(outputs).forEach(o -> o.reportState(this.state));
     }
 }
