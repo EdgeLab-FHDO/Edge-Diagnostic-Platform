@@ -1,6 +1,5 @@
 package InfrastructureManager;
 
-import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 

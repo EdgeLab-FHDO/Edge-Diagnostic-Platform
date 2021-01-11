@@ -1,6 +1,6 @@
 package InfrastructureManager.ModuleManagement.RawData;
 
-import InfrastructureManager.ModuleManagement.ModuleType;
+import InfrastructureManager.ModuleManagement.ModuleFactory.*;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ConsoleModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.UtilityModuleConfigData;

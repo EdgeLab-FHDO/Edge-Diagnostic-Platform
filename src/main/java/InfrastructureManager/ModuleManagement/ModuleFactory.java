@@ -15,6 +15,7 @@ public class ModuleFactory {
 
     private final List<ModuleConfigData> data;
 
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO}
 
     public ModuleFactory(MasterConfigurationData data) {
         this.data = data.getModules();
