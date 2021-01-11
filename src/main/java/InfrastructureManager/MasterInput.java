@@ -49,5 +49,5 @@ public abstract class MasterInput {
 
     protected abstract String getSingleReading();
     protected abstract void storeSingleReading(String reading);
-    public abstract String read() throws Exception;
+    public abstract String read() throws InterruptedException;
 }

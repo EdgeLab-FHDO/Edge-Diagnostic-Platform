@@ -1,6 +1,7 @@
 package InfrastructureManager.Configuration;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +32,7 @@ public class MasterConfigurator {
         }
     }
 
-    public List<PlatformModule> getModules() {
+    public List<PlatformModule> getModules() throws ModuleManagerException {
         return manager.getModules();
     }
 

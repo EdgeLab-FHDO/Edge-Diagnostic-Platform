@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
+
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.function.BiConsumer;
@@ -49,7 +51,7 @@ public class Runner implements Runnable{
             try {
                 checkPause();
                 runOperation.accept(this,input);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | ModuleStoppedException e) {
                 exit = true;
             }
         }

@@ -2,6 +2,8 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.*;
 import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
+import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
+import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -118,7 +120,7 @@ public abstract class PlatformModule {
         }
     }
 
-    //This can be overriden for different modules
+    //This can be overridden for different modules
     protected BiConsumer<Runner,MasterInput> setRunnerOperation() {
         return (runner,input) -> {
             try {
@@ -129,13 +131,13 @@ public abstract class PlatformModule {
                     if (mapping != null) {
                         try {
                             c.getOut().write(mapping);
-                        } catch (Exception e) {
+                        } catch (IllegalArgumentException | ModulePausedException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (InterruptedException e){
+                throw new ModuleStoppedException();
             }
         };
     }

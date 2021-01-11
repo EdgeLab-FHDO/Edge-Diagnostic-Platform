@@ -19,6 +19,7 @@ public class ScenarioModule extends PlatformModule {
         try {
             Scenario scenario = scenarioFromFile(path);
             setInputs(scenario);
+            this.scenario = (Scenario) inputs[0];
             setOutputs(new ScenarioEditor(name + ".editor"),
                     new ScenarioDispatcher(name + ".dispatcher",scenario));
 
@@ -32,7 +33,6 @@ public class ScenarioModule extends PlatformModule {
             inputRunnerThreads.set(0,new Thread(inputRunners.get(0)));
             inputRunnerThreads.get(0).start();
         }
-        scenario = (Scenario) inputs[0];
         scenario.setStartTime(startTime);
         scenario.start();
         scenario.next(); //Unblock the scenario

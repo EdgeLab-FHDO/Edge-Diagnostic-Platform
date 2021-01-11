@@ -1,6 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
@@ -22,14 +23,18 @@ public class ModuleFactory {
     public List<PlatformModule> getModules() {
         List<PlatformModule> result = new ArrayList<>();
         for (ModuleConfigData moduleData : data) {
-            result.add(create(moduleData));
+            try {
+                result.add(create(moduleData));
+            } catch (ModuleNotFoundException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
 
     private PlatformModule create(ModuleConfigData data) {
         return switch (data.getType()) {
-            case DEFAULT -> null;
+            case DEFAULT -> throw new ModuleNotFoundException("The module type for module" + data.getName() + "is not defined");
             case CONSOLE -> new ConsoleModule(data.getName());
             case UTILITY -> new UtilityModule(data.getName());
             case SCENARIO -> {

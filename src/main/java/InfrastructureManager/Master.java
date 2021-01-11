@@ -2,6 +2,7 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.MasterConfigurator;
+import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Scenario;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Master {
 
     private static String configPath = "src/main/resources/Configuration.json";
-    private final List<PlatformModule> modules;
+    private List<PlatformModule> modules;
 
     private static Master instance = null;
 
@@ -26,7 +27,12 @@ public class Master {
      */
     private Master() {
         MasterConfigurator configurator = new MasterConfigurator(configPath);
-        modules = configurator.getModules();
+        try {
+            modules = configurator.getModules();
+        } catch (ModuleManagerException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
 

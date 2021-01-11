@@ -1,5 +1,6 @@
 package InfrastructureManager;
 
+import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 
@@ -20,12 +21,12 @@ public abstract class MasterOutput {
         return name;
     }
 
-    public void write(String response) throws Exception {
+    public void write(String response) throws IllegalArgumentException, ModulePausedException {
         if (this.moduleState == ModuleState.PAUSED) {
             throw new ModulePausedException("Cannot write to output, Module is paused");
         }
         out(response);
     }
 
-    protected abstract void out (String response) throws Exception;
+    protected abstract void out (String response) throws IllegalArgumentException;
 }

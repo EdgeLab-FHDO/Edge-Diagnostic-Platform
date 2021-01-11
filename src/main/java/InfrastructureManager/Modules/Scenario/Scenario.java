@@ -45,7 +45,7 @@ public class Scenario extends MasterInput {
     }
 
     @Override
-    public String read() throws Exception {
+    public String read() throws InterruptedException {
         return this.getReading();
     }
 
@@ -135,7 +135,7 @@ public class Scenario extends MasterInput {
         try {
             Thread.sleep(absoluteTime - System.currentTimeMillis());
         } catch (InterruptedException ie) {
-            ie.printStackTrace();
+            stop();
         }
     }
 }

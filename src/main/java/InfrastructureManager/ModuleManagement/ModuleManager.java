@@ -1,6 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 
 import java.util.List;
 
@@ -10,16 +11,19 @@ public class ModuleManager {
     private ModuleConnector connector;
     private List<PlatformModule> modules;
     private boolean connected;
+    private boolean initialized;
 
     private static ModuleManager instance = null;
 
     private ModuleManager() {
         this.connected = false;
+        this.initialized = false;
     }
 
     public void initialize(MasterConfigurationData data) {
         this.factory = new ModuleFactory(data);
         this.connector = new ModuleConnector(data);
+        this.initialized = true;
     }
 
     private void connectModules() {
@@ -28,7 +32,8 @@ public class ModuleManager {
         this.connected = true;
     }
 
-    public List<PlatformModule> getModules() {
+    public List<PlatformModule> getModules() throws ModuleManagerException{
+        if (!initialized) throw new ModuleManagerException("Manager was not initialized with data");
         if (!connected) {
             connectModules();
         }
