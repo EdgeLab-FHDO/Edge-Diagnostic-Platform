@@ -3,7 +3,7 @@ package InfrastructureManager.ModuleManagement;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
-import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
+import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.REST.RESTModule;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;

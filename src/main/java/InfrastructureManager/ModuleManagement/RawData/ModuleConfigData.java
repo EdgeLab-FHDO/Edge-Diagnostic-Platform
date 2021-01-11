@@ -1,10 +1,10 @@
 package InfrastructureManager.ModuleManagement.RawData;
 
 import InfrastructureManager.ModuleManagement.ModuleFactory.*;
-import InfrastructureManager.ModuleManagement.RawData.Modules.ConsoleModuleConfigData;
+import InfrastructureManager.Modules.Console.RawData.ConsoleModuleConfigData;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
-import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
-import InfrastructureManager.ModuleManagement.RawData.Modules.UtilityModuleConfigData;
+import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
+import InfrastructureManager.Modules.Utility.RawData.UtilityModuleConfigData;
 import com.fasterxml.jackson.annotation.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ModuleConfigData.class)

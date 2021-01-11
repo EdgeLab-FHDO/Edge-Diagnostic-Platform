@@ -1,4 +1,4 @@
-package InfrastructureManager.ModuleManagement.RawData.Modules;
+package InfrastructureManager.Modules.Console.RawData;
 
 import InfrastructureManager.ModuleManagement.ModuleFactory.ModuleType;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
