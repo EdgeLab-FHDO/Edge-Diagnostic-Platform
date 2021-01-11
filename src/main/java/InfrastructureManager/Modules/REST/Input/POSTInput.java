@@ -1,7 +1,7 @@
-package InfrastructureManager.REST.Input;
+package InfrastructureManager.Modules.REST.Input;
 
 import InfrastructureManager.MasterInput;
-import InfrastructureManager.REST.RestServerRunner;
+import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -19,7 +19,7 @@ public class POSTInput extends MasterInput {
 
     private final Queue<String> toRead;
 
-    private final String path; //Path where the post handler will listen
+    private final String URL; //Path where the post handler will listen
     private final List<String> toParse; //List of argument that will be searched for in the json body
     private boolean isActivated; //To synchronize with the rest server
 
@@ -27,13 +27,13 @@ public class POSTInput extends MasterInput {
 
     /**
      * Constructor of the class
-     * @param path Path where the post request will be handled
+     * @param URL Path where the post request will be handled
      * @param command Command that the input will send to the master, it can include parameters using '$'
      * @param toParse List of parameters in the JSON that the input will search for
      */
-    public POSTInput(String path, String command, List<String> toParse) {
-        super("POST{" + path + "}"); // TODO: CHANGE TO RECEIVE NAME IN CONSTRUCTOR
-        this.path = path;
+    public POSTInput(String name, String URL, String command, List<String> toParse) {
+        super(name);
+        this.URL = URL;
         this.toParse = toParse;
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
@@ -121,7 +121,7 @@ public class POSTInput extends MasterInput {
     private void activate() {
         try {
             RestServerRunner.serverCheck.acquire();
-            post(this.path, this.POSTHandler);
+            post(this.URL, this.POSTHandler);
             this.isActivated = true;
         } catch (IllegalStateException | InterruptedException e) {
             e.printStackTrace();

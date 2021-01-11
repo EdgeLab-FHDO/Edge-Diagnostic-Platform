@@ -1,7 +1,7 @@
-package InfrastructureManager.REST;
+package InfrastructureManager.Modules.REST;
 
-import InfrastructureManager.REST.Authentication.DummyAuthentication;
-import InfrastructureManager.REST.Authentication.RESTAuthenticator;
+import InfrastructureManager.Modules.REST.Authentication.DummyAuthentication;
+import InfrastructureManager.Modules.REST.Authentication.RESTAuthenticator;
 import InfrastructureManager.Runner;
 import spark.Filter;
 import spark.Request;
@@ -17,7 +17,7 @@ import static spark.Spark.*;
 public class RestServerRunner extends Runner {
 
     private final int port;
-    private final String heartbeatPath = "/heartbeat"; //Path where the hearbeath is defined to check if server is up (always in localhost)
+    private final String heartbeatPath = "/heartbeat"; //Path where the heartbeat is defined to check if server is up (always in localhost)
 
     private final RESTAuthenticator authenticator; //For future authentication implementations
     private final Filter authenticationHandler; //Handler for authentication to the server
@@ -31,7 +31,7 @@ public class RestServerRunner extends Runner {
      * @param port Port where the server will be exposed
      */
     private RestServerRunner(String name, int port) throws InterruptedException {
-        super(name,null); //TODO
+        super(name,null);
         serverCheck.acquire();
         this.port = port;
         this.authenticator = new DummyAuthentication();

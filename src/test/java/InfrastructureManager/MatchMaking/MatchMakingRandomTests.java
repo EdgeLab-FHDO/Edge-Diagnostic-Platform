@@ -1,8 +1,9 @@
+/*
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Master;
-import InfrastructureManager.REST.Output.ParametrizedGETOutput;
+import InfrastructureManager.Modules.REST.Output.ParametrizedGETOutput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
@@ -98,3 +99,4 @@ public class MatchMakingRandomTests {
 //    }
 
 }
+*/

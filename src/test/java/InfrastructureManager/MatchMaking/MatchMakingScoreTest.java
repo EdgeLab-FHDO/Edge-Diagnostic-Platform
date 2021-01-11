@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.Configuration.CommandSet;
@@ -111,3 +112,4 @@ public class MatchMakingScoreTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 }
+*/

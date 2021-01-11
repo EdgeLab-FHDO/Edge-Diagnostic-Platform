@@ -5,6 +5,8 @@ import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
+import InfrastructureManager.Modules.REST.RESTModule;
+import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 
@@ -15,7 +17,7 @@ public class ModuleFactory {
 
     private final List<ModuleConfigData> data;
 
-    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO}
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST}
 
     public ModuleFactory(MasterConfigurationData data) {
         this.data = data.getModules();
@@ -41,6 +43,11 @@ public class ModuleFactory {
             case SCENARIO -> {
                 ScenarioModuleConfigData castedData = (ScenarioModuleConfigData) data;
                 yield new ScenarioModule(castedData.getName(), castedData.getPath());
+            }
+            case REST -> {
+                RESTModuleConfigData castedData = (RESTModuleConfigData) data;
+                yield new RESTModule(castedData.getName(), castedData.getPort(),
+                        castedData.getBaseURL(), castedData.getPOSTInputs(), castedData.getGETOutputs());
             }
         };
     }

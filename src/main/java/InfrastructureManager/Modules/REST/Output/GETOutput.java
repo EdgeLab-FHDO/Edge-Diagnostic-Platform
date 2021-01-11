@@ -1,7 +1,7 @@
-package InfrastructureManager.REST.Output;
+package InfrastructureManager.Modules.REST.Output;
 
 import InfrastructureManager.MasterOutput;
-import InfrastructureManager.REST.RestServerRunner;
+import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -15,7 +15,7 @@ import static spark.Spark.get;
 public class GETOutput extends MasterOutput {
 
     private String toSend;
-    protected final String path;
+    protected final String URL;
 
     protected boolean isActivated; //To check if REST server is running
 
@@ -30,12 +30,12 @@ public class GETOutput extends MasterOutput {
     /**
      * Constructor, creates a generic GET output based on the path to create the resource
      * @param name Name of the output
-     * @param path Path in which the GET handler will be set (Resource will be created)
+     * @param URL Path in which the GET handler will be set (Resource will be created)
      */
-    public GETOutput(String name, String path) {
+    public GETOutput(String name, String URL) {
         super(name);
         this.toSend = "";
-        this.path = path;
+        this.URL = URL;
         this.isActivated = false;
     }
 
@@ -72,7 +72,7 @@ public class GETOutput extends MasterOutput {
     protected void activate() {
         try {
             RestServerRunner.serverCheck.acquire();
-            get(this.path, this.GETHandler);
+            get(this.URL, this.GETHandler);
             this.isActivated = true;
         } catch (InterruptedException e) {
             e.printStackTrace();

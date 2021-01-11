@@ -2,6 +2,7 @@ package InfrastructureManager.ModuleManagement.RawData;
 
 import InfrastructureManager.ModuleManagement.ModuleFactory.*;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ConsoleModuleConfigData;
+import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.ScenarioModuleConfigData;
 import InfrastructureManager.ModuleManagement.RawData.Modules.UtilityModuleConfigData;
 import com.fasterxml.jackson.annotation.*;
@@ -10,7 +11,8 @@ import com.fasterxml.jackson.annotation.*;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ConsoleModuleConfigData.class, name = "ConsoleModule"),
         @JsonSubTypes.Type(value = UtilityModuleConfigData.class, name = "UtilityModule"),
-        @JsonSubTypes.Type(value = ScenarioModuleConfigData.class, name = "ScenarioModule")
+        @JsonSubTypes.Type(value = ScenarioModuleConfigData.class, name = "ScenarioModule"),
+        @JsonSubTypes.Type(value = RESTModuleConfigData.class, name = "RESTModule")
 })
 public abstract class ModuleConfigData {
     private final String name;
