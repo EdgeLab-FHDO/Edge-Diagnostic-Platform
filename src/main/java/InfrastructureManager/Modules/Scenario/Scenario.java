@@ -98,12 +98,12 @@ public class Scenario extends MasterInput {
     }
 
     public void pause() {
-        this.pausedTime = System.currentTimeMillis();
+        this.pausedTime += System.currentTimeMillis();
         this.getRunner().pause();
     }
 
     public void resume() {
-        this.resumedTime = System.currentTimeMillis();
+        this.resumedTime += System.currentTimeMillis();
         this.getRunner().resume();
     }
 

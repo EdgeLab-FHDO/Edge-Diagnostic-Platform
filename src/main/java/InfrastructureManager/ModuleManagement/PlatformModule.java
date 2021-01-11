@@ -77,7 +77,6 @@ public abstract class PlatformModule {
         inputRunnerThreads.forEach(Thread::start);
         state = ModuleState.RUNNING;
         reportStateToOutputs();
-        System.out.println("STARTED MODULE: " + name);
     }
 
     public void pause() {
