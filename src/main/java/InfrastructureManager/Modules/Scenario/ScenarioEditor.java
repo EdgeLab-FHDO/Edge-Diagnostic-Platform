@@ -20,9 +20,9 @@ public class ScenarioEditor extends MasterOutput {
     private Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(String name, Scenario scenario) {
+    public ScenarioEditor(String name) {
         super(name);
-        this.scenario = scenario;
+        //this.scenario = scenario;
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
@@ -43,23 +43,12 @@ public class ScenarioEditor extends MasterOutput {
         if (command[0].equals("editor")) {
             try {
                 switch (command[1]) {
-                    case "create":
-                        create(command[2]);
-                        break;
-                    case "addEvent":
-                        addEvent(command[2],Integer.parseInt(command[3]));
-                        break;
-                    case "deleteEvent":
-                        deleteLastEvent();
-                        break;
-                    case "toFile" :
-                        scenarioToFile(command[2]);
-                        break;
-                    case "fromFile":
-                        scenarioFromFile(command[2]);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+                    case "create" -> create(command[2]);
+                    case "addEvent" -> addEvent(command[2], Integer.parseInt(command[3]));
+                    case "deleteEvent" -> deleteLastEvent();
+                    case "toFile" -> scenarioToFile(command[2]);
+                    case "fromFile" -> scenarioFromFile(command[2]);
+                    default -> throw new IllegalArgumentException("Invalid command for ScenarioEditor");
                 }
             } catch (IndexOutOfBoundsException e){
                 throw new IllegalArgumentException("Arguments missing for command  - ScenarioEditor");

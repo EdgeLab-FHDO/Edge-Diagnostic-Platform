@@ -19,7 +19,7 @@ public class ScenarioModule extends PlatformModule {
         try {
             Scenario scenario = scenarioFromFile(path);
             setInputs(scenario);
-            setOutputs(new ScenarioEditor(name + ".editor", scenario),
+            setOutputs(new ScenarioEditor(name + ".editor"),
                     new ScenarioDispatcher(name + ".dispatcher",scenario));
 
         } catch (IOException e) {
