@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge.NetworkCharacteristic;
+package InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic;
 
 public class NetworkParameters {
     private int throughputDl;

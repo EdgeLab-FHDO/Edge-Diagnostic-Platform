@@ -3,6 +3,8 @@ package InfrastructureManager.ModuleManagement;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
+import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
+import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.REST.RESTModule;
@@ -17,7 +19,7 @@ public class ModuleFactory {
 
     private final List<ModuleConfigData> data;
 
-    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST}
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE}
 
     public ModuleFactory(MasterConfigurationData data) {
         this.data = data.getModules();
@@ -48,6 +50,10 @@ public class ModuleFactory {
                 RESTModuleConfigData castedData = (RESTModuleConfigData) data;
                 yield new RESTModule(castedData.getName(), castedData.getPort(),
                         castedData.getBaseURL(), castedData.getPOSTInputs(), castedData.getGETOutputs());
+            }
+            case ADVANTEDGE -> {
+                AdvantEdgeModuleConfigData castedData = (AdvantEdgeModuleConfigData) data;
+                yield new AdvantEdgeModule(castedData.getName(), castedData.getPort(), castedData.getAddress());
             }
         };
     }

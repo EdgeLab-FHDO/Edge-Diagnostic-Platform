@@ -16,7 +16,8 @@
         {"name" : "get1", "URL":  "/get_test"},
         {"name": "get2", "URL": "/client/get_node/:client_id"}
       ]
-    }
+    },
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"}
   ],
 
   "connections" : [
@@ -48,6 +49,13 @@
       "out" : "rest.get1",
       "commands" : {
         "get_test": "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "ae.out",
+      "commands" : {
+        "ae_test": "advantEdge deploy dummy"
       }
     }
   ]

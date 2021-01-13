@@ -1,5 +1,6 @@
 package InfrastructureManager.AdvantEdge;
 
+import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Assert;
 import org.junit.Rule;

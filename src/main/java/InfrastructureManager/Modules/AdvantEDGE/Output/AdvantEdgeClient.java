@@ -1,8 +1,8 @@
-package InfrastructureManager.AdvantEdge;
+package InfrastructureManager.Modules.AdvantEDGE.Output;
 
-import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkCharacteristicsUpdate;
-import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkEvent;
-import InfrastructureManager.AdvantEdge.NetworkCharacteristic.NetworkParameters;
+import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkCharacteristicsUpdate;
+import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkEvent;
+import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkParameters;
 import InfrastructureManager.MasterOutput;
 import InfrastructureManager.Utils.FileParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,21 +43,12 @@ public class AdvantEdgeClient extends MasterOutput {
         if (command[0].equals("advantEdge")) { //The commands must come like "advantEdge command"
             try {
                 switch (command[1]) {
-                    case "create" :
-                        createAEScenario(command[2], command[3]);
-                        break;
-                    case "deploy" :
-                        deployAEScenario(command[2]);
-                        break;
-                    case "terminate" :
-                        terminateAEScenario(command[2]);
-                        break;
-                    case "networkUpdate":
-                        sendNetworkCharacteristicsUpdateAEScenario(command[2], command[3], command[4], command[5],
-                                command[6], command[7], command[8], command[9]);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid command for AdvantEdgeClient");
+                    case "create" -> createAEScenario(command[2], command[3]);
+                    case "deploy" -> deployAEScenario(command[2]);
+                    case "terminate" -> terminateAEScenario(command[2]);
+                    case "networkUpdate" -> sendNetworkCharacteristicsUpdateAEScenario(command[2], command[3], command[4], command[5],
+                            command[6], command[7], command[8], command[9]);
+                    default -> throw new IllegalArgumentException("Invalid command for AdvantEdgeClient");
                 }
             } catch (IndexOutOfBoundsException e) {
                 throw new IllegalArgumentException("Arguments missing for command - AdvantEdgeClient");
@@ -86,14 +77,9 @@ public class AdvantEdgeClient extends MasterOutput {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                case 400:
-                    System.out.println("400 - Bad Request");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
+                case 200 -> System.out.println("200 - OK");
+                case 400 -> System.out.println("400 - Bad Request");
+                default -> System.out.println("404 - Not found");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -119,14 +105,9 @@ public class AdvantEdgeClient extends MasterOutput {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                case 400:
-                    System.out.println("400 - Bad Request");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
+                case 200 -> System.out.println("200 - OK");
+                case 400 -> System.out.println("400 - Bad Request");
+                default -> System.out.println("404 - Not found");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,11 +129,9 @@ public class AdvantEdgeClient extends MasterOutput {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
+                case 200 -> System.out.println("200 - OK");
+                case 400 -> System.out.println("400 - Bad Request");
+                default -> System.out.println("404 - Not found");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,14 +168,9 @@ public class AdvantEdgeClient extends MasterOutput {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
             switch (response.statusCode()) {
-                case 200:
-                    System.out.println("200 - OK");
-                    break;
-                case 400:
-                    System.out.println("400 - Bad Request");
-                    break;
-                default:
-                    System.out.println("404 - Not found");
+                case 200 -> System.out.println("200 - OK");
+                case 400 -> System.out.println("400 - Bad Request");
+                default -> System.out.println("404 - Not found");
             }
 
         } catch (Exception e) {
