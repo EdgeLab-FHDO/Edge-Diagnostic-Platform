@@ -1,4 +1,10 @@
 package InfrastructureManager.Modules.MatchMaking;
 
-public class MatchMakingModule {
+import InfrastructureManager.ModuleManagement.PlatformModule;
+
+public class MatchMakingModule extends PlatformModule {
+
+    public MatchMakingModule(String name, MatchMakerType type) {
+        super(name);
+    }
 }

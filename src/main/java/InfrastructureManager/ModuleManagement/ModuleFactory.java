@@ -5,6 +5,8 @@ import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
+import InfrastructureManager.Modules.MatchMaking.RawData.MatchMakingModuleConfigData;
 import InfrastructureManager.Modules.RemoteExecution.RawData.RemoteExecutionModuleConfigData;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
@@ -58,7 +60,10 @@ public class ModuleFactory {
                 yield new AdvantEdgeModule(castedData.getName(), castedData.getPort(), castedData.getAddress());
             }
             case REMOTE_EXEC -> new RemoteExecutionModule(data.getName());
-            case MATCH_MAKING -> null;
+            case MATCH_MAKING -> {
+                MatchMakingModuleConfigData castedData = (MatchMakingModuleConfigData) data;
+                yield new MatchMakingModule(castedData.getName(), castedData.getMatchMakerType());
+            }
         };
     }
 }
