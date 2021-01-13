@@ -1,10 +1,9 @@
 package InfrastructureManager.FileOutput;
 
+import InfrastructureManager.Modules.Utility.FileOutput;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
