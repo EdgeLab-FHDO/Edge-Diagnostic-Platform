@@ -19,7 +19,7 @@ public class ModuleFactory {
 
     private final List<ModuleConfigData> data;
 
-    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC}
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC, MATCH_MAKING}
 
     public ModuleFactory(MasterConfigurationData data) {
         this.data = data.getModules();
@@ -56,6 +56,7 @@ public class ModuleFactory {
                 yield new AdvantEdgeModule(castedData.getName(), castedData.getPort(), castedData.getAddress());
             }
             case REMOTE_EXEC -> null;
+            case MATCH_MAKING -> null;
         };
     }
 }
