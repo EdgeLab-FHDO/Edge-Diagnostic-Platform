@@ -1,7 +1,7 @@
 package InfrastructureManager;
 
 
-import InfrastructureManager.MatchMaking.Exception.NoNodeFoundInHistoryException;
+import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
 
 import java.util.*;
 

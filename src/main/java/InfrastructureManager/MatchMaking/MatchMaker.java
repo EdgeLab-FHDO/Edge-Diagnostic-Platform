@@ -2,7 +2,11 @@ package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.*;
 import InfrastructureManager.EdgeClientHistory;
-import InfrastructureManager.MatchMaking.Exception.*;
+import InfrastructureManager.Modules.MatchMaking.Exception.*;
+import InfrastructureManager.Modules.MatchMaking.Algorithms.MatchMakingAlgorithm;
+import InfrastructureManager.Modules.MatchMaking.Algorithms.NaiveMatchMaking;
+import InfrastructureManager.Modules.MatchMaking.Algorithms.RandomMatchMaking;
+import InfrastructureManager.Modules.MatchMaking.Algorithms.ScoreBasedMatchMaking;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

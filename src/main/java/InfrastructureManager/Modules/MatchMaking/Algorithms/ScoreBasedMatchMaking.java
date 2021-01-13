@@ -1,15 +1,14 @@
-package InfrastructureManager.MatchMaking;
+package InfrastructureManager.Modules.MatchMaking.Algorithms;
 
 import InfrastructureManager.EdgeClient;
 import InfrastructureManager.EdgeNode;
 import InfrastructureManager.EdgeClientHistory;
-import InfrastructureManager.MatchMaking.Exception.NoNodeFoundInHistoryException;
-import InfrastructureManager.MatchMaking.Exception.NoNodeSatisfyRequirementException;
+import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
+import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.Semaphore;
 
 /**
  * Score-based match making algorithm.

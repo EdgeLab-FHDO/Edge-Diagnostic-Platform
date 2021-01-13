@@ -1,4 +1,4 @@
-package InfrastructureManager.MatchMaking.Exception;
+package InfrastructureManager.Modules.MatchMaking.Exception;
 
 public class NoClientFoundException extends InfrastructureException{
     public NoClientFoundException(String message){

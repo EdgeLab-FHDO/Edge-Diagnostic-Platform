@@ -1,4 +1,4 @@
-package InfrastructureManager.MatchMaking.Exception;
+package InfrastructureManager.Modules.MatchMaking.Exception;
 
 public class NoNodeSatisfyRequirementException extends MatchMakingException{
     public NoNodeSatisfyRequirementException (String s){

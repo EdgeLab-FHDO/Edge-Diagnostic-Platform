@@ -1,4 +1,4 @@
-package InfrastructureManager.MatchMaking.Exception;
+package InfrastructureManager.Modules.MatchMaking.Exception;
 
 public class InfrastructureException extends Exception {
     public InfrastructureException(String message) {

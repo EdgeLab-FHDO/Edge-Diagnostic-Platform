@@ -1,14 +1,12 @@
-package InfrastructureManager.MatchMaking;
+package InfrastructureManager.Modules.MatchMaking.Algorithms;
 
 import InfrastructureManager.EdgeClient;
-import InfrastructureManager.EdgeClientHistory;
 import InfrastructureManager.EdgeNode;
-import InfrastructureManager.MatchMaking.Exception.NoNodeSatisfyRequirementException;
+import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Random;
 
 public class NaiveMatchMaking implements MatchMakingAlgorithm {
     private static final long ACCEPTABLE_PING = 300; //use this as parameter before put them in the calculation
