@@ -1,5 +1,6 @@
 package InfrastructureManager.SSH;
 
+import InfrastructureManager.Modules.RemoteExecution.Output.SSHClient;
 import org.junit.Assert;
 import org.junit.Test;
 

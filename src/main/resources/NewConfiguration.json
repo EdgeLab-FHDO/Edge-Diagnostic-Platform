@@ -13,11 +13,12 @@
         {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]}
       ],
       "GET" : [
-        {"name" : "get1", "URL":  "/get_test"},
+        {"name" : "get1", "URL":  "/limit_test"},
         {"name": "get2", "URL": "/client/get_node/:client_id"}
       ]
     },
-    {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"}
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
+    {"type" : "RemoteExecutionModule", "name": "remote"}
   ],
 
   "connections" : [
@@ -56,6 +57,21 @@
       "out": "ae.out",
       "commands" : {
         "ae_test": "advantEdge deploy dummy"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "remote.limit.out",
+      "commands" : {
+        "test_limit" : "limit cores node1 0.5",
+        "test_limit2" : "limit cores node2 0.7"
+      }
+    },
+    {
+      "in" : "remote.limit.in",
+      "out" : "rest.get1",
+      "commands" : {
+        "set_limits $limits": "toGET resource $limits"
       }
     }
   ]

@@ -1,6 +1,7 @@
-package InfrastructureManager.SSH;
+package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.MasterOutput;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SCPException;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -33,27 +34,17 @@ public class SSHClient extends MasterOutput {
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {
                 switch (command[1]) {
-                    case "execute":
-                        String toSend = String.join(" ", Arrays.copyOfRange(command,3,command.length));
+                    case "execute" -> {
+                        String toSend = String.join(" ", Arrays.copyOfRange(command, 3, command.length));
                         switch (command[2]) {
-                            case "-b" :
-                                execute(toSend,true);
-                                break;
-                            case "-f":
-                                execute(toSend, false);
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Wrong Display parameter in SSHClient execute command");
+                            case "-b" -> execute(toSend, true);
+                            case "-f" -> execute(toSend, false);
+                            default -> throw new IllegalArgumentException("Wrong Display parameter in SSHClient execute command");
                         }
-                        break;
-                    case "setup" :
-                        setUpClient(command[2],command[3],command[4], command[5]);
-                        break;
-                    case "sendFile" :
-                        sendFile(command [2], command[3]);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid command for SSHClient");
+                    }
+                    case "setup" -> setUpClient(command[2], command[3], command[4], command[5]);
+                    case "sendFile" -> sendFile(command[2], command[3]);
+                    default -> throw new IllegalArgumentException("Invalid command for SSHClient");
                 }
             } catch (IndexOutOfBoundsException e){
                 throw new IllegalArgumentException("Arguments missing for command - SSHClient");

@@ -5,6 +5,8 @@ import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
+import InfrastructureManager.Modules.RemoteExecution.RawData.RemoteExecutionModuleConfigData;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.REST.RESTModule;
@@ -55,7 +57,7 @@ public class ModuleFactory {
                 AdvantEdgeModuleConfigData castedData = (AdvantEdgeModuleConfigData) data;
                 yield new AdvantEdgeModule(castedData.getName(), castedData.getPort(), castedData.getAddress());
             }
-            case REMOTE_EXEC -> null;
+            case REMOTE_EXEC -> new RemoteExecutionModule(data.getName());
             case MATCH_MAKING -> null;
         };
     }
