@@ -2,8 +2,8 @@
 package InfrastructureManager.MatchMaking;
 
 import InfrastructureManager.Configuration.CommandSet;
-import InfrastructureManager.EdgeClientHistory;
-import InfrastructureManager.EdgeNode;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Master;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;

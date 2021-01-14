@@ -2,7 +2,6 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.Connection;
 import InfrastructureManager.MasterOutput;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ConnectionConfigData;

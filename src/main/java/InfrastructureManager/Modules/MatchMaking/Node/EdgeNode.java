@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.MatchMaking.Node;
 
 import java.util.Objects;
 

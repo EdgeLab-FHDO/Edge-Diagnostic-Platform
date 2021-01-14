@@ -1,4 +1,4 @@
-package InfrastructureManager;
+package InfrastructureManager.Modules.MatchMaking.Client;
 
 
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;

@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.*;
 import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.Runner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;

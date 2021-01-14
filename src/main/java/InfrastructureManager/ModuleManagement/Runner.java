@@ -1,5 +1,6 @@
-package InfrastructureManager;
+package InfrastructureManager.ModuleManagement;
 
+import InfrastructureManager.MasterInput;
 import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.function.BiConsumer;
  */
 public class Runner implements Runnable{
 
-    private BiConsumer<Runner,MasterInput> runOperation;
+    private BiConsumer<Runner, MasterInput> runOperation;
 
     protected String name;
     protected MasterInput input;

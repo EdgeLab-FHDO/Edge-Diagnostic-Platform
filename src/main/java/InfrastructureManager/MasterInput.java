@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import InfrastructureManager.ModuleManagement.Runner;
+
 import java.util.concurrent.Semaphore;
 
 public abstract class MasterInput {

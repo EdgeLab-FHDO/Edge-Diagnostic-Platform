@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.MatchMaking.Algorithms;
 
-import InfrastructureManager.EdgeClient;
-import InfrastructureManager.EdgeNode;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

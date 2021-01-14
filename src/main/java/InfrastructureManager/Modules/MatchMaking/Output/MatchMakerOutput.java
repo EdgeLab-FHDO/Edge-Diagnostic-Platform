@@ -1,8 +1,8 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
-import InfrastructureManager.EdgeClient;
-import InfrastructureManager.EdgeClientHistory;
-import InfrastructureManager.EdgeNode;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.MasterOutput;
 import InfrastructureManager.Modules.MatchMaking.Algorithms.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Algorithms.NaiveMatchMaking;
@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MatchMakerOutput extends MasterOutput {

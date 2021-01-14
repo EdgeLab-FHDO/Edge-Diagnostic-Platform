@@ -2,7 +2,7 @@ package InfrastructureManager.Modules.REST;
 
 import InfrastructureManager.Modules.REST.Authentication.DummyAuthentication;
 import InfrastructureManager.Modules.REST.Authentication.RESTAuthenticator;
-import InfrastructureManager.Runner;
+import InfrastructureManager.ModuleManagement.Runner;
 import spark.Filter;
 import spark.Request;
 import spark.Response;

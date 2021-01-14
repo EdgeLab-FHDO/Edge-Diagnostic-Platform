@@ -1,8 +1,8 @@
 package InfrastructureManager.Modules.MatchMaking.Algorithms;
 
-import InfrastructureManager.EdgeClient;
-import InfrastructureManager.EdgeNode;
-import InfrastructureManager.EdgeClientHistory;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
+import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 import org.slf4j.Logger;

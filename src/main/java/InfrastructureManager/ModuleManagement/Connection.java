@@ -1,6 +1,7 @@
-package InfrastructureManager;
+package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.CommandSet;
+import InfrastructureManager.MasterOutput;
 
 public class Connection {
 
