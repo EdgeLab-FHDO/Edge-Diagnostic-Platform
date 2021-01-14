@@ -1,4 +1,4 @@
-package InfrastructureManager.FileOutput;
+package InfrastructureManager.Modules.Utility.OutputUnitTests;
 
 import InfrastructureManager.Modules.Utility.FileOutput;
 import org.junit.Assert;

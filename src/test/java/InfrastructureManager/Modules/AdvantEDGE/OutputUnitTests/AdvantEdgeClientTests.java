@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge;
+package InfrastructureManager.Modules.AdvantEDGE.OutputUnitTests;
 
 import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
