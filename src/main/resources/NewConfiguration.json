@@ -10,7 +10,10 @@
       "baseURL": "/rest",
       "POST" : [
         {"name" : "post1","URL": "/post_test","command": "test1 $body","information":  []},
-        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]}
+        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]},
+        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
@@ -73,6 +76,62 @@
       "out" : "rest.get1",
       "commands" : {
         "set_limits $limits": "toGET resource $limits"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "mm.out",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "mm.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "mm.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "console.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "console register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "console.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "console register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.assign",
+      "out" : "mm.out",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "console.out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "rest.get2",
+      "commands" : {
+        "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
       }
     }
   ]

@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import java.util.Objects;
+
 public class EdgeClient {
 
     private final String id;
@@ -72,5 +74,13 @@ public class EdgeClient {
                 ", \n  location : " + location +
                 ", \n  message : " + message +
                 "\n";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EdgeClient client = (EdgeClient) o;
+        return Objects.equals(id, client.id);
     }
 }

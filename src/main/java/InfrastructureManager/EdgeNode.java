@@ -1,5 +1,7 @@
 package InfrastructureManager;
 
+import java.util.Objects;
+
 public class EdgeNode {
 
     private final String id;
@@ -111,5 +113,13 @@ public class EdgeNode {
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
                 "  location : " + location + "\n}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EdgeNode edgeNode = (EdgeNode) o;
+        return Objects.equals(id, edgeNode.id);
     }
 }

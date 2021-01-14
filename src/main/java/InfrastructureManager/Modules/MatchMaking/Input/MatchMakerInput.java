@@ -1,18 +1,15 @@
 package InfrastructureManager.Modules.MatchMaking.Input;
 
 import InfrastructureManager.MasterInput;
-import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
-import InfrastructureManager.Modules.MatchMaking.MatchesDoneList;
+import InfrastructureManager.Modules.MatchMaking.MatchesList;
 
 public class MatchMakerInput extends MasterInput {
 
-    private final MatchMakerType type;
-    private MatchesDoneList sharedMatchesList;
+    private final MatchesList sharedMatchesList;
     private String toSend;
 
-    public MatchMakerInput(String name, MatchMakerType type, MatchesDoneList mapping) {
+    public MatchMakerInput(String name, MatchesList mapping) {
         super(name);
-        this.type = type;
         toSend = "";
         this.sharedMatchesList = mapping;
     }
@@ -30,11 +27,18 @@ public class MatchMakerInput extends MasterInput {
     }
 
     @Override
+    protected String getReading() throws InterruptedException {
+        waitForMatch();
+        return super.getReading();
+    }
+
+    @Override
     public String read() throws InterruptedException {
         return getReading();
     }
 
-    private void waitForMatch() {
-        //TODO: Implement with shared protected list
+    private void waitForMatch() throws InterruptedException {
+        String reading = this.sharedMatchesList.getLastAdded();
+        this.storeReadingAndUnblock("give_node " + reading);
     }
 }

@@ -8,8 +8,8 @@ public class MatchMakingModule extends PlatformModule {
 
     public MatchMakingModule(String name, MatchMakerType type) {
         super(name);
-        MatchesDoneList sharedList = new MatchesDoneList();
-        setInputs(new MatchMakerInput(name + ".in", type, sharedList));
+        MatchesList sharedList = new MatchesList();
+        setInputs(new MatchMakerInput(name + ".in", sharedList));
         setOutputs(new MatchMakerOutput(name + ".out", type, sharedList));
     }
 }
