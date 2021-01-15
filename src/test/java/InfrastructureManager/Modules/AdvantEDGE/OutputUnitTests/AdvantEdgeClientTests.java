@@ -2,7 +2,6 @@ package InfrastructureManager.Modules.AdvantEDGE.OutputUnitTests;
 
 import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -12,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static InfrastructureManager.Modules.CommonTestingMethods.assertException;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
@@ -83,19 +83,13 @@ public class AdvantEdgeClientTests {
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
 
-    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
-        var e = Assert.assertThrows(exceptionClass, () -> client.out(command));
-        Assert.assertEquals(expectedMessage, e.getMessage());
-    }
-
-
     @Test
     public void invalidCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "advantEdge notACommand","Invalid command for AdvantEdgeClient");
+        assertException(IllegalArgumentException.class, "Invalid command for AdvantEdgeClient",() -> client.out("advantEdge notACommand"));
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "advantEdge create", "Arguments missing for command - AdvantEdgeClient");
+        assertException(IllegalArgumentException.class, "Arguments missing for command - AdvantEdgeClient", () ->client.out("advantEdge create"));
     }
 }

@@ -8,6 +8,8 @@ import org.junit.Test;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import static InfrastructureManager.Modules.CommonTestingMethods.assertException;
+
 public class FileOutputTests {
 
     private final FileOutput fileOutput = new FileOutput("file_out");
@@ -91,19 +93,14 @@ public class FileOutputTests {
         }
     }
 
-    public void assertException(Class<? extends  Throwable> exceptionClass, String command ,String expectedMessage) {
-        var e = Assert.assertThrows(exceptionClass, () -> fileOutput.out(command));
-        Assert.assertEquals(expectedMessage, e.getMessage());
-    }
-
     @Test
     public void invalidCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "file_out notACommand", "Invalid command for FileOutput");
+        assertException(IllegalArgumentException.class, "Invalid command for FileOutput", () -> fileOutput.out("file_out notACommand"));
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "file_out encoding", "Arguments missing for command - FileOutput");
+        assertException(IllegalArgumentException.class, "Arguments missing for command - FileOutput",() -> fileOutput.out("file_out encoding"));
     }
 
     private void assertFileContent(File file, String expected) throws IOException {

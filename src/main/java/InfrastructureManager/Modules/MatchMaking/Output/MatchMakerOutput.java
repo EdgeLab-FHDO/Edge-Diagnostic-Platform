@@ -375,9 +375,16 @@ public class MatchMakerOutput extends MasterOutput {
 
     }
 
+    public List<EdgeNode> getNodeList() {
+        return nodeList;
+    }
+
+    public List<EdgeClient> getClientList() {
+        return clientList;
+    }
 
     @Override
-    protected void out(String response) throws IllegalArgumentException {
+    public void out(String response) throws IllegalArgumentException {
         String[] commandLine = response.split(" ");
         if (commandLine[0].equals("matchMaker")) {
             try {
@@ -400,6 +407,8 @@ public class MatchMakerOutput extends MasterOutput {
                     }
                     default -> throw new IllegalArgumentException("Invalid command for MatchMaker");
                 }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new IllegalArgumentException("Arguments missing for command - MatchMaker");
             } catch (InfrastructureException | JsonProcessingException | MatchMakingException e) {
                 e.printStackTrace();
             }

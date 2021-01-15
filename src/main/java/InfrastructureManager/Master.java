@@ -198,7 +198,7 @@ public class Master {
             Master.getInstance().startAllModules();
         }
         else {
-            Master.getInstance().startModule("Console");
+            Master.getInstance().startModule("console");
         }
     }
 }

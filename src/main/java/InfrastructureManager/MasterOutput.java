@@ -27,5 +27,5 @@ public abstract class MasterOutput {
         out(response);
     }
 
-    protected abstract void out (String response) throws IllegalArgumentException;
+    public abstract void out (String response) throws IllegalArgumentException;
 }
