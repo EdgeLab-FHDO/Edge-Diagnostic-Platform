@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
+package InfrastructureManager.NetworkStructure;
 
 public class ComputeRequirements {
 	private int requiredCpu;
@@ -17,16 +17,29 @@ public class ComputeRequirements {
 		return requiredMemory;
 	}
 	
-	public setRequiredCpu(int requiredCpu) {
+	public void setRequiredCpu(int requiredCpu) {
 		this.requiredCpu = requiredCpu;
 	}
 	
-	public setRequiredGpu(int requiredGpu) {
+	public void setRequiredGpu(int requiredGpu) {
 		this.requiredGpu = requiredGpu;
 	}
 	
-	public setRequiredMemory(int requiredMemory) {
+	public void setRequiredMemory(int requiredMemory) {
 		this.requiredMemory = requiredMemory;
 	}
+	
+    public ComputeRequirements() {
+        this.requiredCpu = 0;
+        this.requiredGpu = 0;
+        this.requiredMemory = 0;
+    }
+
+    public ComputeRequirements(int requiredCpu,int requiredGpu, int requiredMemory) {
+        this.requiredCpu = requiredCpu;
+        this.requiredGpu = requiredGpu;
+        this.requiredMemory = requiredMemory;
+    }
+	
 	
 }

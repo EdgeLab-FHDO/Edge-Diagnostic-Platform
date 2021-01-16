@@ -1,24 +1,23 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
-
+package InfrastructureManager.NetworkStructure;
 enum TypeId {UE,POA,FOG,EDGE,CLOUD,NONE}
-enum Mobility {MOVABLE,NONMOVABLE}
+enum Mobility {MOVABLE,NONMOVABLE,NONE}
 
 public class DeviceType {
 	private TypeId typeIdentifier;
 	private Mobility mobilityType;
-	private String deviceName = "Device name";
+	private String deviceName;
 	
-	public setTypeId(TypeId typeIdentifier)
+	public void setTypeId(TypeId typeIdentifier)
     {
         this.typeIdentifier = typeIdentifier;
     }
 	
-	public setMobility(Mobility mobilityType)
+	public void setMobility(Mobility mobilityType)
     {
         this.mobilityType = mobilityType;
     }
 
-	public setDeviceName(String deviceName)
+	public void setDeviceName(String deviceName)
     {
         this.deviceName = deviceName;
     }
@@ -36,5 +35,17 @@ public class DeviceType {
 	public String getDeviceName() {
         return deviceName;
     }
+	
+	public DeviceType() {
+		this.typeIdentifier = TypeId.NONE;
+		this.mobilityType = Mobility.NONE;
+		this.deviceName = "";
+	}
+	
+	public DeviceType(TypeId typeIdentifier,Mobility mobilityType,String deviceName) {
+		this.typeIdentifier = typeIdentifier;
+		this.mobilityType = mobilityType;
+		this.deviceName = deviceName;
+	}
 }
 

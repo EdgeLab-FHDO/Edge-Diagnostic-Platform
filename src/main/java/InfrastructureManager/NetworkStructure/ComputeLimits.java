@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
+package InfrastructureManager.NetworkStructure;
 
 public class ComputeLimits {
 	private int cpuCount;
@@ -17,16 +17,28 @@ public class ComputeLimits {
 		return memoryLimit;
 	}
 	
-	public setCpuCount(int cpuCount) {
+	public void setCpuCount(int cpuCount) {
 		this.cpuCount = cpuCount;
 	}
 	
-	public setGpuCount(int gpuCount) {
+	public void setGpuCount(int gpuCount) {
 		this.gpuCount = gpuCount;
 	}
 	
-	public setMemoryLimit(int memoryLimit) {
+	public void setMemoryLimit(int memoryLimit) {
 		this.memoryLimit = memoryLimit;
 	}
+	
+    public ComputeLimits() {
+        this.cpuCount = 0;
+        this.gpuCount = 0;
+        this.memoryLimit = 0;
+    }
+
+    public ComputeLimits(int cpuCount,int gpuCount, int memoryLimit) {
+        this.cpuCount = cpuCount;
+        this.gpuCount = gpuCount;
+        this.memoryLimit = memoryLimit;
+    }
 	
 }

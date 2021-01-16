@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
+package InfrastructureManager.NetworkStructure;
 
 public class NetworkRequirements {
 	private int requiredLatency;
@@ -17,16 +17,29 @@ public class NetworkRequirements {
 		return requiredPacketLoss;
 	}
 	
-	public setRequiredLatency(int requiredLatency) {
+	public void setRequiredLatency(int requiredLatency) {
 		this.requiredLatency =  requiredLatency;
 	}
 	
-	public setRequiredThroughput(double requiredThroughput) {
+	public void setRequiredThroughput(double requiredThroughput) {
 		this.requiredThroughput = requiredThroughput;
 	}
 	
-	public setRequiredPacketLoss(double requiredPacketLoss) {
+	public void setRequiredPacketLoss(double requiredPacketLoss) {
 		this.requiredPacketLoss = requiredPacketLoss;
 	}
+	
+	public NetworkRequirements() {
+		this.requiredLatency = 0;
+		this.requiredThroughput = 0.0f;
+		this.requiredPacketLoss = 0.0f;
+	}
+	
+	public NetworkRequirements(int requiredLatency,double requiredThroughput,double requiredPacketLoss) {
+		this.requiredLatency = requiredLatency;
+		this.requiredThroughput = requiredThroughput;
+		this.requiredPacketLoss = requiredPacketLoss;
+	}
+	
 	
 }

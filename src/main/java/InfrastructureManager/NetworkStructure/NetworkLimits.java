@@ -1,4 +1,4 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
+package InfrastructureManager.NetworkStructure;
 
 public class NetworkLimits {
 	private int latency;
@@ -17,15 +17,27 @@ public class NetworkLimits {
 		return packetLoss;
 	}
 	
-	public setLatency(int latency) {
+	public void setLatency(int latency) {
 		this.latency =  latency;
 	}
 	
-	public setThroughput(double throughput) {
+	public void setThroughput(double throughput) {
 		this.throughput = throughput;
 	}
 	
-	public setPacketLoss(double packetLoss) {
+	public void setPacketLoss(double packetLoss) {
+		this.packetLoss = packetLoss;
+	}
+	
+	public NetworkLimits() {
+		this.latency = 0;
+		this.throughput = 0.0f;
+		this.packetLoss = 0.0f;
+	}
+	
+	public NetworkLimits(int latency,double throughput,double packetLoss) {
+		this.latency = latency;
+		this.throughput = throughput;
 		this.packetLoss = packetLoss;
 	}
 	

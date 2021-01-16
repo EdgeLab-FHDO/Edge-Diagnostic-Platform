@@ -1,18 +1,28 @@
-package InfrastructureManager.AdvantEdge.NetworkStructure;
-
+package InfrastructureManager.NetworkStructure;
 public class Connection {
 	private int connectionId;
-	private Location sourceLocation;
-	private Location destinationLocation;
 	private NetworkLimits networkCapacity;
 	
 	public int getConnectionId() {
 		return connectionId;
 	}
 	
-	public setConnectionId(int connectionId) {
-		this.connectionId =  connectionId;
+	public NetworkLimits getNetworkCapacity() {
+		return networkCapacity;
 	}
 	
-	
+	public void setNetworkCapacity(NetworkLimits networkCapacity) {
+		this.networkCapacity =  networkCapacity;
+	}
+    
+    public Connection(int connectionId) {
+        this.connectionId = connectionId;
+        this.networkCapacity = new NetworkLimits();
+    }
+
+    public Connection(int connectionId, NetworkLimits networkCapacity) {
+        this.connectionId = connectionId;
+        this.networkCapacity = networkCapacity;
+    }
+    
 }
