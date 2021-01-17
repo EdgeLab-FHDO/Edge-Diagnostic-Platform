@@ -4,6 +4,7 @@ import InfrastructureManager.*;
 import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
+import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -12,21 +13,26 @@ public abstract class PlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    protected MasterInput[] inputs;
-    protected MasterOutput[] outputs;
-    protected Map<String, List<Connection>> inputConnections;
-    protected final List<Runner> inputRunners;
-    protected final List<Thread> inputRunnerThreads;
+    protected MasterInput[] inputs;//PRIVATE WITH GETTER
+    protected MasterOutput[] outputs;//PRIVATE WITH GETTER
+    protected Map<String, List<Connection>> inputConnections;//PRIVATE WITH GETTER
+    protected final List<Runner> inputRunners;//PRIVATE WITH GETTER
+    protected final List<Thread> inputRunnerThreads; //PRIVATE WITH GETTER
 
-    private final String name;
+    private String name;
     private volatile ModuleState state;
 
-    protected PlatformModule(String name) {
-        this.name = name;
+    protected PlatformModule() {
         this.state = ModuleState.INITIAL;
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
         this.inputConnections = new HashMap<>();
+    }
+
+    public abstract void configure(ModuleConfigData data);
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected void setInputs(MasterInput... inputs) {
@@ -34,13 +40,13 @@ public abstract class PlatformModule {
         for (MasterInput input : this.inputs) {
             Runner runner = new Runner(input.getName(),input);
             input.setRunner(runner);
-        }
+        } //todo: add not replace
     }
 
     protected void setOutputs(MasterOutput... outputs) {
         this.outputs = outputs;
         reportStateToOutputs();
-    }
+    } //todo: add not replace
 
     public MasterInput[] getInputs() {
         return inputs;
@@ -127,7 +133,7 @@ public abstract class PlatformModule {
                 String fromInput = input.read();
                 Master master = Master.getInstance();
                 for (Connection c : runner.getConnections()) {
-                    String mapping = master.execute(fromInput,c.getCommands());
+                    String mapping = master.execute(fromInput,c.getCommands()); //TODO: REMOVE, part of module
                     if (mapping != null) {
                         try {
                             c.getOut().write(mapping);

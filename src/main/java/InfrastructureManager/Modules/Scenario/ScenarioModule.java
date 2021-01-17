@@ -2,7 +2,9 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.*;
 import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.ModuleManagement.Runner;
+import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -11,18 +13,22 @@ import java.util.function.BiConsumer;
 
 public class ScenarioModule extends PlatformModule {
 
-    private final ObjectMapper mapper;
     private Scenario scenario;
 
-    public ScenarioModule(String name, String path) {
-        super(name);
-        mapper = new ObjectMapper();
+    public ScenarioModule() {
+        super();
+    }
+
+    @Override
+    public void configure(ModuleConfigData data) {
+        ScenarioModuleConfigData castedData = (ScenarioModuleConfigData) data;
+        this.setName(castedData.getName());
         try {
-            Scenario scenario = scenarioFromFile(path);
+            Scenario scenario = scenarioFromFile(castedData.getPath());
             setInputs(scenario);
             this.scenario = (Scenario) inputs[0];
-            setOutputs(new ScenarioEditor(name + ".editor"),
-                    new ScenarioDispatcher(name + ".dispatcher",scenario));
+            setOutputs(new ScenarioEditor(this.getName() + ".editor"),
+                    new ScenarioDispatcher(this.getName() + ".dispatcher",scenario));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,6 +58,7 @@ public class ScenarioModule extends PlatformModule {
     }
 
     private Scenario scenarioFromFile(String path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(new File(path),Scenario.class);
     }
 

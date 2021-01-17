@@ -4,15 +4,11 @@ import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
-import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.RawData.MatchMakingModuleConfigData;
-import InfrastructureManager.Modules.RemoteExecution.RawData.RemoteExecutionModuleConfigData;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
-import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.REST.RESTModule;
-import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 
@@ -42,28 +38,18 @@ public class ModuleFactory {
     }
 
     private PlatformModule create(ModuleConfigData data) {
-        return switch (data.getType()) {
-            case DEFAULT -> throw new ModuleNotFoundException("The module type for module" + data.getName() + "is not defined");
-            case CONSOLE -> new ConsoleModule(data.getName());
-            case UTILITY -> new UtilityModule(data.getName());
-            case SCENARIO -> {
-                ScenarioModuleConfigData castedData = (ScenarioModuleConfigData) data;
-                yield new ScenarioModule(castedData.getName(), castedData.getPath());
-            }
-            case REST -> {
-                RESTModuleConfigData castedData = (RESTModuleConfigData) data;
-                yield new RESTModule(castedData.getName(), castedData.getPort(),
-                        castedData.getBaseURL(), castedData.getPOSTInputs(), castedData.getGETOutputs());
-            }
-            case ADVANTEDGE -> {
-                AdvantEdgeModuleConfigData castedData = (AdvantEdgeModuleConfigData) data;
-                yield new AdvantEdgeModule(castedData.getName(), castedData.getPort(), castedData.getAddress());
-            }
-            case REMOTE_EXEC -> new RemoteExecutionModule(data.getName());
-            case MATCH_MAKING -> {
-                MatchMakingModuleConfigData castedData = (MatchMakingModuleConfigData) data;
-                yield new MatchMakingModule(castedData.getName(), castedData.getMatchMakerType());
-            }
+
+        PlatformModule result = switch (data.getType()) {
+            case CONSOLE -> new ConsoleModule();
+            case UTILITY -> new UtilityModule();
+            case SCENARIO -> new ScenarioModule();
+            case REST -> new RESTModule();
+            case ADVANTEDGE -> new AdvantEdgeModule();
+            case REMOTE_EXEC -> new RemoteExecutionModule();
+            case MATCH_MAKING -> new MatchMakingModule();
+            default -> throw new ModuleNotFoundException("The module type for module" + data.getName() + "is not defined");
         };
+        result.configure(data);
+        return result;
     }
 }
