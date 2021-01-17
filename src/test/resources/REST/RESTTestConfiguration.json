@@ -1,7 +1,6 @@
 {
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
-    {"type": "ScenarioModule", "name": "dummy", "path": "src/main/resources/scenarios/dummy.json"},
     {"type": "UtilityModule", "name": "util"},
     {
       "type" : "RESTModule",
@@ -9,12 +8,12 @@
       "port": 4567,
       "baseURL": "/rest",
       "POST" : [
-        {"name" : "post1","URL": "/post_test","command": "test1 $body","information":  []},
+        {"name" : "post1","URL": "/post_test","command": "test $body","information":  []},
         {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/get_test"},
-        {"name": "get2", "URL": "/client/get_node/:client_id"}
+        {"name": "get2", "URL": "/get_test2/:id"}
       ]
     }
   ],
@@ -22,18 +21,18 @@
   "connections" : [
     {
       "in" : "console.in",
-      "out" : "console.out",
-      "commands" : {
-        "test $param" : "console $param"
-      }
-    },
-    {
-      "in" : "console.in",
-      "out" : "util.out",
+      "out" : "util.internal",
       "commands" : {
         "exit" : "util exit",
         "pause $module" : "util pauseModule $module",
         "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "rest.post1",
+      "out" : "console.out",
+      "commands" : {
+        "test $body" : "console $body"
       }
     },
     {
@@ -48,6 +47,13 @@
       "out" : "rest.get1",
       "commands" : {
         "get_test": "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.get2",
+      "commands" : {
+        "get_test": "toGET resource id1 {\"name\": \"example\",\n\"number\": 874}"
       }
     }
   ]
