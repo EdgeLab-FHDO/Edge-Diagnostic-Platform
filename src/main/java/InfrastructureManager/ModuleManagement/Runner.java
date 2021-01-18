@@ -1,10 +1,9 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.function.BiConsumer;
 
 /**
  * Class implementing the Runnable interface to be run in different threads by the master.
@@ -13,12 +12,11 @@ import java.util.function.BiConsumer;
  */
 public class Runner implements Runnable{
 
-    private BiConsumer<Runner, ModuleInput> runOperation;
+    private RunnerOperation runOperation;
 
     protected String name;
     protected ModuleInput input;
     protected List<Connection> connections;
-
 
     protected final Semaphore pauseBlock;
     protected volatile boolean paused = false; //Flag to check status and be able to pause
@@ -50,7 +48,7 @@ public class Runner implements Runnable{
         while (!exit) {
             try {
                 checkPause();
-                runOperation.accept(this,input);
+                runOperation.process(this,input);
             } catch (InterruptedException | ModuleStoppedException e) {
                 exit = true;
             }
@@ -68,7 +66,7 @@ public class Runner implements Runnable{
         }
     }
 
-    public void setRunOperation(BiConsumer<Runner, ModuleInput> runOperation) {
+    public void setRunOperation(RunnerOperation runOperation) {
         this.runOperation = runOperation;
     }
 

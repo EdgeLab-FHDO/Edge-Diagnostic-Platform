@@ -1,11 +1,10 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.*;
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.Exception.ResponseNotDefinedException;
-import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
-import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
-import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
 import java.util.*;
@@ -22,6 +21,27 @@ public abstract class PlatformModule {
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
     private volatile ModuleState state;
+
+    protected RunnerOperation runnerOperation = (runner,input) -> {
+        try {
+            String fromInput = input.read();
+            if (fromInput == null) {
+                runner.exit();
+            } else {
+                for (Connection c : runner.getConnections()) {
+                    try {
+                        String mapping = this.execute(fromInput,c.getCommands());
+                        c.getOut().write(mapping);
+                    } catch (IllegalArgumentException | ModulePausedException e) {
+                        e.printStackTrace();
+                    } catch (ResponseNotDefinedException ignored) {}
+                }
+            }
+
+        } catch (InterruptedException e){
+            throw new ModuleStoppedException();
+        }
+    }; //For other functionalities can be overriden
 
     protected PlatformModule() {
         this.state = ModuleState.INITIAL;
@@ -77,7 +97,7 @@ public abstract class PlatformModule {
         inputRunnerThreads.get(index).start();
     }
 
-    public void addConnection(String inputName, Connection connection) {
+    public void addConnection(String inputName, Connection connection) throws IncorrectInputException {
         if (hasInput(inputName)) {
             if (inputConnections.containsKey(inputName)) {
                 inputConnections.get(inputName).add(connection);
@@ -133,7 +153,7 @@ public abstract class PlatformModule {
             if (inputConnections.containsKey(in.getName())) {
                 Runner runner = in.getRunner();
                 runner.setConnections(inputConnections.get(in.getName()));
-                runner.setRunOperation(setRunnerOperation());
+                runner.setRunOperation(this.runnerOperation);
                 inputRunners.add(runner);
             }
         }
@@ -141,30 +161,6 @@ public abstract class PlatformModule {
 
     public String execute(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
-    }
-
-    //This can be overridden for different modules
-    protected BiConsumer<Runner, ModuleInput> setRunnerOperation() {
-        return (runner,input) -> {
-            try {
-                String fromInput = input.read();
-                if (fromInput == null) {
-                    runner.exit();
-                } else {
-                    for (Connection c : runner.getConnections()) {
-                        try {
-                            String mapping = this.execute(fromInput,c.getCommands());
-                            c.getOut().write(mapping);
-                        } catch (IllegalArgumentException | ModulePausedException e) {
-                            e.printStackTrace();
-                        } catch (ResponseNotDefinedException ignored) {}
-                    }
-                }
-
-            } catch (InterruptedException e){
-                throw new ModuleStoppedException();
-            }
-        };
     }
 
     private void reportStateToOutputs() {

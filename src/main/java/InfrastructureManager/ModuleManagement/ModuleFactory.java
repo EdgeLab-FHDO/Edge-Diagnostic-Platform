@@ -1,7 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.Console.ConsoleModule;
@@ -36,7 +36,7 @@ public class ModuleFactory {
         return result;
     }
 
-    private PlatformModule create(ModuleConfigData data) {
+    private PlatformModule create(ModuleConfigData data) throws ModuleNotFoundException {
 
         PlatformModule result = switch (data.getType()) {
             case CONSOLE -> new ConsoleModule();

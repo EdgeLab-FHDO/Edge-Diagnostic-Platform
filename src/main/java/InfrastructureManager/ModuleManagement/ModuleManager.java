@@ -1,7 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 
 import java.util.List;
 

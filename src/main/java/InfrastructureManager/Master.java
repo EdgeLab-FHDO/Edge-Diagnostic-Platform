@@ -2,8 +2,8 @@ package InfrastructureManager;
 
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.MasterConfigurator;
-import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
-import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;

@@ -2,7 +2,7 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import com.fasterxml.jackson.databind.ObjectMapper;

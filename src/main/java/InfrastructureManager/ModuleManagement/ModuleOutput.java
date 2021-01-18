@@ -1,6 +1,6 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedException;
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 
 public abstract class ModuleOutput {
@@ -27,5 +27,5 @@ public abstract class ModuleOutput {
         out(response);
     }
 
-    public abstract void out (String response) throws IllegalArgumentException;
+    protected abstract void out (String response) throws IllegalArgumentException;
 }

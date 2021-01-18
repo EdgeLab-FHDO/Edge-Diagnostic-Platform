@@ -16,10 +16,6 @@ public class Connection {
         return out;
     }
 
-    public String getOutputName() {
-        return out.getName();
-    }
-
     public CommandSet getCommands() {
         return commands;
     }
