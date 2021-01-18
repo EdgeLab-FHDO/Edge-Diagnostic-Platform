@@ -1,6 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.*;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.ModuleManagement.Runner;
@@ -62,7 +62,7 @@ public class ScenarioModule extends PlatformModule {
     }
 
     @Override
-    protected BiConsumer<Runner, MasterInput> setRunnerOperation() {
+    protected BiConsumer<Runner, ModuleInput> setRunnerOperation() {
         return (runner, input) -> {
             Scenario scenario = (Scenario)input;
             super.setRunnerOperation().accept(runner, input);

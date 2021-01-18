@@ -1,9 +1,9 @@
 package InfrastructureManager.Modules.RemoteExecution.Input;
 
-import InfrastructureManager.MasterInput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
-public class NodeLimitInput extends MasterInput {
+public class NodeLimitInput extends ModuleInput {
 
     private final LimitList sharedList;
     private String bodyToSend;

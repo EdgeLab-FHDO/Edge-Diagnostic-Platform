@@ -1,12 +1,12 @@
 package InfrastructureManager.Modules.Utility;
 
 import InfrastructureManager.Master;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 
 /**
  * Class implementing MasterOutput, for utilities within the master
  */
-public class MasterUtility extends MasterOutput {
+public class MasterUtility extends ModuleOutput {
 
     public MasterUtility(String name) {
         super(name);

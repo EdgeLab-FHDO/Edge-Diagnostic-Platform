@@ -1,13 +1,13 @@
 package InfrastructureManager.Modules.Console;
 
-import InfrastructureManager.MasterInput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 
 import java.util.Scanner;
 
 /**
  * Class representing input from the console as a form of MasterInputInterface
  */
-public class ConsoleInput extends MasterInput {
+public class ConsoleInput extends ModuleInput {
     private final Scanner IN = new Scanner(System.in);
 
     public ConsoleInput(String name) {

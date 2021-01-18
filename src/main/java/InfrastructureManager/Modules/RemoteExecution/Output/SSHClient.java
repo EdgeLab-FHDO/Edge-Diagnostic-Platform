@@ -1,6 +1,6 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SCPException;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
@@ -10,7 +10,7 @@ import com.jcraft.jsch.Session;
 import java.io.*;
 import java.util.Arrays;
 
-public class SSHClient extends MasterOutput {
+public class SSHClient extends ModuleOutput {
 
     private final JSch jsch;
     private String username;

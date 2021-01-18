@@ -1,13 +1,13 @@
-package InfrastructureManager;
+package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 
-public abstract class MasterOutput {
+public abstract class ModuleOutput {
     private final String name;
     private ModuleState moduleState;
 
-    public MasterOutput(String name) {
+    public ModuleOutput(String name) {
         this.name = name;
     }
 

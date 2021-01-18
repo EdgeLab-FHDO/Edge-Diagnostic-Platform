@@ -1,16 +1,16 @@
-package InfrastructureManager;
+package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Runner;
 
 import java.util.concurrent.Semaphore;
 
-public abstract class MasterInput {
+public abstract class ModuleInput {
 
     private final String name;
     private final Semaphore readingLock; //Binary semaphore to implement blocking on inputs
     private Runner runner;
 
-    public MasterInput(String name) {
+    public ModuleInput(String name) {
         this.name = name;
         this.readingLock = new Semaphore(0); // starts without permits so it will block until input is available
     }

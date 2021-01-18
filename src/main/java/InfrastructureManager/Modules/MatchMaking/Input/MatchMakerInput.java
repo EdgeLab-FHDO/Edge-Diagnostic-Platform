@@ -1,9 +1,9 @@
 package InfrastructureManager.Modules.MatchMaking.Input;
 
-import InfrastructureManager.MasterInput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 
-public class MatchMakerInput extends MasterInput {
+public class MatchMakerInput extends ModuleInput {
 
     private final MatchesList sharedMatchesList;
     private String toSend;

@@ -1,13 +1,13 @@
 package InfrastructureManager.Modules.Utility;
 
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class FileOutput extends MasterOutput {
+public class FileOutput extends ModuleOutput {
 
     private Charset encoding;
 

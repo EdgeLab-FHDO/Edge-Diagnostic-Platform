@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.Master;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 
 /**
  * Scenario Handling class that is an Output of the master
@@ -10,7 +10,7 @@ import InfrastructureManager.MasterOutput;
  * - Run Scenarios
  * - Pause/Resume Scenarios
  */
-public class ScenarioDispatcher extends MasterOutput {
+public class ScenarioDispatcher extends ModuleOutput {
 
     private Scenario scenario;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay

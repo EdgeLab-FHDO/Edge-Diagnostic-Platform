@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.REST;
 
-import InfrastructureManager.MasterInput;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
 import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.Output.ParametrizedGETOutput;
@@ -14,23 +14,23 @@ import java.util.List;
 
 public class RESTModuleConfiguration {
 
-    public static MasterInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, String moduleName) {
-        List<MasterInput> result = new ArrayList<>();
+    public static ModuleInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, String moduleName) {
+        List<ModuleInput> result = new ArrayList<>();
         for (POSTInputConfigData inputData : data) {
             String name = createName(inputData,moduleName);
             result.add(new POSTInput(name,baseURL + inputData.getURL(),
                     inputData.getCommand(),inputData.getInformation()));
         }
-        return result.toArray(new MasterInput[0]);
+        return result.toArray(new ModuleInput[0]);
     }
 
-    public static MasterOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, String moduleName) {
-        List<MasterOutput> result = new ArrayList<>();
+    public static ModuleOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, String moduleName) {
+        List<ModuleOutput> result = new ArrayList<>();
         for (GETOutputConfigData outputData : data) {
             String name = createName(outputData,moduleName);
             result.add(getTypedOutput(name, baseURL + outputData.getURL()));
         }
-        return result.toArray(new MasterOutput[0]);
+        return result.toArray(new ModuleOutput[0]);
     }
 
     private static String createName(RESTIOConfigData data, String moduleName) {

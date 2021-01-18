@@ -1,9 +1,9 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
-public class NodeLimitOutput extends MasterOutput {
+public class NodeLimitOutput extends ModuleOutput {
 
     private final LimitList sharedList;
 

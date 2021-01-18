@@ -1,6 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.MasterInput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * Class representing an scenario, as an object with a name and a list of events
  */
 @JsonIgnoreProperties({"startTime","command","current", "pausedTime", "resumedTime"})
-public class Scenario extends MasterInput {
+public class Scenario extends ModuleInput {
 
     private final List<Event> eventList;
     private long startTime;

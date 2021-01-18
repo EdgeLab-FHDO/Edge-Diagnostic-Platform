@@ -1,6 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.*;
+import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
@@ -13,8 +14,8 @@ public abstract class PlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    private final List<MasterInput> inputs;
-    private final List<MasterOutput> outputs;
+    private final List<ModuleInput> inputs;
+    private final List<ModuleOutput> outputs;
     private String name;
     private final Map<String, List<Connection>> inputConnections;
     private final List<Runner> inputRunners;
@@ -36,24 +37,24 @@ public abstract class PlatformModule {
         this.name = name;
     }
 
-    protected void setInputs(MasterInput... inputs) {
-        for (MasterInput input : inputs) { //Process the new inputs by adding a runner
+    protected void setInputs(ModuleInput... inputs) {
+        for (ModuleInput input : inputs) { //Process the new inputs by adding a runner
             Runner runner = new Runner(input.getName(),input);
             input.setRunner(runner);
         }
         this.inputs.addAll(Arrays.asList(inputs)); //Append them to the list
     }
 
-    protected void setOutputs(MasterOutput... outputs) {
+    protected void setOutputs(ModuleOutput... outputs) {
         this.outputs.addAll(Arrays.asList(outputs));
         reportStateToOutputs();
     }
 
-    public List<MasterInput> getInputs() {
+    public List<ModuleInput> getInputs() {
         return inputs;
     }
 
-    public List<MasterOutput> getOutputs() {
+    public List<ModuleOutput> getOutputs() {
         return outputs;
     }
 
@@ -123,11 +124,11 @@ public abstract class PlatformModule {
     }
 
     private boolean hasInput(String inputName) {
-        return inputs.stream().map(MasterInput::getName).anyMatch(inputName::equals);
+        return inputs.stream().map(ModuleInput::getName).anyMatch(inputName::equals);
     }
 
     private void configureRunners() {
-        for (MasterInput in : inputs) {
+        for (ModuleInput in : inputs) {
             if (inputConnections.containsKey(in.getName())) {
                 Runner runner = in.getRunner();
                 runner.setConnections(inputConnections.get(in.getName()));
@@ -137,14 +138,17 @@ public abstract class PlatformModule {
         }
     }
 
+    public String execute(String fromInput, CommandSet commands) {
+        return commands.getResponse(fromInput);
+    }
+
     //This can be overridden for different modules
-    protected BiConsumer<Runner,MasterInput> setRunnerOperation() {
+    protected BiConsumer<Runner, ModuleInput> setRunnerOperation() {
         return (runner,input) -> {
             try {
                 String fromInput = input.read();
-                Master master = Master.getInstance();
                 for (Connection c : runner.getConnections()) {
-                    String mapping = master.execute(fromInput,c.getCommands()); //TODO: REMOVE, part of module
+                    String mapping = this.execute(fromInput,c.getCommands());
                     if (mapping != null) {
                         try {
                             c.getOut().write(mapping);

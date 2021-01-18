@@ -3,7 +3,7 @@ package InfrastructureManager.Modules.MatchMaking.Output;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
-import InfrastructureManager.MasterOutput;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.Modules.MatchMaking.Algorithms.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Algorithms.NaiveMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Algorithms.RandomMatchMaking;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchMakerOutput extends MasterOutput {
+public class MatchMakerOutput extends ModuleOutput {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper mapper;

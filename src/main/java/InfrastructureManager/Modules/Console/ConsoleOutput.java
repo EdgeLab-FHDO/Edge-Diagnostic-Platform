@@ -1,15 +1,11 @@
 package InfrastructureManager.Modules.Console;
 
-import InfrastructureManager.MasterOutput;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 
 /**
  * Class representing output to the console as a form of MasterOutput
  */
-public class ConsoleOutput extends MasterOutput {
+public class ConsoleOutput extends ModuleOutput {
 
     public ConsoleOutput(String name) {
         super(name);

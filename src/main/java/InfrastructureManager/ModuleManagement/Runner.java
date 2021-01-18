@@ -1,6 +1,5 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.MasterInput;
 import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
 
 import java.util.List;
@@ -14,10 +13,10 @@ import java.util.function.BiConsumer;
  */
 public class Runner implements Runnable{
 
-    private BiConsumer<Runner, MasterInput> runOperation;
+    private BiConsumer<Runner, ModuleInput> runOperation;
 
     protected String name;
-    protected MasterInput input;
+    protected ModuleInput input;
     protected List<Connection> connections;
 
 
@@ -26,7 +25,7 @@ public class Runner implements Runnable{
     protected volatile boolean exit = false; //Flag to check status and be able to exit
     protected volatile boolean running = false; //Flag to see runner status
 
-    public Runner(String name, MasterInput input) {
+    public Runner(String name, ModuleInput input) {
         this.name = name;
         this.input = input;
         this.pauseBlock = new Semaphore(0);
@@ -69,7 +68,7 @@ public class Runner implements Runnable{
         }
     }
 
-    public void setRunOperation(BiConsumer<Runner,MasterInput> runOperation) {
+    public void setRunOperation(BiConsumer<Runner, ModuleInput> runOperation) {
         this.runOperation = runOperation;
     }
 

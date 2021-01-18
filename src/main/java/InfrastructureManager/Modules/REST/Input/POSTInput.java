@@ -1,6 +1,6 @@
 package InfrastructureManager.Modules.REST.Input;
 
-import InfrastructureManager.MasterInput;
+import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
@@ -15,7 +15,7 @@ import static spark.Spark.post;
 /**
  * Class to represent data coming from POST requests, it can be configured to extract parameters from the request body json
  */
-public class POSTInput extends MasterInput {
+public class POSTInput extends ModuleInput {
 
     private final Queue<String> toRead;
 

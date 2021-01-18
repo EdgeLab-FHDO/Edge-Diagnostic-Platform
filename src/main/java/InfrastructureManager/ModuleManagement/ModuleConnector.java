@@ -2,7 +2,6 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.MasterOutput;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.RawData.ConnectionConfigData;
 
@@ -28,7 +27,7 @@ public class ModuleConnector {
 
         for (ConnectionConfigData connectionData : data) {
             if (getInputModuleName(connectionData).equals(moduleName)) {
-                MasterOutput output = findOutput(connectionData.getOut());
+                ModuleOutput output = findOutput(connectionData.getOut());
                 CommandSet commandSet = new CommandSet();
                 commandSet.set(connectionData.getCommands());
                 Connection connection = new Connection(output,commandSet);
@@ -45,9 +44,9 @@ public class ModuleConnector {
         return IOName.substring(0,IOName.indexOf('.'));
     }
 
-    private MasterOutput findOutput(String outputName) throws ModuleNotFoundException {
+    private ModuleOutput findOutput(String outputName) throws ModuleNotFoundException {
         PlatformModule module = findOutputModule(outputName);
-        for (MasterOutput output : module.getOutputs()) {
+        for (ModuleOutput output : module.getOutputs()) {
             if (outputName.equals(output.getName())) {
                 return output;
             }
