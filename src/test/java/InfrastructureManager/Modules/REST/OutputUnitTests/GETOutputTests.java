@@ -1,10 +1,12 @@
 package InfrastructureManager.Modules.REST.OutputUnitTests;
 
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedException;
 import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.Output.ParametrizedGETOutput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,19 +33,19 @@ public class GETOutputTests {
     }
 
     @Test
-    public void GenericGETOutputTest() {
+    public void GenericGETOutputTest() throws ModulePausedException {
         String path = "/rest/get_test";
         GETOutput out = new GETOutput("get1",path);
-        out.out("toGET resource " + JSONExample);
+        out.write("toGET resource " + JSONExample);
         String responseBody = given().spec(requestSpec).get(path).asString();
         Assert.assertEquals(responseBody,JSONExample);
     }
 
     @Test
-    public void ParametrizedGETOutputTest(){
+    public void ParametrizedGETOutputTest() throws ModulePausedException {
         String path = "/rest/get_test2/:id";
         ParametrizedGETOutput out = new ParametrizedGETOutput("get2",path,"id");
-        out.out("toGET resource test_id " + JSONExample);
+        out.write("toGET resource test_id " + JSONExample);
         String responseBody = given().spec(requestSpec).
                 get("/rest/get_test2/test_id").asString();
         Assert.assertEquals(JSONExample,responseBody);
@@ -55,7 +57,7 @@ public class GETOutputTests {
         GETOutput out = new GETOutput("rest_out","/rest/get_test");
         String expected = "Arguments missing for command - REST";
         String command = "toGET resource"; //Missing the json body
-        assertException(IllegalArgumentException.class,expected,() -> out.out(command));
+        assertException(IllegalArgumentException.class,expected,() -> out.write(command));
     }
 
     @Test
@@ -63,7 +65,12 @@ public class GETOutputTests {
         GETOutput out = new GETOutput("rest_out","/rest/get_test");
         String expected = "Invalid command for REST";
         String command = "toGET notACommand";
-        assertException(IllegalArgumentException.class, expected, () -> out.out(command));
+        assertException(IllegalArgumentException.class, expected, () -> out.write(command));
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        Master.getInstance().exitAll();
     }
 
 }

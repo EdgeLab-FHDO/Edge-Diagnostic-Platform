@@ -4,6 +4,7 @@ import InfrastructureManager.Master;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,5 +64,10 @@ public class POSTInputTests {
         });
         t.start();
         Assert.assertEquals(expected, in2.read());
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        Master.getInstance().exitAll();
     }
 }

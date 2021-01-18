@@ -42,6 +42,14 @@ public class Master {
         modules.forEach(PlatformModule::stop);
     }
 
+    public void stopModule(String moduleName) {
+        try {
+            findModuleByName(moduleName).stop();
+        } catch (ModuleNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void startAllModules() {
         modules.forEach(PlatformModule::start);
     }

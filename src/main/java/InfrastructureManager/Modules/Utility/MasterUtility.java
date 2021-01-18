@@ -27,6 +27,7 @@ public class MasterUtility extends ModuleOutput {
                     case "startModule" -> Master.getInstance().startModule(command[2]);
                     case "pauseModule" -> Master.getInstance().pauseModule(command[2]);
                     case "resumeModule" -> Master.getInstance().resumeModule(command[2]);
+                    case "stopModule" -> Master.getInstance().stopModule(command[2]);
                     case "pauseAllModules" -> Master.getInstance().pauseAllModules();
                     case "resumeAllModules" -> Master.getInstance().resumeAllModules();
                     default -> throw new IllegalArgumentException("Invalid Command for Utility Output");

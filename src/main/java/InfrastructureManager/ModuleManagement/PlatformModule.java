@@ -113,9 +113,11 @@ public abstract class PlatformModule {
     }
 
     public void start() {
-        configureRunners();
-        fillThreads();
-        inputRunnerThreads.forEach(Thread::start);
+        if (state != ModuleState.RUNNING) {
+            configureRunners();
+            fillThreads();
+            inputRunnerThreads.forEach(Thread::start);
+        }
         state = ModuleState.RUNNING;
         reportStateToOutputs();
     }

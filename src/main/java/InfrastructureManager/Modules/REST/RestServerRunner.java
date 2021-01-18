@@ -59,9 +59,9 @@ public class RestServerRunner extends Runner {
     private void startServerIfNotRunning() {
         if(!serverIsRunning()) {
             startServer();
+            awaitInitialization();
+            serverCheck.release();
         }
-        awaitInitialization();
-        serverCheck.release();
     }
 
     /**
