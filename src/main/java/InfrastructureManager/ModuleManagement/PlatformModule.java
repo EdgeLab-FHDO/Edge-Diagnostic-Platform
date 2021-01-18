@@ -147,16 +147,21 @@ public abstract class PlatformModule {
         return (runner,input) -> {
             try {
                 String fromInput = input.read();
-                for (Connection c : runner.getConnections()) {
-                    String mapping = this.execute(fromInput,c.getCommands());
-                    if (mapping != null) {
-                        try {
-                            c.getOut().write(mapping);
-                        } catch (IllegalArgumentException | ModulePausedException e) {
-                            e.printStackTrace();
+                if (fromInput == null) {
+                    runner.exit();
+                } else {
+                    for (Connection c : runner.getConnections()) {
+                        String mapping = this.execute(fromInput,c.getCommands());
+                        if (mapping != null) {
+                            try {
+                                c.getOut().write(mapping);
+                            } catch (IllegalArgumentException | ModulePausedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
+
             } catch (InterruptedException e){
                 throw new ModuleStoppedException();
             }

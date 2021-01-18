@@ -6,39 +6,24 @@ import InfrastructureManager.Modules.RemoteExecution.LimitList;
 public class NodeLimitInput extends ModuleInput {
 
     private final LimitList sharedList;
-    private String bodyToSend;
+    private String toSend;
 
     public NodeLimitInput(String name, LimitList list) {
         super(name);
         this.sharedList = list;
-        this.bodyToSend = null;
+        this.toSend = null;
     }
 
-
-    @Override
-    protected String getSingleReading() {
-        return bodyToSend;
-    }
-
-    @Override
-    protected void storeSingleReading(String reading) {
-        bodyToSend = reading;
-    }
-
-    @Override
-    protected String getReading() throws InterruptedException {
-        waitForList();
-        return super.getReading();
-    }
-
-    protected void waitForList() throws InterruptedException {
-        String reading = sharedList.getListAsBody();
-        super.storeReadingAndUnblock(reading);
+    protected String waitForList() throws InterruptedException {
+        return sharedList.getListAsBody();
     }
 
     @Override
     public String read() throws InterruptedException {
-        return "set_limits " + getReading();
+        toSend = "set_limits" + waitForList();
+        String aux = toSend;
+        toSend = "";
+        return aux;
     }
 
 }

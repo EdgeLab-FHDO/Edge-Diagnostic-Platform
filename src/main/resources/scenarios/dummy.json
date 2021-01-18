@@ -12,10 +12,6 @@
     {
       "command": "node_request",
       "executionTime": 10000
-    },
-    {
-      "command": "deploy_application",
-      "executionTime": 12000
     }
   ]
 }

@@ -43,6 +43,24 @@
       }
     },
     {
+      "in" : "dummy.scenario",
+      "out" : "console.out",
+      "commands" : {
+        "deploy_application" : "console helmChartExecution" ,
+        "update_gui" : "console GUIUpdateExecution" ,
+        "node_request" : "console matchMakingExecution"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "dummy.dispatcher",
+      "commands": {
+        "run_scenario" : "dispatcher run",
+        "pause_scenario" : "dispatcher pause",
+        "resume_scenario" : "dispatcher resume"
+      }
+    },
+    {
       "in" : "rest.post2",
       "out" : "console.out",
       "commands" : {

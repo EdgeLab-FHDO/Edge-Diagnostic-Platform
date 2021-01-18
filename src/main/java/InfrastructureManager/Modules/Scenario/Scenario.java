@@ -10,15 +10,15 @@ import java.util.List;
 /**
  * Class representing an scenario, as an object with a name and a list of events
  */
-@JsonIgnoreProperties({"startTime","command","current", "pausedTime", "resumedTime"})
+@JsonIgnoreProperties({"startTime","current", "pausedTime", "resumedTime","started"})
 public class Scenario extends ModuleInput {
 
     private final List<Event> eventList;
     private long startTime;
-    private String command;
     private int currentIndex;
     private long pausedTime;
     private long resumedTime;
+    private boolean started;
 
     /**
      * Constructor of the class
@@ -28,25 +28,25 @@ public class Scenario extends ModuleInput {
         super(name + ".scenario");
         this.eventList = new ArrayList<>();
         this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
-        this.command = null;
         this.currentIndex = 0;
         this.pausedTime = 0L;
         this.resumedTime = 0L;
-    }
-
-    @Override
-    protected String getSingleReading() {
-        return this.command;
-    }
-
-    @Override
-    protected void storeSingleReading(String reading) {
-        this.command = reading;
+        this.started = false;
     }
 
     @Override
     public String read() throws InterruptedException {
-        return this.getReading();
+        if (!started) {
+            this.block();
+        }
+        if (currentIndex < eventList.size()) {
+            Event currentEvent = eventList.get(currentIndex);
+            currentIndex++;
+            return waitForEvent(currentEvent);
+        } else {
+            stop();
+            return null;
+        }
     }
 
     /**
@@ -94,7 +94,9 @@ public class Scenario extends ModuleInput {
     }
 
     public void start() {
-        currentIndex = -1;
+        currentIndex = 0;
+        this.started = true;
+        this.unblock();
     }
 
     public void pause() {
@@ -110,32 +112,22 @@ public class Scenario extends ModuleInput {
     public void stop() {
         this.pausedTime = 0L;
         this.resumedTime = 0L;
-        currentIndex = -1;
+        currentIndex = 0;
+        this.started = false;
         this.getRunner().exit();
         System.out.println("FINISHED SCENARIO: " + this.getName());
     }
-
-    public void next() {
-        currentIndex++;
-        if (currentIndex == eventList.size()) {
-            stop();
-            return;
-        }
-        Event currentEvent = eventList.get(currentIndex);
-        waitForEvent(currentEvent);
-        storeReadingAndUnblock(currentEvent.getCommand());
-    }
-
     /**
      * Wait for executing the states according to their relative execution times
      * @param e Event to be waited for
      */
-    private void waitForEvent (Event e) {
+    private String waitForEvent (Event e) {
         long absoluteTime = this.getStartTime() + (resumedTime - pausedTime) + e.getExecutionTime();
         try {
             Thread.sleep(absoluteTime - System.currentTimeMillis());
         } catch (InterruptedException ie) {
             stop();
         }
+        return e.getCommand();
     }
 }

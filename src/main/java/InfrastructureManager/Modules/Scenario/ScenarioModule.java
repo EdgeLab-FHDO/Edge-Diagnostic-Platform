@@ -1,15 +1,12 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
-import InfrastructureManager.ModuleManagement.Runner;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiConsumer;
 
 public class ScenarioModule extends PlatformModule {
 
@@ -41,7 +38,6 @@ public class ScenarioModule extends PlatformModule {
         }
         scenario.setStartTime(startTime);
         scenario.start();
-        scenario.next(); //Unblock the scenario
     }
 
     public void stopScenario() {
@@ -59,14 +55,5 @@ public class ScenarioModule extends PlatformModule {
     private Scenario scenarioFromFile(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(new File(path),Scenario.class);
-    }
-
-    @Override
-    protected BiConsumer<Runner, ModuleInput> setRunnerOperation() {
-        return (runner, input) -> {
-            Scenario scenario = (Scenario)input;
-            super.setRunnerOperation().accept(runner, input);
-            scenario.next();
-        };
     }
 }

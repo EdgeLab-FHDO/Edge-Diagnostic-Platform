@@ -15,30 +15,14 @@ public class MatchMakerInput extends ModuleInput {
     }
 
     @Override
-    protected String getSingleReading() {
+    public String read() throws InterruptedException {
+        this.toSend = "give_node " + waitForMatch();
         String aux = this.toSend;
         this.toSend = "";
         return aux;
     }
 
-    @Override
-    protected void storeSingleReading(String reading) {
-        this.toSend = reading;
-    }
-
-    @Override
-    protected String getReading() throws InterruptedException {
-        waitForMatch();
-        return super.getReading();
-    }
-
-    @Override
-    public String read() throws InterruptedException {
-        return getReading();
-    }
-
-    private void waitForMatch() throws InterruptedException {
-        String reading = this.sharedMatchesList.getLastAdded();
-        this.storeReadingAndUnblock("give_node " + reading);
+    private String waitForMatch() throws InterruptedException {
+        return this.sharedMatchesList.getLastAdded();
     }
 }

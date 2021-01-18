@@ -5,7 +5,7 @@ import InfrastructureManager.ModuleManagement.ModuleInput;
 import java.util.Scanner;
 
 /**
- * Class representing input from the console as a form of MasterInputInterface
+ * Class representing input from the console as a form of ModuleInput
  */
 public class ConsoleInput extends ModuleInput {
     private final Scanner IN = new Scanner(System.in);
@@ -13,17 +13,8 @@ public class ConsoleInput extends ModuleInput {
     public ConsoleInput(String name) {
         super(name);
     }
-
-    @Override
-    protected String getSingleReading() {
-        return null;
-    }
-
-    @Override
-    protected void storeSingleReading(String reading){}
-
     /**
-     * Method for reading from the console
+     * Method for reading from the console, blocks by terms of the underlining Scanner class instance
      * @return String object containing the last line inputted in the console
      */
     @Override

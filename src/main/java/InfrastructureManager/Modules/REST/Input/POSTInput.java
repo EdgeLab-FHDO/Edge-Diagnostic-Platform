@@ -40,7 +40,8 @@ public class POSTInput extends ModuleInput {
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
-                this.storeReadingAndUnblock(this.substituteCommand(command,o));
+                this.toRead.offer(this.substituteCommand(command,o));
+                this.unblock();
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
@@ -93,26 +94,10 @@ public class POSTInput extends ModuleInput {
         if (!isActivated) {
             activate();
         }
-        return getReading();
-    }
-
-    /**
-     * Get the commands to send to the master from the internal FIFO queue
-     * @return Command from the queue
-     */
-    @Override
-    protected String getSingleReading() {
+        this.block(); //Wait on requests
         return this.toRead.poll();
     }
 
-    /**
-     * Store reading to be sent in the FIFO queue
-     * @param reading Command to be sent
-     */
-    @Override
-    protected void storeSingleReading(String reading) {
-        this.toRead.offer(reading);
-    }
 
     /**
      * Synchronize with the REST Server Thread, so the route for POST handling is only created after the
