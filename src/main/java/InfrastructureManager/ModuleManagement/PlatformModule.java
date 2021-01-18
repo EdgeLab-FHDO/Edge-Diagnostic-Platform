@@ -13,13 +13,12 @@ public abstract class PlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    protected MasterInput[] inputs;//PRIVATE WITH GETTER
-    protected MasterOutput[] outputs;//PRIVATE WITH GETTER
-    protected Map<String, List<Connection>> inputConnections;//PRIVATE WITH GETTER
-    protected final List<Runner> inputRunners;//PRIVATE WITH GETTER
-    protected final List<Thread> inputRunnerThreads; //PRIVATE WITH GETTER
-
+    private MasterInput[] inputs;
+    private MasterOutput[] outputs;
     private String name;
+    private final Map<String, List<Connection>> inputConnections;
+    private final List<Runner> inputRunners;
+    private final List<Thread> inputRunnerThreads;
     private volatile ModuleState state;
 
     protected PlatformModule() {
@@ -62,6 +61,20 @@ public abstract class PlatformModule {
 
     public ModuleState getState() {
         return state;
+    }
+
+    public List<Runner> getInputRunners() {
+        return inputRunners;
+    }
+
+    public boolean isDeadThread(int index) {
+        return !inputRunnerThreads.isEmpty() && !inputRunnerThreads.get(index).isAlive();
+    }
+
+    public void restartThread(int index, int runnerIndex) {
+        Runner runner = inputRunners.get(runnerIndex);
+        inputRunnerThreads.set(index,new Thread(runner, runner.getName()));
+        inputRunnerThreads.get(index).start();
     }
 
     public void addConnection(String inputName, Connection connection) {

@@ -26,7 +26,7 @@ public class ScenarioModule extends PlatformModule {
         try {
             Scenario scenario = scenarioFromFile(castedData.getPath());
             setInputs(scenario);
-            this.scenario = (Scenario) inputs[0];
+            this.scenario = (Scenario) this.getInputs()[0];
             setOutputs(new ScenarioEditor(this.getName() + ".editor"),
                     new ScenarioDispatcher(this.getName() + ".dispatcher",scenario));
 
@@ -36,9 +36,8 @@ public class ScenarioModule extends PlatformModule {
     }
 
     public void startScenario(long startTime) {
-        if (!inputRunnerThreads.isEmpty() && !inputRunnerThreads.get(0).isAlive()) {
-            inputRunnerThreads.set(0,new Thread(inputRunners.get(0)));
-            inputRunnerThreads.get(0).start();
+        if (isDeadThread(0)) {
+            restartThread(0,0);
         }
         scenario.setStartTime(startTime);
         scenario.start();
