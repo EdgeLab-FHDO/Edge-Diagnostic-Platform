@@ -13,8 +13,8 @@ public abstract class PlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    private MasterInput[] inputs;
-    private MasterOutput[] outputs;
+    private final List<MasterInput> inputs;
+    private final List<MasterOutput> outputs;
     private String name;
     private final Map<String, List<Connection>> inputConnections;
     private final List<Runner> inputRunners;
@@ -23,6 +23,8 @@ public abstract class PlatformModule {
 
     protected PlatformModule() {
         this.state = ModuleState.INITIAL;
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
         this.inputConnections = new HashMap<>();
@@ -35,23 +37,23 @@ public abstract class PlatformModule {
     }
 
     protected void setInputs(MasterInput... inputs) {
-        this.inputs = inputs;
-        for (MasterInput input : this.inputs) {
+        for (MasterInput input : inputs) { //Process the new inputs by adding a runner
             Runner runner = new Runner(input.getName(),input);
             input.setRunner(runner);
-        } //todo: add not replace
+        }
+        this.inputs.addAll(Arrays.asList(inputs)); //Append them to the list
     }
 
     protected void setOutputs(MasterOutput... outputs) {
-        this.outputs = outputs;
+        this.outputs.addAll(Arrays.asList(outputs));
         reportStateToOutputs();
-    } //todo: add not replace
+    }
 
-    public MasterInput[] getInputs() {
+    public List<MasterInput> getInputs() {
         return inputs;
     }
 
-    public MasterOutput[] getOutputs() {
+    public List<MasterOutput> getOutputs() {
         return outputs;
     }
 
@@ -61,10 +63,6 @@ public abstract class PlatformModule {
 
     public ModuleState getState() {
         return state;
-    }
-
-    public List<Runner> getInputRunners() {
-        return inputRunners;
     }
 
     public boolean isDeadThread(int index) {
@@ -125,7 +123,7 @@ public abstract class PlatformModule {
     }
 
     private boolean hasInput(String inputName) {
-        return Arrays.stream(inputs).map(MasterInput::getName).anyMatch(inputName::equals);
+        return inputs.stream().map(MasterInput::getName).anyMatch(inputName::equals);
     }
 
     private void configureRunners() {
@@ -162,6 +160,6 @@ public abstract class PlatformModule {
     }
 
     private void reportStateToOutputs() {
-        Arrays.stream(outputs).forEach(o -> o.reportState(this.state));
+        outputs.forEach(o -> o.reportState(this.state));
     }
 }
