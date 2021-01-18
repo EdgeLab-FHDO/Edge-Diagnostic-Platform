@@ -1,5 +1,6 @@
 package InfrastructureManager.Configuration;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
@@ -17,9 +18,8 @@ import java.util.List;
 public class MasterConfigurator {
 
     private final ModuleManager manager;
-    //TODO: consider making it a singleton
 
-    public MasterConfigurator(String configurationFilePath) {
+    public MasterConfigurator(String configurationFilePath) throws ConfigurationException {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
         manager = ModuleManager.getInstance();
         try {
@@ -27,8 +27,7 @@ public class MasterConfigurator {
             //Configuration File Interface
             manager.initialize(mapper.readValue(new File(configurationFilePath), MasterConfigurationData.class));
         } catch (IOException e) {
-            System.out.println("Error while reading JSON Config File");
-            e.printStackTrace();
+            throw new ConfigurationException("Error while reading JSON Config File",e);
         }
     }
 

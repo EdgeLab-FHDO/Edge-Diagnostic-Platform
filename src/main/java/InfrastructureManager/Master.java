@@ -1,6 +1,6 @@
 package InfrastructureManager;
 
-import InfrastructureManager.Configuration.CommandSet;
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.MasterConfigurator;
 import InfrastructureManager.ModuleManagement.Exception.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.ModuleNotFoundException;
@@ -26,18 +26,13 @@ public class Master {
      * Gets the master configured according to the config file.
      */
     private Master() {
-        MasterConfigurator configurator = new MasterConfigurator(configPath);
         try {
+            MasterConfigurator configurator = new MasterConfigurator(configPath);
             modules = configurator.getModules();
-        } catch (ModuleManagerException e) {
+        } catch (ModuleManagerException | ConfigurationException e) {
             e.printStackTrace();
             System.exit(-1);
         }
-    }
-
-
-    public String execute(String fromInput, CommandSet commands) {
-        return commands.getResponse(fromInput);
     }
 
     /**

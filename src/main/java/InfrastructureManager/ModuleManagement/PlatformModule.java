@@ -2,6 +2,7 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.*;
 import InfrastructureManager.Configuration.CommandSet;
+import InfrastructureManager.Configuration.Exception.ResponseNotDefinedException;
 import InfrastructureManager.ModuleManagement.Exception.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.ModulePausedException;
 import InfrastructureManager.ModuleManagement.Exception.ModuleStoppedException;
@@ -138,7 +139,7 @@ public abstract class PlatformModule {
         }
     }
 
-    public String execute(String fromInput, CommandSet commands) {
+    public String execute(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
     }
 
@@ -151,14 +152,12 @@ public abstract class PlatformModule {
                     runner.exit();
                 } else {
                     for (Connection c : runner.getConnections()) {
-                        String mapping = this.execute(fromInput,c.getCommands());
-                        if (mapping != null) {
-                            try {
-                                c.getOut().write(mapping);
-                            } catch (IllegalArgumentException | ModulePausedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        try {
+                            String mapping = this.execute(fromInput,c.getCommands());
+                            c.getOut().write(mapping);
+                        } catch (IllegalArgumentException | ModulePausedException e) {
+                            e.printStackTrace();
+                        } catch (ResponseNotDefinedException ignored) {}
                     }
                 }
 

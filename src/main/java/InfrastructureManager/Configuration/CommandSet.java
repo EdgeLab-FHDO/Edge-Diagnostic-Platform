@@ -1,6 +1,8 @@
 package InfrastructureManager.Configuration;
 
 
+import InfrastructureManager.Configuration.Exception.ResponseNotDefinedException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,19 +46,14 @@ public class CommandSet {
      * given command is not configured
      * @throws IllegalArgumentException if the command is not defined or is empty
      */
-    public String getResponse(String command) throws IllegalArgumentException {
+    public String getResponse(String command) throws IllegalArgumentException, ResponseNotDefinedException {
         String[] commandAsArray = command.split(" ");
-        //String param = command.replace(commandAsArray[0],"");
         command = commandAsArray[0];
         if (command.isEmpty()) {
             throw new IllegalArgumentException("Empty Command at input!");
         } else {
             String response = getUnmappedResponse(commandAsArray);
-            if (response != null) {
-                return mapCommand(commandAsArray,response);
-            } else {
-                return null;
-            }
+            return mapCommand(commandAsArray,response);
         }
     }
 
@@ -78,7 +75,7 @@ public class CommandSet {
         return result;
     }
 
-    private String getUnmappedResponse(String[] commandAsArray) {
+    private String getUnmappedResponse(String[] commandAsArray) throws ResponseNotDefinedException {
         String[] aux;
         for (String definedCommand : this.commands.keySet()) {
             if (definedCommand.startsWith(commandAsArray[0])) {
@@ -88,15 +85,14 @@ public class CommandSet {
                 }
             }
         }
-        return null;
+        throw new ResponseNotDefinedException("Response could not be found for command " + commandAsArray[0]);
     }
 
     private String mapCommand(String[] commandAsArray, String response) {
         List<Integer> positions = this.parameterMapping.get(commandAsArray[0]);
-        for (int i = 0; i < positions.size() ; i++) {
-            response = response.replaceFirst("\\s+\\$.+?\\b"," " + commandAsArray[positions.get(i)]);
+        for (Integer position : positions) {
+            response = response.replaceFirst("\\s+\\$.+?\\b", " " + commandAsArray[position]);
         }
         return response;
-
     }
 }
