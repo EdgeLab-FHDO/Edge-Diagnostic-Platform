@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.REST.Output;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
@@ -43,22 +44,21 @@ public class GETOutput extends ModuleOutput {
      * Based on a command from the master creates a rest resource with a path and a json body
      * @param response Must be in the way "toGET command" where command can be:
      *                 - resource: Plus json body as string (Ex. toGET resource {\"name\": \"example\"})
-     * @throws IllegalArgumentException If the command is not defined or is missing arguments
+     * @throws RESTOutputException if an invalid or incomplete command is passed
      */
     @Override
-    public void out(String response) throws IllegalArgumentException {
+    public void out(String response) throws RESTOutputException {
         String[] command = response.split(" ",3);
         if (command[0].equals("toGET")) {
             try {
                 switch (command[1]) {
-                    case "resource":
-                        addResource(command[2]);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid command for REST");
+                    case "resource" -> addResource(command[2]);
+                    default -> throw new RESTOutputException("Invalid command " + command[1] + " for REST output "
+                    + this.getName());
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command - REST");
+                throw new RESTOutputException("Arguments missing for command" + response + " to REST Output "
+                + this.getName());
             }
         }
     }

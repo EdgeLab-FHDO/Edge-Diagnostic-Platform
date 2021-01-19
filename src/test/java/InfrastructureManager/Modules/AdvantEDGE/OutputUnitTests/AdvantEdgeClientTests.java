@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.AdvantEDGE.OutputUnitTests;
 
+import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
 import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
@@ -26,7 +27,7 @@ public class AdvantEdgeClientTests {
 
 
     @Test
-    public void addScenarioRequestTest() {
+    public void addScenarioRequestTest() throws AdvantEdgeModuleException {
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String scenarioPath = "src/test/resources/AdvantEdge/dummy-test.json";
         client.out("advantEdge create " + scenarioName + " " + scenarioPath);
@@ -37,7 +38,7 @@ public class AdvantEdgeClientTests {
     }
 
     @Test // Checks if adding the scenario as a YAML file, sends a JSON in the request
-    public void addYAMLScenarioRequestTest() {
+    public void addYAMLScenarioRequestTest() throws AdvantEdgeModuleException {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
@@ -52,7 +53,7 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void deployScenarioRequestTest() throws IOException {
+    public void deployScenarioRequestTest() throws IOException, AdvantEdgeModuleException {
         String path = "/platform-ctrl/v1/sandboxes/sandbox-" + scenarioName;
         String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
         client.out("advantEdge deploy " + scenarioName);
@@ -64,7 +65,7 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void updateNetworkCharacteristics() throws IOException {
+    public void updateNetworkCharacteristics() throws IOException, AdvantEdgeModuleException {
         String sandboxName = "test";
         String path = "/" + sandboxName + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
         String jsonTestPath = "src/test/resources/AdvantEdge/network-update-test.json";
@@ -77,7 +78,7 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void terminateScenarioRequestTest() {
+    public void terminateScenarioRequestTest() throws AdvantEdgeModuleException {
         String path = "/test_sandbox/sandbox-ctrl/v1/active/";
         client.out("advantEdge terminate test_sandbox");
         verify(deleteRequestedFor(urlEqualTo(path)));

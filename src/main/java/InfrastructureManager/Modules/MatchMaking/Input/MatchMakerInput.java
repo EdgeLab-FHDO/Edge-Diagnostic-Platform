@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.MatchMaking.Input;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 
@@ -21,6 +22,9 @@ public class MatchMakerInput extends ModuleInput {
         this.toSend = "";
         return aux;
     }
+
+    @Override
+    public void response(ModuleExecutionException outputException) {}
 
     private String waitForMatch() throws InterruptedException {
         return this.sharedMatchesList.getLastAdded();

@@ -1,6 +1,9 @@
 package InfrastructureManager.Modules.REST.Input;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.Modules.REST.Exception.Input.ParsingArgumentNotDefinedException;
+import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
@@ -9,6 +12,7 @@ import spark.Route;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 import static spark.Spark.post;
 
@@ -24,6 +28,8 @@ public class POSTInput extends ModuleInput {
     private boolean isActivated; //To synchronize with the rest server
 
     private final Route POSTHandler;
+    private String customResponse;
+    private final Semaphore responseBlock;
 
     /**
      * Constructor of the class
@@ -37,17 +43,28 @@ public class POSTInput extends ModuleInput {
         this.toParse = toParse;
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
+        this.customResponse = null;
+        this.responseBlock = new Semaphore(0);
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
                 this.toRead.offer(this.substituteCommand(command,o));
                 this.unblock();
+                this.responseBlock.acquire();
+                if (this.customResponse == null) {
+                    response.status(200);
+                    response.body("200");
+                } else {
+                    response.body(this.customResponse);
+                    this.customResponse = null;
+                    response.status(500);
+                }
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
                 response.status(500); //If argument not found, return internal error in response
             }
-            return response.status();
+            return response.body();
         };
     }
 
@@ -61,7 +78,7 @@ public class POSTInput extends ModuleInput {
      * @return Final command with parameters in '$' substituted
      * @throws IllegalArgumentException if a command contains a parameter not defined to be searched for in the configuration
      */
-    private String substituteCommand(String rawCommand, UnknownJSONObject object) {
+    private String substituteCommand(String rawCommand, UnknownJSONObject object) throws ParsingArgumentNotDefinedException, UnsupportedJSONTypeException {
         String[] splitCommand = rawCommand.split(" ");
         StringBuilder finalCommand = new StringBuilder(splitCommand[0]);
         String cleanValueName;
@@ -76,7 +93,8 @@ public class POSTInput extends ModuleInput {
                 } else if(cleanValueName.equals("body")) {
                     finalCommand.append(object.getBody().replaceAll("\\s+",""));
                 } else {
-                    throw new IllegalArgumentException("Argument in command was not defined to be parsed");
+                    throw new ParsingArgumentNotDefinedException("Argument" + cleanValueName
+                            + "was not defined to be parsed");
                 }
             } else {
                 finalCommand.append(reading);
@@ -98,6 +116,14 @@ public class POSTInput extends ModuleInput {
         return this.toRead.poll();
     }
 
+    @Override
+    public void response(ModuleExecutionException outputException) {
+        if (outputException != null) {
+            outputException.printStackTrace();
+            this.customResponse = outputException.getMessage();
+        }
+        this.responseBlock.release();
+    }
 
     /**
      * Synchronize with the REST Server Thread, so the route for POST handling is only created after the
@@ -108,7 +134,7 @@ public class POSTInput extends ModuleInput {
             RestServerRunner.serverCheck.acquire();
             post(this.URL, this.POSTHandler);
             this.isActivated = true;
-        } catch (IllegalStateException | InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             RestServerRunner.serverCheck.release();

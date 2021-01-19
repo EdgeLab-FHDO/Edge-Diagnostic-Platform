@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.REST;
 
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
+import InfrastructureManager.Modules.REST.Exception.Server.ServerNotConfiguredException;
 import InfrastructureManager.Modules.REST.RawData.GETOutputConfigData;
 import InfrastructureManager.Modules.REST.RawData.POSTInputConfigData;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
@@ -26,8 +27,13 @@ public class RESTModule extends PlatformModule {
     }
 
     private void startServerThread() {
-        Thread serverThread = new Thread(RestServerRunner.getInstance(), "REST Server thread");
-        serverThread.start();
+        try {
+            Thread serverThread = new Thread(RestServerRunner.getInstance(), "REST Server thread");
+            serverThread.start();
+        } catch (ServerNotConfiguredException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 
     @Override
@@ -38,7 +44,9 @@ public class RESTModule extends PlatformModule {
 
     @Override
     public void stop() {
-        RestServerRunner.getInstance().exit();
+        try {
+            RestServerRunner.getInstance().exit();
+        } catch (ServerNotConfiguredException ignored) {}
         super.stop();
     }
 }

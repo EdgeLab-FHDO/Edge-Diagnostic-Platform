@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Console;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 
 import java.util.Scanner;
@@ -21,5 +22,12 @@ public class ConsoleInput extends ModuleInput {
     public String read() {
         System.out.println("Input >");
         return IN.nextLine(); //Wraps the nextLine method from the console scanner
+    }
+
+    @Override
+    public void response(ModuleExecutionException outputException) {
+        if (outputException != null) {
+            outputException.printStackTrace();
+        }
     }
 }

@@ -3,6 +3,7 @@ package InfrastructureManager.ModuleManagement;
 import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.Exception.ResponseNotDefinedException;
 import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
@@ -32,8 +33,9 @@ public abstract class PlatformModule {
                     try {
                         String mapping = this.execute(fromInput,c.getCommands());
                         c.getOut().write(mapping);
-                    } catch (IllegalArgumentException | ModulePausedException e) {
-                        e.printStackTrace();
+                        input.response(null);
+                    } catch (ModuleExecutionException e) {
+                        input.response(e);
                     } catch (ResponseNotDefinedException ignored) {}
                 }
             }

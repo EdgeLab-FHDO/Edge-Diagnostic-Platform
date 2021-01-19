@@ -1,5 +1,8 @@
 package InfrastructureManager.ModuleManagement;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
 public abstract class ModuleInput {
@@ -34,4 +37,5 @@ public abstract class ModuleInput {
     }
 
     public abstract String read() throws InterruptedException;
+    public abstract void response(ModuleExecutionException outputException);
 }

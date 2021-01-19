@@ -1,7 +1,12 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.Modules.RemoteExecution.Exception.SCPException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.ClientNotInitializedException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.CommandExecution.CommandExecutionException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.FileSendingException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.InvalidFileException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.SCPProtocolException;
+import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.SSHException;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -29,7 +34,7 @@ public class SSHClient extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws IllegalArgumentException {
+    public void out(String response) throws SSHException {
         String[] command = response.split(" ");
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {
@@ -44,17 +49,17 @@ public class SSHClient extends ModuleOutput {
                     }
                     case "setup" -> setUpClient(command[2], command[3], command[4], command[5]);
                     case "sendFile" -> sendFile(command[2], command[3]);
-                    default -> throw new IllegalArgumentException("Invalid command for SSHClient");
+                    default -> throw new SSHException("Invalid command " + command[1] + " for SSHClient");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command - SSHClient");
+                throw new SSHException("Arguments missing for command" + response + " to SSHClient");
             }
         }
     }
 
-    private void sendFile(String localFilePath, String remoteDestFilePath) {
+    private void sendFile(String localFilePath, String remoteDestFilePath) throws FileSendingException, ClientNotInitializedException {
         if (!isSetUp()) {
-            throw new IllegalStateException("SSH Client has not been set up");
+            throw new ClientNotInitializedException("SSH Client has not been set up");
         }
         //Resources declaration in null, so they can be closed in the finally
         Session session = null;
@@ -64,7 +69,7 @@ public class SSHClient extends ModuleOutput {
         //-----------------------------
         File localFile = new File(localFilePath);
         if (!localFile.isFile()) {
-            throw new IllegalArgumentException("Invalid File");
+            throw new InvalidFileException("Invalid File in " + localFilePath);
         }
         //Try-with-resources, closes the stream automatically
         try (FileInputStream fileStream = new FileInputStream(localFile)) {
@@ -104,9 +109,8 @@ public class SSHClient extends ModuleOutput {
 
             checkSCPAck(in); //check received
 
-
-        } catch (JSchException | IOException | SCPException e) {
-            e.printStackTrace();
+        } catch (JSchException | IOException e) {
+            throw new FileSendingException("Error while sending file", e);
         } finally {
             //Close IO Resources
             if (channel != null) channel.disconnect();
@@ -116,15 +120,15 @@ public class SSHClient extends ModuleOutput {
         }
     }
 
-    private void checkSCPAck(InputStream in) throws IOException, SCPException {
+    private void checkSCPAck(InputStream in) throws IOException, SCPProtocolException {
         int ack=in.read();
         switch (ack) {
             case 0: return;
             case 1:
             case 2:
-                throw new SCPException(getErrorFromInputStream(in)); //If response is 1 or 2 then print the error message
+                throw new SCPProtocolException(getErrorFromInputStream(in)); //If response is 1 or 2 then print the error message
             default:
-                throw new SCPException("Unknown error");
+                throw new SCPProtocolException("Unknown error");
         }
     }
 
@@ -139,9 +143,9 @@ public class SSHClient extends ModuleOutput {
         return sb.toString();
     }
 
-    private void execute(String command, boolean background) {
+    private void execute(String command, boolean background) throws CommandExecutionException, ClientNotInitializedException {
         if (!isSetUp()) {
-            throw new IllegalStateException("SSH Client has not been set up");
+            throw new ClientNotInitializedException("SSH Client has not been set up");
         }
         //Resources declaration in null, so they can be closed in the finally
         Session session = null;
@@ -180,7 +184,7 @@ public class SSHClient extends ModuleOutput {
             }
 
         } catch (JSchException | InterruptedException | IOException e) {
-            e.printStackTrace();
+            throw new CommandExecutionException("Error while executing command", e);
         } finally {
             //Close IO Resources
             if (channel != null) channel.disconnect();

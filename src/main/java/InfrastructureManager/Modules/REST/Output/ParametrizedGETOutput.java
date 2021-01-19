@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST.Output;
 
+import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import spark.Request;
 import spark.Response;
 
@@ -22,16 +23,18 @@ public class ParametrizedGETOutput extends GETOutput {
     }
 
     @Override
-    public void out(String response) throws IllegalArgumentException {
+    public void out(String response) throws RESTOutputException {
         String[] command = response.split(" ",4);
         if (command[0].equals("toGET")) {
             try {
                 switch (command[1]) {
                     case "resource" -> addResource(command[2], command[3]);
-                    default -> throw new IllegalArgumentException("Invalid command for REST");
+                    default -> throw new RESTOutputException("Invalid command " + command[1] + " for REST output "
+                            + this.getName());
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command - REST");
+                throw new RESTOutputException("Arguments missing for command" + response + " to REST Output "
+                        + this.getName());
             }
         }
     }
@@ -41,7 +44,14 @@ public class ParametrizedGETOutput extends GETOutput {
         this.GETHandler = (Request request, Response response) -> {
             response.type("application/json");
             String parameterFromRequest = request.params(":" + this.parameter);
-            return this.info.getOrDefault(parameterFromRequest,"");
+            if (this.info.containsKey(parameterFromRequest)) {
+                response.status(200);
+                response.body(this.info.get(parameterFromRequest));
+            } else {
+                response.status(404);
+                response.body("No resource was found for parameter " + parameterFromRequest);
+            }
+            return response.body();
         };
         super.activate();
     }

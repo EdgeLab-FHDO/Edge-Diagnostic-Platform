@@ -1,6 +1,9 @@
 package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.Console.Exception.ConsoleOutputException;
+
+import java.util.Arrays;
 
 /**
  * Class representing output to the console as a form of MasterOutput
@@ -13,20 +16,17 @@ public class ConsoleOutput extends ModuleOutput {
     /**
      * Method for outputting to the console
      * @param response Message to be outputted to the console, the command has to be preceded by "console"
-     * @throws IllegalArgumentException If the command is not correctly formatted
+     * @throws ConsoleOutputException if the command is missing arguments
      */
     @Override
-    public void out(String response) {
+    public void out(String response) throws ConsoleOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("console")) { //The commands must come like "console command"
             try {
-                StringBuilder result = new StringBuilder(" ");
-                for (int i = 1; i < command.length; i++) {
-                    result.append(command[i]).append(" ");
-                }
-                System.out.println(result.toString().trim());
+                String result = String.join(" ",Arrays.copyOfRange(command,1,command.length));
+                System.out.println(result);
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - ConsoleOutput");
+                throw new ConsoleOutputException("Arguments missing for command" + response + " to ConsoleOutput");
             }
         }
     }

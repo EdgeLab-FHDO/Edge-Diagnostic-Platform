@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.RemoteExecution.Input;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
@@ -26,4 +27,6 @@ public class NodeLimitInput extends ModuleInput {
         return aux;
     }
 
+    @Override
+    public void response(ModuleExecutionException outputException) {}
 }

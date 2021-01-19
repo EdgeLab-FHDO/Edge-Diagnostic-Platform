@@ -33,13 +33,13 @@ public class MatchMakerOutput extends ModuleOutput {
         super(name);
         this.type = type;
         this.sharedMatchesList = mapping;
-        this.algorithm = algorithmFromType(type);
+        this.algorithm = algorithmFromType();
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
     }
 
-    private MatchMakingAlgorithm algorithmFromType (MatchMakerType type) {
+    private MatchMakingAlgorithm algorithmFromType () {
         return switch (type) {
             case RANDOM -> new RandomMatchMaking();
             case NAIVE -> new NaiveMatchMaking();
@@ -47,7 +47,7 @@ public class MatchMakerOutput extends ModuleOutput {
         };
     }
 
-    private void assign(String thisClientID) throws InfrastructureException, MatchMakingException, JsonProcessingException {
+    private void assign(String thisClientID) throws MatchMakingModuleException, JsonProcessingException {
         EdgeClient thisClient = this.getClientByID(thisClientID);
         EdgeClientHistory clientHistoryInfo = thisClient.getClientHistory();
 
@@ -229,11 +229,14 @@ public class MatchMakerOutput extends ModuleOutput {
         }
     }
 
+
     /**
      * Update the node with new info/data from REST input (JSON body)
      *
-     * @param nodeAsString JSON string of updating node
-     * @throws Exception
+     * @param nodeAsString  JSON string of updating node
+     * @throws NoNodeFoundException If the required node cannot be found in the node list
+     * @throws NoClientFoundException If the node is connected but the client cannot be found in the client list
+     * @throws JsonProcessingException If there is an error while parsing the node object from the JSON body
      */
     private void updateNode(String nodeAsString) throws NoNodeFoundException, NoClientFoundException, JsonProcessingException {
         logger.info("UpdateNode - node as string: {} ", nodeAsString);
@@ -295,7 +298,7 @@ public class MatchMakerOutput extends ModuleOutput {
      * @param clientAsString JSON body of client when updating
      * @author Zero
      */
-    private void updateAfterDisconnecting(String clientAsString) throws JsonProcessingException, MatchMakingException, InfrastructureException {
+    private void updateAfterDisconnecting(String clientAsString) throws JsonProcessingException, MatchMakingModuleException {
         //get client ID and disconnect reason:
         //we only need the ID and message of this object anyway
         EdgeClient pseudoClient = this.mapper.readValue(clientAsString, EdgeClient.class);
@@ -384,7 +387,7 @@ public class MatchMakerOutput extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws IllegalArgumentException {
+    public void out(String response) throws MatchMakingModuleException {
         String[] commandLine = response.split(" ");
         if (commandLine[0].equals("matchMaker")) {
             try {
@@ -405,12 +408,14 @@ public class MatchMakerOutput extends ModuleOutput {
                         updateAfterDisconnecting(commandLine[2]);
                         logger.info("client disconnected, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
-                    default -> throw new IllegalArgumentException("Invalid command for MatchMaker");
+                    default -> throw new MatchMakingModuleException("Invalid command" + commandLine[1]
+                            + " for MatchMaker");
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - MatchMaker");
-            } catch (InfrastructureException | JsonProcessingException | MatchMakingException e) {
-                e.printStackTrace();
+                throw new MatchMakingModuleException("Arguments missing for command" + response
+                        + " for MatchMakerOutput");
+            } catch (JsonProcessingException e) {
+                throw new MatchMakingModuleException("Error processing JSON data", e);
             }
         }
     }

@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -48,6 +49,9 @@ public class Scenario extends ModuleInput {
             return null;
         }
     }
+
+    @Override
+    public void response(ModuleExecutionException outputException) {}
 
     /**
      * Get the event list of the current scenario

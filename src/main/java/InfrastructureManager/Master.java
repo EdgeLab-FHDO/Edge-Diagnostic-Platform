@@ -197,7 +197,8 @@ public class Master {
             }
         }
         if (autostart) {
-            Master.changeConfigPath("src/main/resources/NewConfiguration.json");
+            //Master.changeConfigPath("src/main/resources/NewConfiguration.json");
+            Master.changeConfigPath("src/test/resources/REST/RESTTestConfiguration.json");
             Master.getInstance().startAllModules();
         }
         else {

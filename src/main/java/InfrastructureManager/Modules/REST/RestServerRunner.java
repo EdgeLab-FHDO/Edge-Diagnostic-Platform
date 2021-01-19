@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.REST;
 import InfrastructureManager.Modules.REST.Authentication.DummyAuthentication;
 import InfrastructureManager.Modules.REST.Authentication.RESTAuthenticator;
 import InfrastructureManager.ModuleManagement.Runner;
+import InfrastructureManager.Modules.REST.Exception.Server.ServerNotConfiguredException;
 import spark.Filter;
 import spark.Request;
 import spark.Response;
@@ -11,6 +12,7 @@ import spark.Spark;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 
 import static spark.Spark.*;
 
@@ -21,6 +23,7 @@ public class RestServerRunner extends Runner {
 
     private final RESTAuthenticator authenticator; //For future authentication implementations
     private final Filter authenticationHandler; //Handler for authentication to the server
+    private final Consumer<Exception> initExceptionHandler;
 
     public static final Semaphore serverCheck = new Semaphore(1);
     private static RestServerRunner restRunner = null; //Singleton implementation
@@ -40,6 +43,10 @@ public class RestServerRunner extends Runner {
                 halt(401, "Request not authorized");
             }
         };
+        this.initExceptionHandler = e -> {
+            e.printStackTrace();
+            System.exit(-1);
+        };
     }
 
     /**
@@ -47,7 +54,7 @@ public class RestServerRunner extends Runner {
      */
     private void startServer() {
         Spark.port(this.port);
-        initExceptionHandler(Throwable::printStackTrace); //Print the exception is an error happens when starting
+        initExceptionHandler(this.initExceptionHandler); //Print the exception is an error happens when starting
         before(this.authenticationHandler);
         get(heartbeatPath, (request, response) -> response.status());
     }
@@ -90,9 +97,9 @@ public class RestServerRunner extends Runner {
      * Method for getting the Singleton REST Server instance.
      * @throws IllegalStateException If `configure()` method has not been called yet
      */
-    public static RestServerRunner getInstance() throws IllegalStateException {
+    public static RestServerRunner getInstance() throws ServerNotConfiguredException {
         if(restRunner == null) {
-            throw new IllegalStateException("Rest Server is not configured");
+            throw new ServerNotConfiguredException("Rest Server is not configured");
         }
         return restRunner;
     }

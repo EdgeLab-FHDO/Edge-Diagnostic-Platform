@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST.Input;
 
+import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,20 +31,16 @@ public class UnknownJSONObject {
      * @return String representation of the value of the parameter
      * @throws IllegalArgumentException if the parameter type is not supported (Array, JSON object, null)
      */
-    public String getValue(String fieldName) throws IllegalArgumentException {
+    public String getValue(String fieldName) throws UnsupportedJSONTypeException {
         JsonNode node = tree.get(fieldName);
         if (node == null) {
             return null;
         }
-        switch (node.getNodeType()) {
-            case STRING:
-                return node.textValue();
-            case BOOLEAN:
-            case NUMBER:
-                return node.asText();
-            default:
-                throw new IllegalArgumentException("Unsupported JSON parameter type");
-        }
+        return switch (node.getNodeType()) {
+            case STRING -> node.textValue();
+            case BOOLEAN, NUMBER -> node.asText();
+            default -> throw new UnsupportedJSONTypeException("Parameter is not a String, Boolean or Number value");
+        };
     }
 
     /**
