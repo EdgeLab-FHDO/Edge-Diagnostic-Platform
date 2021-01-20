@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -43,7 +44,13 @@ public class Scenario extends ModuleInput {
         if (currentIndex < eventList.size()) {
             Event currentEvent = eventList.get(currentIndex);
             currentIndex++;
-            return waitForEvent(currentEvent);
+            try {
+                return waitForEvent(currentEvent);
+            } catch (InvalidTimeException e) {
+                e.printStackTrace();
+                stop();
+                return null;
+            }
         } else {
             stop();
             return null;
@@ -65,11 +72,11 @@ public class Scenario extends ModuleInput {
      * Set the start time of the scenario
      * @param startTime Absolute time in milliseconds (Since UNIX epoch)
      */
-    public void setStartTime(long startTime) throws IllegalArgumentException {
+    public void setStartTime(long startTime) throws InvalidTimeException {
         if (startTime >= System.currentTimeMillis()) {
             this.startTime = startTime;
         } else {
-            throw new IllegalArgumentException("Start time in the past!");
+            throw new InvalidTimeException("Start time in the past!");
         }
     }
 
@@ -125,12 +132,14 @@ public class Scenario extends ModuleInput {
      * Wait for executing the states according to their relative execution times
      * @param e Event to be waited for
      */
-    private String waitForEvent (Event e) {
+    private String waitForEvent (Event e) throws InvalidTimeException {
         long absoluteTime = this.getStartTime() + (resumedTime - pausedTime) + e.getExecutionTime();
         try {
             Thread.sleep(absoluteTime - System.currentTimeMillis());
         } catch (InterruptedException ie) {
             stop();
+        } catch (IllegalArgumentException iae) {
+            throw new InvalidTimeException("Handling event " + e.getCommand() + " resulted in a negative waiting time");
         }
         return e.getCommand();
     }

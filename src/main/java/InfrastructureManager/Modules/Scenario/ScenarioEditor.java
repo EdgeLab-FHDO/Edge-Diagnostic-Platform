@@ -1,6 +1,9 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
+import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
+import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioIOException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -22,7 +25,6 @@ public class ScenarioEditor extends ModuleOutput {
 
     public ScenarioEditor(String name) {
         super(name);
-        //this.scenario = scenario;
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
@@ -35,10 +37,11 @@ public class ScenarioEditor extends ModuleOutput {
      *                 - Delete : Just the command. (editor deleteEvent)
      *                 - Save to file : Add the path of the folder in which the file will be saved (editor toFile src/resources/scenarios/)
      *                 - Load from File: Add the path to the file (editor fromFile src/resources/scenario.json)
-     *@throws IllegalArgumentException If the command is not defined or is missing arguments
+     *@throws ScenarioEditorException If the command is not defined or is missing arguments, or if one of the
+     * internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
      */
     @Override
-    public void out(String response) {
+    public void out(String response) throws ScenarioEditorException {
         String[] command = response.split(" ");
         if (command[0].equals("editor")) {
             try {
@@ -48,10 +51,12 @@ public class ScenarioEditor extends ModuleOutput {
                     case "deleteEvent" -> deleteLastEvent();
                     case "toFile" -> scenarioToFile(command[2]);
                     case "fromFile" -> scenarioFromFile(command[2]);
-                    default -> throw new IllegalArgumentException("Invalid command for ScenarioEditor");
+                    default -> throw new ScenarioEditorException("Invalid command " + command[1]
+                            + " for ScenarioEditor");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command  - ScenarioEditor");
+                throw new ScenarioEditorException("Arguments missing for command " + response
+                        + " to ScenarioEditor");
             }
         }
     }
@@ -76,9 +81,11 @@ public class ScenarioEditor extends ModuleOutput {
     /**
      * Delete the last event from a loaded scenario (from file or created)
      */
-    private void deleteLastEvent(){
-        int last = scenario.getEventList().size() - 1;
-        if (last >= 0) {
+    private void deleteLastEvent() throws EmptyEventListException {
+        if (scenario.getEventList().isEmpty()) {
+            throw new EmptyEventListException("Event list is empty!");
+        } else {
+            int last = scenario.getEventList().size() - 1;
             scenario.deleteEvent(last);
         }
     }
@@ -87,12 +94,12 @@ public class ScenarioEditor extends ModuleOutput {
      * Save the loaded scenario (from file or created) to a JSON file
      * @param path Path of the folder to save the file (Filename is automatic)
      */
-    private void scenarioToFile(String path){
+    private void scenarioToFile(String path) throws ScenarioIOException {
         path = path + scenario.getName() + ".json"; //Filename according to scenario name
         try {
             mapper.writeValue(new File(path), this.scenario);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ScenarioIOException("Scenario " + scenario.getName() + " could not be saved", e);
         }
     }
 
@@ -100,11 +107,11 @@ public class ScenarioEditor extends ModuleOutput {
      * Load scenario from a JSON file
      * @param path Path of the file
      */
-    private void scenarioFromFile(String path){
+    private void scenarioFromFile(String path) throws ScenarioIOException {
         try {
             this.scenario = mapper.readValue(new File(path),Scenario.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ScenarioIOException("Scenario could not be loaded from path " + path, e);
         }
     }
 

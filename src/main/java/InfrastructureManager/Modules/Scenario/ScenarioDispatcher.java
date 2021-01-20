@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 
 /**
  * Scenario Handling class that is an Output of the master
@@ -12,7 +13,7 @@ import InfrastructureManager.ModuleManagement.ModuleOutput;
  */
 public class ScenarioDispatcher extends ModuleOutput {
 
-    private Scenario scenario;
+    private final Scenario scenario;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
     public ScenarioDispatcher(String name, Scenario scenario) {
@@ -28,10 +29,10 @@ public class ScenarioDispatcher extends ModuleOutput {
      *                 used, a delayed start time can be given using either the "-r" flag for a relative time or "-a" flag for
      *                 an absolute time input (Milliseconds since UNIX epoch), followed by the desired time in milliseconds
      *                 - Other functionalities : Just the command.
-     * @throws IllegalArgumentException If the command is not defined or is missing arguments
+     * @throws ScenarioDispatcherException If the command is not defined or is missing arguments
      */
     @Override
-    public void out(String response) {
+    public void out(String response) throws ScenarioDispatcherException {
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
             try {
@@ -46,7 +47,7 @@ public class ScenarioDispatcher extends ModuleOutput {
                                 case "-a":
                                     break;
                                 default:
-                                    throw new IllegalArgumentException("Invalid run command");
+                                    throw new ScenarioDispatcherException("Invalid run command " + command[3]);
                             }
                             startTime += Long.parseLong(command[4]);
                             runScenario(startTime);
@@ -64,10 +65,12 @@ public class ScenarioDispatcher extends ModuleOutput {
                         stopScenario();
                         break;
                     default:
-                        throw new IllegalArgumentException("Invalid command for ScenarioDispatcher");
+                        throw new ScenarioDispatcherException("Invalid command " + command[1]
+                                + " for ScenarioDispatcher");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new IllegalArgumentException("Arguments missing for command  - ScenarioDispatcher");
+                throw new ScenarioDispatcherException("Arguments missing for command " + response
+                        + " to ScenarioDispatcher");
             }
         }
     }

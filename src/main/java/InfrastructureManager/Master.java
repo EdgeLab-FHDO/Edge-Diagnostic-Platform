@@ -5,6 +5,7 @@ import InfrastructureManager.Configuration.MasterConfigurator;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 
@@ -111,7 +112,7 @@ public class Master {
         try {
             ScenarioModule scenarioModule = getScenarioModule(scenario);
             scenarioModule.startScenario(startTime);
-        } catch (ModuleNotFoundException e) {
+        } catch (ModuleNotFoundException | InvalidTimeException e) {
             e.printStackTrace();
         }
     }

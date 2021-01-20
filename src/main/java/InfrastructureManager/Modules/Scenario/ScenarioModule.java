@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
+import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,7 +33,7 @@ public class ScenarioModule extends PlatformModule {
         }
     }
 
-    public void startScenario(long startTime) {
+    public void startScenario(long startTime) throws InvalidTimeException {
         if (isDeadThread(0)) {
             restartThread(0,0);
         }

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Event{
 
-    private String command; //Command to be executed in the master
+    private final String command; //Command to be executed in the master
     private final long executionTime; //Execution time relative to the scenario start (in ms)
 
     /**
