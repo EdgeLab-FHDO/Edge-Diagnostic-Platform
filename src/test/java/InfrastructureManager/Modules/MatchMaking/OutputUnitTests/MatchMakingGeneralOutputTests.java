@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 
 import InfrastructureManager.Modules.CommonTestingMethods;
+import InfrastructureManager.Modules.MatchMaking.Exception.MatchMakingModuleException;
 import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
@@ -13,13 +14,13 @@ public class MatchMakingGeneralOutputTests {
     private final MatchMakerOutput matchMaker = new MatchMakerOutput("mm", MatchMakerType.RANDOM, matchesList);
 
     @Test
-    public void registerNodeTest() {
+    public void registerNodeTest() throws MatchMakingModuleException {
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         String expected = matchMaker.getNodeList().get(0).getId();
         Assert.assertEquals(expected, "node1");
     }
 
-    public void registerMultipleNodesTest() {
+    public void registerMultipleNodesTest() throws MatchMakingModuleException {
         matchMaker.out("matchMaker register_node {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}");
         matchMaker.out("matchMaker register_node {\"id\":\"node2\",\"ipAddress\":\"255.169.255.10\",\"connected\":false}");
         int size = matchMaker.getNodeList().size();
@@ -27,7 +28,7 @@ public class MatchMakingGeneralOutputTests {
     }
 
     @Test
-    public void registerClientTest() {
+    public void registerClientTest() throws MatchMakingModuleException {
         matchMaker.out("matchMaker register_client {\"id\":\"client1\"}");
         String expected = matchMaker.getClientList().get(0).getId();
         Assert.assertEquals(expected, "client1");

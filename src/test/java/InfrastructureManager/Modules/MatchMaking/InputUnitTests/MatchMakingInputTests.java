@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.MatchMaking.InputUnitTests;
 
+import InfrastructureManager.Modules.MatchMaking.Exception.MatchMakingModuleException;
 import InfrastructureManager.Modules.MatchMaking.Input.MatchMakerInput;
 import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
@@ -13,7 +14,7 @@ public class MatchMakingInputTests {
     private final MatchMakerInput input = new MatchMakerInput("mm.in",matchesList);
 
     @Test
-    public void correctInputReadWithRandomMatchMakerOutputTest() throws InterruptedException {
+    public void correctInputReadWithRandomMatchMakerOutputTest() throws InterruptedException, MatchMakingModuleException {
         MatchMakerOutput output = new MatchMakerOutput("mm.out", MatchMakerType.RANDOM,matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
         String client = "{\"id\":\"client1\"}";
@@ -25,7 +26,7 @@ public class MatchMakingInputTests {
     }
 
     @Test
-    public void correctInputReadWithNaiveMatchMakerOutputTest() throws InterruptedException {
+    public void correctInputReadWithNaiveMatchMakerOutputTest() throws InterruptedException, MatchMakingModuleException {
         MatchMakerOutput output = new MatchMakerOutput("mm.out", MatchMakerType.NAIVE,matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
         String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
@@ -37,7 +38,7 @@ public class MatchMakingInputTests {
     }
 
     @Test
-    public void correctInputReadWithScoreMatchMakerOutputTest() throws InterruptedException {
+    public void correctInputReadWithScoreMatchMakerOutputTest() throws InterruptedException, MatchMakingModuleException {
         MatchMakerOutput output = new MatchMakerOutput("mm.out", MatchMakerType.SCORE_BASED,matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
         String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
@@ -48,7 +49,7 @@ public class MatchMakingInputTests {
         Assert.assertEquals(expected,input.read());
     }
 
-    private void registerNodeAndClient(MatchMakerOutput output, String nodeAsString, String clientAsString) {
+    private void registerNodeAndClient(MatchMakerOutput output, String nodeAsString, String clientAsString) throws MatchMakingModuleException {
         output.out("matchMaker register_node " + nodeAsString);
         output.out("matchMaker register_client " + clientAsString);
     }

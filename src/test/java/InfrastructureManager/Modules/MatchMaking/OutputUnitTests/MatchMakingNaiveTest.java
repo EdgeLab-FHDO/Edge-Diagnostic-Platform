@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
@@ -101,3 +102,4 @@ public class MatchMakingNaiveTest {
     }
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.Modules.REST.InputUnitTests;
 
 import InfrastructureManager.Master;
@@ -71,3 +72,4 @@ public class POSTInputTests {
         Master.getInstance().exitAll();
     }
 }
+*/

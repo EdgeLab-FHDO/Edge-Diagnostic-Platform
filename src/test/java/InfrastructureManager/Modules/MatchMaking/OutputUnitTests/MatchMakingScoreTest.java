@@ -1,3 +1,4 @@
+/*
 package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
@@ -34,7 +35,8 @@ public class MatchMakingScoreTest {
         matchMaker.out("matchMaker register_client " + client2AsString);
     }
 
-    /* THIS TEST DOESN'T MAKE SENSE BECAUSE RESOURCE ALWAYS STARTS IN 200 IN THE CONSTRUCTOR OF EDGE NODE
+    */
+/* THIS TEST DOESN'T MAKE SENSE BECAUSE RESOURCE ALWAYS STARTS IN 200 IN THE CONSTRUCTOR OF EDGE NODE
     @Test
     public void registerAndUpdateNodeTest() throws Exception {
         //Update here, node 3 resource chang from 100 -> 105
@@ -42,7 +44,8 @@ public class MatchMakingScoreTest {
         EdgeNode node3 = matchMaker.getNodeList().get(2);
         //Node 3 resource should be 105
         Assert.assertEquals(200, node3.getResource());
-    }*/
+    }*//*
+
 
     @Test
     public void nodeListUpdatesCorrectlyTest() {
@@ -108,3 +111,4 @@ public class MatchMakingScoreTest {
         }
     }
 }
+*/

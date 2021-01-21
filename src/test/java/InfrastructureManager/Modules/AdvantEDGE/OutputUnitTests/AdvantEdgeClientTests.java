@@ -1,6 +1,8 @@
 package InfrastructureManager.Modules.AdvantEDGE.OutputUnitTests;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
+import InfrastructureManager.Modules.AdvantEDGE.Exception.ErrorInResponseException;
 import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Rule;
@@ -27,10 +29,12 @@ public class AdvantEdgeClientTests {
 
 
     @Test
-    public void addScenarioRequestTest() throws AdvantEdgeModuleException {
+    public void addScenarioRequestTest() throws ModuleExecutionException {
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String scenarioPath = "src/test/resources/AdvantEdge/dummy-test.json";
-        client.out("advantEdge create " + scenarioName + " " + scenarioPath);
+        try {
+            client.write("advantEdge create " + scenarioName + " " + scenarioPath);
+        } catch (ErrorInResponseException ignored) {}
         verify(postRequestedFor(urlEqualTo(path))
                 .withRequestBody(
                         matchingJsonPath("$.name", equalTo(scenarioName))
@@ -38,25 +42,32 @@ public class AdvantEdgeClientTests {
     }
 
     @Test // Checks if adding the scenario as a YAML file, sends a JSON in the request
-    public void addYAMLScenarioRequestTest() throws AdvantEdgeModuleException {
+    public void addYAMLScenarioRequestTest() throws ModuleExecutionException {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
         String YAMLScenarioPath = "src/test/resources/AdvantEdge/dummy-test-to-convert.yaml";
-        client.out("advantEdge create " + scenarioName + " " + YAMLScenarioPath);
+        try {
+            client.write("advantEdge create " + scenarioName + " " + YAMLScenarioPath);
+        } catch (ErrorInResponseException ignored) {}
+
         verify(postRequestedFor(urlEqualTo(path))
                 .withRequestBody(
                         matchingJsonPath("$.name", equalTo(scenarioName))
                 ));
-        if (convertedScenarioFile.exists()) convertedScenarioFile.delete(); //Delete the generated JSON file, to be able to try again from scratch
+        if (convertedScenarioFile.exists()) {
+            convertedScenarioFile.delete(); //Delete the generated JSON file, to be able to try again from scratch
+        }
 
     }
 
     @Test
-    public void deployScenarioRequestTest() throws IOException, AdvantEdgeModuleException {
+    public void deployScenarioRequestTest() throws IOException, ModuleExecutionException {
         String path = "/platform-ctrl/v1/sandboxes/sandbox-" + scenarioName;
         String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
-        client.out("advantEdge deploy " + scenarioName);
+        try {
+            client.write("advantEdge deploy " + scenarioName);
+        } catch (ErrorInResponseException ignored) {}
 
         String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
 
@@ -65,11 +76,13 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void updateNetworkCharacteristics() throws IOException, AdvantEdgeModuleException {
+    public void updateNetworkCharacteristics() throws IOException, ModuleExecutionException {
         String sandboxName = "test";
         String path = "/" + sandboxName + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
         String jsonTestPath = "src/test/resources/AdvantEdge/network-update-test.json";
-        client.out("advantEdge networkUpdate " + sandboxName + " fog-1 FOG 10 10 50 1 0");
+        try {
+            client.write("advantEdge networkUpdate " + sandboxName + " fog-1 FOG 10 10 50 1 0");
+        } catch (ErrorInResponseException ignored){}
 
         String jsonString = Files.readString(Paths.get(jsonTestPath), StandardCharsets.US_ASCII);
 
@@ -78,19 +91,25 @@ public class AdvantEdgeClientTests {
     }
 
     @Test
-    public void terminateScenarioRequestTest() throws AdvantEdgeModuleException {
+    public void terminateScenarioRequestTest() throws ModuleExecutionException {
         String path = "/test_sandbox/sandbox-ctrl/v1/active/";
-        client.out("advantEdge terminate test_sandbox");
+        try {
+            client.write("advantEdge terminate test_sandbox");
+        } catch (ErrorInResponseException ignored){}
         verify(deleteRequestedFor(urlEqualTo(path)));
     }
 
     @Test
     public void invalidCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "Invalid command for AdvantEdgeClient",() -> client.out("advantEdge notACommand"));
+        String command = "advantEdge notACommand";
+        String expectedMessage = "Invalid command notACommand for AdvantEdgeClient";
+        assertException(AdvantEdgeModuleException.class, expectedMessage,() -> client.write(command));
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "Arguments missing for command - AdvantEdgeClient", () ->client.out("advantEdge create"));
+        String command = "advantEdge create";
+        String expectedMessage = "Arguments missing in command " + command + " to AdvantEdgeClient";
+        assertException(AdvantEdgeModuleException.class, expectedMessage,() -> client.write(command));
     }
 }

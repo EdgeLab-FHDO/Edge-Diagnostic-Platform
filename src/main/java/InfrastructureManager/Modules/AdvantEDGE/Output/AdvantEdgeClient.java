@@ -44,7 +44,7 @@ public class AdvantEdgeClient extends ModuleOutput {
      * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
     @Override
-    public void out(String response) throws AdvantEdgeModuleException {
+    protected void out(String response) throws AdvantEdgeModuleException {
         String[] command = response.split(" ");
         if (command[0].equals("advantEdge")) { //The commands must come like "advantEdge command"
             try {
