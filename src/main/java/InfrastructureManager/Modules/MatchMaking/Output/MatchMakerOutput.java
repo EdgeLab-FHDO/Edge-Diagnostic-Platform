@@ -387,7 +387,7 @@ public class MatchMakerOutput extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws MatchMakingModuleException {
+    protected void out(String response) throws MatchMakingModuleException {
         String[] commandLine = response.split(" ");
         if (commandLine[0].equals("matchMaker")) {
             try {
@@ -408,11 +408,11 @@ public class MatchMakerOutput extends ModuleOutput {
                         updateAfterDisconnecting(commandLine[2]);
                         logger.info("client disconnected, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
-                    default -> throw new MatchMakingModuleException("Invalid command" + commandLine[1]
+                    default -> throw new MatchMakingModuleException("Invalid command " + commandLine[1]
                             + " for MatchMaker");
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                throw new MatchMakingModuleException("Arguments missing for command" + response
+                throw new MatchMakingModuleException("Arguments missing for command " + response
                         + " for MatchMakerOutput");
             } catch (JsonProcessingException e) {
                 throw new MatchMakingModuleException("Error processing JSON data", e);
