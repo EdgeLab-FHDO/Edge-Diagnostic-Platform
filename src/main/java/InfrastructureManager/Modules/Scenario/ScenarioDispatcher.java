@@ -1,7 +1,9 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 
 /**
@@ -21,6 +23,7 @@ public class ScenarioDispatcher extends ModuleOutput {
         this.scenario = scenario;
     }
 
+
     /**
      * Based on responses from the master executes the different functionalities
      * @param response Must be in the way "dispatcher command" and additionally:
@@ -29,10 +32,12 @@ public class ScenarioDispatcher extends ModuleOutput {
      *                 used, a delayed start time can be given using either the "-r" flag for a relative time or "-a" flag for
      *                 an absolute time input (Milliseconds since UNIX epoch), followed by the desired time in milliseconds
      *                 - Other functionalities : Just the command.
-     * @throws ScenarioDispatcherException If the command is not defined or is missing arguments
+     * @throws ScenarioDispatcherException If the command passed is invalid or incomplete
+     * @throws InvalidTimeException If when running the scenario there is a problem with the timing
+     * @throws ModuleNotFoundException If the scenario to be run doesn't have an underlying module assigned
      */
     @Override
-    public void out(String response) throws ScenarioDispatcherException {
+    public void out(String response) throws ScenarioDispatcherException, InvalidTimeException, ModuleNotFoundException {
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
             try {
@@ -78,28 +83,28 @@ public class ScenarioDispatcher extends ModuleOutput {
     /**
      * Method for stopping the current scenario
      */
-    private void stopScenario() {
+    private void stopScenario() throws ModuleNotFoundException {
         Master.getInstance().stopScenario(this.scenario);
     }
 
     /**
      * Method for pausing the scenario
      */
-    private void pauseScenario() {
+    private void pauseScenario() throws ModuleNotFoundException {
         Master.getInstance().pauseScenario(this.scenario);
     }
 
     /**
      * Method to resume the scenario if paused
      */
-    private void resumeScenario() {
+    private void resumeScenario() throws ModuleNotFoundException {
         Master.getInstance().resumeScenario(this.scenario);
     }
 
     /**
      * Method to run the scenario
      */
-    private void runScenario(long startTime) {
+    private void runScenario(long startTime) throws InvalidTimeException, ModuleNotFoundException {
         Master.getInstance().runScenario(this.scenario, startTime);
     }
 

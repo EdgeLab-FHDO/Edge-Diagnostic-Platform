@@ -4,7 +4,7 @@ import InfrastructureManager.Configuration.CommandSet;
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectIONameException;
 import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
-import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefinedException;
 import InfrastructureManager.ModuleManagement.RawData.ConnectionConfigData;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class ModuleConnector {
         modules.forEach(m -> {
             try {
                 connectSingleModule(m);
-            } catch (IncorrectIONameException | ModuleNotFoundException | IncorrectInputException e) {
+            } catch (IncorrectIONameException | ModuleNotDefinedException | IncorrectInputException e) {
                 System.err.println("Module " + m.getName() + " could not be connected");
                 e.printStackTrace();
             }
@@ -31,7 +31,7 @@ public class ModuleConnector {
     }
 
 
-    private void connectSingleModule(PlatformModule module) throws IncorrectIONameException, ModuleNotFoundException, IncorrectInputException {
+    private void connectSingleModule(PlatformModule module) throws IncorrectIONameException, ModuleNotDefinedException, IncorrectInputException {
         String moduleName = module.getName();
 
         for (ConnectionConfigData connectionData : data) {
@@ -58,21 +58,21 @@ public class ModuleConnector {
         }
     }
 
-    private ModuleOutput findOutput(String outputName) throws ModuleNotFoundException, IncorrectIONameException {
+    private ModuleOutput findOutput(String outputName) throws ModuleNotDefinedException, IncorrectIONameException {
         PlatformModule module = findOutputModule(outputName);
         for (ModuleOutput output : module.getOutputs()) {
             if (outputName.equals(output.getName())) {
                 return output;
             }
         }
-        throw new ModuleNotFoundException("No module could be found with defined output " + outputName);
+        throw new ModuleNotDefinedException("No module could be found with defined output " + outputName);
     }
 
-    private PlatformModule findOutputModule(String outputName) throws ModuleNotFoundException, IncorrectIONameException {
+    private PlatformModule findOutputModule(String outputName) throws ModuleNotDefinedException, IncorrectIONameException {
         String moduleName = extractName(outputName);
         Optional<PlatformModule> module = modules.stream().filter(m -> m.getName().equals(moduleName))
                 .findFirst();
-        return module.orElseThrow(() -> new ModuleNotFoundException("Output Module was not found"));
+        return module.orElseThrow(() -> new ModuleNotDefinedException("Output Module was not found"));
     }
 
 }

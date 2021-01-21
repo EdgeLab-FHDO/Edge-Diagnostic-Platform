@@ -1,7 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
-import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefinedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.Console.ConsoleModule;
@@ -29,14 +29,14 @@ public class ModuleFactory {
         for (ModuleConfigData moduleData : data) {
             try {
                 result.add(create(moduleData));
-            } catch (ModuleNotFoundException e) {
+            } catch (ModuleNotDefinedException e) {
                 e.printStackTrace();
             }
         }
         return result;
     }
 
-    private PlatformModule create(ModuleConfigData data) throws ModuleNotFoundException {
+    private PlatformModule create(ModuleConfigData data) throws ModuleNotDefinedException {
 
         PlatformModule result = switch (data.getType()) {
             case CONSOLE -> new ConsoleModule();
@@ -46,7 +46,7 @@ public class ModuleFactory {
             case ADVANTEDGE -> new AdvantEdgeModule();
             case REMOTE_EXEC -> new RemoteExecutionModule();
             case MATCH_MAKING -> new MatchMakingModule();
-            default -> throw new ModuleNotFoundException("The module type for module" + data.getName() + "is not defined");
+            default -> throw new ModuleNotDefinedException("The module type for module" + data.getName() + "is not defined");
         };
         result.configure(data);
         return result;

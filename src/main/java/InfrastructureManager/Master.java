@@ -3,7 +3,7 @@ package InfrastructureManager;
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.MasterConfigurator;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
-import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Scenario;
@@ -43,34 +43,22 @@ public class Master {
         modules.forEach(PlatformModule::stop);
     }
 
-    public void stopModule(String moduleName) {
-        try {
-            findModuleByName(moduleName).stop();
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void stopModule(String moduleName) throws ModuleNotFoundException {
+        findModuleByName(moduleName).stop();
     }
 
     public void startAllModules() {
         modules.forEach(PlatformModule::start);
     }
 
-    public void startModule(String moduleName) {
-        try {
-            findModuleByName(moduleName).start();
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void startModule(String moduleName) throws ModuleNotFoundException {
+        findModuleByName(moduleName).start();
     }
 
-    public void pauseModule(String moduleName) {
-        try {
-            PlatformModule moduleToPause = findModuleByName(moduleName);
-            if (moduleToPause.getState() == PlatformModule.ModuleState.RUNNING) {
-                moduleToPause.pause();
-            }
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
+    public void pauseModule(String moduleName) throws ModuleNotFoundException {
+        PlatformModule moduleToPause = findModuleByName(moduleName);
+        if (moduleToPause.getState() == PlatformModule.ModuleState.RUNNING) {
+            moduleToPause.pause();
         }
     }
 
@@ -79,14 +67,10 @@ public class Master {
                 .forEach(PlatformModule::pause);
     }
 
-    public void resumeModule(String moduleName) {
-        try {
-            PlatformModule moduleToResume = findModuleByName(moduleName);
-            if (moduleToResume.getState() == PlatformModule.ModuleState.PAUSED) {
-                moduleToResume.resume();
-            }
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
+    public void resumeModule(String moduleName) throws ModuleNotFoundException {
+        PlatformModule moduleToResume = findModuleByName(moduleName);
+        if (moduleToResume.getState() == PlatformModule.ModuleState.PAUSED) {
+            moduleToResume.resume();
         }
     }
 
@@ -108,52 +92,36 @@ public class Master {
      * it
      * @param scenario Scenario to be run
      */
-    public void runScenario(Scenario scenario, long startTime) {
-        try {
-            ScenarioModule scenarioModule = getScenarioModule(scenario);
-            scenarioModule.startScenario(startTime);
-        } catch (ModuleNotFoundException | InvalidTimeException e) {
-            e.printStackTrace();
-        }
+    public void runScenario(Scenario scenario, long startTime) throws InvalidTimeException, ModuleNotFoundException {
+        ScenarioModule scenarioModule = getScenarioModule(scenario);
+        scenarioModule.startScenario(startTime);
     }
 
     /**
      * Stop a running ScenarioRunner, given the scenario that is running
      * @param scenario Running scenario to be stopped
      */
-    public void stopScenario(Scenario scenario) {
-        try {
-            ScenarioModule scenarioModule = getScenarioModule(scenario);
-            scenarioModule.stopScenario();
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void stopScenario(Scenario scenario) throws ModuleNotFoundException {
+        ScenarioModule scenarioModule = getScenarioModule(scenario);
+        scenarioModule.stopScenario();
     }
 
     /**
      * Method to pause a running ScenarioRunner, given the scenario that is running
      * @param scenario Running scenario to be paused
      */
-    public void pauseScenario(Scenario scenario) {
-        try {
-            ScenarioModule scenarioModule = getScenarioModule(scenario);
-            scenarioModule.pauseScenario();
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void pauseScenario(Scenario scenario) throws ModuleNotFoundException {
+        ScenarioModule scenarioModule = getScenarioModule(scenario);
+        scenarioModule.pauseScenario();
     }
 
     /**
      * Method to resume a paused ScenarioRunner, given its scenario
      * @param scenario Paused scenario to be resumed
      */
-    public void resumeScenario(Scenario scenario) {
-        try {
-            ScenarioModule scenarioModule = getScenarioModule(scenario);
-            scenarioModule.resumeScenario();
-        } catch (ModuleNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void resumeScenario(Scenario scenario) throws ModuleNotFoundException {
+        ScenarioModule scenarioModule = getScenarioModule(scenario);
+        scenarioModule.resumeScenario();
     }
 
     private ScenarioModule getScenarioModule(Scenario scenario) throws ModuleNotFoundException {
@@ -203,7 +171,11 @@ public class Master {
             Master.getInstance().startAllModules();
         }
         else {
-            Master.getInstance().startModule("console");
+            try {
+                Master.getInstance().startModule("console");
+            } catch (ModuleNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

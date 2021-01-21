@@ -35,7 +35,7 @@
     },
     {
       "in" : "console.in",
-      "out" : "util.internal",
+      "out" : "util.control",
       "commands" : {
         "exit" : "util exit",
         "pause $module" : "util pauseModule $module",

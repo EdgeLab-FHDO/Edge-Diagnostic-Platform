@@ -1,24 +1,28 @@
 package InfrastructureManager.Modules.Utility;
 
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.Modules.Utility.Exception.MasterController.MasterControllerException;
 
 /**
  * Class implementing MasterOutput, for utilities within the master
  */
-public class MasterUtility extends ModuleOutput {
+public class MasterController extends ModuleOutput {
 
-    public MasterUtility(String name) {
+    public MasterController(String name) {
         super(name);
     }
 
+
     /**
-     * Out method implementation according to MasterOutput interface, which gets commands from the master
+     Out method implementation according to MasterOutput interface, which gets commands from the master
      * @param response Response coming from the master.
-     * @throws IllegalArgumentException If the command is not defined or is missing arguments
+     * @throws ModuleNotFoundException If the module which is aimed to be controlled is not configured
+     * @throws MasterControllerException If the command passed is invalid or incomplete
      */
     @Override
-    public void out(String response) {
+    public void out(String response) throws ModuleNotFoundException, MasterControllerException {
         String[] command = response.split(" ");
         if (command[0].equals("util")) {
             try {
@@ -30,10 +34,12 @@ public class MasterUtility extends ModuleOutput {
                     case "stopModule" -> Master.getInstance().stopModule(command[2]);
                     case "pauseAllModules" -> Master.getInstance().pauseAllModules();
                     case "resumeAllModules" -> Master.getInstance().resumeAllModules();
-                    default -> throw new IllegalArgumentException("Invalid Command for Utility Output");
+                    default -> throw new MasterControllerException("Invalid Command" + command[1]
+                            + " for MasterController output");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new IllegalArgumentException("Arguments missing for command - MasterUtility");
+                throw new MasterControllerException("Arguments missing for command" + response
+                        + " to MasterController");
             }
         }
     }
