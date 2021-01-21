@@ -34,7 +34,7 @@ public class SSHClient extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws SSHException {
+    protected void out(String response) throws SSHException {
         String[] command = response.split(" ");
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {

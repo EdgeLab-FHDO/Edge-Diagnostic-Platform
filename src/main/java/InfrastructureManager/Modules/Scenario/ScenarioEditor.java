@@ -41,7 +41,7 @@ public class ScenarioEditor extends ModuleOutput {
      * internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
      */
     @Override
-    public void out(String response) throws ScenarioEditorException {
+    protected void out(String response) throws ScenarioEditorException {
         String[] command = response.split(" ");
         if (command[0].equals("editor")) {
             try {

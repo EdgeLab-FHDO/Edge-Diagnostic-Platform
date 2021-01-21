@@ -23,7 +23,7 @@ public class ParametrizedGETOutput extends GETOutput {
     }
 
     @Override
-    public void out(String response) throws RESTOutputException {
+    protected void out(String response) throws RESTOutputException {
         String[] command = response.split(" ",4);
         if (command[0].equals("toGET")) {
             try {

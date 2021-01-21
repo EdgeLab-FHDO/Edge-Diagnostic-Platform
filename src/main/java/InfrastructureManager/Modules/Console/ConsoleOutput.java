@@ -19,7 +19,7 @@ public class ConsoleOutput extends ModuleOutput {
      * @throws ConsoleOutputException if the command is missing arguments
      */
     @Override
-    public void out(String response) throws ConsoleOutputException {
+    protected void out(String response) throws ConsoleOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("console")) { //The commands must come like "console command"
             try {

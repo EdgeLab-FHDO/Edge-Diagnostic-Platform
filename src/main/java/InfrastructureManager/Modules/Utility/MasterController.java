@@ -22,7 +22,7 @@ public class MasterController extends ModuleOutput {
      * @throws MasterControllerException If the command passed is invalid or incomplete
      */
     @Override
-    public void out(String response) throws ModuleNotFoundException, MasterControllerException {
+    protected void out(String response) throws ModuleNotFoundException, MasterControllerException {
         String[] command = response.split(" ");
         if (command[0].equals("util")) {
             try {

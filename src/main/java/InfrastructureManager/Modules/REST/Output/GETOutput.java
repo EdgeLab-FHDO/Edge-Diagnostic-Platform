@@ -47,7 +47,7 @@ public class GETOutput extends ModuleOutput {
      * @throws RESTOutputException if an invalid or incomplete command is passed
      */
     @Override
-    public void out(String response) throws RESTOutputException {
+    protected void out(String response) throws RESTOutputException {
         String[] command = response.split(" ",3);
         if (command[0].equals("toGET")) {
             try {

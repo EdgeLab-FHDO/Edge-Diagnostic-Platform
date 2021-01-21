@@ -37,7 +37,7 @@ public class ScenarioDispatcher extends ModuleOutput {
      * @throws ModuleNotFoundException If the scenario to be run doesn't have an underlying module assigned
      */
     @Override
-    public void out(String response) throws ScenarioDispatcherException, InvalidTimeException, ModuleNotFoundException {
+    protected void out(String response) throws ScenarioDispatcherException, InvalidTimeException, ModuleNotFoundException {
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
             try {

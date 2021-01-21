@@ -21,7 +21,7 @@ public class FileOutput extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws FileOutputException {
+    protected void out(String response) throws FileOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("file_out")) { //The commands must come like "file_out command"
             try {

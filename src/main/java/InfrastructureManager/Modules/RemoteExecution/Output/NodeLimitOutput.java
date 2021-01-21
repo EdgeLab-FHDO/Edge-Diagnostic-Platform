@@ -15,7 +15,7 @@ public class NodeLimitOutput extends ModuleOutput {
     }
 
     @Override
-    public void out(String response) throws NodeLimitException {
+    protected void out(String response) throws NodeLimitException {
         String[] command = response.split(" ");
         if (command[0].equals("limit")) {
             try {
