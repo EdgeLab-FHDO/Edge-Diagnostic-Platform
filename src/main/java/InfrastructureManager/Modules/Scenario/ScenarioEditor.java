@@ -95,7 +95,8 @@ public class ScenarioEditor extends ModuleOutput {
      * @param path Path of the folder to save the file (Filename is automatic)
      */
     private void scenarioToFile(String path) throws ScenarioIOException {
-        path = path + scenario.getName() + ".json"; //Filename according to scenario name
+        String processedName = scenario.getName().substring(0, scenario.getName().indexOf('.'));
+        path = path + processedName + ".json"; //Filename according to scenario name
         try {
             mapper.writeValue(new File(path), this.scenario);
         } catch (IOException e) {

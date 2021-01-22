@@ -126,7 +126,7 @@ public class Scenario extends ModuleInput {
         currentIndex = 0;
         this.started = false;
         this.getRunner().exit();
-        System.out.println("FINISHED SCENARIO: " + this.getName());
+        //System.out.println("FINISHED SCENARIO: " + this.getName());
     }
     /**
      * Wait for executing the states according to their relative execution times

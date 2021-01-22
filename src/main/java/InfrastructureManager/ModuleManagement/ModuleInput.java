@@ -1,6 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Optional;
 import java.util.concurrent.Semaphore;
@@ -9,6 +10,7 @@ public abstract class ModuleInput {
 
     private final String name;
     private final Semaphore readingLock; //Binary semaphore to implement blocking on inputs
+    @JsonIgnore
     private Runner runner;
 
     public ModuleInput(String name) {
