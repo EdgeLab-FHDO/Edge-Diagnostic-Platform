@@ -1,11 +1,11 @@
-/*
 package InfrastructureManager.Modules.REST.InputUnitTests;
 
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class POSTInputTests {
     public static final String JSONExample = "{\"name\":\"example\",\"number\":874}";
 
     @BeforeClass
-    public static void setUpMasterAndStartServer() {
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException {
         String testIp = "http://localhost";
         int port = 4567;
         requestSpec = new RequestSpecBuilder().
@@ -67,9 +67,39 @@ public class POSTInputTests {
         Assert.assertEquals(expected, in2.read());
     }
 
-    @AfterClass
-    public static void stopServer() {
-        Master.getInstance().exitAll();
+    @Test
+    public void POSTInputWithUndefinedParametersToMapThrowsExceptionAndReturnsItInResponse() {
+        String path = "/rest/post_test13";
+        POSTInput in3 = new POSTInput("post3", path, "test3 $name $number", List.of("name"));
+        //Number was not included in the list
+        String expected = "Argument number was not defined to be parsed";
+        Thread thread = new Thread(() -> {
+            try {
+                in3.read();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start(); //To start the new ROUTE, this thread will just be blocked
+        Response response = given().spec(requestSpec).body(JSONExample).post(path);
+        Assert.assertEquals(500, response.getStatusCode());
+        Assert.assertEquals(expected, response.asString());
+        thread.interrupt();
+    }
+
+    @Test
+    public void POSTInputWithUnsupportedJSONParameterTypesThrowsExceptionAndReturnsItInResponse() {
+        String path = "/rest/post_test14";
+        POSTInput in4 = new POSTInput("post4", path, "test4 $name $array", List.of("name", "array"));
+        String JSONExampleWithArray = "{\"name\":\"example\",\"array\":[1,2,3]}";
+        String expected = "Parameter is not a String, Boolean or Number value";
+        Thread thread = new Thread(() -> {
+            try {
+                in4.read();
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start(); //To start the new ROUTE, this thread will just be blocked
+        Response response = given().spec(requestSpec).body(JSONExampleWithArray).post(path);
+        Assert.assertEquals(500, response.getStatusCode());
+        Assert.assertEquals(expected, response.asString());
+        thread.interrupt();
     }
 }
-*/

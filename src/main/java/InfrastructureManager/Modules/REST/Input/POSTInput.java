@@ -59,7 +59,7 @@ public class POSTInput extends ModuleInput {
                     this.customResponse = null;
                     response.status(500);
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (ParsingArgumentNotDefinedException | UnsupportedJSONTypeException e) {
                 e.printStackTrace();
                 response.body(e.getMessage());
                 response.status(500); //If argument not found, return internal error in response
@@ -93,8 +93,8 @@ public class POSTInput extends ModuleInput {
                 } else if(cleanValueName.equals("body")) {
                     finalCommand.append(object.getBody().replaceAll("\\s+",""));
                 } else {
-                    throw new ParsingArgumentNotDefinedException("Argument" + cleanValueName
-                            + "was not defined to be parsed");
+                    throw new ParsingArgumentNotDefinedException("Argument " + cleanValueName
+                            + " was not defined to be parsed");
                 }
             } else {
                 finalCommand.append(reading);

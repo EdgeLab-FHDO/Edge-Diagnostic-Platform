@@ -33,7 +33,7 @@ public class ParametrizedGETOutput extends GETOutput {
                             + this.getName());
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new RESTOutputException("Arguments missing for command" + response + " to REST Output "
+                throw new RESTOutputException("Arguments missing for command " + response + " to REST Output "
                         + this.getName());
             }
         }
