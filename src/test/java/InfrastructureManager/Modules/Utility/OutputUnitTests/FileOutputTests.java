@@ -16,11 +16,11 @@ import static InfrastructureManager.Modules.CommonTestingMethods.assertException
 public class FileOutputTests {
 
     private final FileOutput fileOutput = new FileOutput("util.fileOut");
-    private final String testPath = "src/test/resources/FileOutput/";
+    private final String testPath = "src/test/resources/Modules/Utility/FileOutput/";
 
     @BeforeClass
     public static void createTestFolder() throws Exception {
-        File testFolder = new File("src/test/resources/FileOutput/");
+        File testFolder = new File("src/test/resources/Modules/Utility/FileOutput/");
         if (!testFolder.exists()) {
             if (!testFolder.mkdir()) {
                 throw new Exception("Test folder could not be created in FileOutputTests");

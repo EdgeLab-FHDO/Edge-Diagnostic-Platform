@@ -25,7 +25,7 @@ public class ScenarioDispatcherTests {
     private final ByteArrayOutputStream outContent;
 
     public ScenarioDispatcherTests() throws IOException {
-        String scenarioPath = "src/test/resources/ScenarioResources/dummyScenario.json";
+        String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ObjectMapper mapper = new ObjectMapper();
         Scenario scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
         dispatcher = new ScenarioDispatcher("dummy.dispatcher", scenario);
@@ -34,7 +34,7 @@ public class ScenarioDispatcherTests {
 
     @BeforeClass
     public static void configureMaster() {
-        Master.changeConfigPath("src/test/resources/ScenarioResources/ScenarioConfiguration.json");
+        Master.changeConfigPath("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
         Master.resetInstance();
         Master.getInstance().startAllModules();
     }

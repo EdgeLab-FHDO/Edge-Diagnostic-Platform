@@ -1,7 +1,7 @@
 {
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
-    {"type": "ScenarioModule", "name": "dummy", "path": "src/test/resources/ScenarioResources/dummyScenario.json"}
+    {"type": "ScenarioModule", "name": "dummy", "path": "src/test/resources/Modules/Scenario/dummyScenario.json"}
   ],
 
   "connections" : [

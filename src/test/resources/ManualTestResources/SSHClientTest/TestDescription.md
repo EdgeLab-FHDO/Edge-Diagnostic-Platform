@@ -4,7 +4,7 @@
 Before running this test the following is required :
 
 - `dummy.sh` BASH script, located in `src/test/resources/ManualTestResources/SSHClientTest/dummy.sh`
-- Test configuration file, located in `src/test/resources/ManualTestResources/SSHClientTest/test-config.json`
+- Test configuration file, located in `src/test/resources/Modules/RemoteExecution/SSHClient/SSHClientConfiguration.json`
 - VM running any linux distro, with OpenSSH package installed (And port 22 open)
 
 ## Steps
@@ -16,7 +16,7 @@ Before running this test the following is required :
       - VM's IP address (using the `ifconfig` command)
       - SSH Port (Normally 22)
 
-2. Switch to the host PC where the Master is and change the configuration file to be the same as `test-config.json`
+2. Switch to the host PC where the Master is and change the configuration file to be the same as `SSHClientConfiguration.json`
    . In lines 16 and 17:
    
     ```
@@ -52,36 +52,33 @@ Used a VM with the following characteristics and configurations in VirtualBox:
 I used the following in the configuration file:
 ```json
 {
-  "ioData": {
-    "inputs": [
-      {"type": "ConsoleInput","name": "console_in"}
-    ],
-    "outputs": [
-      {"type": "MasterUtility","name": "util"},
-      {"type": "SSHClient","name": "ssh"}
-    ]
-  },
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {"type" : "RemoteExecutionModule", "name": "remote"}
+  ],
+
   "connections" : [
     {
-      "in" : "console_in",
-      "out" : "ssh",
+      "in" : "console.in",
+      "out" : "util.control",
       "commands" : {
-        "test_setup" : "ssh setup 192.168.0.127 22 jpcr3108 jp1234",
-        "send_dummy" : "ssh sendFile src/test/resources/ManualTestResources/SSHClientTest/dummy.sh /home/jpcr3108/dummy.sh",
+        "exit" : "util exit",
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "remote.ssh.out",
+      "commands" : {
+        "test_setup" : "ssh setup <$IP> <$PORT> <$USERNAME> <$PASSWORD>",
+        "send_dummy" : "ssh sendFile src/test/resources/ManualTestResources/SSHClientTest/dummy.sh /home/<$USERNAME>/dummy.sh",
         "see_files" : "ssh execute -f ls",
         "execute_dummy" : "ssh execute -b bash dummy.sh",
         "execute_dummy_sudo" : "ssh execute -b sudo bash dummy.sh",
         "check_processes" : "ssh execute -f ps -ef | grep dummy | grep -v grep",
         "kill $PID" : "ssh execute -f sudo kill $PID"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "util",
-      "commands" : {
-        "exit" : "util exit",
-        "start_rest_server" : "util runRunner RestServer",
-        "start_runner $runner_name" : "util runRunner $runner_name"
       }
     }
   ]

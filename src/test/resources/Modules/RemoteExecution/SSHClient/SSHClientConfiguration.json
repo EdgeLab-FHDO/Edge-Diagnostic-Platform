@@ -1,17 +1,23 @@
 {
-  "ioData": {
-    "inputs": [
-      {"type": "ConsoleInput","name": "console_in"}
-    ],
-    "outputs": [
-      {"type": "MasterUtility","name": "util"},
-      {"type": "SSHClient","name": "ssh"}
-    ]
-  },
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {"type" : "RemoteExecutionModule", "name": "remote"}
+  ],
+
   "connections" : [
     {
-      "in" : "console_in",
-      "out" : "ssh",
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit",
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "remote.ssh.out",
       "commands" : {
         "test_setup" : "ssh setup <$IP> <$PORT> <$USERNAME> <$PASSWORD>",
         "send_dummy" : "ssh sendFile src/test/resources/ManualTestResources/SSHClientTest/dummy.sh /home/<$USERNAME>/dummy.sh",
@@ -20,15 +26,6 @@
         "execute_dummy_sudo" : "ssh execute -b sudo bash dummy.sh",
         "check_processes" : "ssh execute -f ps -ef | grep dummy | grep -v grep",
         "kill $PID" : "ssh execute -f sudo kill $PID"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "util",
-      "commands" : {
-        "exit" : "util exit",
-        "start_rest_server" : "util runRunner RestServer",
-        "start_runner $runner_name" : "util runRunner $runner_name"
       }
     }
   ]

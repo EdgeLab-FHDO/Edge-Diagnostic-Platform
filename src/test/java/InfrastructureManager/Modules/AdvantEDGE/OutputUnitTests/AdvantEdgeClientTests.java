@@ -31,7 +31,7 @@ public class AdvantEdgeClientTests {
     @Test
     public void addScenarioRequestTest() throws ModuleExecutionException {
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
-        String scenarioPath = "src/test/resources/AdvantEdge/dummy-test.json";
+        String scenarioPath = "src/test/resources/Modules/AdvantEDGE/dummy-test.json";
         try {
             client.write("advantEdge create " + scenarioName + " " + scenarioPath);
         } catch (ErrorInResponseException ignored) {}
@@ -46,7 +46,7 @@ public class AdvantEdgeClientTests {
         File convertedScenarioFile = new File ("src/test/resources/AdvantEdge/dummy-test-to-convert.json");
 
         String path = "/platform-ctrl/v1/scenarios/" + scenarioName;
-        String YAMLScenarioPath = "src/test/resources/AdvantEdge/dummy-test-to-convert.yaml";
+        String YAMLScenarioPath = "src/test/resources/Modules/AdvantEDGE/dummy-test-to-convert.yaml";
         try {
             client.write("advantEdge create " + scenarioName + " " + YAMLScenarioPath);
         } catch (ErrorInResponseException ignored) {}
@@ -64,7 +64,7 @@ public class AdvantEdgeClientTests {
     @Test
     public void deployScenarioRequestTest() throws IOException, ModuleExecutionException {
         String path = "/platform-ctrl/v1/sandboxes/sandbox-" + scenarioName;
-        String jsonTestPath = "src/test/resources/AdvantEdge/deploy-scenario.json";
+        String jsonTestPath = "src/test/resources/Modules/AdvantEDGE/deploy-scenario.json";
         try {
             client.write("advantEdge deploy " + scenarioName);
         } catch (ErrorInResponseException ignored) {}
@@ -79,7 +79,7 @@ public class AdvantEdgeClientTests {
     public void updateNetworkCharacteristics() throws IOException, ModuleExecutionException {
         String sandboxName = "test";
         String path = "/" + sandboxName + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
-        String jsonTestPath = "src/test/resources/AdvantEdge/network-update-test.json";
+        String jsonTestPath = "src/test/resources/Modules/AdvantEDGE/network-update-test.json";
         try {
             client.write("advantEdge networkUpdate " + sandboxName + " fog-1 FOG 10 10 50 1 0");
         } catch (ErrorInResponseException ignored){}

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Master {
 
-    private static String configPath = "src/main/resources/Configuration.json";
+    private static String configPath = "src/main/resources/NewConfiguration.json";
     private List<PlatformModule> modules;
 
     private static Master instance = null;
@@ -166,8 +166,6 @@ public class Master {
             }
         }
         if (autostart) {
-            //Master.changeConfigPath("src/main/resources/NewConfiguration.json");
-            Master.changeConfigPath("src/test/resources/REST/RESTTestConfiguration.json");
             Master.getInstance().startAllModules();
         }
         else {

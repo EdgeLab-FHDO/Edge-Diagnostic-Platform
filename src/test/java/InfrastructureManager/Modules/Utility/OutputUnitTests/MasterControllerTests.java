@@ -14,7 +14,7 @@ public class MasterControllerTests {
 
     @BeforeClass
     public static void setUp() {
-        Master.changeConfigPath("src/test/resources/UtilityModule/UtilityModuleTestConfiguration.json");
+        Master.changeConfigPath("src/test/resources/Modules/Utility/UtilityModuleTestConfiguration.json");
         Master.resetInstance();
         Master.getInstance().startAllModules();
     }

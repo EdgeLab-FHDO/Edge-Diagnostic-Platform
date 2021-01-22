@@ -22,7 +22,7 @@ public class ScenarioEditorTests {
 
     @BeforeClass
     public static void configureMaster() {
-        Master.changeConfigPath("src/test/resources/ScenarioResources/ScenarioConfiguration.json");
+        Master.changeConfigPath("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
         Master.resetInstance();
         Master.getInstance().startAllModules();
     }
@@ -74,18 +74,18 @@ public class ScenarioEditorTests {
 
     @Test
     public void saveToFileTest() throws ModuleExecutionException {
-        File scenarioFile = new File("src/test/resources/ScenarioResources/" + scenarioName + ".json");
+        File scenarioFile = new File("src/test/resources/Modules/Scenario/" + scenarioName + ".json");
         editor.write("editor create " + scenarioName);
         editor.write("editor addEvent test_event0 1000");
         editor.write("editor addEvent test_event1 2000");
-        editor.write("editor toFile src/test/resources/ScenarioResources/");
+        editor.write("editor toFile src/test/resources/Modules/Scenario/");
         Assert.assertTrue(scenarioFile.exists());
         scenarioFile.deleteOnExit();
     }
 
     @Test
     public void loadFromFileTest() throws ModuleExecutionException {
-        editor.write("editor fromFile src/test/resources/ScenarioResources/dummyScenario.json");
+        editor.write("editor fromFile src/test/resources/Modules/Scenario/dummyScenario.json");
         String expected = "deploy_application" + "node_request" + "update_gui";
         String result = getConcatenatedEventCommandsInScenario();
         Assert.assertEquals(expected, result);

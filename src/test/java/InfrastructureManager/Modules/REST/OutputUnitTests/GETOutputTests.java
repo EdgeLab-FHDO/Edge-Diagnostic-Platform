@@ -31,7 +31,7 @@ public class GETOutputTests {
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        Master.changeConfigPath("src/test/resources/REST/RESTTestConfiguration.json");
+        Master.changeConfigPath("src/test/resources/Modules/REST/RESTTestConfiguration.json");
         Master.resetInstance();
         Master.getInstance().startModule("rest");
     }
