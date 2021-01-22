@@ -24,6 +24,7 @@ public class ModuleManager {
         this.factory = new ModuleFactory(data);
         this.connector = new ModuleConnector(data);
         this.initialized = true;
+        this.connected = false;
     }
 
     private void connectModules() {
