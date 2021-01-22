@@ -34,11 +34,11 @@ public class MasterController extends ModuleOutput {
                     case "stopModule" -> Master.getInstance().stopModule(command[2]);
                     case "pauseAllModules" -> Master.getInstance().pauseAllModules();
                     case "resumeAllModules" -> Master.getInstance().resumeAllModules();
-                    default -> throw new MasterControllerException("Invalid Command" + command[1]
+                    default -> throw new MasterControllerException("Invalid Command " + command[1]
                             + " for MasterController output");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new MasterControllerException("Arguments missing for command" + response
+                throw new MasterControllerException("Arguments missing for command " + response
                         + " to MasterController");
             }
         }

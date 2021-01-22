@@ -1,0 +1,32 @@
+{
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"}
+  ],
+
+  "connections" : [
+    {
+      "in" : "console.in",
+      "out" : "console.out",
+      "commands" : {
+        "test $param" : "console $param"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit",
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "util.fileOut",
+      "commands" : {
+        "create_file $path $content": "file_out create $path $content"
+      }
+    }
+  ]
+}

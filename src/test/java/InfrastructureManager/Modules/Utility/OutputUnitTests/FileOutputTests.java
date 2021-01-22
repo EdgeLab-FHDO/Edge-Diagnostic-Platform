@@ -1,6 +1,8 @@
-/*
 package InfrastructureManager.Modules.Utility.OutputUnitTests;
 
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
+import InfrastructureManager.Modules.Utility.Exception.FileOutput.InvalidEncodingException;
 import InfrastructureManager.Modules.Utility.FileOutput;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -13,7 +15,7 @@ import static InfrastructureManager.Modules.CommonTestingMethods.assertException
 
 public class FileOutputTests {
 
-    private final FileOutput fileOutput = new FileOutput("file_out");
+    private final FileOutput fileOutput = new FileOutput("util.fileOut");
     private final String testPath = "src/test/resources/FileOutput/";
 
     @BeforeClass
@@ -28,43 +30,43 @@ public class FileOutputTests {
 
 
     @Test
-    public void fileIsCreatedTest() {
+    public void fileIsCreatedTest() throws ModuleExecutionException {
         File file = new File(testPath + "test1");
-        fileOutput.out("file_out create "  + file.getPath() + " Test1");
+        fileOutput.write("file_out create "  + file.getPath() + " Test1");
         Assert.assertTrue(file.exists());
         file.deleteOnExit();
     }
 
     @Test
-    public void fileContentIsCorrectlyWrittenTest() throws IOException {
+    public void fileContentIsCorrectlyWrittenTest() throws IOException, ModuleExecutionException {
         String expected = "Test2Content";
         File file = new File( testPath + "test2");
-        fileOutput.out("file_out create "  + file.getPath() + " Test2Content");
+        fileOutput.write("file_out create "  + file.getPath() + " Test2Content");
         assertFileContent(file,expected);
     }
 
     @Test
-    public void fileContentCanHaveSpacesTest() throws IOException {
+    public void fileContentCanHaveSpacesTest() throws IOException, ModuleExecutionException {
         String expected = "Test 3\n\tContent";
         File file = new File( testPath + "test3");
-        fileOutput.out("file_out create "  + file.getPath() + " Test 3\n\tContent");
+        fileOutput.write("file_out create "  + file.getPath() + " Test 3\n\tContent");
         assertFileContent(file,expected);
     }
 
     @Test
-    public void appendCommandDoesNotOverwriteTest() throws IOException {
+    public void appendCommandDoesNotOverwriteTest() throws IOException, ModuleExecutionException {
         File file = new File(testPath + "test");
         createFileWithContent(file,"Old Text");
         String expected = "Old Text New Text";
-        fileOutput.out("file_out append " + file.getPath() + "  New Text");
+        fileOutput.write("file_out append " + file.getPath() + "  New Text");
         assertFileContent(file,expected);
     }
 
     @Test
-    public void appendCommandCreatesNewFileIfNecessary() throws IOException {
+    public void appendCommandCreatesNewFileIfNecessary() throws IOException, ModuleExecutionException {
         File file = new File(testPath + "file");
         String expected = "test";
-        fileOutput.out("file_out append " + file.getPath() + " test");
+        fileOutput.write("file_out append " + file.getPath() + " test");
         assertFileContent(file,expected);
     }
 
@@ -75,18 +77,18 @@ public class FileOutputTests {
     }
 
     @Test
-    public void encodingCanBeChangedTest() {
+    public void encodingCanBeChangedTest() throws ModuleExecutionException {
         String expected = "UTF-16";
-        fileOutput.out("file_out encoding UTF16");
+        fileOutput.write("file_out encoding UTF16");
         Assert.assertEquals(expected, fileOutput.getEncoding().name());
     }
 
     @Test
-    public void fileIsCreatedWithDifferentEncodingTest() throws IOException {
+    public void fileIsCreatedWithDifferentEncodingTest() throws IOException, ModuleExecutionException {
         String expected = Character.toString(0x2F81A); //Testing with '冬' character, which is differently encoded in UTF8 and UTF16
         File file = new File(testPath + "testEncoding");
-        fileOutput.out("file_out encoding UTF16");
-        fileOutput.out("file_out create " + file.getPath() + " " + expected);
+        fileOutput.write("file_out encoding UTF16");
+        fileOutput.write("file_out create " + file.getPath() + " " + expected);
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_16))) {
             Assert.assertEquals(expected,in.readLine());
         } finally {
@@ -95,13 +97,28 @@ public class FileOutputTests {
     }
 
     @Test
+    public void settingInvalidEncodingThrowsException() {
+        String command = "file_out encoding XYZ123";
+        String expected = "Specified encoding XYZ123 is not valid";
+        assertExceptionInOutput(InvalidEncodingException.class, expected, command);
+    }
+
+    @Test
     public void invalidCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "Invalid command for FileOutput", () -> fileOutput.out("file_out notACommand"));
+        String command = "file_out notACommand";
+        String expected = "Invalid command notACommand for FileOutput";
+        assertExceptionInOutput(FileOutputException.class, expected, command);
     }
 
     @Test
     public void incompleteCommandThrowsException() {
-        assertException(IllegalArgumentException.class, "Arguments missing for command - FileOutput",() -> fileOutput.out("file_out encoding"));
+        String command = "file_out encoding";
+        String expected = "Arguments missing for command " + command + " to FileOutput";
+        assertExceptionInOutput(FileOutputException.class, expected, command);
+    }
+
+    private void assertExceptionInOutput(Class<? extends Exception> exceptionClass, String expectedMessage, String command) {
+        assertException(exceptionClass, expectedMessage, () -> fileOutput.write(command));
     }
 
     private void assertFileContent(File file, String expected) throws IOException {
@@ -120,4 +137,3 @@ public class FileOutputTests {
         }
     }
 }
-*/
