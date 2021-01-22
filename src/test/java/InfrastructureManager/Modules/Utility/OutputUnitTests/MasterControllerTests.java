@@ -21,26 +21,26 @@ public class MasterControllerTests {
 
     @Test
     public void startingNonExistingModuleThrowsException() {
-        String command = "util startModule rest";
-        String expected = "Module rest was not found";
+        String command = "util startModule mm";
+        String expected = "Module mm was not found";
         assertExceptionInOutput(ModuleNotFoundException.class, expected, command);
     }
     @Test
     public void pausingNonExistingModuleThrowsException() {
-        String command = "util pauseModule rest";
-        String expected = "Module rest was not found";
+        String command = "util pauseModule mm";
+        String expected = "Module mm was not found";
         assertExceptionInOutput(ModuleNotFoundException.class, expected, command);
     }
     @Test
     public void resumingNonExistingModuleThrowsException() {
-        String command = "util resumeModule rest";
-        String expected = "Module rest was not found";
+        String command = "util resumeModule mm";
+        String expected = "Module mm was not found";
         assertExceptionInOutput(ModuleNotFoundException.class, expected, command);
     }
     @Test
     public void stoppingNonExistingModuleThrowsException() {
-        String command = "util stopModule rest";
-        String expected = "Module rest was not found";
+        String command = "util stopModule mm";
+        String expected = "Module mm was not found";
         assertExceptionInOutput(ModuleNotFoundException.class, expected, command);
     }
 
