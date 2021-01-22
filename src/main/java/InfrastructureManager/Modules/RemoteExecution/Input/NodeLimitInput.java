@@ -21,7 +21,7 @@ public class NodeLimitInput extends ModuleInput {
 
     @Override
     public String read() throws InterruptedException {
-        toSend = "set_limits" + waitForList();
+        toSend = "set_limits " + waitForList();
         String aux = toSend;
         toSend = "";
         return aux;

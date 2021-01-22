@@ -24,10 +24,10 @@ public class NodeLimitOutput extends ModuleOutput {
                         String period = command.length > 4 ? command[4] : "100000";
                         addToLimitList(command[2], command[3], period);
                     }
-                    default -> throw new NodeLimitException("Invalid command" + command[1] + " for NodeLimiter");
+                    default -> throw new NodeLimitException("Invalid command " + command[1] + " for NodeLimiter");
                 }
             } catch (IndexOutOfBoundsException e) {
-                throw new NodeLimitException("Arguments missing for command" + response  + " to NodeLimiter");
+                throw new NodeLimitException("Arguments missing for command " + response  + " to NodeLimiter");
             }
         }
     }

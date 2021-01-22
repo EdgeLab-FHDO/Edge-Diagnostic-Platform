@@ -18,6 +18,10 @@ public class LimitList {
         this.mapper = new ObjectMapper();
     }
 
+    public ConcurrentMap<String, String> getLimitList() {
+        return limitList;
+    }
+
     public String getListAsBody() throws InterruptedException {
         this.block.acquire();
         try {

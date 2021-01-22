@@ -44,7 +44,7 @@ public class SSHClient extends ModuleOutput {
                         switch (command[2]) {
                             case "-b" -> execute(toSend, true);
                             case "-f" -> execute(toSend, false);
-                            default -> throw new IllegalArgumentException("Wrong Display parameter in SSHClient execute command");
+                            default -> throw new SSHException("Wrong Display parameter in SSHClient execute command");
                         }
                     }
                     case "setup" -> setUpClient(command[2], command[3], command[4], command[5]);
@@ -52,7 +52,7 @@ public class SSHClient extends ModuleOutput {
                     default -> throw new SSHException("Invalid command " + command[1] + " for SSHClient");
                 }
             } catch (IndexOutOfBoundsException e){
-                throw new SSHException("Arguments missing for command" + response + " to SSHClient");
+                throw new SSHException("Arguments missing for command " + response + " to SSHClient");
             }
         }
     }
