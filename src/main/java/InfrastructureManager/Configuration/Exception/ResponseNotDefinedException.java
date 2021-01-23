@@ -5,6 +5,9 @@ package InfrastructureManager.Configuration.Exception;
  */
 public class ResponseNotDefinedException extends CommandSetException {
 
+    /**
+     * @param message Message to be set into the exception.
+     */
     public ResponseNotDefinedException(String message) {
         super(message);
     }
