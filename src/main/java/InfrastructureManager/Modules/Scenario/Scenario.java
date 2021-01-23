@@ -8,19 +8,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Class representing an scenario, as an object with a name and a list of events
  */
-@JsonIgnoreProperties({"startTime","current", "pausedTime", "resumedTime","started"})
+@JsonIgnoreProperties({"startBlock","startTime","current", "pausedTime", "resumedTime","started"})
 public class Scenario extends ModuleInput {
 
     private final List<Event> eventList;
+    private final Semaphore startBlock;
     private long startTime;
     private int currentIndex;
     private long pausedTime;
     private long resumedTime;
     private boolean started;
+
 
     /**
      * Constructor of the class
@@ -29,6 +32,7 @@ public class Scenario extends ModuleInput {
     public Scenario(@JsonProperty("name") String name) {
         super(name + ".scenario");
         this.eventList = new ArrayList<>();
+        this.startBlock = new Semaphore(0);
         this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
         this.currentIndex = 0;
         this.pausedTime = 0L;
@@ -39,7 +43,7 @@ public class Scenario extends ModuleInput {
     @Override
     public String read() throws InterruptedException {
         if (!started) {
-            this.block();
+            this.startBlock.acquire();
         }
         if (currentIndex < eventList.size()) {
             Event currentEvent = eventList.get(currentIndex);
@@ -107,7 +111,7 @@ public class Scenario extends ModuleInput {
     public void start() {
         currentIndex = 0;
         this.started = true;
-        this.unblock();
+        this.startBlock.release();
     }
 
     public void pause() {

@@ -29,6 +29,8 @@ public class POSTInput extends ModuleInput {
 
     private final Route POSTHandler;
     private String customResponse;
+
+    private final Semaphore readBlock;
     private final Semaphore responseBlock;
 
     /**
@@ -44,13 +46,14 @@ public class POSTInput extends ModuleInput {
         this.isActivated = false;
         this.toRead = new ArrayDeque<>();
         this.customResponse = null;
+        this.readBlock = new Semaphore(0);
         this.responseBlock = new Semaphore(0);
         this.POSTHandler = (Request request, Response response) -> {
             UnknownJSONObject o = new UnknownJSONObject(request.body());
             try {
                 this.toRead.offer(this.substituteCommand(command,o));
-                this.unblock();
-                this.responseBlock.acquire();
+                this.readBlock.release(); //Unblock the reading
+                this.responseBlock.acquire(); //Block until information for response is available
                 if (this.customResponse == null) {
                     response.status(200);
                     response.body("200");
@@ -112,7 +115,7 @@ public class POSTInput extends ModuleInput {
         if (!isActivated) {
             activate();
         }
-        this.block(); //Wait on requests
+        this.readBlock.acquire(); //Wait on requests
         return this.toRead.poll();
     }
 
@@ -122,7 +125,7 @@ public class POSTInput extends ModuleInput {
             outputException.printStackTrace();
             this.customResponse = outputException.getMessage();
         }
-        this.responseBlock.release();
+        this.responseBlock.release(); //Unblock the thread in charge of responding the request
     }
 
     /**
