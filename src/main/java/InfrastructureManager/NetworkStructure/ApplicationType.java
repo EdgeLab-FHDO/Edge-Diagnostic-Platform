@@ -25,6 +25,12 @@ public class ApplicationType {
 		this.networkSpecification =  networkSpecification;
 	}
 	
+	public ApplicationType() {
+		this.applicationId = 0;
+		this.computeSpecification = new ComputeRequirements();
+		this.networkSpecification = new NetworkRequirements();
+	}
+	
 	public ApplicationType(int applicationId) {
 		this.applicationId = applicationId;
 		this.computeSpecification = new ComputeRequirements();

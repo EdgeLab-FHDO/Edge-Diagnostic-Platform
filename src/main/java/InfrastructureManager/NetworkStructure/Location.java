@@ -26,6 +26,12 @@ public class Location {
 	}
 	
 
+	public Location() {
+		this.locationId = 0;
+		this.latitude = 0.0f;
+		this.longitude = 0.0f;
+	}
+	
 	public Location(int locationId) {
 		this.locationId = locationId;
 		this.latitude = 0.0f;
@@ -62,25 +68,6 @@ public class Location {
 		return validRange;
 	}
 	
-	//To be moved to different class later
-	//source - https://www.geodatasource.com/developers/java and https://www.w3resource.com/java-exercises/basic/java-basic-exercise-36.php
-	public double calculateDistance(Location source,Location destination)
-	{
-		double earthRadius = 6371.01; //Kilometers
-		double distance = 0;
-		if ((source.getLatitude() == destination.getLatitude()) && (source.getLongitude() == destination.getLongitude())) {
-			distance =  0;
-			}
-
-		else {
-			double theta = source.getLongitude() - destination.getLongitude();
-			double sourceLatitudeRadians = Math.toRadians(source.getLatitude());
-			double destinationLatitudeRadians = Math.toRadians(destination.getLatitude());
-	        distance = Math.acos(Math.sin(sourceLatitudeRadians)*Math.sin(destinationLatitudeRadians) + Math.cos(sourceLatitudeRadians)*Math.cos(destinationLatitudeRadians)*Math.cos(Math.toRadians(theta)));
-	        distance = earthRadius * distance;     
-	        }
-		return distance;
-	}
 }
 	
 	

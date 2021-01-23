@@ -25,4 +25,9 @@ public class Connection {
         this.networkCapacity = networkCapacity;
     }
     
+    public Connection() {
+        this.connectionId = 0;
+        this.networkCapacity = new NetworkLimits();
+    }
+    
 }

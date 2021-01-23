@@ -11,6 +11,16 @@ public class ApplicationInstance {
 		this.applicationState = State.IDLE;
 	}
 	
+	public ApplicationInstance(int applicationId) {
+	this.application = new ApplicationType(applicationId);
+	this.applicationState = State.IDLE;
+	}
+	
+	public ApplicationInstance() {
+	this.application = new ApplicationType(0);
+	this.applicationState = State.IDLE;
+	}
+	
 	public ApplicationType getApplicationInstancce() {
 		return application;
 	}
