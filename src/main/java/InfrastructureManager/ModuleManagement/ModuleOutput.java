@@ -1,32 +1,24 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedException;
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 
 public abstract class ModuleOutput {
     private final String name;
-    private ModuleState moduleState;
+    private final PlatformModule ownerModule;
 
-    public ModuleOutput(String name) {
+    public ModuleOutput(PlatformModule ownerModule, String name) {
         this.name = name;
+        this.ownerModule = ownerModule;
     }
-
-    public void reportState(ModuleState state) {
-        this.moduleState = state;
-    }
-
 
     public String getName() {
         return name;
     }
 
-    public void write(String response) throws IllegalArgumentException, ModuleExecutionException {
-        if (this.moduleState == ModuleState.PAUSED) {
-            throw new ModulePausedException("Cannot write to output, Module is paused");
-        }
-        out(response);
+    public ModuleState getOwnerModuleState() {
+        return this.ownerModule.getState();
     }
 
-    protected abstract void out (String response) throws ModuleExecutionException;
+    public abstract void execute(String response) throws ModuleExecutionException;
 }

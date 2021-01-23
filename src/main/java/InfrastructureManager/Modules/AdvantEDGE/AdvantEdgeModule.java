@@ -16,7 +16,7 @@ public class AdvantEdgeModule  extends PlatformModule {
         AdvantEdgeModuleConfigData castedData = (AdvantEdgeModuleConfigData) data;
         this.setName(castedData.getName());
         setInputs(); //No inputs
-        setOutputs(new AdvantEdgeClient(this.getName() + ".out", castedData.getAddress(),
+        setOutputs(new AdvantEdgeClient(this, this.getName() + ".out", castedData.getAddress(),
                 castedData.getPort()));
     }
 }

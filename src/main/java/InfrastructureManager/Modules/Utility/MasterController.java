@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.Utility;
 import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Utility.Exception.MasterController.MasterControllerException;
 
 /**
@@ -10,8 +11,8 @@ import InfrastructureManager.Modules.Utility.Exception.MasterController.MasterCo
  */
 public class MasterController extends ModuleOutput {
 
-    public MasterController(String name) {
-        super(name);
+    public MasterController(PlatformModule module, String name) {
+        super(module,name);
     }
 
 
@@ -22,7 +23,7 @@ public class MasterController extends ModuleOutput {
      * @throws MasterControllerException If the command passed is invalid or incomplete
      */
     @Override
-    protected void out(String response) throws ModuleNotFoundException, MasterControllerException {
+    public void execute(String response) throws ModuleNotFoundException, MasterControllerException {
         String[] command = response.split(" ");
         if (command[0].equals("util")) {
             try {

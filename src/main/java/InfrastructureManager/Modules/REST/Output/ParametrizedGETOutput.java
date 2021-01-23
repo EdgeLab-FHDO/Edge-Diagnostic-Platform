@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST.Output;
 
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import spark.Request;
 import spark.Response;
@@ -17,13 +18,13 @@ public class ParametrizedGETOutput extends GETOutput {
      * @param name Name of the output
      * @param URL Path in which the GET handler will be set (Resource will be created)
      */
-    public ParametrizedGETOutput(String name, String URL, String parameter) {
-        super(name, URL);
+    public ParametrizedGETOutput(PlatformModule module, String name, String URL, String parameter) {
+        super(module,name, URL);
         this.parameter = parameter;
     }
 
     @Override
-    protected void out(String response) throws RESTOutputException {
+    public void execute(String response) throws RESTOutputException {
         String[] command = response.split(" ",4);
         if (command[0].equals("toGET")) {
             try {

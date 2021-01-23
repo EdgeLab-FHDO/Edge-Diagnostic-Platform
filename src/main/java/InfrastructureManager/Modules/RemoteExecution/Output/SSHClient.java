@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.ClientNotInitializedException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.CommandExecution.CommandExecutionException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.FileSendingException;
@@ -24,8 +25,8 @@ public class SSHClient extends ModuleOutput {
     private int port;
 
 
-    public SSHClient(String name) {
-        super(name);
+    public SSHClient(PlatformModule module, String name) {
+        super(module, name);
         this.jsch = new JSch();
         this.username = null;
         this.password = null;
@@ -34,7 +35,7 @@ public class SSHClient extends ModuleOutput {
     }
 
     @Override
-    protected void out(String response) throws SSHException {
+    public void execute(String response) throws SSHException {
         String[] command = response.split(" ");
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
             try {

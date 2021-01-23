@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Console.Exception.ConsoleOutputException;
 
 import java.util.Arrays;
@@ -10,8 +11,8 @@ import java.util.Arrays;
  */
 public class ConsoleOutput extends ModuleOutput {
 
-    public ConsoleOutput(String name) {
-        super(name);
+    public ConsoleOutput(PlatformModule module, String name) {
+        super(module, name);
     }
     /**
      * Method for outputting to the console
@@ -19,7 +20,7 @@ public class ConsoleOutput extends ModuleOutput {
      * @throws ConsoleOutputException if the command is missing arguments
      */
     @Override
-    protected void out(String response) throws ConsoleOutputException {
+    public void execute(String response) throws ConsoleOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("console")) { //The commands must come like "console command"
             try {

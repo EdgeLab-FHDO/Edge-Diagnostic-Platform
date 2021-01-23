@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.Scenario;
 import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 
@@ -18,8 +19,8 @@ public class ScenarioDispatcher extends ModuleOutput {
     private final Scenario scenario;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher(String name, Scenario scenario) {
-        super(name);
+    public ScenarioDispatcher(PlatformModule module, String name, Scenario scenario) {
+        super(module,name);
         this.scenario = scenario;
     }
 
@@ -37,7 +38,7 @@ public class ScenarioDispatcher extends ModuleOutput {
      * @throws ModuleNotFoundException If the scenario to be run doesn't have an underlying module assigned
      */
     @Override
-    protected void out(String response) throws ScenarioDispatcherException, InvalidTimeException, ModuleNotFoundException {
+    public void execute(String response) throws ScenarioDispatcherException, InvalidTimeException, ModuleNotFoundException {
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
             try {

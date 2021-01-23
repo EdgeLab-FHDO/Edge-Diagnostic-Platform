@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.AdvantEDGE.Output;
 
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.ErrorInResponseException;
 import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkCharacteristicsUpdate;
@@ -27,8 +28,8 @@ public class AdvantEdgeClient extends ModuleOutput {
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
-    public AdvantEdgeClient(String name,String address, int port) {
-        super(name);
+    public AdvantEdgeClient(PlatformModule module, String name, String address, int port) {
+        super(module, name);
         this.requestPath = address + ":" + port;
     }
 
@@ -44,7 +45,7 @@ public class AdvantEdgeClient extends ModuleOutput {
      * @throws IllegalArgumentException If the command is not defined or is missing arguments
      */
     @Override
-    protected void out(String response) throws AdvantEdgeModuleException {
+    public void execute(String response) throws AdvantEdgeModuleException {
         String[] command = response.split(" ");
         if (command[0].equals("advantEdge")) { //The commands must come like "advantEdge command"
             try {

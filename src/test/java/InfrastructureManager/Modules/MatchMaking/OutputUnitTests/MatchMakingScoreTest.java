@@ -4,6 +4,7 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
@@ -18,20 +19,21 @@ import java.util.regex.Pattern;
 public class MatchMakingScoreTest {
 
     private final MatchesList matchesList = new MatchesList();
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput("mm", MatchMakerType.SCORE_BASED, matchesList);
+    private final MatchMakingModule module = new MatchMakingModule();
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", MatchMakerType.SCORE_BASED, matchesList);
 
     @Before
     public void register3NodesAnd2Clients() throws ModuleExecutionException {
         String node1AsString = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
-        matchMaker.write("matchMaker register_node " + node1AsString);
+        matchMaker.execute("matchMaker register_node " + node1AsString);
         String node2AsString = "{\"id\":\"node2\",\"ipAddress\":\"92.183.84.109:42589\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":33}";
-        matchMaker.write("matchMaker register_node " + node2AsString);
+        matchMaker.execute("matchMaker register_node " + node2AsString);
         String node3AsString = "{\"id\":\"node3\",\"ipAddress\":\"138.134.15.25:25545\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":77}";
-        matchMaker.write("matchMaker register_node " + node3AsString);
+        matchMaker.execute("matchMaker register_node " + node3AsString);
         String client1AsString = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
-        matchMaker.write("matchMaker register_client " + client1AsString);
+        matchMaker.execute("matchMaker register_client " + client1AsString);
         String client2AsString = "{\"id\":\"client2\",\"reqNetwork\":20,\"reqResource\":40,\"location\":42}";
-        matchMaker.write("matchMaker register_client " + client2AsString);
+        matchMaker.execute("matchMaker register_client " + client2AsString);
     }
 
 
@@ -39,7 +41,7 @@ public class MatchMakingScoreTest {
     public void nodeListUpdatesCorrectlyTest() throws ModuleExecutionException {
         //Changed IP
         String modifiedNode1AsString = "{\"id\":\"node1\",\"ipAddress\":\"40.16.64.123:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
-        matchMaker.write("matchMaker register_node " + modifiedNode1AsString);
+        matchMaker.execute("matchMaker register_node " + modifiedNode1AsString);
         Assert.assertEquals(3, matchMaker.getNodeList().size()); //Size is still 3;
         EdgeNode node1 = matchMaker.getNodeList().get(0);
         Assert.assertEquals("40.16.64.123:30968", node1.getIpAddress());
@@ -49,7 +51,7 @@ public class MatchMakingScoreTest {
     public void clientListUpdatesCorrectlyTest() throws ModuleExecutionException {
         //Changed reqNetwork 5 -> 10
         String modifiedClient1AsString = "{\"id\":\"client1\",\"reqNetwork\":10,\"reqResource\":10,\"location\":54}";
-        matchMaker.write("matchMaker register_client " + modifiedClient1AsString);
+        matchMaker.execute("matchMaker register_client " + modifiedClient1AsString);
         Assert.assertEquals(2,matchMaker.getClientList().size());
         EdgeClient client1 = matchMaker.getClientList().get(0);
         Assert.assertEquals(10,client1.getReqNetwork());
@@ -58,7 +60,7 @@ public class MatchMakingScoreTest {
     @Test
     public void assignCorrectlyNodeToClientTest() throws Exception {
 
-        matchMaker.write("matchMaker assign_client client1");
+        matchMaker.execute("matchMaker assign_client client1");
         //client1 should be mapped to node1
         String thisShouldBeNode1 = getNodeIDFromJSON(matchesList.getMapping().get("client1"));
         Assert.assertEquals("node1", thisShouldBeNode1);
@@ -66,9 +68,9 @@ public class MatchMakingScoreTest {
 
     @Test
     public void disconnectAndChangeInScoreTest() throws Exception {
-        matchMaker.write("matchMaker assign_client client1");
+        matchMaker.execute("matchMaker assign_client client1");
         //job failed -> client 1 score with node 1 should be 10
-        matchMaker.write("matchMaker disconnect_client {\"id\":\"client1\",\"message\":\"job_failed\"}");
+        matchMaker.execute("matchMaker disconnect_client {\"id\":\"client1\",\"message\":\"job_failed\"}");
         EdgeClientHistory client1History = matchMaker.getClientList().get(0).getClientHistory();
         long thisShouldBe10  = client1History.getHistoryScore("node1");
         Assert.assertEquals(10,thisShouldBe10);
@@ -79,7 +81,7 @@ public class MatchMakingScoreTest {
             e.printStackTrace();
         }
         //Re assign client 1
-        matchMaker.write("matchMaker assign_client client1");
+        matchMaker.execute("matchMaker assign_client client1");
         //2s passed, clint1-node1 score should be 8
         long thisShouldBe8  =  matchMaker.getClientList().get(0).getClientHistory().getHistoryScore("node1");
         Assert.assertEquals(8,thisShouldBe8);

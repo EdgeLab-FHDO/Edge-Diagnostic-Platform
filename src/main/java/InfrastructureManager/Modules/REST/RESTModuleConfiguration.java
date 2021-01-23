@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.REST;
 
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
 import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.Output.ParametrizedGETOutput;
@@ -24,11 +25,12 @@ public class RESTModuleConfiguration {
         return result.toArray(new ModuleInput[0]);
     }
 
-    public static ModuleOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, String moduleName) {
+    public static ModuleOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, PlatformModule module) {
         List<ModuleOutput> result = new ArrayList<>();
+        String moduleName =  module.getName();
         for (GETOutputConfigData outputData : data) {
             String name = createName(outputData,moduleName);
-            result.add(getTypedOutput(name, baseURL + outputData.getURL()));
+            result.add(getTypedOutput(module,name, baseURL + outputData.getURL()));
         }
         return result.toArray(new ModuleOutput[0]);
     }
@@ -37,12 +39,12 @@ public class RESTModuleConfiguration {
         return moduleName + "." + data.getName();
     }
 
-    private static GETOutput getTypedOutput(String name, String URL) {
+    private static GETOutput getTypedOutput(PlatformModule module, String name, String URL) {
         String parameter = getRESTPathParameter(URL);
         if (parameter == null) {
-            return new GETOutput(name, URL);
+            return new GETOutput(module,name, URL);
         } else {
-            return new ParametrizedGETOutput(name, URL,parameter);
+            return new ParametrizedGETOutput(module,name, URL,parameter);
         }
     }
 

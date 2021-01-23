@@ -23,7 +23,7 @@ public class RESTModule extends PlatformModule {
         this.setName(name);
         RestServerRunner.configure("REST_SERVER", castedData.getPort());
         setInputs(RESTModuleConfiguration.getInputsFromData(castedData.getPOSTInputs(), baseURL, name));
-        setOutputs(RESTModuleConfiguration.getOutputsFromData(castedData.getGETOutputs(), baseURL, name));
+        setOutputs(RESTModuleConfiguration.getOutputsFromData(castedData.getGETOutputs(), baseURL, this));
     }
 
     private void startServerThread() {

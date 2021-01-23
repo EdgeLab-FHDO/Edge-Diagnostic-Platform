@@ -4,25 +4,27 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.Modules.RemoteExecution.Input.NodeLimitInput;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 import InfrastructureManager.Modules.RemoteExecution.Output.NodeLimitOutput;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class NodeLimitInputTests {
 
     private final LimitList list = new LimitList();
-    private final NodeLimitOutput output = new NodeLimitOutput("limit.out", list);
+    RemoteExecutionModule module = new RemoteExecutionModule();
+    private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out", list);
     private final NodeLimitInput input = new NodeLimitInput("limit.in", list);
 
     @Test
     public void limitBodyIsCorrectWithDefaultPeriod() throws ModuleExecutionException, InterruptedException {
-        output.write("limit cores node1 0.7");
+        output.execute("limit cores node1 0.7");
         String expected = "set_limits {\"node1\":\"70000_100000\"}";
         Assert.assertEquals(expected, input.read());
     }
 
     @Test
     public void limitBodyIsCorrectWithCustomPeriod() throws ModuleExecutionException, InterruptedException {
-        output.write("limit cores node1 0.7 1000");
+        output.execute("limit cores node1 0.7 1000");
         String expected = "set_limits {\"node1\":\"700_1000\"}";
         Assert.assertEquals(expected, input.read());
     }

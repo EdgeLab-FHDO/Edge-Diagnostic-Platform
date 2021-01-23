@@ -15,6 +15,6 @@ public class ConsoleModule extends PlatformModule {
     public void configure(ModuleConfigData data) {
         this.setName(data.getName());
         setInputs(new ConsoleInput(this.getName() + ".in"));
-        setOutputs(new ConsoleOutput(this.getName() + ".out"));
+        setOutputs(new ConsoleOutput(this,this.getName() + ".out"));
     }
 }

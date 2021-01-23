@@ -6,14 +6,16 @@ import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.ClientNotInit
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.InvalidFileException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.SSHException;
 import InfrastructureManager.Modules.RemoteExecution.Output.SSHClient;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import org.junit.Test;
 
 public class SSHClientTests {
 
-    private final SSHClient client = new SSHClient("test_ssh");
+    private final RemoteExecutionModule module = new RemoteExecutionModule();
+    private final SSHClient client = new SSHClient(module,"test_ssh");
 
     private void assertExceptionInClient(Class<? extends  Throwable> exceptionClass, String expectedMessage, String commandToClient) {
-        CommonTestingMethods.assertException(exceptionClass,expectedMessage,() -> client.write(commandToClient));
+        CommonTestingMethods.assertException(exceptionClass,expectedMessage,() -> client.execute(commandToClient));
     }
 
     @Test
@@ -53,7 +55,7 @@ public class SSHClientTests {
 
     @Test
     public void invalidFileThrowsException() throws ModuleExecutionException {
-        client.write("ssh setup 192.168.0.1 22 username pass");
+        client.execute("ssh setup 192.168.0.1 22 username pass");
         String command = "ssh sendFile /file1 /home/file2";
         String expected = "Invalid File in /file1";
         assertExceptionInClient(InvalidFileException.class, expected, command);

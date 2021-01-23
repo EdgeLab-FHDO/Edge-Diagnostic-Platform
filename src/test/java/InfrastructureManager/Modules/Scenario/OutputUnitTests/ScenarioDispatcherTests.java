@@ -8,6 +8,7 @@ import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioDispatcher;
+import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.*;
 
@@ -23,12 +24,14 @@ public class ScenarioDispatcherTests {
     private final ScenarioDispatcher dispatcher;
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent;
+    private final ScenarioModule module = new ScenarioModule();
 
     public ScenarioDispatcherTests() throws IOException {
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ObjectMapper mapper = new ObjectMapper();
         Scenario scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
-        dispatcher = new ScenarioDispatcher("dummy.dispatcher", scenario);
+
+        dispatcher = new ScenarioDispatcher(module,"dummy.dispatcher", scenario);
         outContent = new ByteArrayOutputStream();
     }
 
@@ -72,7 +75,7 @@ public class ScenarioDispatcherTests {
     @Test
     public void runningAScenarioNotRelatedToAModuleThrowsException() {
         Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher("aName.dispatcher", otherScenario);
+        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
         String expected = "Module aName was not found";
         assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher run");
     }
@@ -80,7 +83,7 @@ public class ScenarioDispatcherTests {
     @Test
     public void pausingAScenarioNotRelatedToAModuleThrowsException() {
         Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher("aName.dispatcher", otherScenario);
+        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
         String expected = "Module aName was not found";
         assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher pause");
 
@@ -88,7 +91,7 @@ public class ScenarioDispatcherTests {
     @Test
     public void resumingAScenarioNotRelatedToAModuleThrowsException() {
         Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher("aName.dispatcher", otherScenario);
+        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
         String expected = "Module aName was not found";
         assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher resume");
 
@@ -96,7 +99,7 @@ public class ScenarioDispatcherTests {
     @Test
     public void stoppingAScenarioNotRelatedToAModuleThrowsException() {
         Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher("aName.dispatcher", otherScenario);
+        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
         String expected = "Module aName was not found";
         assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher stop");
 
@@ -104,7 +107,7 @@ public class ScenarioDispatcherTests {
 
 
     public void assertExceptionInOutput(ScenarioDispatcher output,Class<? extends  Throwable> exceptionClass, String expectedMessage, String command) {
-        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.write(command));
+        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.execute(command));
     }
 
     @Before //For testing the Standard Output
@@ -131,7 +134,7 @@ public class ScenarioDispatcherTests {
 
         String expected = "helmChartExecution\n" + "matchMakingExecution\n" +
                 "GUIUpdateExecution\n";
-        dispatcher.write("dispatcher run");
+        dispatcher.execute("dispatcher run");
         //Waiting for all the events to be executed in time
         waitFor(WAITING_TIME);
         Assert.assertEquals(expected,outContent.toString().replaceAll("\r",""));
@@ -143,7 +146,7 @@ public class ScenarioDispatcherTests {
         String expected = "helmChartExecution\n" + "matchMakingExecution\n" +
                 "GUIUpdateExecution\n";
         int delay = 2000; //2 seconds delay
-        dispatcher.write("dispatcher run -d -r " + delay);
+        dispatcher.execute("dispatcher run -d -r " + delay);
         //Waiting for all the events to be executed in time
         waitFor(WAITING_TIME + delay);
         Assert.assertEquals(expected,outContent.toString().replaceAll("\r",""));

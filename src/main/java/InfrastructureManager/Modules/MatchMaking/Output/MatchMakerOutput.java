@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
@@ -29,8 +30,8 @@ public class MatchMakerOutput extends ModuleOutput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
-    public MatchMakerOutput(String name, MatchMakerType type, MatchesList mapping) {
-        super(name);
+    public MatchMakerOutput(PlatformModule module, String name, MatchMakerType type, MatchesList mapping) {
+        super(module,name);
         this.type = type;
         this.sharedMatchesList = mapping;
         this.algorithm = algorithmFromType();
@@ -387,7 +388,7 @@ public class MatchMakerOutput extends ModuleOutput {
     }
 
     @Override
-    protected void out(String response) throws MatchMakingModuleException {
+    public void execute(String response) throws MatchMakingModuleException {
         String[] commandLine = response.split(" ");
         if (commandLine[0].equals("matchMaker")) {
             try {

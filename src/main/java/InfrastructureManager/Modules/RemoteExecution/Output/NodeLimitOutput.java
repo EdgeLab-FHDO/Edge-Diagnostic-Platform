@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.InvalidLimitParametersException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.NodeLimitException;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
@@ -9,13 +10,13 @@ public class NodeLimitOutput extends ModuleOutput {
 
     private final LimitList sharedList;
 
-    public NodeLimitOutput(String name, LimitList list) {
-        super(name);
+    public NodeLimitOutput(PlatformModule module, String name, LimitList list) {
+        super(module,name);
         this.sharedList = list;
     }
 
     @Override
-    protected void out(String response) throws NodeLimitException {
+    public void execute(String response) throws NodeLimitException {
         String[] command = response.split(" ");
         if (command[0].equals("limit")) {
             try {

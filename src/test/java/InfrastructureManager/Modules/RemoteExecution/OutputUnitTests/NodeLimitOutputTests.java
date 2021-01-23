@@ -6,28 +6,30 @@ import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.Invalid
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.NodeLimitException;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 import InfrastructureManager.Modules.RemoteExecution.Output.NodeLimitOutput;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class NodeLimitOutputTests {
 
     private final LimitList list = new LimitList();
-    private final NodeLimitOutput output = new NodeLimitOutput("limit.out", list);
+    RemoteExecutionModule module = new RemoteExecutionModule();
+    private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out", list);
 
     private void assertExceptionInOutput(Class<? extends Exception> exceptionClass, String expectedMessage, String command) {
-        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.write(command));
+        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.execute(command));
     }
 
     @Test
     public void limitsAreAddedWithDefaultPeriod() throws ModuleExecutionException {
-        output.write("limit cores node1 0.5");
+        output.execute("limit cores node1 0.5");
         String expectedLimitForNode1 = "50000_100000";
         Assert.assertEquals(expectedLimitForNode1, list.getLimitList().get("node1"));
     }
 
     @Test
     public void limitsAreAddedWithCustomPeriod() throws ModuleExecutionException {
-        output.write("limit cores node1 0.5 1000");
+        output.execute("limit cores node1 0.5 1000");
         String expectedLimitForNode1 = "500_1000";
         Assert.assertEquals(expectedLimitForNode1, list.getLimitList().get("node1"));
     }

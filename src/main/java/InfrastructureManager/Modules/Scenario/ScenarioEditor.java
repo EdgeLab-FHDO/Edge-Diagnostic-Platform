@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioIOException;
@@ -23,8 +24,8 @@ public class ScenarioEditor extends ModuleOutput {
     private Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(String name) {
-        super(name);
+    public ScenarioEditor(PlatformModule module, String name) {
+        super(module,name);
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
@@ -41,7 +42,7 @@ public class ScenarioEditor extends ModuleOutput {
      * internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
      */
     @Override
-    protected void out(String response) throws ScenarioEditorException {
+    public void execute(String response) throws ScenarioEditorException {
         String[] command = response.split(" ");
         if (command[0].equals("editor")) {
             try {

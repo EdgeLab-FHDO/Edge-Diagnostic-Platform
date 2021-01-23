@@ -9,7 +9,6 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedE
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 public abstract class PlatformModule {
 
@@ -31,8 +30,11 @@ public abstract class PlatformModule {
             } else {
                 for (Connection c : runner.getConnections()) {
                     try {
-                        String mapping = this.execute(fromInput,c.getCommands());
-                        c.getOut().write(mapping);
+                        String mapping = this.processCommand(fromInput,c.getCommands());
+                        if (c.getOut().getOwnerModuleState() == ModuleState.PAUSED) {
+                            throw new ModulePausedException("Cannot write to output, Module is paused");
+                        }
+                        c.getOut().execute(mapping);
                         input.response(null);
                     } catch (ModuleExecutionException e) {
                         input.response(e);
@@ -43,7 +45,7 @@ public abstract class PlatformModule {
         } catch (InterruptedException e){
             throw new ModuleStoppedException();
         }
-    }; //For other functionalities can be overriden
+    }; //For other functionalities can be overridden
 
     protected PlatformModule() {
         this.state = ModuleState.INITIAL;
@@ -70,7 +72,6 @@ public abstract class PlatformModule {
 
     protected void setOutputs(ModuleOutput... outputs) {
         this.outputs.addAll(Arrays.asList(outputs));
-        reportStateToOutputs();
     }
 
     public List<ModuleInput> getInputs() {
@@ -121,20 +122,17 @@ public abstract class PlatformModule {
             inputRunnerThreads.forEach(Thread::start);
         }
         state = ModuleState.RUNNING;
-        reportStateToOutputs();
     }
 
     public void pause() {
         inputRunners.forEach(Runner::pause);
         state = ModuleState.PAUSED;
-        reportStateToOutputs();
         System.out.println("PAUSED: " + name);
     }
 
     public void resume() {
         inputRunners.forEach(Runner::resume);
         state = ModuleState.RUNNING;
-        reportStateToOutputs();
         System.out.println("RESUMED: " + name);
     }
 
@@ -163,11 +161,7 @@ public abstract class PlatformModule {
         }
     }
 
-    public String execute(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
+    public String processCommand(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
-    }
-
-    private void reportStateToOutputs() {
-        outputs.forEach(o -> o.reportState(this.state));
     }
 }

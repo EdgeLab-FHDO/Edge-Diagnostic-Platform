@@ -19,6 +19,6 @@ public class MatchMakingModule extends PlatformModule {
         setName(name);
         MatchesList sharedList = new MatchesList();
         setInputs(new MatchMakerInput(name + ".in", sharedList));
-        setOutputs(new MatchMakerOutput(name + ".out", castedData.getMatchMakerType(), sharedList));
+        setOutputs(new MatchMakerOutput(this,name + ".out", castedData.getMatchMakerType(), sharedList));
     }
 }

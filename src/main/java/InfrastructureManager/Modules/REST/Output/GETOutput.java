@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.REST.Output;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
@@ -33,8 +34,8 @@ public class GETOutput extends ModuleOutput {
      * @param name Name of the output
      * @param URL Path in which the GET handler will be set (Resource will be created)
      */
-    public GETOutput(String name, String URL) {
-        super(name);
+    public GETOutput(PlatformModule module, String name, String URL) {
+        super(module,name);
         this.toSend = "";
         this.URL = URL;
         this.isActivated = false;
@@ -47,7 +48,7 @@ public class GETOutput extends ModuleOutput {
      * @throws RESTOutputException if an invalid or incomplete command is passed
      */
     @Override
-    protected void out(String response) throws RESTOutputException {
+    public void execute(String response) throws RESTOutputException {
         String[] command = response.split(" ",3);
         if (command[0].equals("toGET")) {
             try {

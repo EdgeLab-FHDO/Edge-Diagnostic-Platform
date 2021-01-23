@@ -5,12 +5,14 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFound
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Utility.Exception.MasterController.MasterControllerException;
 import InfrastructureManager.Modules.Utility.MasterController;
+import InfrastructureManager.Modules.Utility.UtilityModule;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MasterControllerTests {
 
-    private final MasterController output = new MasterController("util.control");
+    private final UtilityModule module = new UtilityModule();
+    private final MasterController output = new MasterController(module,"util.control");
 
     @BeforeClass
     public static void setUp() {
@@ -59,6 +61,6 @@ public class MasterControllerTests {
     }
 
     private void assertExceptionInOutput(Class<? extends  Exception> exceptionClass, String expected, String command) {
-        CommonTestingMethods.assertException(exceptionClass, expected, () -> output.write(command));
+        CommonTestingMethods.assertException(exceptionClass, expected, () -> output.execute(command));
     }
 }

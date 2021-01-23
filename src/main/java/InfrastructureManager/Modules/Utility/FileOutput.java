@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.Utility;
 
 import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.InvalidEncodingException;
 
@@ -15,13 +16,13 @@ public class FileOutput extends ModuleOutput {
 
     private Charset encoding;
 
-    public FileOutput(String name) {
-        super(name);
+    public FileOutput(PlatformModule module, String name) {
+        super(module,name);
         this.encoding = StandardCharsets.UTF_8;
     }
 
     @Override
-    protected void out(String response) throws FileOutputException {
+    public void execute(String response) throws FileOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("file_out")) { //The commands must come like "file_out command"
             try {

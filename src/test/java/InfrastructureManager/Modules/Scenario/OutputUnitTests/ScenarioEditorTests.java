@@ -7,6 +7,7 @@ import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
 import InfrastructureManager.Modules.Scenario.ScenarioEditor;
+import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +18,8 @@ import java.util.stream.Collectors;
 
 public class ScenarioEditorTests {
 
-    ScenarioEditor editor = new ScenarioEditor("dummy.editor");
+    ScenarioModule module = new ScenarioModule();
+    ScenarioEditor editor = new ScenarioEditor(module,"dummy.editor");
     final String scenarioName = "test";
 
     @BeforeClass
@@ -29,14 +31,14 @@ public class ScenarioEditorTests {
 
     @Test
     public void createScenarioTest() throws ModuleExecutionException {
-        editor.write("editor create " + scenarioName);
+        editor.execute("editor create " + scenarioName);
         Assert.assertEquals(scenarioName + ".scenario", editor.getScenario().getName());
     }
 
     @Test
     public void addFirstEventTest() throws ModuleExecutionException {
-        editor.write("editor create " + scenarioName);
-        editor.write("editor addEvent test_event0 1000");
+        editor.execute("editor create " + scenarioName);
+        editor.execute("editor addEvent test_event0 1000");
         String expected = "test_event0";
         String result = getConcatenatedEventCommandsInScenario();
         Assert.assertEquals(expected, result);
@@ -45,9 +47,9 @@ public class ScenarioEditorTests {
 
     @Test
     public void addAnotherEventTest() throws ModuleExecutionException {
-        editor.write("editor create " + scenarioName);
-        editor.write("editor addEvent test_event0 1000");
-        editor.write("editor addEvent test_event1 2000");
+        editor.execute("editor create " + scenarioName);
+        editor.execute("editor addEvent test_event0 1000");
+        editor.execute("editor addEvent test_event1 2000");
         String expected = "test_event0" + "test_event1";
         String result = getConcatenatedEventCommandsInScenario();
         Assert.assertEquals(expected, result);
@@ -55,10 +57,10 @@ public class ScenarioEditorTests {
 
     @Test
     public void deleteEventTest() throws ModuleExecutionException {
-        editor.write("editor create " + scenarioName);
-        editor.write("editor addEvent test_event0 1000");
-        editor.write("editor addEvent test_event1 2000");
-        editor.write("editor deleteEvent");
+        editor.execute("editor create " + scenarioName);
+        editor.execute("editor addEvent test_event0 1000");
+        editor.execute("editor addEvent test_event1 2000");
+        editor.execute("editor deleteEvent");
         String expected = "test_event0";
         String result = getConcatenatedEventCommandsInScenario();
         Assert.assertEquals(expected, result);
@@ -66,7 +68,7 @@ public class ScenarioEditorTests {
 
     @Test
     public void deleteEventOnEmptyEventListThrowsException() throws ModuleExecutionException {
-        editor.write("editor create " + scenarioName);
+        editor.execute("editor create " + scenarioName);
         String command = "editor deleteEvent";
         String expected = "Event list is empty!";
         assertExceptionInOutput(EmptyEventListException.class,expected,command);
@@ -75,17 +77,17 @@ public class ScenarioEditorTests {
     @Test
     public void saveToFileTest() throws ModuleExecutionException {
         File scenarioFile = new File("src/test/resources/Modules/Scenario/" + scenarioName + ".json");
-        editor.write("editor create " + scenarioName);
-        editor.write("editor addEvent test_event0 1000");
-        editor.write("editor addEvent test_event1 2000");
-        editor.write("editor toFile src/test/resources/Modules/Scenario/");
+        editor.execute("editor create " + scenarioName);
+        editor.execute("editor addEvent test_event0 1000");
+        editor.execute("editor addEvent test_event1 2000");
+        editor.execute("editor toFile src/test/resources/Modules/Scenario/");
         Assert.assertTrue(scenarioFile.exists());
         scenarioFile.deleteOnExit();
     }
 
     @Test
     public void loadFromFileTest() throws ModuleExecutionException {
-        editor.write("editor fromFile src/test/resources/Modules/Scenario/dummyScenario.json");
+        editor.execute("editor fromFile src/test/resources/Modules/Scenario/dummyScenario.json");
         String expected = "deploy_application" + "node_request" + "update_gui";
         String result = getConcatenatedEventCommandsInScenario();
         Assert.assertEquals(expected, result);
@@ -115,7 +117,7 @@ public class ScenarioEditorTests {
     }
 
     private void assertExceptionInOutput(Class<? extends  Exception> exceptionClass, String expectedMessage, String command) {
-        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> editor.write(command));
+        CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> editor.execute(command));
     }
 
 }

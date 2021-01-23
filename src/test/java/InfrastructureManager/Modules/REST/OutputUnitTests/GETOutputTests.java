@@ -6,6 +6,7 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFound
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.Output.ParametrizedGETOutput;
+import InfrastructureManager.Modules.REST.RESTModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
@@ -19,8 +20,9 @@ public class GETOutputTests {
 
     private static RequestSpecification requestSpec;
     public static final String JSONExample = "{\"name\":\"example\",\"number\":874}";
-    private final GETOutput get1 = new GETOutput("get1","/rest/get_test");
-    private final ParametrizedGETOutput get2 = new ParametrizedGETOutput("get2",
+    private final RESTModule module = new RESTModule();
+    private final GETOutput get1 = new GETOutput(module,"get1","/rest/get_test");
+    private final ParametrizedGETOutput get2 = new ParametrizedGETOutput(module,"get2",
             "/rest/get_test2/:id","id");
 
     @BeforeClass
@@ -39,7 +41,7 @@ public class GETOutputTests {
     @Test
     public void GenericGETOutputTest() throws ModuleExecutionException {
         String path = "/rest/get_test";
-        get1.write("toGET resource " + JSONExample);
+        get1.execute("toGET resource " + JSONExample);
         String responseBody = given().spec(requestSpec).get(path).asString();
         Assert.assertEquals(responseBody,JSONExample);
     }
@@ -47,7 +49,7 @@ public class GETOutputTests {
     @Test
     public void ParametrizedGETOutputTest() throws ModuleExecutionException {
         String path = "/rest/get_test2/test_id";
-        get2.write("toGET resource test_id " + JSONExample);
+        get2.execute("toGET resource test_id " + JSONExample);
         String responseBody = given().spec(requestSpec).get(path).asString();
         Assert.assertEquals(JSONExample,responseBody);
 
@@ -57,28 +59,28 @@ public class GETOutputTests {
     public void InGenericOutputIncompleteCommandThrowsException() {
         String command = "toGET resource"; //Missing the json body
         String expected = "Arguments missing for command " + command + " to REST Output get1";
-        assertException(RESTOutputException.class,expected,() -> get1.write(command));
+        assertException(RESTOutputException.class,expected,() -> get1.execute(command));
     }
 
     @Test
     public void InGenericOutputInvalidCommandThrowsException() {
         String command = "toGET notACommand";
         String expected = "Invalid command notACommand for REST output get1";
-        assertException(RESTOutputException.class, expected, () -> get1.write(command));
+        assertException(RESTOutputException.class, expected, () -> get1.execute(command));
     }
 
     @Test
     public void InParameterOutputIncompleteCommandThrowsException() {
         String command = "toGET resource"; //Missing the json body
         String expected = "Arguments missing for command " + command + " to REST Output get2";
-        assertException(RESTOutputException.class,expected,() -> get2.write(command));
+        assertException(RESTOutputException.class,expected,() -> get2.execute(command));
     }
 
     @Test
     public void InParameterOutputInvalidCommandThrowsException() {
         String command = "toGET notACommand";
         String expected = "Invalid command notACommand for REST output get2";
-        assertException(RESTOutputException.class, expected, () -> get2.write(command));
+        assertException(RESTOutputException.class, expected, () -> get2.execute(command));
     }
 
 }
