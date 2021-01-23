@@ -1,7 +1,6 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.Configuration.CommandSet;
-import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectIONameException;
 import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefinedException;
@@ -11,30 +10,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class ModuleConnector {
-    private final List<ConnectionConfigData> data;
-    private List<PlatformModule> modules;
+    private final List<ConnectionConfigData> connectionDataList;
+    private final List<PlatformModule> modules;
 
-    public ModuleConnector(MasterConfigurationData data) {
-        this.data = data.getConnections();
-    }
-
-    public void connectModules(List<PlatformModule> modules) {
+    public ModuleConnector(List<ConnectionConfigData> data, List<PlatformModule> modules) {
+        this.connectionDataList = data;
         this.modules = modules;
-        modules.forEach(m -> {
-            try {
-                connectSingleModule(m);
-            } catch (IncorrectIONameException | ModuleNotDefinedException | IncorrectInputException e) {
-                System.err.println("Module " + m.getName() + " could not be connected");
-                e.printStackTrace();
-            }
-        });
     }
 
 
-    private void connectSingleModule(PlatformModule module) throws IncorrectIONameException, ModuleNotDefinedException, IncorrectInputException {
+    public void connectModule(PlatformModule module) throws IncorrectIONameException, ModuleNotDefinedException, IncorrectInputException {
         String moduleName = module.getName();
 
-        for (ConnectionConfigData connectionData : data) {
+        for (ConnectionConfigData connectionData : connectionDataList) {
             if (getInputModuleName(connectionData).equals(moduleName)) {
                 ModuleOutput output = findOutput(connectionData.getOut());
                 CommandSet commandSet = new CommandSet();

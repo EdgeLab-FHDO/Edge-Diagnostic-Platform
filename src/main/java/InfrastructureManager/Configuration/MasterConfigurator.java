@@ -21,7 +21,7 @@ public class MasterConfigurator {
 
     public MasterConfigurator(String configurationFilePath) throws ConfigurationException {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
-        manager = ModuleManager.getInstance();
+        manager = new ModuleManager();
         try {
             //Map the contents of the JSON file to a java object
             //Configuration File Interface

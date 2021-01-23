@@ -1,6 +1,5 @@
 package InfrastructureManager.ModuleManagement;
 
-import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefinedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
@@ -11,32 +10,11 @@ import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ModuleFactory {
-
-    private final List<ModuleConfigData> data;
 
     public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC, MATCH_MAKING}
 
-    public ModuleFactory(MasterConfigurationData data) {
-        this.data = data.getModules();
-    }
-
-    public List<PlatformModule> getModules() {
-        List<PlatformModule> result = new ArrayList<>();
-        for (ModuleConfigData moduleData : data) {
-            try {
-                result.add(create(moduleData));
-            } catch (ModuleNotDefinedException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    private PlatformModule create(ModuleConfigData data) throws ModuleNotDefinedException {
+    public PlatformModule create(ModuleConfigData data) throws ModuleNotDefinedException {
 
         PlatformModule result = switch (data.getType()) {
             case CONSOLE -> new ConsoleModule();
