@@ -1,55 +1,66 @@
 package InfrastructureManager.NetworkStructure;
 import java.util.ArrayList;
-import java.util.Arrays;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.List;
+
+/**
+ * This class contains relationship between application and device information.
+ *
+ * @author Shankar Lokeshwara
+ */
+
 public class Network {
 	
-	private List<Device> deviceList;
 	private final ObjectMapper mapper;
+	private List<Device> deviceList;
 	private List<Connection> connectionList;
     private List<Location> locationList;
     private List<ApplicationInstance> applicationList;
+    private List<ApplicationInstanceDeviceRelation> applicationDeviceList;
+    private List<LocationConnectionRelation> locationConnectionList;
+    private List<DeviceLocationRelation> deviceLocationList;
 	
-	
+	/**
+	* Default constructor for Network Class
+	*/
 	public Network() {
 		this.mapper = new ObjectMapper();
 		deviceList = new ArrayList<>();
 		connectionList = new ArrayList<>();
 		locationList = new ArrayList<>();
 		applicationList = new ArrayList<>();
+		applicationDeviceList = new ArrayList<>();
+		locationConnectionList= new ArrayList<>();
+		deviceLocationList = new ArrayList<>();
 	}
 
+	/**
+	 * Function to read JSON string and update network class
+	 * @param String
+	 */
 	public void loadNetwork(String readString) throws JsonProcessingException{
-		JsonNode newNetwork = this.mapper.readTree(readString);
-		System.out.println(newNetwork);
-		Network obj = this.mapper.readValue(readString,Network.class);
-		System.out.println(obj.deviceList);
-		System.out.println(obj.connectionList);
 		
+		//New object created as the called object cannot be accessed as a whole. Therefore new object is created to update the calling object members with values from json string
+		Network clonedObject = this.mapper.readValue(readString,Network.class);
+		this.deviceList = clonedObject.deviceList;
+		this.connectionList = clonedObject.connectionList;
+		this.locationList = clonedObject.locationList;
+		this.applicationList = clonedObject.applicationList;
+		this.applicationDeviceList = clonedObject.applicationDeviceList;
+		this.locationConnectionList = clonedObject.locationConnectionList;
+		this.deviceLocationList = clonedObject.deviceLocationList;
 	}
 	
-	//ToDO - implement the JSON write
+	/**
+	 * Function to save JSON string
+	 * @return String
+	 */
 	public String saveNetwork() throws JsonProcessingException{
 		String json = null;
-		//ObjectNode resultObject = mapper.createObjectNode();
 		try {
-		    // create book object
-			List<Device> deviceList = Arrays.asList(new Device(001),new Device(002),new Device(003),new Device(004));
-			List<Connection> connectionList = Arrays.asList(new Connection(100),new Connection(101),new Connection(102),new Connection(103),new Connection(104));
-			List <Location> locationList = Arrays.asList(new Location(500),new Location(501),new Location(502),new Location(503),new Location(504));
-			List<ApplicationInstance> applicationList = Arrays.asList(new ApplicationInstance(600),new ApplicationInstance(601),new ApplicationInstance(602),new ApplicationInstance(603),new ApplicationInstance(604));
-			// convert book object to JSON
-			Network network = new Network();
-			network.applicationList = applicationList;
-			network.connectionList = connectionList;
-			network.deviceList = deviceList;
-			network.locationList=locationList;
-			json = this.mapper.writeValueAsString(network);
-
+			// convert network object to JSON
+			json = this.mapper.writeValueAsString(this);
 		} catch (Exception ex) {
 		    ex.printStackTrace();
 		}
@@ -57,26 +68,115 @@ public class Network {
 		
 	}
 	
+	/**
+	 * Getter function
+	 * @return deviceList
+	 */
+    public List<Device> getDeviceList() {
+        return deviceList;
+    }
+    
+	/**
+	 * Getter function
+	 * @return connectionList
+	 */
+    public List<Connection> getConnectionList() {
+        return connectionList;
+    }
+	
+	/**
+	 * Getter function
+	 * @return locationList
+	 */
+    public  List<Location> getLocationList() {
+        return locationList;
+    }
+    
+	/**
+	 * Getter function
+	 * @return applicationList
+	 */
     public List<ApplicationInstance> getApplicationList() {
         return applicationList;
     }
 
-    public List<Connection> getConnectionList() {
-        return connectionList;
+	/**
+	 * Getter function
+	 * @return applicationDeviceList
+	 */
+    public List<ApplicationInstanceDeviceRelation> getApplicationDeviceList() {
+        return applicationDeviceList;
+    }
+    
+	/**
+	 * Getter function
+	 * @return locationConnectionList
+	 */
+    public List<LocationConnectionRelation> getLocationConnectionList() {
+        return locationConnectionList;
+    }
+    
+	/**
+	 * Getter function
+	 * @return deviceLocationList
+	 */
+    public List<DeviceLocationRelation> getDeviceLocationList() {
+        return deviceLocationList;
+    }
+    
+	/**
+	 * Setter function
+	 * @param deviceList
+	 */
+    public  void setDeviceList(List<Device> deviceList) {
+        this.deviceList = deviceList;
     }
 
-    public List<Device> getDeviceList() {
-        return deviceList;
+	/**
+	 * Setter function
+	 * @param connectionList
+	 */
+    public void setConnectionList(List<Connection> connectionList) {
+        this.connectionList = connectionList;
     }
-
-    public List<Location> getLocationList() {
-        return locationList;
+    
+	/**
+	 * Setter function
+	 * @param locationList
+	 */
+    public  void setLocationList(List<Location> locationList) {
+        this.locationList = locationList;
     }
 	
-	public static void main(String[] args) throws JsonProcessingException
-	{
-		Network network = new Network();
-		String writeString = network.saveNetwork();
-		network.loadNetwork(writeString);
-	}	
+	/**
+	 * Setter function
+	 * @param applicationList
+	 */
+    public void setApplicationList(List<ApplicationInstance> applicationList) {
+        this.applicationList = applicationList;
+    }
+    
+	/**
+	 * Setter function
+	 * @param applicationDeviceList
+	 */
+    public void setApplicationDeviceList(List<ApplicationInstanceDeviceRelation> applicationDeviceList) {
+        this.applicationDeviceList = applicationDeviceList;
+    }
+    
+	/**
+	 * Setter function
+	 * @param locationConnectionList
+	 */
+    public void setLocationConnectionList(List<LocationConnectionRelation> locationConnectionList) {
+        this.locationConnectionList = locationConnectionList;
+    }
+    
+	/**
+	 * Setter function
+	 * @param deviceLocationList
+	 */
+    public void setDeviceLocationList(List<DeviceLocationRelation> deviceLocationList) {
+        this.deviceLocationList = deviceLocationList;
+    }
 }

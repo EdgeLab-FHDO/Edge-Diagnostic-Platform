@@ -1,25 +1,42 @@
 package InfrastructureManager.NetworkStructure;
+/**
+ * This class contains relationship between location and connection information.
+ *
+ * @author Shankar Lokeshwara
+ */
 public class LocationConnectionRelation {
 	
+	private Connection connection;
+	private Location location;
 	
-	private DeviceLocationRelation sourceLocation;
-	private DeviceLocationRelation destinationLocation;
-	
-	public LocationConnectionRelation(int sourceDevice, int sourceLocation, int destinationDevice, int destinationLocation) {
-		this.sourceLocation = new DeviceLocationRelation(sourceDevice,sourceLocation);
-		this.destinationLocation = new DeviceLocationRelation(destinationDevice,destinationLocation);
+	/**
+	* Parameterized constructor for LocationConnectionRelation Class
+	* @param connection 	
+	* @param location 			
+	*/
+	public LocationConnectionRelation(Connection connection,Location location) {
+		this.connection = connection;
+		this.location = location;
 	}
 	
-	
-	public DeviceLocationRelation getSourceLocation () {
-		return this.sourceLocation;	
+	/**
+	 * Getter function
+	 * @return location
+	 */
+	public Location getLocationRelation () {
+		return this.location;	
 	}
 	
-	public DeviceLocationRelation getDestinationLocation () {
-		return this.destinationLocation;	
+	/**
+	 * Getter function
+	 * @return connection
+	 */
+	public Connection getConnectionRelation () {
+		return this.connection;	
 	}
 	
 
+	//ToDo move it to other file with other function implementation
 	//source - https://www.geodatasource.com/developers/java and https://www.w3resource.com/java-exercises/basic/java-basic-exercise-36.php
 	public double calculateDistance(DeviceLocationRelation source,DeviceLocationRelation destination)
 	{
