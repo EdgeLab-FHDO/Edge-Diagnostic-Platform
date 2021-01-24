@@ -1,7 +1,4 @@
 package InfrastructureManager.NetworkStructure;
-enum TypeId {UE,POA,FOG,EDGE,CLOUD,NONE} //Types of the device ID's
-enum Mobility {MOVABLE,NONMOVABLE,NONE} //Types of devices based on mobility
-
 
 /**
  * This class contains device types.
@@ -10,18 +7,12 @@ enum Mobility {MOVABLE,NONMOVABLE,NONE} //Types of devices based on mobility
  */
 
 public class DeviceType {
+	enum TypeId {UE,POA,FOG,EDGE,CLOUD,NONE} //Types of the device ID's
+	enum Mobility {MOVABLE,NONMOVABLE,NONE} //Types of devices based on mobility
+	
 	private TypeId typeIdentifier;
 	private Mobility mobilityType;
 	private String deviceName;
-	
-	/**
-	* Default constructor for DeviceType Class
-	*/
-	public DeviceType() {
-		this.typeIdentifier = TypeId.NONE;
-		this.mobilityType = Mobility.NONE;
-		this.deviceName = "";
-	}
 	
 	/**
 	* Parameterized constructor for DeviceType Class
@@ -58,30 +49,5 @@ public class DeviceType {
         return deviceName;
     }
 	
-	/**
-	 * Setter function
-	 * @param typeIdentifier
-	 */
-	public void setTypeId(TypeId typeIdentifier)
-    {
-        this.typeIdentifier = typeIdentifier;
-    }
-	
-	/**
-	 * Setter function
-	 * @param mobilityType
-	 */
-	public void setMobility(Mobility mobilityType)
-    {
-        this.mobilityType = mobilityType;
-    }
-	/**
-	 * Setter function
-	 * @param deviceName
-	 */
-	public void setDeviceName(String deviceName)
-    {
-        this.deviceName = deviceName;
-    }
 }
 

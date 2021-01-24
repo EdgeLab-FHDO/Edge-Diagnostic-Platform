@@ -6,26 +6,18 @@ package InfrastructureManager.NetworkStructure;
  * @author Shankar Lokeshwara
  */
 public class ComputeLimits {
-	private int cpuCount; // Number of CPU's available
-	private int gpuCount; // Number of GPU's available
-	private int memoryLimit; // Mega Bytes of memory available
+	private float cpuCount; // Number of CPU's available
+	private float gpuCount; // Number of GPU's available
+	private float memoryLimit; // Mega Bytes of memory available
 	
 	
-	/**
-	* Default constructor for class ComputeLimits
-	*/
-    public ComputeLimits() {
-        this.cpuCount = 0;
-        this.gpuCount = 0;
-        this.memoryLimit = 0;
-    }
 	/**
 	* Parameterized constructor for class ComputeLimits
-	* @param cpuCount 		integer
-	* @param gpuCount 		integer
-	* @param memoryLimit 	integer
+	* @param cpuCount 		float
+	* @param gpuCount 		float
+	* @param memoryLimit 	float
 	*/
-    public ComputeLimits(int cpuCount,int gpuCount, int memoryLimit) {
+    public ComputeLimits(float cpuCount,float gpuCount, float memoryLimit) {
         this.cpuCount = cpuCount;
         this.gpuCount = gpuCount;
         this.memoryLimit = memoryLimit;
@@ -35,7 +27,7 @@ public class ComputeLimits {
 	 * Getter function
 	 * @return cpuCount
 	 */
-	public int getCpuCount() {
+	public float getCpuCount() {
 		return cpuCount;
 	}
 	
@@ -44,7 +36,7 @@ public class ComputeLimits {
 	 * @return gpuCount
 	 */
 	
-	public int getGpuCount() {
+	public float getGpuCount() {
 		return gpuCount;
 	}
 	
@@ -52,35 +44,8 @@ public class ComputeLimits {
 	 * Getter function
 	 * @return memoryLimit
 	 */
-	public int getMemoryLimit() {
+	public float getMemoryLimit() {
 		return memoryLimit;
-	}
-	
-	/**
-	 * Setter function
-	 * @param cpuCount
-	 */
-	
-	public void setCpuCount(int cpuCount) {
-		this.cpuCount = cpuCount;
-	}
-	
-	/**
-	 * Setter function
-	 * @param gpuCount
-	 */
-	
-	public void setGpuCount(int gpuCount) {
-		this.gpuCount = gpuCount;
-	}
-	
-	/**
-	 * Setter function
-	 * @param memoryLimit
-	 */
-	
-	public void setMemoryLimit(int memoryLimit) {
-		this.memoryLimit = memoryLimit;
 	}
 	
 }

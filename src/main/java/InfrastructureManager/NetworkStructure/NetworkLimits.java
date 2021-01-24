@@ -7,18 +7,10 @@ package InfrastructureManager.NetworkStructure;
  */
 
 public class NetworkLimits {
-	private int latency;
+	private float latency;
+	private float jitter;
 	private double throughput;
 	private double packetLoss;
-	
-	/**
-	* Default constructor for NetworkLimits Class
-	*/
-	public NetworkLimits() {
-		this.latency = 0;
-		this.throughput = 0.0f;
-		this.packetLoss = 0.0f;
-	}
 	
 	/**
 	* Parameterized constructor for NetworkLimits Class
@@ -26,8 +18,9 @@ public class NetworkLimits {
 	* @param throughput 
 	* @param packetLoss 			
 	*/
-	public NetworkLimits(int latency,double throughput,double packetLoss) {
+	public NetworkLimits(float latency,float jitter,double throughput,double packetLoss) {
 		this.latency = latency;
+		this.jitter = jitter;
 		this.throughput = throughput;
 		this.packetLoss = packetLoss;
 	}
@@ -36,8 +29,16 @@ public class NetworkLimits {
 	 * Getter function
 	 * @return latency
 	 */
-	public int getLatency() {
+	public float getLatency() {
 		return latency;
+	}
+	
+	/**
+	 * Getter function
+	 * @return jitter
+	 */
+	public float getJitter() {
+		return jitter;
 	}
 	
 	/**
@@ -54,30 +55,6 @@ public class NetworkLimits {
 	 */
 	public double getPacketLoss() {
 		return packetLoss;
-	}
-	
-	/**
-	 * Setter function
-	 * @param latency
-	 */
-	public void setLatency(int latency) {
-		this.latency =  latency;
-	}
-	
-	/**
-	 * Setter function
-	 * @param throughput
-	 */
-	public void setThroughput(double throughput) {
-		this.throughput = throughput;
-	}
-	
-	/**
-	 * Setter function
-	 * @param packetLoss
-	 */
-	public void setPacketLoss(double packetLoss) {
-		this.packetLoss = packetLoss;
 	}
 	
 }

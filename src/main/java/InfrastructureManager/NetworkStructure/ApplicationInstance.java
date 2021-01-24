@@ -1,7 +1,5 @@
 package InfrastructureManager.NetworkStructure;
 //States of the application
-enum State {IDLE,RUNNING,COMPLETED,TERMINATED}
-
 
 /**
  * This class contains application information.
@@ -9,39 +7,25 @@ enum State {IDLE,RUNNING,COMPLETED,TERMINATED}
  * @author Shankar Lokeshwara
  */
 public class ApplicationInstance {
-	private ApplicationType application; //Application object
-	private State applicationState; // Data member to hold the state of the application
+	enum State {RUNNING,COMPLETED,SUSPENDED,PAUSED}
+	private ApplicationType application; 
+	private State applicationState; 
 	
-	/**
-	* Default constructor for class ApplicationInstance
-	*/
-	public ApplicationInstance() {
-	this.application = new ApplicationType(0);
-	this.applicationState = State.IDLE;
-	}
-	
+
 	/**
 	* Parameterized constructor for class ApplicationInstance
 	* @param application 		application object
 	*/
-	public ApplicationInstance(ApplicationType application) {
+	public ApplicationInstance(ApplicationType application, State initialState) {
 		this.application = application;
-		this.applicationState = State.IDLE;
-	}
-	/**
-	* Parameterized constructor for class ApplicationInstance
-	* @param applicationId 		applicationId as integer
-	*/
-	public ApplicationInstance(int applicationId) {
-	this.application = new ApplicationType(applicationId);
-	this.applicationState = State.IDLE;
+		this.applicationState = initialState;
 	}
 	
 	/**
 	 * Getter function
 	 * @return application
 	 */
-	public ApplicationType getApplicationInstance() {
+	public ApplicationType getApplicationType() {
 		return application;
 	}
 	
@@ -52,16 +36,7 @@ public class ApplicationInstance {
 	public State getApplicationState() {
 		return applicationState;
 	}
-	
-	/**
-	 * Setter function
-	 * @param application
-	 */
-	
-	public void setApplicationInstance(ApplicationType application) {
-		this.application = application;
-	}
-	
+		
 	/**
 	 * Setter function
 	 * @param applicationState

@@ -7,18 +7,10 @@ package InfrastructureManager.NetworkStructure;
  */
 
 public class NetworkRequirements {
-	private int requiredLatency;
+	private float requiredLatency;
+	private float requiredJitter;
 	private double requiredThroughput;
 	private double requiredPacketLoss;
-	
-	/**
-	* Default constructor for NetworkRequirements Class
-	*/
-	public NetworkRequirements() {
-		this.requiredLatency = 0;
-		this.requiredThroughput = 0.0f;
-		this.requiredPacketLoss = 0.0f;
-	}
 	
 	/**
 	* Parameterized constructor for NetworkRequirements Class
@@ -26,8 +18,9 @@ public class NetworkRequirements {
 	* @param requiredThroughput 
 	* @param requiredPacketLoss 			
 	*/
-	public NetworkRequirements(int requiredLatency,double requiredThroughput,double requiredPacketLoss) {
+	public NetworkRequirements(float requiredLatency,float requiredJitter,double requiredThroughput,double requiredPacketLoss) {
 		this.requiredLatency = requiredLatency;
+		this.requiredJitter = requiredJitter;
 		this.requiredThroughput = requiredThroughput;
 		this.requiredPacketLoss = requiredPacketLoss;
 	}
@@ -36,8 +29,16 @@ public class NetworkRequirements {
 	 * Getter function
 	 * @return requiredLatency
 	 */
-	public int getRequiredLatency() {
+	public float getRequiredLatency() {
 		return requiredLatency;
+	}
+	
+	/**
+	 * Getter function
+	 * @return requiredJitter
+	 */
+	public float getRequiredJitter() {
+		return requiredJitter;
 	}
 	
 	/**
@@ -54,30 +55,6 @@ public class NetworkRequirements {
 	 */
 	public double getRequiredPacketLoss() {
 		return requiredPacketLoss;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredLatency
-	 */
-	public void setRequiredLatency(int requiredLatency) {
-		this.requiredLatency =  requiredLatency;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredThroughput
-	 */
-	public void setRequiredThroughput(double requiredThroughput) {
-		this.requiredThroughput = requiredThroughput;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredPacketLoss
-	 */
-	public void setRequiredPacketLoss(double requiredPacketLoss) {
-		this.requiredPacketLoss = requiredPacketLoss;
 	}
 	
 }

@@ -8,26 +8,17 @@ package InfrastructureManager.NetworkStructure;
  */
 
 public class ComputeRequirements {
-	private int requiredCpu;
-	private int requiredGpu;
-	private int requiredMemory;
+	private float requiredCpu;
+	private float requiredGpu;
+	private float requiredMemory;
 	
-	/**
-	* Default constructor for class ComputeRequirements
-	*/
-    public ComputeRequirements() {
-        this.requiredCpu = 0;
-        this.requiredGpu = 0;
-        this.requiredMemory = 0;
-    }
-
 	/**
 	* Parameterized constructor for class ComputeRequirements
 	* @param requiredCpu 		integer
 	* @param requiredGpu 		integer
 	* @param requiredMemory 	integer
 	*/
-    public ComputeRequirements(int requiredCpu,int requiredGpu, int requiredMemory) {
+    public ComputeRequirements(float requiredCpu,float requiredGpu, float requiredMemory) {
         this.requiredCpu = requiredCpu;
         this.requiredGpu = requiredGpu;
         this.requiredMemory = requiredMemory;
@@ -37,7 +28,7 @@ public class ComputeRequirements {
 	 * Getter function
 	 * @return requiredCpu
 	 */
-	public int getRequiredCpu() {
+	public float getRequiredCpu() {
 		return requiredCpu;
 	}
 	
@@ -45,7 +36,7 @@ public class ComputeRequirements {
 	 * Getter function
 	 * @return requiredGpu
 	 */
-	public int getRequiredGpu() {
+	public float getRequiredGpu() {
 		return requiredGpu;
 	}
 	
@@ -53,32 +44,8 @@ public class ComputeRequirements {
 	 * Getter function
 	 * @return requiredMemory
 	 */
-	public int getRequiredMemory() {
+	public float getRequiredMemory() {
 		return requiredMemory;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredCpu
-	 */
-	public void setRequiredCpu(int requiredCpu) {
-		this.requiredCpu = requiredCpu;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredGpu
-	 */
-	public void setRequiredGpu(int requiredGpu) {
-		this.requiredGpu = requiredGpu;
-	}
-	
-	/**
-	 * Setter function
-	 * @param requiredMemory
-	 */
-	public void setRequiredMemory(int requiredMemory) {
-		this.requiredMemory = requiredMemory;
 	}
 		
 }

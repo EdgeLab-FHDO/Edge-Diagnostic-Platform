@@ -8,28 +8,9 @@ package InfrastructureManager.NetworkStructure;
  */
 
 public class Location {
-	private int locationId;
+	private String locationId;
 	private float latitude;
 	private float longitude;
-	
-	/**
-	* Default constructor for Location Class
-	*/
-	public Location() {
-		this.locationId = 0;
-		this.latitude = 0.0f;
-		this.longitude = 0.0f;
-	}
-	
-	/**
-	* Parameterized constructor for Location Class
-	* @param locationId 				
-	*/
-	public Location(int locationId) {
-		this.locationId = locationId;
-		this.latitude = 0.0f;
-		this.longitude = 0.0f;
-	}
 	
 	/**
 	* Parameterized constructor for Location Class
@@ -37,7 +18,7 @@ public class Location {
 	* @param latitude
 	* @param longitude
 	*/
-	public Location(int locationId,float latitude,float longitude) {
+	public Location(String locationId,float latitude,float longitude) {
 		this.locationId = locationId;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -47,7 +28,7 @@ public class Location {
 	 * Getter function
 	 * @return locationId
 	 */
-	public int getLocationId() {
+	public String getLocationId() {
 		return locationId;
 	}
 	

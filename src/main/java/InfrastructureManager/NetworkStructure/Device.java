@@ -7,32 +7,12 @@ package InfrastructureManager.NetworkStructure;
 
 
 public class Device {
-	private int deviceId;
+	private String deviceId;
 	private String deviceAddress;
 	private DeviceType deviceType;
 	private ComputeLimits computeLimits;
 	
-	/**
-	* Default constructor of Device Class
-	*/
-    public Device() {
-        this.deviceId = 0;
-        this.deviceAddress = "";
-        this.deviceType = new DeviceType();
-        this.computeLimits = new ComputeLimits();
-    }
-    
-	/**
-	* Parameterized constructor of Device Class
-	* @param deviceId 		integer		
-	*/
-    public Device(int deviceId) {
-        this.deviceId = deviceId;
-        this.deviceAddress = "";
-        this.deviceType = new DeviceType();
-        this.computeLimits = new ComputeLimits();
-    }
-    
+   
 	/**
 	* Parameterized constructor of Device Class
 	* @param deviceId 		integer		
@@ -40,7 +20,7 @@ public class Device {
 	* @param deviceType
 	* @param computeLimits
 	*/
-    public Device(int deviceId,String deviceAddress, DeviceType deviceType,ComputeLimits computeLimits) {
+    public Device(String deviceId,String deviceAddress, DeviceType deviceType,ComputeLimits computeLimits) {
         this.deviceId = deviceId;
         this.deviceAddress = deviceAddress;
         this.deviceType = deviceType;
@@ -51,7 +31,7 @@ public class Device {
 	 * Getter function
 	 * @return deviceId
 	 */
-	public int getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 	
@@ -82,26 +62,17 @@ public class Device {
 	
 	/**
 	 * Setter function
-	 * @param deviceType
+	 * @param deviceAddress
 	 */
-	public void setDeviceType(DeviceType deviceType) {
-		this.deviceType = deviceType;
-	}
-	
-	/**
-	 * Setter function
-	 * @param computeLimits
-	 */
-	public void setComputeLimits(ComputeLimits computeLimits) {
-		this.computeLimits = computeLimits;
+	public void setDeviceAddress(String deviceAddress) {
+		this.deviceAddress = deviceAddress;
 	}
 	
 	/**
 	 * Setter function
 	 * @param deviceAddress
 	 */
-	public void setDeviceAddress(String deviceAddress) {
-		this.deviceAddress = deviceAddress;
+	public void setComputeLimits(ComputeLimits computeLimits) {
+		this.computeLimits = computeLimits;
 	}
-    
 }
