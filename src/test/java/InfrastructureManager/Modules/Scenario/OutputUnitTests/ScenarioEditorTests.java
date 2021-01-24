@@ -1,6 +1,8 @@
 package InfrastructureManager.Modules.Scenario.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
@@ -23,10 +25,10 @@ public class ScenarioEditorTests {
     final String scenarioName = "test";
 
     @BeforeClass
-    public static void configureMaster() {
-        Master.changeConfigPath("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+    public static void configureMaster() throws ConfigurationException, ModuleManagerException {
         Master.resetInstance();
-        Master.getInstance().startAllModules();
+        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+        Master.getInstance().getManager().startAllModules();
     }
 
     @Test

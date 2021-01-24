@@ -12,7 +12,7 @@ public class UtilityModule extends PlatformModule {
     public void configure(ModuleConfigData data) {
         this.setName(data.getName());
         setInputs(); //NO INPUTS
-        setOutputs(new MasterController(this,this.getName() + ".control"),
+        setOutputs(new ModuleController(this,this.getName() + ".control"),
                 new FileOutput(this,this.getName() + ".fileOut"));
     }
 }

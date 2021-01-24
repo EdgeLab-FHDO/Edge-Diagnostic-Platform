@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * Configuration Data Object (Mapped from JSON Config File)
  */
-public class MasterConfigurationData {
+public class ModulesConfigurationFileData {
 
     private final List<ModuleConfigData> modules;
     private final List<ConnectionConfigData> connections;
 
-    public MasterConfigurationData() {
+    public ModulesConfigurationFileData() {
         //Initialize all values in null;
         modules = null;
         connections = null;

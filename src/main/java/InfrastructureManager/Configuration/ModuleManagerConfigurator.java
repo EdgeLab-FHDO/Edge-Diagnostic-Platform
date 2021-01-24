@@ -1,7 +1,7 @@
 package InfrastructureManager.Configuration;
 
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
-import InfrastructureManager.Configuration.RawData.MasterConfigurationData;
+import InfrastructureManager.Configuration.RawData.ModulesConfigurationFileData;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
@@ -15,24 +15,22 @@ import java.util.List;
  * Configurator class for the master, that takes the values in the configuration file
  * object and gives the master the different elements based on that (Commands, and Runners)
  */
-public class MasterConfigurator {
+public class ModuleManagerConfigurator {
 
     private final ModuleManager manager;
 
-    public MasterConfigurator(String configurationFilePath) throws ConfigurationException {
+    public ModuleManagerConfigurator(String configurationFilePath) throws ConfigurationException {
         ObjectMapper mapper = new ObjectMapper(); //Using Jackson Functionality
         manager = new ModuleManager();
         try {
             //Map the contents of the JSON file to a java object
-            //Configuration File Interface
-            manager.initialize(mapper.readValue(new File(configurationFilePath), MasterConfigurationData.class));
+            manager.initialize(mapper.readValue(new File(configurationFilePath), ModulesConfigurationFileData.class));
         } catch (IOException e) {
             throw new ConfigurationException("Error while reading JSON Config File",e);
         }
     }
 
-    public List<PlatformModule> getModules() throws ModuleManagerException {
-        return manager.getModules();
+    public ModuleManager getConfiguredManager() {
+        return manager;
     }
-
 }

@@ -1,6 +1,8 @@
 package InfrastructureManager.Modules.REST.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
@@ -26,16 +28,17 @@ public class GETOutputTests {
             "/rest/get_test2/:id","id");
 
     @BeforeClass
-    public static void setUpMasterAndStartServer() throws ModuleNotFoundException {
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
         String testIp = "http://localhost";
         int port = 4567;
         requestSpec = new RequestSpecBuilder().
                 setBaseUri(testIp).
                 setPort(port).
                 build();
-        Master.changeConfigPath("src/test/resources/Modules/REST/RESTTestConfiguration.json");
+
         Master.resetInstance();
-        Master.getInstance().startModule("rest");
+        Master.getInstance().configure("src/test/resources/Modules/REST/RESTTestConfiguration.json");
+        Master.getInstance().getManager().startModule("rest");
     }
 
     @Test

@@ -1,8 +1,11 @@
 package InfrastructureManager.Modules.Scenario.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
@@ -21,25 +24,39 @@ import java.util.stream.Collectors;
 
 public class ScenarioDispatcherTests {
 
-    private final ScenarioDispatcher dispatcher;
+    private ScenarioDispatcher dispatcher;
+    private final Scenario scenario;
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent;
-    private final ScenarioModule module = new ScenarioModule();
+    private static ScenarioModule module = new ScenarioModule();
+
 
     public ScenarioDispatcherTests() throws IOException {
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ObjectMapper mapper = new ObjectMapper();
-        Scenario scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
-
-        dispatcher = new ScenarioDispatcher(module,"dummy.dispatcher", scenario);
+        this.scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
         outContent = new ByteArrayOutputStream();
     }
 
     @BeforeClass
-    public static void configureMaster() {
-        Master.changeConfigPath("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+    public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException {
         Master.resetInstance();
-        Master.getInstance().startAllModules();
+        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+        ModuleManager manager = Master.getInstance().getManager();
+        manager.startAllModules();
+        module = findModule(manager);
+    }
+
+    @Before
+    public void init() {
+        dispatcher = new ScenarioDispatcher(module,"dummy.dispatcher", scenario);
+    }
+
+    private static ScenarioModule findModule(ModuleManager manager) throws ModuleNotFoundException, ModuleManagerException {
+        return (ScenarioModule) manager.getModules().stream()
+                .filter(m -> m.getName().equals("dummy"))
+                .findFirst()
+                .orElseThrow(() -> new ModuleNotFoundException("There is no module for dummy scenario"));
     }
 
     @Test
@@ -71,40 +88,6 @@ public class ScenarioDispatcherTests {
         String expected = "Arguments missing for command " + command + " to ScenarioDispatcher";
         assertExceptionInOutput(dispatcher,ScenarioDispatcherException.class, expected, command);
     }
-
-    @Test
-    public void runningAScenarioNotRelatedToAModuleThrowsException() {
-        Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
-        String expected = "Module aName was not found";
-        assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher run");
-    }
-
-    @Test
-    public void pausingAScenarioNotRelatedToAModuleThrowsException() {
-        Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
-        String expected = "Module aName was not found";
-        assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher pause");
-
-    }
-    @Test
-    public void resumingAScenarioNotRelatedToAModuleThrowsException() {
-        Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
-        String expected = "Module aName was not found";
-        assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher resume");
-
-    }
-    @Test
-    public void stoppingAScenarioNotRelatedToAModuleThrowsException() {
-        Scenario otherScenario = new Scenario("aName.scenario");
-        ScenarioDispatcher otherDispatcher = new ScenarioDispatcher(module,"aName.dispatcher", otherScenario);
-        String expected = "Module aName was not found";
-        assertExceptionInOutput(otherDispatcher,ModuleNotFoundException.class,expected,"dispatcher stop");
-
-    }
-
 
     public void assertExceptionInOutput(ScenarioDispatcher output,Class<? extends  Throwable> exceptionClass, String expectedMessage, String command) {
         CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.execute(command));

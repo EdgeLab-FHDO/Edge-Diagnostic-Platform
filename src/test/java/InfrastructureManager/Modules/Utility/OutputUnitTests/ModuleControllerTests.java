@@ -1,24 +1,26 @@
 package InfrastructureManager.Modules.Utility.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.CommonTestingMethods;
-import InfrastructureManager.Modules.Utility.Exception.MasterController.MasterControllerException;
-import InfrastructureManager.Modules.Utility.MasterController;
+import InfrastructureManager.Modules.Utility.Exception.MasterController.ModuleControllerException;
+import InfrastructureManager.Modules.Utility.ModuleController;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class MasterControllerTests {
+public class ModuleControllerTests {
 
     private final UtilityModule module = new UtilityModule();
-    private final MasterController output = new MasterController(module,"util.control");
+    private final ModuleController output = new ModuleController(module,"util.control");
 
     @BeforeClass
-    public static void setUp() {
-        Master.changeConfigPath("src/test/resources/Modules/Utility/UtilityModuleTestConfiguration.json");
+    public static void setUp() throws ConfigurationException, ModuleManagerException {
         Master.resetInstance();
-        Master.getInstance().startAllModules();
+        Master.getInstance().configure("src/test/resources/Modules/Utility/UtilityModuleTestConfiguration.json");
+        Master.getInstance().getManager().startAllModules();
     }
 
     @Test
@@ -49,15 +51,15 @@ public class MasterControllerTests {
     @Test
     public void invalidCommandThrowsException() {
         String command = "util notACommand";
-        String expected = "Invalid Command notACommand for MasterController output";
-        assertExceptionInOutput(MasterControllerException.class, expected, command);
+        String expected = "Invalid Command notACommand for ModuleController output";
+        assertExceptionInOutput(ModuleControllerException.class, expected, command);
     }
 
     @Test
     public void incompleteCommandThrowsException() {
         String command = "util startModule";
-        String expected = "Arguments missing for command " + command + " to MasterController";
-        assertExceptionInOutput(MasterControllerException.class, expected, command);
+        String expected = "Arguments missing for command " + command + " to ModuleController";
+        assertExceptionInOutput(ModuleControllerException.class, expected, command);
     }
 
     private void assertExceptionInOutput(Class<? extends  Exception> exceptionClass, String expected, String command) {
