@@ -7,7 +7,4 @@ public class RESTInputException extends RESTModuleException {
         super(message);
     }
 
-    public RESTInputException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

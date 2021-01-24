@@ -1,4 +1,4 @@
-package InfrastructureManager.Modules.Utility.Exception.MasterController;
+package InfrastructureManager.Modules.Utility.Exception.ModuleController;
 
 import InfrastructureManager.Modules.Utility.Exception.UtilityModuleException;
 

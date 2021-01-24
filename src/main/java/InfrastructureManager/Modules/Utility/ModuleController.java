@@ -6,7 +6,7 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFound
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
-import InfrastructureManager.Modules.Utility.Exception.MasterController.ModuleControllerException;
+import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleControllerException;
 
 /**
  * Class implementing MasterOutput, for utilities within the master

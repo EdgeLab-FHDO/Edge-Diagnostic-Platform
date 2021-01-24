@@ -2,14 +2,11 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.RawData.ModulesConfigurationFileData;
-import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
-import InfrastructureManager.ModuleManagement.PlatformModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Configurator class for the master, that takes the values in the configuration file

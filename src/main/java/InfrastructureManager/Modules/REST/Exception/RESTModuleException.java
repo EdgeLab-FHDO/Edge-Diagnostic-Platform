@@ -7,7 +7,4 @@ public class RESTModuleException extends ModuleExecutionException {
         super(message);
     }
 
-    public RESTModuleException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
