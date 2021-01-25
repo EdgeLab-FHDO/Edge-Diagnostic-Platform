@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.Scenario;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
+import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,6 +24,7 @@ public class ScenarioModule extends PlatformModule {
         this.setName(castedData.getName());
         try {
             Scenario scenario = scenarioFromFile(castedData.getPath());
+            scenario.setOwnerModule(this);
             setInputs(scenario);
             this.scenario = (Scenario) this.getInputs().get(0);
             setOutputs(new ScenarioEditor(this,this.getName() + ".editor"),
@@ -33,7 +35,7 @@ public class ScenarioModule extends PlatformModule {
         }
     }
 
-    public void startScenario(long startTime) throws InvalidTimeException {
+    public void startScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
         if (isDeadThread(0)) {
             restartThread(0,0);
         }

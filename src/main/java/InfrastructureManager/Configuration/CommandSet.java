@@ -47,7 +47,13 @@ public class CommandSet {
      * @throws IllegalArgumentException if the command is not defined or is empty
      */
     public String getResponse(String command) throws IllegalArgumentException, ResponseNotDefinedException {
-        String[] commandAsArray = command.split(" ");
+        String[] commandAsArray;
+        if (command.startsWith("fromDebug")) {
+            String message = command.replaceAll("fromDebug ","");
+            commandAsArray = new String[] {"fromDebug", message};
+        } else {
+            commandAsArray = command.split(" ");
+        }
         command = commandAsArray[0];
         if (command.isEmpty()) {
             throw new IllegalArgumentException("Empty Command at input!");

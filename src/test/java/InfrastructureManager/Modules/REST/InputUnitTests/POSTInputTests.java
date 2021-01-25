@@ -5,6 +5,7 @@ import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
+import InfrastructureManager.Modules.REST.RESTModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -20,6 +21,7 @@ import static io.restassured.RestAssured.given;
 public class POSTInputTests {
 
     private static RequestSpecification requestSpec;
+    private final RESTModule module = new RESTModule();
     public static final String JSONExample = "{\"name\":\"example\",\"number\":874}";
 
     @BeforeClass
@@ -38,7 +40,7 @@ public class POSTInputTests {
     @Test
     public void POSTInputWithBodyInCommandTest() throws InterruptedException {
         String path ="/rest/post_test1";
-        POSTInput in = new POSTInput("post1",path,"test $body", Collections.emptyList());
+        POSTInput in = new POSTInput(module, "post1", path, "test $body", Collections.emptyList());
         String expected = "test " + JSONExample;
         Thread t = new Thread(()-> {
             given().spec(requestSpec).body(JSONExample).post(path);
@@ -55,7 +57,7 @@ public class POSTInputTests {
     @Test
     public void POSTInputWithParametersInCommandTest() throws InterruptedException {
         String path = "/rest/post_test12";
-        POSTInput in2 = new POSTInput("post2", path, "test2 $name $number", List.of("name","number"));
+        POSTInput in2 = new POSTInput(module, "post2", path, "test2 $name $number", List.of("name","number"));
         String expected = "test2 example 874";
         Thread t = new Thread(()-> {
             try {
@@ -72,7 +74,7 @@ public class POSTInputTests {
     @Test
     public void POSTInputWithUndefinedParametersToMapThrowsExceptionAndReturnsItInResponse() {
         String path = "/rest/post_test13";
-        POSTInput in3 = new POSTInput("post3", path, "test3 $name $number", List.of("name"));
+        POSTInput in3 = new POSTInput(module, "post3", path, "test3 $name $number", List.of("name"));
         //Number was not included in the list
         String expected = "Argument number was not defined to be parsed";
         Thread thread = new Thread(() -> {
@@ -90,7 +92,7 @@ public class POSTInputTests {
     @Test
     public void POSTInputWithUnsupportedJSONParameterTypesThrowsExceptionAndReturnsItInResponse() {
         String path = "/rest/post_test14";
-        POSTInput in4 = new POSTInput("post4", path, "test4 $name $array", List.of("name", "array"));
+        POSTInput in4 = new POSTInput(module, "post4", path, "test4 $name $array", List.of("name", "array"));
         String JSONExampleWithArray = "{\"name\":\"example\",\"array\":[1,2,3]}";
         String expected = "Parameter is not a String, Boolean or Number value";
         Thread thread = new Thread(() -> {

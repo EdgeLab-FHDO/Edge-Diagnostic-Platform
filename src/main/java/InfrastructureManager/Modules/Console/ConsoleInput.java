@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 
 import java.util.Scanner;
 
@@ -11,8 +12,8 @@ import java.util.Scanner;
 public class ConsoleInput extends ModuleInput {
     private final Scanner IN = new Scanner(System.in);
 
-    public ConsoleInput(String name) {
-        super(name);
+    public ConsoleInput(PlatformModule module, String name) {
+        super(module,name);
     }
     /**
      * Method for reading from the console, blocks by terms of the underlining Scanner class instance
@@ -21,7 +22,9 @@ public class ConsoleInput extends ModuleInput {
     @Override
     public String read() {
         System.out.println("Input >");
-        return IN.nextLine(); //Wraps the nextLine method from the console scanner
+        String reading = IN.nextLine();
+        this.getOwnerModule().getDebugInput().debug(reading);
+        return reading; //Wraps the nextLine method from the console scanner
     }
 
     @Override

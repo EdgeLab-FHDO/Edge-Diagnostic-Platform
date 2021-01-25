@@ -14,7 +14,7 @@ public class ConsoleModule extends PlatformModule {
     @Override
     public void configure(ModuleConfigData data) {
         this.setName(data.getName());
-        setInputs(new ConsoleInput(this.getName() + ".in"));
+        setInputs(new ConsoleInput(this, this.getName() + ".in"));
         setOutputs(new ConsoleOutput(this,this.getName() + ".out"));
     }
 }

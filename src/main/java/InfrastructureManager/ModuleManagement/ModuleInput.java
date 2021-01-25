@@ -1,16 +1,26 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"runner", "ownerModule"})
 public abstract class ModuleInput {
 
     private final String name;
-    @JsonIgnore
     private Runner runner;
+    private PlatformModule ownerModule;
 
-    public ModuleInput(String name) {
+    public ModuleInput(PlatformModule ownerModule,String name) {
+        this.ownerModule = ownerModule;
         this.name = name;
+    }
+
+    protected void setOwnerModule(PlatformModule ownerModule) {
+        this.ownerModule = ownerModule;
+    }
+
+    protected PlatformModule getOwnerModule() {
+        return this.ownerModule;
     }
 
     public void setRunner(Runner runner) {

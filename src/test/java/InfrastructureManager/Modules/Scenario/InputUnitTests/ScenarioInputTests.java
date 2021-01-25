@@ -3,7 +3,9 @@ package InfrastructureManager.Modules.Scenario.InputUnitTests;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
+import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Scenario;
+import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +21,9 @@ public class ScenarioInputTests {
     public ScenarioInputTests() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
+        ScenarioModule module =new ScenarioModule();
         scenario = mapper.readValue(new File(scenarioPath),Scenario.class);
+        scenario.setOwnerModule(module);
     }
 
     @Test
@@ -43,7 +47,7 @@ public class ScenarioInputTests {
     }
 
     @Test
-    public void commandsAreSentCorrectly() throws InterruptedException, InvalidTimeException {
+    public void commandsAreSentCorrectly() throws InterruptedException, InvalidTimeException, OwnerModuleNotSetUpException {
         int events = scenario.getEventList().size();
         StringBuilder result = new StringBuilder();
         scenario.setStartTime(System.currentTimeMillis() + 1000);

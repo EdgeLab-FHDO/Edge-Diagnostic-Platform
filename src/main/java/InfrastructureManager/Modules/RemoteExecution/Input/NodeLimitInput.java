@@ -2,6 +2,7 @@ package InfrastructureManager.Modules.RemoteExecution.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
 public class NodeLimitInput extends ModuleInput {
@@ -9,8 +10,8 @@ public class NodeLimitInput extends ModuleInput {
     private final LimitList sharedList;
     private String toSend;
 
-    public NodeLimitInput(String name, LimitList list) {
-        super(name);
+    public NodeLimitInput(PlatformModule module, String name, LimitList list) {
+        super(module,name);
         this.sharedList = list;
         this.toSend = null;
     }

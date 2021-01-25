@@ -2,15 +2,16 @@ package InfrastructureManager.Modules.MatchMaking.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ModuleInput;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 
-public class MatchMakerInput extends ModuleInput {
+public class matchMakerInput extends ModuleInput {
 
     private final MatchesList sharedMatchesList;
     private String toSend;
 
-    public MatchMakerInput(String name, MatchesList mapping) {
-        super(name);
+    public matchMakerInput(PlatformModule module, String name, MatchesList mapping) {
+        super(module,name);
         toSend = "";
         this.sharedMatchesList = mapping;
     }

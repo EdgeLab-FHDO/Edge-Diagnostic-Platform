@@ -34,6 +34,13 @@
       }
     },
     {
+      "in" : "console.debug",
+      "out" : "console.out",
+      "commands" : {
+        "fromDebug $message" : "console $message"
+      }
+    },
+    {
       "in" : "console.in",
       "out" : "util.control",
       "commands" : {

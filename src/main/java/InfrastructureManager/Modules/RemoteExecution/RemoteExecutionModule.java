@@ -17,7 +17,7 @@ public class RemoteExecutionModule extends PlatformModule {
         String name = data.getName();
         setName(name);
         LimitList sharedList = new LimitList();
-        setInputs(new NodeLimitInput(name + ".limit.in",sharedList));
+        setInputs(new NodeLimitInput(this, name + ".limit.in", sharedList));
         setOutputs(new SSHClient(this,name + ".ssh.out"),
                 new NodeLimitOutput(this,name + ".limit.out", sharedList));
     }

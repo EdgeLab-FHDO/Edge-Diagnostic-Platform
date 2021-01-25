@@ -15,12 +15,13 @@ import java.util.List;
 
 public class RESTModuleConfiguration {
 
-    public static ModuleInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, String moduleName) {
+    public static ModuleInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, PlatformModule module) {
         List<ModuleInput> result = new ArrayList<>();
+        String moduleName = module.getName();
         for (POSTInputConfigData inputData : data) {
             String name = createName(inputData,moduleName);
-            result.add(new POSTInput(name,baseURL + inputData.getURL(),
-                    inputData.getCommand(),inputData.getInformation()));
+            result.add(new POSTInput(module, name,
+                    baseURL + inputData.getURL(), inputData.getCommand(), inputData.getInformation()));
         }
         return result.toArray(new ModuleInput[0]);
     }

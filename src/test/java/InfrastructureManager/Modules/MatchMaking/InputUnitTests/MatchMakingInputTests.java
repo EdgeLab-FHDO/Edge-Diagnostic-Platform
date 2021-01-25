@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.MatchMaking.InputUnitTests;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.Modules.MatchMaking.Input.MatchMakerInput;
+import InfrastructureManager.Modules.MatchMaking.Input.matchMakerInput;
 import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
@@ -13,7 +13,7 @@ public class MatchMakingInputTests {
 
     private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchMakerInput input = new MatchMakerInput("mm.in",matchesList);
+    private final matchMakerInput input = new matchMakerInput(module, "mm.in", matchesList);
 
     @Test
     public void correctInputReadWithRandomMatchMakerOutputTest() throws InterruptedException, ModuleExecutionException {

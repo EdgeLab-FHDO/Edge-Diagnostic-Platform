@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.Scenario;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
+import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 
 /**
@@ -37,7 +38,7 @@ public class ScenarioDispatcher extends ModuleOutput {
      * @throws InvalidTimeException If when running the scenario there is a problem with the timing
      */
     @Override
-    public void execute(String response) throws ScenarioDispatcherException, InvalidTimeException {
+    public void execute(String response) throws ScenarioDispatcherException, InvalidTimeException, OwnerModuleNotSetUpException {
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
             try {
@@ -104,7 +105,8 @@ public class ScenarioDispatcher extends ModuleOutput {
     /**
      * Method to run the scenario
      */
-    private void runScenario(long startTime) throws InvalidTimeException {
+    private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
+        this.getOwnerModule().getDebugInput().debug("starting scenario " + this.scenario.getName());
         this.ownerScenarioModule.startScenario(startTime);
     }
 

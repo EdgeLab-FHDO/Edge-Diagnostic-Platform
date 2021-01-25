@@ -16,6 +16,10 @@ public abstract class ModuleOutput {
         return name;
     }
 
+    public PlatformModule getOwnerModule() {
+        return ownerModule;
+    }
+
     public ModuleState getOwnerModuleState() {
         return this.ownerModule.getState();
     }

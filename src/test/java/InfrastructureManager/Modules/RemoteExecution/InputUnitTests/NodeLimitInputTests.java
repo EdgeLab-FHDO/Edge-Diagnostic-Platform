@@ -13,7 +13,7 @@ public class NodeLimitInputTests {
     private final LimitList list = new LimitList();
     RemoteExecutionModule module = new RemoteExecutionModule();
     private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out", list);
-    private final NodeLimitInput input = new NodeLimitInput("limit.in", list);
+    private final NodeLimitInput input = new NodeLimitInput(module, "limit.in", list);
 
     @Test
     public void limitBodyIsCorrectWithDefaultPeriod() throws ModuleExecutionException, InterruptedException {

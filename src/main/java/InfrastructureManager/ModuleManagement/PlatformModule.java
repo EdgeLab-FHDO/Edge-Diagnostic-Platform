@@ -20,6 +20,8 @@ public abstract class PlatformModule {
     private final Map<String, List<Connection>> inputConnections;
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
+    private ModuleDebugInput debugInput;
+
     private volatile ModuleState state;
 
     protected RunnerOperation runnerOperation = (runner,input) -> {
@@ -63,11 +65,11 @@ public abstract class PlatformModule {
     }
 
     protected void setInputs(ModuleInput... inputs) {
-        for (ModuleInput input : inputs) { //Process the new inputs by adding a runner
-            Runner runner = new Runner(input.getName(),input);
-            input.setRunner(runner);
-        }
-        this.inputs.addAll(Arrays.asList(inputs)); //Append them to the list
+        List<ModuleInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
+        this.debugInput = new ModuleDebugInput(this,name + ".debug");
+        temporalList.add(this.debugInput);
+        temporalList.forEach(i -> i.setRunner(new Runner(i.getName(), i)));
+        this.inputs.addAll(temporalList); //Append them to the list
     }
 
     protected void setOutputs(ModuleOutput... outputs) {
@@ -163,5 +165,9 @@ public abstract class PlatformModule {
 
     public String processCommand(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
+    }
+
+    public ModuleDebugInput getDebugInput() {
+        return debugInput;
     }
 }
