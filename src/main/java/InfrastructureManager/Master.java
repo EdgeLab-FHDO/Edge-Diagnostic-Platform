@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Master {
 
-    private static final String DEFAULT_CONFIG_PATH = "src/main/resources/NewConfiguration.json";
+    private static final String DEFAULT_CONFIG_PATH = "src/main/resources/Configuration.json";
     private static Master instance = null;
 
     private ModuleManager manager;

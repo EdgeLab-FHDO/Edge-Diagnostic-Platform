@@ -1,134 +1,57 @@
 {
-  "ioData": {
-      "inputs": [
-        {"type": "ConsoleInput","name": "console_in"},
-        {"type": "MatchMaker-Score","name": "match_m"},
-        {"type": "Scenario", "name": "dummy"},
-        {"type": "Scenario", "name": "run_open_cv_demo"},
-        {"type":  "NodeResourceLimiter", "name": "limit"},
-        {"type": "GenericPOST","name": "client_in_rest","address": "/client/register","port": 4567,
-          "command" :  "register_client $body",
-          "information": [],
-          "@IOType" : "CustomCommand"
-        },
-        {"type": "GenericPOST","name": "node_in_rest","address": "/node/register","port": 4567,
-          "command" :  "register_node $body",
-          "information": [],
-          "@IOType" : "CustomCommand"
-        },
-        {"type": "GenericPOST","name": "disconnect_client_in_rest","address": "/client/disconnect","port": 4567,
-          "command" :  "disconnect_client $body",
-          "information": [],
-          "@IOType" : "CustomCommand"
-        },
-        {"type": "GenericPOST","name": "assignment_rest","address": "/client/assign","port": 4567,
-          "command" :  "assign_client $id",
-          "information": ["id"],
-          "@IOType" : "CustomCommand"
-        },
-        {"type": "GenericPOST","name": "post_test","address": "/post_test","port": 4567,
-          "command" :  "test $name $number",
-          "information": ["name", "number"],
-          "@IOType" : "CustomCommand"
-        }
-
-
-
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "ScenarioModule", "name": "dummy", "path": "src/main/resources/scenarios/dummy.json"},
+    {"type": "UtilityModule", "name": "util"},
+    {
+      "type" : "RESTModule",
+      "name":  "rest",
+      "port": 4567,
+      "baseURL": "/rest",
+      "POST" : [
+        {"name" : "post1","URL": "/post_test","command": "test1 $body","information":  []},
+        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]},
+        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]}
       ],
-      "outputs": [
-        {"type": "ConsoleOutput","name": "console_out"},
-        {"type": "MasterUtility","name": "util"},
-        {"type": "AdvantEdgeClient","name": "advant_e", "address" : "http://localhost", "port" : 80},
-        {"type": "ScenarioDispatcher","name": "scenario_dispatcher"},
-        {"type": "ScenarioEditor","name": "scenario_editor"},
-        {"type": "SSHClient","name": "ssh"},
-        {"type": "FileOutput", "name": "file_out"},
-        {"type": "GenericGET","name": "rest_limit", "address": "/limit","port": 4567},
-        {"type": "GenericGET","name": "get2", "address": "/client/get_node/:client_id","port": 4567},
-        {"type": "GenericGET","name": "get_test", "address": "/get_test","port": 4567},
-        {"type": "MasterUtility","name": "util"},
-        {"type": "MatchMaker-Random","name": "match_m"},
-        {"type":  "NodeResourceLimiter", "name": "limit"}
+      "GET" : [
+        {"name" : "get1", "URL":  "/limit_test"},
+        {"name": "get2", "URL": "/client/get_node/:client_id"}
       ]
     },
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
+    {"type" : "RemoteExecutionModule", "name": "remote"},
+    {"type" :  "MatchMakingModule", "name":  "mm", "matchMakerType":  "RANDOM"}
+  ],
+
   "connections" : [
     {
-      "in" : "console_in",
-      "out" : "console_out",
+      "in" : "console.in",
+      "out" : "console.out",
       "commands" : {
-        "deploy_application" : "console helmChartExecution" ,
-        "update_gui" : "console GUIUpdateExecution" ,
-        "node_request" : "console matchMakingExecution" ,
-        "save_statistics" : "console LoggerExecution" ,
-        "show_statistics" : "console GUIUpdateExecution"
+        "test $param" : "console $param"
       }
     },
     {
-      "in" : "console_in",
-      "out" : "file_out",
+      "in" : "console.debug",
+      "out" : "console.out",
       "commands" : {
-        "define_encoding $ENCODING" : "file_out encoding $ENCODING",
-        "create_file $PATH" : "file_out create $PATH Hello World!",
-        "append_to_file $PATH" : "file_out append $PATH \nHello Back!"
+        "fromDebug $message" : "console $message"
       }
     },
     {
-      "in" : "console_in",
-      "out" : "ssh",
-      "commands" : {
-        "setup_ssh $HOST $PORT $USERNAME $PASSWORD" : "ssh setup $HOST $PORT $USERNAME $PASSWORD",
-        "test_setup" : "ssh setup 192.168.0.127 22 jpcr3108 jp1234",
-        "see_files" : "ssh execute -f ls",
-        "check_processes" : "ssh execute -f ps -ef | grep dummy | grep -v grep",
-        "execute_dummy" : "ssh execute -b bash dummy.sh",
-        "execute_dummy_sudo" : "ssh execute -b sudo bash dummy.sh",
-        "kill $PID" : "ssh execute -f sudo kill $PID",
-        "send_dummy" : "ssh sendFile src/test/resources/ManualTestResources/SSHClientTest/dummy.sh /home/jpcr3108/dummy.sh"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "util",
+      "in" : "console.in",
+      "out" : "util.control",
       "commands" : {
         "exit" : "util exit",
-        "start_rest_server" : "util runRunner RestServer",
-        "start_runner $runner_name" : "util runRunner $runner_name"
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
       }
     },
     {
-      "in" : "console_in",
-      "out" : "advant_e",
-      "commands" : {
-        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
-        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
-        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name",
-        "ae_update_nw_char $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $ELEMENT_TYPE $THROUGHPUT_DL $THROUGHPUT_UL $LATENCY $LATENCY_VARIATION $PACKET_LOSS"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "scenario_editor",
-      "commands" : {
-        "create_scenario $scenario_name" : "editor create $scenario_name",
-        "add_event $event_name $execution_time" : "editor addEvent $event_name $execution_time",
-        "delete_event" : "editor deleteEvent",
-        "save_scenario $path" : "editor toFile $path",
-        "read_scenario $path" : "editor fromFile $path"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "scenario_dispatcher",
-      "commands" : {
-        "load_scenario $path" : "dispatcher fromFile $path",
-        "run_scenario" : "dispatcher run",
-        "pause_scenario" : "dispatcher pause",
-        "resume_scenario" : "dispatcher resume"
-      }
-    },
-    {
-      "in" : "dummy",
-      "out" : "console_out",
+      "in" : "dummy.scenario",
+      "out" : "console.out",
       "commands" : {
         "deploy_application" : "console helmChartExecution" ,
         "update_gui" : "console GUIUpdateExecution" ,
@@ -136,98 +59,104 @@
       }
     },
     {
-      "in" : "console_in",
-      "out" : "match_m",
+      "in" : "console.in",
+      "out": "dummy.dispatcher",
+      "commands": {
+        "run_scenario" : "dispatcher run",
+        "pause_scenario" : "dispatcher pause",
+        "resume_scenario" : "dispatcher resume"
+      }
+    },
+    {
+      "in" : "rest.post2",
+      "out" : "console.out",
+      "commands" : {
+        "test2 $name $number" : "console $name $number"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.get1",
+      "commands" : {
+        "get_test": "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "ae.out",
+      "commands" : {
+        "ae_test": "advantEdge deploy dummy"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "remote.limit.out",
+      "commands" : {
+        "test_limit" : "limit cores node1 0.5",
+        "test_limit2" : "limit cores node2 0.7"
+      }
+    },
+    {
+      "in" : "remote.limit.in",
+      "out" : "rest.get1",
+      "commands" : {
+        "set_limits $limits": "toGET resource $limits"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "mm.out",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
       }
     },
     {
-      "in" : "client_in_rest",
-      "out" : "match_m",
+      "in" : "rest.client",
+      "out" : "mm.out",
       "commands" : {
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
       }
     },
     {
-      "in" : "node_in_rest",
-      "out" : "match_m",
+      "in" : "rest.node",
+      "out" : "mm.out",
       "commands" : {
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
       }
     },
     {
-      "in" : "disconnect_client_in_rest",
-      "out" : "match_m",
+      "in" : "rest.client",
+      "out" : "console.out",
       "commands" : {
-        "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
+        "register_client $client_as_json_string" : "console register_client $client_as_json_string"
       }
     },
     {
-      "in" : "assignment_rest",
-      "out" : "match_m",
+      "in" : "rest.node",
+      "out" : "console.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "console register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.assign",
+      "out" : "mm.out",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
       }
     },
     {
-      "in" : "match_m",
-      "out" : "console_out",
+      "in" : "mm.in",
+      "out" : "console.out",
       "commands" : {
         "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
       }
     },
     {
-      "in" : "match_m",
-      "out" : "get2",
+      "in" : "mm.in",
+      "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "limit",
-      "commands" : {
-        "limit_node $tag $CPU_limit" : "limit cores $tag $CPU_limit"
-      }
-    },
-    {
-      "in" : "limit",
-      "out" : "rest_limit",
-      "commands" : {
-        "set_limits $limits" : "toGET resource $limits"
-      }
-    },
-    {
-      "in" : "console_in",
-      "out" : "get_test",
-      "commands" : {
-        "test_get" : "toGET resource {\"name\":\"example\",\"number\":874}",
-        "test_get2" : "toGET resource {\"name\":\"other\",\"number\":123}"
-      }
-    },
-    {
-      "in" : "post_test",
-      "out" : "console_out",
-      "commands" : {
-        "test $name $number": "console $name $number"
-      }
-    },
-    {
-      "in" : "run_open_cv_demo",
-      "out" : "util",
-      "commands" : {
-        "start_rest_server" : "util runRunner RestServer",
-        "start_runner $runner_name" : "util runRunner $runner_name"
-      }
-    },
-    {
-      "in" : "run_open_cv_demo",
-      "out" : "advant_e",
-      "commands" : {
-        "ae_create_scenario $scenario_name $scenario_path" : "advantEdge create $scenario_name $scenario_path",
-        "ae_deploy_scenario $scenario_name" : "advantEdge deploy $scenario_name",
-        "ae_terminate_active $sandbox_name" : "advantEdge terminate $sandbox_name"
       }
     }
   ]
