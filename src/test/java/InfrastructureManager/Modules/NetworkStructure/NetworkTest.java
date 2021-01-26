@@ -1,4 +1,4 @@
-package InfrastructureManager.NetworkStructure;
+package InfrastructureManager.Modules.NetworkStructure;
 import org.junit.Assert;
 import org.junit.Test;
 

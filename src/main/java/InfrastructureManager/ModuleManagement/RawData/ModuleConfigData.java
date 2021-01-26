@@ -8,6 +8,7 @@ import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 import InfrastructureManager.Modules.RemoteExecution.RawData.RemoteExecutionModuleConfigData;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
 import InfrastructureManager.Modules.Utility.RawData.UtilityModuleConfigData;
+import InfrastructureManager.Modules.NetworkStructure.RawData.NetworkModuleConfigData;
 import com.fasterxml.jackson.annotation.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = ModuleConfigData.class)
@@ -18,7 +19,8 @@ import com.fasterxml.jackson.annotation.*;
         @JsonSubTypes.Type(value = RESTModuleConfigData.class, name = "RESTModule"),
         @JsonSubTypes.Type(value = AdvantEdgeModuleConfigData.class, name = "AdvantEdgeModule"),
         @JsonSubTypes.Type(value = RemoteExecutionModuleConfigData.class, name = "RemoteExecutionModule"),
-        @JsonSubTypes.Type(value = MatchMakingModuleConfigData.class, name = "MatchMakingModule")
+        @JsonSubTypes.Type(value = MatchMakingModuleConfigData.class, name = "MatchMakingModule"),
+        @JsonSubTypes.Type(value = NetworkModuleConfigData.class, name = "NetworkModule")
 })
 public abstract class ModuleConfigData {
     private final String name;

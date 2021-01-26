@@ -1,6 +1,9 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 
 public abstract class ModuleOutput {

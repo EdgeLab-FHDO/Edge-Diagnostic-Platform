@@ -2,6 +2,7 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 @JsonIgnoreProperties({"runner", "ownerModule"})
 public abstract class ModuleInput {
@@ -35,6 +36,6 @@ public abstract class ModuleInput {
         return name;
     }
 
-    public abstract String read() throws InterruptedException;
+    public abstract String read() throws InterruptedException, JsonProcessingException;
     public abstract void response(ModuleExecutionException outputException);
 }
