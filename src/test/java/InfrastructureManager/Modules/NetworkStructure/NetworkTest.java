@@ -171,7 +171,7 @@ public class NetworkTest {
 	
 	
 	@Test
-	public void saveNetworkTest() throws JsonProcessingException {
+	public void saveNetworkTest() throws JsonProcessingException, InterruptedException {
 	 // create network object
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
 		ComputeLimits computelimits = new ComputeLimits(1,2,3);
