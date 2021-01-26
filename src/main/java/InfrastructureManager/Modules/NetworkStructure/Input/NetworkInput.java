@@ -18,7 +18,7 @@ public class NetworkInput extends ModuleInput {
 		this.network = network;
 	}
     @Override
-    public String read() throws JsonProcessingException  {
+    public String read() throws InterruptedException  {
         String aux = this.network.saveNetwork();
         return aux;
     }

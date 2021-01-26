@@ -2,6 +2,9 @@ package InfrastructureManager.Modules.NetworkStructure;
 import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
+
 import java.util.List;
 
 /**
@@ -66,9 +69,15 @@ public class Network {
 	 * Function to save JSON string
 	 * @return String
 	 */
-	public String saveNetwork() throws JsonProcessingException{
-		String json = this.mapper.writeValueAsString(this);
-		return json;
+	public String saveNetwork() throws InterruptedException{
+		try {
+			String json = this.mapper.writeValueAsString(this);
+			return json;
+		}
+		catch(JsonProcessingException e) {
+			return null;
+		}
+
 	}
 
 
