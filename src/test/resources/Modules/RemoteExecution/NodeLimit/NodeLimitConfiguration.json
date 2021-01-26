@@ -1,0 +1,43 @@
+{
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {
+      "type" : "RESTModule",
+      "name":  "rest",
+      "port": 4567,
+      "baseURL": "/rest",
+      "POST" : [],
+      "GET" : [
+        {"name" : "limit", "URL":  "/limit_test"}
+      ]
+    },
+    {"type" : "RemoteExecutionModule", "name": "remote"}
+  ],
+
+  "connections" : [
+    {
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit",
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out": "remote.limit.out",
+      "commands" : {
+        "limit_node $tag $limit" : "limit cores $tag $limit"
+      }
+    },
+    {
+      "in" : "remote.limit.in",
+      "out" : "rest.limit",
+      "commands" : {
+        "set_limits $limits": "toGET resource $limits"
+      }
+    }
+  ]
+}

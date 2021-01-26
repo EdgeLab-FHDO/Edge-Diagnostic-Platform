@@ -1,0 +1,60 @@
+{
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {
+      "type" : "RESTModule",
+      "name":  "rest",
+      "port": 4567,
+      "baseURL": "/rest",
+      "POST" : [
+        {"name" : "post1","URL": "/post_test","command": "test $body","information":  []},
+        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]}
+      ],
+      "GET" : [
+        {"name" : "get1", "URL":  "/get_test"},
+        {"name": "get2", "URL": "/get_test2/:id"}
+      ]
+    }
+  ],
+
+  "connections" : [
+    {
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit",
+        "pause $module" : "util pauseModule $module",
+        "resume $module" : "util resumeModule $module"
+      }
+    },
+    {
+      "in" : "rest.post1",
+      "out" : "console.out",
+      "commands" : {
+        "test $body" : "console $body"
+      }
+    },
+    {
+      "in" : "rest.post2",
+      "out" : "console.out",
+      "commands" : {
+        "test2 $name $number" : "console $name $number"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.get1",
+      "commands" : {
+        "get_test": "toGET resource {\"name\": \"example\",\n\"number\": 874}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.get2",
+      "commands" : {
+        "get_test": "toGET resource id1 {\"name\": \"example\",\n\"number\": 874}"
+      }
+    }
+  ]
+}
