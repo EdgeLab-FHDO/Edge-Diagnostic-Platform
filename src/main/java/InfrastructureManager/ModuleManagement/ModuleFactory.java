@@ -9,10 +9,11 @@ import InfrastructureManager.Modules.REST.RESTModule;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
+import InfrastructureManager.Modules.NetworkStructure.NetworkModule;
 
 public class ModuleFactory {
 
-    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC, MATCH_MAKING}
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC, MATCH_MAKING, NETWORK_STRUCTURE}
 
     public PlatformModule create(ModuleConfigData data) throws ModuleNotDefinedException {
 
@@ -24,6 +25,7 @@ public class ModuleFactory {
             case ADVANTEDGE -> new AdvantEdgeModule();
             case REMOTE_EXEC -> new RemoteExecutionModule();
             case MATCH_MAKING -> new MatchMakingModule();
+            case NETWORK_STRUCTURE -> new NetworkModule();
             default -> throw new ModuleNotDefinedException("The module type for module" + data.getName() + "is not defined");
         };
         result.configure(data);
