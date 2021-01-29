@@ -5,6 +5,7 @@ import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioIOException;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -26,8 +27,11 @@ public class ScenarioEditor extends ModuleOutput {
 
     public ScenarioEditor(PlatformModule module, String name) {
         super(module,name);
+        InjectableValues inject = new InjectableValues.Std()
+                .addValue(PlatformModule.class, module);
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        this.mapper.setInjectableValues(inject);
     }
 
     /**
@@ -47,7 +51,7 @@ public class ScenarioEditor extends ModuleOutput {
         if (command[0].equals("editor")) {
             try {
                 switch (command[1]) {
-                    case "create" -> create(command[2]);
+                    case "create" -> create();
                     case "addEvent" -> addEvent(command[2], Integer.parseInt(command[3]));
                     case "deleteEvent" -> deleteLastEvent();
                     case "toFile" -> scenarioToFile(command[2]);
@@ -64,10 +68,9 @@ public class ScenarioEditor extends ModuleOutput {
 
     /**
      * Create a new scenario (related to this editor)
-     * @param name Name of the scenario to be created
      */
-    private void create(String name){
-        scenario = new Scenario(name);
+    private void create(){
+        scenario = new Scenario(this.getOwnerModule());
     }
 
     /**

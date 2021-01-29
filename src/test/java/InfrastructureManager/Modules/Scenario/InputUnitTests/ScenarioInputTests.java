@@ -1,11 +1,13 @@
 package InfrastructureManager.Modules.Scenario.InputUnitTests;
 
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,8 +24,9 @@ public class ScenarioInputTests {
         ObjectMapper mapper = new ObjectMapper();
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ScenarioModule module =new ScenarioModule();
+        InjectableValues inject = new InjectableValues.Std().addValue(PlatformModule.class, module);
+        mapper.setInjectableValues(inject);
         scenario = mapper.readValue(new File(scenarioPath),Scenario.class);
-        scenario.setOwnerModule(module);
     }
 
     @Test

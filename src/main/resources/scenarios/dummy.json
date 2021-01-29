@@ -1,5 +1,4 @@
 {
-  "name": "dummy",
   "eventList": [
     {
       "command": "deploy_application",
