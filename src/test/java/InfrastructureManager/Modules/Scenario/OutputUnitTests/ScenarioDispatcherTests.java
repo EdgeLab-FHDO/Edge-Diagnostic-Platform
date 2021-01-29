@@ -6,12 +6,14 @@ import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ModuleManager;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 import InfrastructureManager.Modules.Scenario.Scenario;
 import InfrastructureManager.Modules.Scenario.ScenarioDispatcher;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.*;
 
@@ -25,26 +27,28 @@ import java.util.stream.Collectors;
 public class ScenarioDispatcherTests {
 
     private ScenarioDispatcher dispatcher;
-    private final Scenario scenario;
+    private static Scenario scenario;
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent;
     private static ScenarioModule module = new ScenarioModule();
 
 
-    public ScenarioDispatcherTests() throws IOException {
-        String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
-        ObjectMapper mapper = new ObjectMapper();
-        this.scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
+    public ScenarioDispatcherTests() {
         outContent = new ByteArrayOutputStream();
     }
 
     @BeforeClass
-    public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException {
+    public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException, IOException {
         Master.resetInstance();
         Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
         ModuleManager manager = Master.getInstance().getManager();
         manager.startAllModules();
         module = findModule(manager);
+        InjectableValues inject = new InjectableValues.Std().addValue(PlatformModule.class, module);
+        String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setInjectableValues(inject);
+        scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
     }
 
     @Before

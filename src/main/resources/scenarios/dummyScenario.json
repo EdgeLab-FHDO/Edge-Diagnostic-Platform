@@ -1,5 +1,4 @@
 {
-  "name": "dummy",
   "eventList": [
     {
       "command": "start_rest_server",

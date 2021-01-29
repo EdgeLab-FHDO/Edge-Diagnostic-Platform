@@ -7,7 +7,6 @@ import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeExcepti
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +29,10 @@ public class Scenario extends ModuleInput {
 
     /**
      * Constructor of the class
-     * @param name Name of the new scenario
+     *
      */
-    public Scenario(@JacksonInject PlatformModule module, @JsonProperty("name") String name) {
-        super(module,name + ".scenario");
+    public Scenario(@JacksonInject PlatformModule module) {
+        super(module, module.getName() + ".scenario");
         this.eventList = new ArrayList<>();
         this.startBlock = new Semaphore(0);
         this.startTime = 0; //When a new scenario is created for file or command, start time in 0 (It will be rewritten when is run)
