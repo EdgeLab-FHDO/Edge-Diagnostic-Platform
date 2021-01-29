@@ -67,7 +67,7 @@ public class ScenarioEditor extends ModuleOutput {
      * @param name Name of the scenario to be created
      */
     private void create(String name){
-        scenario = new Scenario(name);
+        scenario = new Scenario(this.getOwnerModule(),name);
     }
 
     /**

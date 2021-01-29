@@ -8,15 +8,11 @@ public abstract class ModuleInput {
 
     private final String name;
     private Runner runner;
-    private PlatformModule ownerModule;
+    private final PlatformModule ownerModule;
 
     public ModuleInput(PlatformModule ownerModule,String name) {
         this.ownerModule = ownerModule;
         this.name = name;
-    }
-
-    protected void setOwnerModule(PlatformModule ownerModule) {
-        this.ownerModule = ownerModule;
     }
 
     protected PlatformModule getOwnerModule() {
