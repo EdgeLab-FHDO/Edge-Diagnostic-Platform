@@ -1,13 +1,12 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.InvalidLimitParametersException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.NodeLimitException;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
-public class NodeLimitOutput extends ModuleOutput {
+public class NodeLimitOutput extends PlatformOutput {
 
     private final LimitList sharedList;
 

@@ -2,15 +2,14 @@ package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformInput;
 
 import java.util.Scanner;
 
 /**
- * Class representing input from the console as a form of ModuleInput
+ * Class representing input from the console as a form of PlatformInput
  */
-public class ConsoleInput extends ModuleInput {
+public class ConsoleInput extends PlatformInput {
     private final Scanner IN = new Scanner(System.in);
 
     public ConsoleInput(ImmutablePlatformModule module, String name) {

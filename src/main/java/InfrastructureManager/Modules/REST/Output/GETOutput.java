@@ -1,8 +1,7 @@
 package InfrastructureManager.Modules.REST.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
@@ -15,7 +14,7 @@ import static spark.Spark.get;
  * Class to represent a MasterOutput that generates a REST resource to be consumed by GET requests
  * given the path in which the resource will be available and the json body of the desired response
  */
-public class GETOutput extends ModuleOutput {
+public class GETOutput extends PlatformOutput {
 
     private String toSend;
     protected final String URL;

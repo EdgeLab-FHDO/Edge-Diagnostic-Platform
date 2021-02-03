@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.ClientNotInitializedException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.CommandExecution.CommandExecutionException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.FileSendingException;
@@ -16,7 +16,7 @@ import com.jcraft.jsch.Session;
 import java.io.*;
 import java.util.Arrays;
 
-public class SSHClient extends ModuleOutput {
+public class SSHClient extends PlatformOutput {
 
     private final JSch jsch;
     private String username;

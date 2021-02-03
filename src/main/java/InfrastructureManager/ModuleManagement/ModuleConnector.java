@@ -24,7 +24,7 @@ public class ModuleConnector {
 
         for (ConnectionConfigData connectionData : connectionDataList) {
             if (getInputModuleName(connectionData).equals(moduleName)) {
-                ModuleOutput output = findOutput(connectionData.getOut());
+                PlatformOutput output = findOutput(connectionData.getOut());
                 CommandSet commandSet = new CommandSet();
                 commandSet.set(connectionData.getCommands());
                 Connection connection = new Connection(output,commandSet);
@@ -46,9 +46,9 @@ public class ModuleConnector {
         }
     }
 
-    private ModuleOutput findOutput(String outputName) throws ModuleNotDefinedException, IncorrectIONameException {
+    private PlatformOutput findOutput(String outputName) throws ModuleNotDefinedException, IncorrectIONameException {
         PlatformModule module = findOutputModule(outputName);
-        for (ModuleOutput output : module.getOutputs()) {
+        for (PlatformOutput output : module.getOutputs()) {
             if (outputName.equals(output.getName())) {
                 return output;
             }

@@ -2,8 +2,7 @@ package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -17,7 +16,7 @@ import java.util.concurrent.Semaphore;
  * Class representing an scenario, as an object with a name and a list of events
  */
 @JsonIgnoreProperties({"startBlock","startTime","current", "pausedTime", "resumedTime","started"})
-public class Scenario extends ModuleInput {
+public class Scenario extends PlatformInput {
 
     private final List<Event> eventList;
     private final Semaphore startBlock;

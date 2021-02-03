@@ -10,7 +10,7 @@ public abstract class LoggableObject {
     public LoggableObject(ImmutablePlatformModule ownerModule) {
         this.ownerModule = ownerModule;
     }
-    
+
     protected ModuleDebugInput getLogger() {
         return this.ownerModule.getDebugInput();
     }

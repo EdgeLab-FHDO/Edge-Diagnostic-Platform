@@ -2,15 +2,11 @@ package InfrastructureManager.Modules.NetworkStructure.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
+import InfrastructureManager.ModuleManagement.PlatformInput;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.NetworkStructure.Network;
 
-public class NetworkInput extends ModuleInput {
+public class NetworkInput extends PlatformInput {
 	
 	private final Network network;
 	

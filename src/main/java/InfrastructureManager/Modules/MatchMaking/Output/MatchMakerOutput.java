@@ -1,8 +1,7 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Exception.*;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchMakerOutput extends ModuleOutput {
+public class MatchMakerOutput extends PlatformOutput {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper mapper;

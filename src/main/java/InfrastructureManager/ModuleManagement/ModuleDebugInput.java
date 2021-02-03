@@ -5,7 +5,7 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class ModuleDebugInput extends ModuleInput {
+public class ModuleDebugInput extends PlatformInput {
 
     private final BlockingQueue<String> debugData;
 

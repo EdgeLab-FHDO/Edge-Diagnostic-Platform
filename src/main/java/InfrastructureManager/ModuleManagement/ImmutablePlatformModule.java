@@ -15,8 +15,8 @@ import java.util.Map;
 public abstract class ImmutablePlatformModule {
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    private final List<ModuleInput> inputs;
-    private final List<ModuleOutput> outputs;
+    private final List<PlatformInput> inputs;
+    private final List<PlatformOutput> outputs;
     private final Map<String, List<Connection>> inputConnections;
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
@@ -62,11 +62,11 @@ public abstract class ImmutablePlatformModule {
 
     public abstract void configure(ModuleConfigData data);
 
-    public List<ModuleInput> getInputs() {
+    public List<PlatformInput> getInputs() {
         return inputs;
     }
 
-    public List<ModuleOutput> getOutputs() {
+    public List<PlatformOutput> getOutputs() {
         return outputs;
     }
 
@@ -124,11 +124,11 @@ public abstract class ImmutablePlatformModule {
     }
 
     protected boolean hasInput(String inputName) {
-        return inputs.stream().map(ModuleInput::getName).anyMatch(inputName::equals);
+        return inputs.stream().map(PlatformInput::getName).anyMatch(inputName::equals);
     }
 
     private void configureRunners() {
-        for (ModuleInput in : inputs) {
+        for (PlatformInput in : inputs) {
             if (inputConnections.containsKey(in.getName())) {
                 Runner runner = in.getRunner();
                 runner.setConnections(inputConnections.get(in.getName()));

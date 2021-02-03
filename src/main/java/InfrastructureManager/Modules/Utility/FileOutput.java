@@ -1,8 +1,7 @@
 package InfrastructureManager.Modules.Utility;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.InvalidEncodingException;
 
@@ -13,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 
-public class FileOutput extends ModuleOutput {
+public class FileOutput extends PlatformOutput {
 
     private Charset encoding;
 

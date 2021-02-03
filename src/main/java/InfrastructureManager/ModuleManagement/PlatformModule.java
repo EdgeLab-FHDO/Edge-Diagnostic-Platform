@@ -20,15 +20,15 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
         this.name = name;
     }
 
-    protected void setInputs(ModuleInput... inputs) {
-        List<ModuleInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
+    protected void setInputs(PlatformInput... inputs) {
+        List<PlatformInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
         this.debugInput = new ModuleDebugInput(this,name + ".debug");
         temporalList.add(this.debugInput);
         temporalList.forEach(i -> i.setRunner(new Runner(i.getName(), i)));
         this.getInputs().addAll(temporalList); //Append them to the list
     }
 
-    protected void setOutputs(ModuleOutput... outputs) {
+    protected void setOutputs(PlatformOutput... outputs) {
         this.getOutputs().addAll(Arrays.asList(outputs));
     }
 

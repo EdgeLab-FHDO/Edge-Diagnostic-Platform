@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.REST;
 
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformInput;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Input.POSTInput;
 import InfrastructureManager.Modules.REST.Output.GETOutput;
@@ -15,25 +15,25 @@ import java.util.List;
 
 public class RESTModuleConfiguration {
 
-    public static ModuleInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, PlatformModule module) {
-        List<ModuleInput> result = new ArrayList<>();
+    public static PlatformInput[] getInputsFromData(List<POSTInputConfigData> data, String baseURL, PlatformModule module) {
+        List<PlatformInput> result = new ArrayList<>();
         String moduleName = module.getName();
         for (POSTInputConfigData inputData : data) {
             String name = createName(inputData,moduleName);
             result.add(new POSTInput(module, name,
                     baseURL + inputData.getURL(), inputData.getCommand(), inputData.getInformation()));
         }
-        return result.toArray(new ModuleInput[0]);
+        return result.toArray(new PlatformInput[0]);
     }
 
-    public static ModuleOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, PlatformModule module) {
-        List<ModuleOutput> result = new ArrayList<>();
+    public static PlatformOutput[] getOutputsFromData(List<GETOutputConfigData> data, String baseURL, PlatformModule module) {
+        List<PlatformOutput> result = new ArrayList<>();
         String moduleName =  module.getName();
         for (GETOutputConfigData outputData : data) {
             String name = createName(outputData,moduleName);
             result.add(getTypedOutput(module,name, baseURL + outputData.getURL()));
         }
-        return result.toArray(new ModuleOutput[0]);
+        return result.toArray(new PlatformOutput[0]);
     }
 
     private static String createName(RESTIOConfigData data, String moduleName) {

@@ -15,7 +15,7 @@ public class Runner implements Runnable{
     private RunnerOperation runOperation;
 
     protected String name;
-    protected ModuleInput input;
+    protected PlatformInput input;
     protected List<Connection> connections;
 
     protected final Semaphore pauseBlock;
@@ -23,7 +23,7 @@ public class Runner implements Runnable{
     protected volatile boolean exit = false; //Flag to check status and be able to exit
     protected volatile boolean running = false; //Flag to see runner status
 
-    public Runner(String name, ModuleInput input) {
+    public Runner(String name, PlatformInput input) {
         this.name = name;
         this.input = input;
         this.pauseBlock = new Semaphore(0);

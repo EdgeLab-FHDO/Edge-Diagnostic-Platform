@@ -1,8 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
@@ -14,7 +13,7 @@ import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatche
  * - Run Scenarios
  * - Pause/Resume Scenarios
  */
-public class ScenarioDispatcher extends ModuleOutput {
+public class ScenarioDispatcher extends PlatformOutput {
 
     private final Scenario scenario;
     private final ScenarioModule ownerScenarioModule;

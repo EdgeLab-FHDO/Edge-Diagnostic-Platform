@@ -5,13 +5,13 @@ import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleManager;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleControllerException;
 
 /**
  * Class implementing MasterOutput, for utilities within the master
  */
-public class ModuleController extends ModuleOutput {
+public class ModuleController extends PlatformOutput {
 
     public ModuleController(ImmutablePlatformModule module, String name) {
         super(module,name);

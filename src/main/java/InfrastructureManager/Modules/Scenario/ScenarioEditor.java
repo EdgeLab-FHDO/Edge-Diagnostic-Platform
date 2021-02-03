@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
@@ -21,7 +21,7 @@ import java.io.IOException;
  * - Save Scenarios to JSON Files
  * - Load Scenarios from JSON Files
  */
-public class ScenarioEditor extends ModuleOutput {
+public class ScenarioEditor extends PlatformOutput {
 
     private Scenario scenario;
     private final ObjectMapper mapper;

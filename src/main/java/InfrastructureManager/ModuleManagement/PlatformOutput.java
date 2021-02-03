@@ -3,11 +3,11 @@ package InfrastructureManager.ModuleManagement;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule.ModuleState;
 
-public abstract class ModuleOutput {
+public abstract class PlatformOutput {
     private final String name;
     private final ImmutablePlatformModule ownerModule;
 
-    public ModuleOutput(ImmutablePlatformModule ownerModule, String name) {
+    public PlatformOutput(ImmutablePlatformModule ownerModule, String name) {
         this.name = name;
         this.ownerModule = ownerModule;
     }
