@@ -28,8 +28,8 @@ public class ScenarioModule extends PlatformModule {
             Scenario scenario = scenarioFromFile(castedData.getPath());
             setInputs(scenario);
             this.scenario = (Scenario) this.getInputs().get(0);
-            setOutputs(new ScenarioEditor(this,this.getName() + ".editor"),
-                    new ScenarioDispatcher(this,this.getName() + ".dispatcher",scenario));
+            setOutputs(new ScenarioEditor(this,this.getName() + ".editor", scenario),
+                    new ScenarioDispatcher(this,this.getName() + ".dispatcher", scenario));
 
         } catch (IOException e) {
             e.printStackTrace();
