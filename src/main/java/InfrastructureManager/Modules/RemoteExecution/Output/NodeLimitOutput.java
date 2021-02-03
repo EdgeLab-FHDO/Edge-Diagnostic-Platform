@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.InvalidLimitParametersException;
@@ -10,7 +11,7 @@ public class NodeLimitOutput extends ModuleOutput {
 
     private final LimitList sharedList;
 
-    public NodeLimitOutput(PlatformModule module, String name, LimitList list) {
+    public NodeLimitOutput(ImmutablePlatformModule module, String name, LimitList list) {
         super(module,name);
         this.sharedList = list;
     }

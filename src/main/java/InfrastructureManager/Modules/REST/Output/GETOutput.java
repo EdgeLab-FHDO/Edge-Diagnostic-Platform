@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
@@ -34,7 +35,7 @@ public class GETOutput extends ModuleOutput {
      * @param name Name of the output
      * @param URL Path in which the GET handler will be set (Resource will be created)
      */
-    public GETOutput(PlatformModule module, String name, String URL) {
+    public GETOutput(ImmutablePlatformModule module, String name, String URL) {
         super(module,name);
         this.toSend = "";
         this.URL = URL;

@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
@@ -31,7 +32,7 @@ public class Scenario extends ModuleInput {
      * Constructor of the class
      *
      */
-    public Scenario(@JacksonInject PlatformModule module) {
+    public Scenario(@JacksonInject ImmutablePlatformModule module) {
         super(module, module.getName() + ".scenario");
         this.eventList = new ArrayList<>();
         this.startBlock = new Semaphore(0);

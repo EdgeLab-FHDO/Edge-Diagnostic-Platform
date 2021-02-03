@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Console;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Console.Exception.ConsoleOutputException;
@@ -11,7 +12,7 @@ import java.util.Arrays;
  */
 public class ConsoleOutput extends ModuleOutput {
 
-    public ConsoleOutput(PlatformModule module, String name) {
+    public ConsoleOutput(ImmutablePlatformModule module, String name) {
         super(module, name);
     }
     /**

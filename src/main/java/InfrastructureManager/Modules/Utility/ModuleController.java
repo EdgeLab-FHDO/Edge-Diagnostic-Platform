@@ -3,9 +3,9 @@ package InfrastructureManager.Modules.Utility;
 import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleControllerException;
 
 /**
@@ -13,7 +13,7 @@ import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleCo
  */
 public class ModuleController extends ModuleOutput {
 
-    public ModuleController(PlatformModule module, String name) {
+    public ModuleController(ImmutablePlatformModule module, String name) {
         super(module,name);
     }
 

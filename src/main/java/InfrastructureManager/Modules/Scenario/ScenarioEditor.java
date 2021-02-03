@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
@@ -25,7 +26,7 @@ public class ScenarioEditor extends ModuleOutput {
     private Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(PlatformModule module, String name) {
+    public ScenarioEditor(ImmutablePlatformModule module, String name) {
         super(module,name);
         InjectableValues inject = new InjectableValues.Std()
                 .addValue(PlatformModule.class, module);
@@ -113,7 +114,7 @@ public class ScenarioEditor extends ModuleOutput {
      * @param path Path of the file
      */
     private void scenarioFromFile(String path) throws ScenarioIOException {
-        try {
+        try { //TODO: DELETE
             this.scenario = mapper.readValue(new File(path),Scenario.class);
         } catch (IOException e) {
             throw new ScenarioIOException("Scenario could not be loaded from path " + path, e);

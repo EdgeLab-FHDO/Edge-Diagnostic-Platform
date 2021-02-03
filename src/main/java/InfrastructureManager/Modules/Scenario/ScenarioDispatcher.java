@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
@@ -19,7 +20,7 @@ public class ScenarioDispatcher extends ModuleOutput {
     private final ScenarioModule ownerScenarioModule;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher(PlatformModule module, String name, Scenario scenario) {
+    public ScenarioDispatcher(ImmutablePlatformModule module, String name, Scenario scenario) {
         super(module,name);
         this.scenario = scenario;
         this.ownerScenarioModule = (ScenarioModule) module;

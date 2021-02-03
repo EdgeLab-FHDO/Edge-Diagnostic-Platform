@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.AdvantEDGE.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.ErrorInResponseException;
@@ -28,7 +29,7 @@ public class AdvantEdgeClient extends ModuleOutput {
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
-    public AdvantEdgeClient(PlatformModule module, String name, String address, int port) {
+    public AdvantEdgeClient(ImmutablePlatformModule module, String name, String address, int port) {
         super(module, name);
         this.requestPath = address + ":" + port;
     }

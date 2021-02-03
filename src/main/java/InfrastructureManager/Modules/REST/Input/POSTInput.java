@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.REST.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Input.ParsingArgumentNotDefinedException;
@@ -41,7 +42,7 @@ public class POSTInput extends ModuleInput {
      * @param command Command that the input will send to the master, it can include parameters using '$'
      * @param toParse List of parameters in the JSON that the input will search for
      */
-    public POSTInput(PlatformModule module, String name, String URL, String command, List<String> toParse) {
+    public POSTInput(ImmutablePlatformModule module, String name, String URL, String command, List<String> toParse) {
         super(module, name);
         this.URL = URL;
         this.toParse = toParse;

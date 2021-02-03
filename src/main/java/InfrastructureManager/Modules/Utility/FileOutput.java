@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Utility;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
@@ -16,7 +17,7 @@ public class FileOutput extends ModuleOutput {
 
     private Charset encoding;
 
-    public FileOutput(PlatformModule module, String name) {
+    public FileOutput(ImmutablePlatformModule module, String name) {
         super(module,name);
         this.encoding = StandardCharsets.UTF_8;
     }

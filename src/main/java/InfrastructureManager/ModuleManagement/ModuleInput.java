@@ -8,14 +8,14 @@ public abstract class ModuleInput {
 
     private final String name;
     private Runner runner;
-    private final PlatformModule ownerModule;
+    private final ImmutablePlatformModule ownerModule;
 
-    public ModuleInput(PlatformModule ownerModule,String name) {
+    public ModuleInput(ImmutablePlatformModule ownerModule,String name) {
         this.ownerModule = ownerModule;
         this.name = name;
     }
 
-    protected PlatformModule getOwnerModule() {
+    protected ImmutablePlatformModule getOwnerModule() {
         return this.ownerModule;
     }
 

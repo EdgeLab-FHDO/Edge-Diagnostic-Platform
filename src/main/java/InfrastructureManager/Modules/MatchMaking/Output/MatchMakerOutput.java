@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
@@ -25,7 +26,7 @@ public class MatchMakerOutput extends ModuleOutput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
-    public MatchMakerOutput(PlatformModule module, String name, MatchMakingAlgorithm algorithm, MatchesList mapping) {
+    public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm, MatchesList mapping) {
         super(module,name);
         this.sharedMatchesList = mapping;
         this.algorithm = algorithm;

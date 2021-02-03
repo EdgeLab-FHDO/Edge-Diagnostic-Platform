@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Scenario.InputUnitTests;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Scenario.Event;
@@ -24,7 +25,7 @@ public class ScenarioInputTests {
         ObjectMapper mapper = new ObjectMapper();
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ScenarioModule module =new ScenarioModule();
-        InjectableValues inject = new InjectableValues.Std().addValue(PlatformModule.class, module);
+        InjectableValues inject = new InjectableValues.Std().addValue(ImmutablePlatformModule.class, module);
         mapper.setInjectableValues(inject);
         scenario = mapper.readValue(new File(scenarioPath),Scenario.class);
     }

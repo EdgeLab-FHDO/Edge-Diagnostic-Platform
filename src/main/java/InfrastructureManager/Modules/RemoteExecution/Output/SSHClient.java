@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.RemoteExecution.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.ClientNotInitializedException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.CommandExecution.CommandExecutionException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.FileSendingException;
@@ -25,7 +25,7 @@ public class SSHClient extends ModuleOutput {
     private int port;
 
 
-    public SSHClient(PlatformModule module, String name) {
+    public SSHClient(ImmutablePlatformModule module, String name) {
         super(module, name);
         this.jsch = new JSch();
         this.username = null;

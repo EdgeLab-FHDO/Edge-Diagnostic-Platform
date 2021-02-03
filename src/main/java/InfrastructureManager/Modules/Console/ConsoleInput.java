@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 
@@ -12,7 +13,7 @@ import java.util.Scanner;
 public class ConsoleInput extends ModuleInput {
     private final Scanner IN = new Scanner(System.in);
 
-    public ConsoleInput(PlatformModule module, String name) {
+    public ConsoleInput(ImmutablePlatformModule module, String name) {
         super(module,name);
     }
     /**
