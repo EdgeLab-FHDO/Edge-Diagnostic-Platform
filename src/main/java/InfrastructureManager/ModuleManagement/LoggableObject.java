@@ -1,16 +1,17 @@
-package InfrastructureManager.Modules.MatchMaking;
+package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleDebugInput;
 
-public abstract class MatchMakingLoggableElement {
+public abstract class LoggableObject {
 
     private final ImmutablePlatformModule ownerModule;
 
-    public MatchMakingLoggableElement(ImmutablePlatformModule ownerModule) {
+    public LoggableObject(ImmutablePlatformModule ownerModule) {
         this.ownerModule = ownerModule;
     }
-    public ModuleDebugInput getLogger() {
+    
+    protected ModuleDebugInput getLogger() {
         return this.ownerModule.getDebugInput();
     }
 }
