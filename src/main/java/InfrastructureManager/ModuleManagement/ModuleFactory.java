@@ -5,6 +5,9 @@ import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.Console.ConsoleModule;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
+import InfrastructureManager.Modules.MatchMaking.Naive.MatchMakingNaiveModule;
+import InfrastructureManager.Modules.MatchMaking.Random.MatchMakingRandomModule;
+import InfrastructureManager.Modules.MatchMaking.ScoreBased.MatchMakingScoreBasedModule;
 import InfrastructureManager.Modules.REST.RESTModule;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
@@ -13,7 +16,9 @@ import InfrastructureManager.Modules.NetworkStructure.NetworkModule;
 
 public class ModuleFactory {
 
-    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE, REMOTE_EXEC, MATCH_MAKING, NETWORK_STRUCTURE}
+    public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE,
+        REMOTE_EXEC, MATCH_MAKING_RANDOM, MATCH_MAKING_NAIVE, MATCH_MAKING_SCORE_BASED,
+        NETWORK_STRUCTURE}
 
     public PlatformModule create(ModuleConfigData data) throws ModuleNotDefinedException {
 
@@ -24,7 +29,9 @@ public class ModuleFactory {
             case REST -> new RESTModule();
             case ADVANTEDGE -> new AdvantEdgeModule();
             case REMOTE_EXEC -> new RemoteExecutionModule();
-            case MATCH_MAKING -> new MatchMakingModule();
+            case MATCH_MAKING_RANDOM -> new MatchMakingRandomModule();
+            case MATCH_MAKING_NAIVE -> new MatchMakingNaiveModule();
+            case MATCH_MAKING_SCORE_BASED -> new MatchMakingScoreBasedModule();
             case NETWORK_STRUCTURE -> new NetworkModule();
             default -> throw new ModuleNotDefinedException("The module type for module" + data.getName() + "is not defined");
         };

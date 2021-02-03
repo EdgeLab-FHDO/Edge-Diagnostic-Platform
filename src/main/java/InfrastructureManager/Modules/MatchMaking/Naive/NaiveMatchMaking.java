@@ -1,5 +1,6 @@
-package InfrastructureManager.Modules.MatchMaking.Algorithms;
+package InfrastructureManager.Modules.MatchMaking.Naive;
 
+import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;

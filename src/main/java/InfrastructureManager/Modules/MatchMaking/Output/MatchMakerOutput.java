@@ -1,17 +1,13 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
+import InfrastructureManager.ModuleManagement.ModuleOutput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
-import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.MatchMakingAlgorithm;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.NaiveMatchMaking;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.RandomMatchMaking;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.ScoreBasedMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Exception.*;
-import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -24,28 +20,18 @@ public class MatchMakerOutput extends ModuleOutput {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper mapper;
-    private final MatchMakerType type;
     private final MatchesList sharedMatchesList;
     private final MatchMakingAlgorithm algorithm;
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
-    public MatchMakerOutput(PlatformModule module, String name, MatchMakerType type, MatchesList mapping) {
+    public MatchMakerOutput(PlatformModule module, String name, MatchMakingAlgorithm algorithm, MatchesList mapping) {
         super(module,name);
-        this.type = type;
         this.sharedMatchesList = mapping;
-        this.algorithm = algorithmFromType();
+        this.algorithm = algorithm;
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
-    }
-
-    private MatchMakingAlgorithm algorithmFromType () {
-        return switch (type) {
-            case RANDOM -> new RandomMatchMaking();
-            case NAIVE -> new NaiveMatchMaking();
-            case SCORE_BASED -> new ScoreBasedMatchMaking();
-        };
     }
 
     private void assign(String thisClientID) throws MatchMakingModuleException, JsonProcessingException {
