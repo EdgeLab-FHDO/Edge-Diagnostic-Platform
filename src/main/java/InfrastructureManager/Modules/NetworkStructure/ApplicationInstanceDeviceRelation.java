@@ -33,7 +33,7 @@ public class ApplicationInstanceDeviceRelation {
 	 * Getter function
 	 * @return device
 	 */
-	public Device getDevice() {
+	public Device getApplicationDevice() {
 		return this.device;		
 	}
 		

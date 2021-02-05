@@ -14,7 +14,8 @@ public class NetworkLimits {
 	
 	/**
 	* Parameterized constructor for NetworkLimits Class
-	* @param latency 	
+	* @param latency
+	* @param jitter
 	* @param throughput 
 	* @param packetLoss 			
 	*/

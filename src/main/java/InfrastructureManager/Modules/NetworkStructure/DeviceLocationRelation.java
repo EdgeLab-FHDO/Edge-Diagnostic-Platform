@@ -24,7 +24,7 @@ public class DeviceLocationRelation {
 	 * Getter function
 	 * @return device
 	 */
-	public Device getDeviceLocation() {
+	public Device getDevice() {
 		return this.device;		
 	}
 	

@@ -171,7 +171,7 @@ public class NetworkTest {
 	
 	
 	@Test
-	public void saveNetworkTest() throws JsonProcessingException, InterruptedException {
+	public void saveNetworkTest() throws JsonProcessingException {
 	 // create network object
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
 		ComputeLimits computelimits = new ComputeLimits(1,2,3);
@@ -187,9 +187,6 @@ public class NetworkTest {
 		network.updateApplicationInstanceList(application1, Network.Update.ADD);
 		Location location1 = new Location("location1",10.5f,20.5f);
 		network.updateLocationList(location1, Network.Update.ADD);
-		network.setApplicationDeviceList(Arrays.asList(new ApplicationInstanceDeviceRelation(network.getApplicationInstanceFromList("Application1"),network.getDeviceFromList("100"))));
-		network.setDeviceLocationList(Arrays.asList(new DeviceLocationRelation(network.getDeviceFromList("100"),network.getLocationFromList("location1"))));
-		network.setLocationConnectionList(Arrays.asList(new LocationConnectionRelation(network.getConnectionFromList("Connection1"),network.getLocationFromList("location1"))));
 		String writeString = network.saveNetwork();
 		System.out.println(writeString);
 	}
