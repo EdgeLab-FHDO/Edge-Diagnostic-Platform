@@ -2,6 +2,8 @@ package InfrastructureManager.Modules.MatchMaking.Client;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.PlatformObject;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
@@ -14,7 +16,8 @@ public class EdgeClient extends PlatformObject {
     private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
     private EdgeClientHistory clientHistory;
 
-    public EdgeClient(ImmutablePlatformModule ownerModule) {
+    @JsonCreator
+    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule) {
         super(ownerModule);
         this.id = null;
         //Long.MAX to make the tracing easier since the number would be crazy when things go wrong
@@ -23,7 +26,7 @@ public class EdgeClient extends PlatformObject {
         this.location = Long.MAX_VALUE;
         this.message = "no message"; // to send custom command if needed (similar to job fail, job done in history)
     }
-    public EdgeClient(ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message) {
+    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message) {
         super(ownerModule);
         this.id = id;
         this.reqResource = reqRes;

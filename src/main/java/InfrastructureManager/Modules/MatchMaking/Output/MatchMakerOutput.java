@@ -9,6 +9,7 @@ import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,9 @@ public class MatchMakerOutput extends PlatformOutput {
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
+        InjectableValues inject = new InjectableValues.Std()
+                .addValue(ImmutablePlatformModule.class, module);
+        mapper.setInjectableValues(inject);
     }
 
     private void assign(String thisClientID) throws MatchMakingModuleException, JsonProcessingException {
