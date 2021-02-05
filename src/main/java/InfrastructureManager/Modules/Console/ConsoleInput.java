@@ -23,7 +23,7 @@ public class ConsoleInput extends PlatformInput {
     public String read() {
         System.out.println("Input >");
         String reading = IN.nextLine();
-        this.getOwnerModule().getDebugInput().debug(reading);
+        this.getLogger().debug(reading);
         return reading; //Wraps the nextLine method from the console scanner
     }
 

@@ -16,7 +16,7 @@ public class MatchMakingScoreBasedModule  extends MatchMakingModule {
     @Override
     public void configure(ModuleConfigData data) {
         super.configure(data);
-        setAlgorithm(new ScoreBasedMatchMaking());
+        setAlgorithm(new ScoreBasedMatchMaking(this));
         String name = this.getName();
         MatchesList sharedList = this.getSharedList();
         MatchMakingScoreBasedModuleConfigData castedData = (MatchMakingScoreBasedModuleConfigData) data;

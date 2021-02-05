@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 
 public class MatchMakingNaiveTest {
 
-    private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new NaiveMatchMaking(), matchesList);
+    private final MatchesList matchesList = new MatchesList(module);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new NaiveMatchMaking(module), matchesList);
 
     @Before
     public void register3NodesAnd2Clients() throws ModuleExecutionException {

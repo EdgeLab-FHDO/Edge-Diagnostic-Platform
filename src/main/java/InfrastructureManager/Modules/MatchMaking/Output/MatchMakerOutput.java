@@ -92,7 +92,7 @@ public class MatchMakerOutput extends PlatformOutput {
         //Get node location in list to replace later on
         int nodeLocationInList = this.nodeList.indexOf(thisNode);
         //node that we going to replace in our nodeList
-        EdgeNode updateNode = new EdgeNode(thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
+        EdgeNode updateNode = new EdgeNode(this.getOwnerModule(),thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
 
         //accounting usedResource (resource - usedResource)
         updateNode.updateComputingResource(usedResource);
@@ -146,7 +146,7 @@ public class MatchMakerOutput extends PlatformOutput {
         }
 
         //Initiating client history
-        EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
+        EdgeClientHistory thisClientHistory = new EdgeClientHistory(this.getOwnerModule(),thisClientID);
 
         for (EdgeNode thisNode : this.nodeList) {
             String thisNodeID = thisNode.getId();

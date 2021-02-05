@@ -16,7 +16,7 @@ public class MatchMakingNaiveModule  extends MatchMakingModule {
     @Override
     public void configure(ModuleConfigData data) {
         super.configure(data);
-        setAlgorithm(new NaiveMatchMaking());
+        setAlgorithm(new NaiveMatchMaking(this));
         String name = this.getName();
         MatchesList sharedList = this.getSharedList();
         MatchMakingNaiveModuleConfigData castedData = (MatchMakingNaiveModuleConfigData) data;

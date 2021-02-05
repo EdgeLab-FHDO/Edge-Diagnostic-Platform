@@ -10,9 +10,9 @@ import org.junit.Test;
 
 public class MatchMakingRandomTests {
 
-    private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new RandomMatchMaking(), matchesList);
+    private final MatchesList matchesList = new MatchesList(module);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new RandomMatchMaking(module), matchesList);
 
     @Test
     public void assignNodeToClientCompleteTest() throws InterruptedException, ModuleExecutionException {

@@ -2,26 +2,22 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule.ModuleState;
+import InfrastructureManager.PlatformObject;
 
-public abstract class PlatformOutput {
+public abstract class PlatformOutput extends PlatformObject {
     private final String name;
-    private final ImmutablePlatformModule ownerModule;
 
     public PlatformOutput(ImmutablePlatformModule ownerModule, String name) {
+        super(ownerModule);
         this.name = name;
-        this.ownerModule = ownerModule;
     }
 
     public String getName() {
         return name;
     }
 
-    public ImmutablePlatformModule getOwnerModule() {
-        return ownerModule;
-    }
-
     public ModuleState getOwnerModuleState() {
-        return this.ownerModule.getState();
+        return this.getOwnerModule().getState();
     }
 
     public abstract void execute(String response) throws ModuleExecutionException;

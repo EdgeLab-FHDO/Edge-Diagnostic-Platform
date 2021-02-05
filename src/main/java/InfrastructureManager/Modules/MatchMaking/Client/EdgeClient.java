@@ -1,8 +1,11 @@
 package InfrastructureManager.Modules.MatchMaking.Client;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.PlatformObject;
+
 import java.util.Objects;
 
-public class EdgeClient {
+public class EdgeClient extends PlatformObject {
 
     private final String id;
     private long reqResource; //required computation resource
@@ -11,7 +14,8 @@ public class EdgeClient {
     private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
     private EdgeClientHistory clientHistory;
 
-    public EdgeClient() {
+    public EdgeClient(ImmutablePlatformModule ownerModule) {
+        super(ownerModule);
         this.id = null;
         //Long.MAX to make the tracing easier since the number would be crazy when things go wrong
         this.reqResource = Long.MAX_VALUE;
@@ -19,13 +23,14 @@ public class EdgeClient {
         this.location = Long.MAX_VALUE;
         this.message = "no message"; // to send custom command if needed (similar to job fail, job done in history)
     }
-    public EdgeClient(String id, long reqRes, long reqNet, long location, String message) {
+    public EdgeClient(ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message) {
+        super(ownerModule);
         this.id = id;
         this.reqResource = reqRes;
         this.reqNetwork = reqNet;
         this.location = location;
         this.message = message;
-        this.clientHistory = new EdgeClientHistory(id);
+        this.clientHistory = new EdgeClientHistory(ownerModule,id);
     }
 
     public String getId() {

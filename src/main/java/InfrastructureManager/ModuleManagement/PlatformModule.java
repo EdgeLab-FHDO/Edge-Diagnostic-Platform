@@ -24,7 +24,7 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
         List<PlatformInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
         this.debugInput = new ModuleDebugInput(this,name + ".debug");
         temporalList.add(this.debugInput);
-        temporalList.forEach(i -> i.setRunner(new Runner(i.getName(), i)));
+        temporalList.forEach(i -> i.setRunner(new Runner(this,i.getName(), i)));
         this.getInputs().addAll(temporalList); //Append them to the list
     }
 

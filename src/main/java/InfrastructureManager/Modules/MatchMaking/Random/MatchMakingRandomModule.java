@@ -16,7 +16,7 @@ public class MatchMakingRandomModule extends MatchMakingModule {
     @Override
     public void configure(ModuleConfigData data) {
         super.configure(data);
-        setAlgorithm(new RandomMatchMaking());
+        setAlgorithm(new RandomMatchMaking(this));
         String name = this.getName();
         MatchesList sharedList = this.getSharedList();
         //If something from the data needs to be used to create IOS

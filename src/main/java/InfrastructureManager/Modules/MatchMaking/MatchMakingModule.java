@@ -10,7 +10,7 @@ public class MatchMakingModule extends PlatformModule {
 
     public MatchMakingModule() {
         super();
-        this.sharedList = new MatchesList();
+        this.sharedList = new MatchesList(this);
     }
 
     protected MatchesList getSharedList() {

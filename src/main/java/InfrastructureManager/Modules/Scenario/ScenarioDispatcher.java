@@ -106,7 +106,7 @@ public class ScenarioDispatcher extends PlatformOutput {
      * Method to run the scenario
      */
     private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
-        this.getOwnerModule().getDebugInput().debug("starting scenario " + this.scenario.getName());
+        this.getLogger().debug("starting scenario " + this.scenario.getName());
         this.ownerScenarioModule.startScenario(startTime);
     }
 

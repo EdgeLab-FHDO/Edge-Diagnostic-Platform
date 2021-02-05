@@ -1,22 +1,18 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"runner", "ownerModule"})
-public abstract class PlatformInput {
+public abstract class PlatformInput extends PlatformObject {
 
     private final String name;
     private Runner runner;
-    private final ImmutablePlatformModule ownerModule;
 
     public PlatformInput(ImmutablePlatformModule ownerModule, String name) {
-        this.ownerModule = ownerModule;
+        super(ownerModule);
         this.name = name;
-    }
-
-    protected ImmutablePlatformModule getOwnerModule() {
-        return this.ownerModule;
     }
 
     public void setRunner(Runner runner) {

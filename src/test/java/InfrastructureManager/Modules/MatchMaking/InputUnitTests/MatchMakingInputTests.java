@@ -13,13 +13,13 @@ import org.junit.Test;
 
 public class MatchMakingInputTests {
 
-    private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule(); //Generic Module
+    private final MatchesList matchesList = new MatchesList(module);
     private final MatchMakerInput input = new MatchMakerInput(module, "mm.in", matchesList);
 
     @Test
     public void correctInputReadWithRandomMatchMakerOutputTest() throws InterruptedException, ModuleExecutionException {
-        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new RandomMatchMaking(),matchesList);
+        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new RandomMatchMaking(module),matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true}";
         String client = "{\"id\":\"client1\"}";
         registerNodeAndClient(output,node,client);
@@ -31,7 +31,7 @@ public class MatchMakingInputTests {
 
     @Test
     public void correctInputReadWithNaiveMatchMakerOutputTest() throws InterruptedException, ModuleExecutionException {
-        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new NaiveMatchMaking(),matchesList);
+        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new NaiveMatchMaking(module),matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
         String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
         registerNodeAndClient(output,node,client);
@@ -43,7 +43,7 @@ public class MatchMakingInputTests {
 
     @Test
     public void correctInputReadWithScoreMatchMakerOutputTest() throws InterruptedException, ModuleExecutionException {
-        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new ScoreBasedMatchMaking(),matchesList);
+        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new ScoreBasedMatchMaking(module),matchesList);
         String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
         String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
         registerNodeAndClient(output,node,client);

@@ -1,17 +1,24 @@
 package InfrastructureManager.Modules.MatchMaking.Naive;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
+import InfrastructureManager.PlatformObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NaiveMatchMaking implements MatchMakingAlgorithm {
+public class NaiveMatchMaking extends PlatformObject implements MatchMakingAlgorithm {
     private static final long ACCEPTABLE_PING = 300; //use this as parameter before put them in the calculation
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public NaiveMatchMaking(ImmutablePlatformModule ownerModule) {
+        super(ownerModule);
+    }
+
 
     @Override
     public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) throws NoNodeSatisfyRequirementException {
@@ -19,7 +26,7 @@ public class NaiveMatchMaking implements MatchMakingAlgorithm {
         long closestDistance = Long.MAX_VALUE;
         long clientLocation = client.getLocation();
         int totalNodeNumber = nodeList.size();
-        EdgeNode bestNode = new EdgeNode();
+        EdgeNode bestNode = new EdgeNode(this.getOwnerModule());
         int numberOfUnqualified = 0;
         //Check distance between node and client
         for (EdgeNode thisNode : nodeList) {

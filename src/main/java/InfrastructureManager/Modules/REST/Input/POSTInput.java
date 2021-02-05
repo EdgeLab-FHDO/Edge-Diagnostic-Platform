@@ -51,7 +51,7 @@ public class POSTInput extends PlatformInput {
         this.readBlock = new Semaphore(0);
         this.responseBlock = new Semaphore(0);
         this.POSTHandler = (Request request, Response response) -> {
-            UnknownJSONObject o = new UnknownJSONObject(request.body());
+            UnknownJSONObject o = new UnknownJSONObject(this.getOwnerModule(),request.body());
             try {
                 this.toRead.offer(this.substituteCommand(command,o));
                 this.readBlock.release(); //Unblock the reading
