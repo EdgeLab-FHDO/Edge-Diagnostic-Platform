@@ -37,7 +37,7 @@ public class MatchMakingInputTests {
         registerNodeAndClient(output,node,client);
         output.execute("matchMaker assign_client client1");
 
-        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":200,\"network\":200,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
+        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
         Assert.assertEquals(expected,input.read());
     }
 
@@ -49,7 +49,7 @@ public class MatchMakingInputTests {
         registerNodeAndClient(output,node,client);
         output.execute("matchMaker assign_client client1");
 
-        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":200,\"network\":200,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
+        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
         Assert.assertEquals(expected,input.read());
     }
 
