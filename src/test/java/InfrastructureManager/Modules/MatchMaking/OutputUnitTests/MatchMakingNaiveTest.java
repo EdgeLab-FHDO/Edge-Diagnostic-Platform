@@ -2,9 +2,9 @@ package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
-import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
+import InfrastructureManager.Modules.MatchMaking.Naive.NaiveMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
 import org.junit.Assert;
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 
 public class MatchMakingNaiveTest {
 
-    private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", MatchMakerType.NAIVE, matchesList);
+    private final MatchesList matchesList = new MatchesList(module);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new NaiveMatchMaking(module), matchesList);
 
     @Before
     public void register3NodesAnd2Clients() throws ModuleExecutionException {

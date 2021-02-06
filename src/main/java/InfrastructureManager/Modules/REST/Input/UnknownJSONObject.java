@@ -1,6 +1,8 @@
 package InfrastructureManager.Modules.REST.Input;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
+import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Class to abstract a JSON object which has unknown parameters (Both type and value)
  */
-public class UnknownJSONObject {
+public class UnknownJSONObject extends PlatformObject {
 
     private final JsonNode tree;
     private final String body;
@@ -18,7 +20,8 @@ public class UnknownJSONObject {
      * @param jsonBody Body to create the object from
      * @throws JsonProcessingException If an error occurs while parsing
      */
-    public UnknownJSONObject(String jsonBody) throws JsonProcessingException {
+    public UnknownJSONObject(ImmutablePlatformModule ownerModule, String jsonBody) throws JsonProcessingException {
+        super(ownerModule);
         ObjectMapper mapper = new ObjectMapper();
         this.body = jsonBody;
         this.tree = mapper.readTree(this.body); //Create JSON node

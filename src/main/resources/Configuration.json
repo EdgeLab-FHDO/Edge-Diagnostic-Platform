@@ -22,7 +22,7 @@
     },
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
     {"type" : "RemoteExecutionModule", "name": "remote"},
-    {"type" :  "MatchMakingModule", "name":  "mm", "matchMakerType":  "RANDOM"}
+    {"type" :  "MatchMakingModule-Random", "name":  "mm"}
   ],
 
   "connections" : [

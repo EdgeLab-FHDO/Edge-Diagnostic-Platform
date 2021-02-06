@@ -1,16 +1,23 @@
-package InfrastructureManager.Modules.MatchMaking.Algorithms;
+package InfrastructureManager.Modules.MatchMaking.Random;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
+import InfrastructureManager.PlatformObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Random;
 
-public class RandomMatchMaking implements MatchMakingAlgorithm {
+public class RandomMatchMaking extends PlatformObject implements MatchMakingAlgorithm {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public RandomMatchMaking(ImmutablePlatformModule ownerModule) {
+        super(ownerModule);
+    }
 
     @Override
     public EdgeNode match(EdgeClient client, List<EdgeNode> nodeList) {

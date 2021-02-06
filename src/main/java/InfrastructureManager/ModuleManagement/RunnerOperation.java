@@ -4,5 +4,5 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedE
 
 @FunctionalInterface
 public interface RunnerOperation {
-    void process(Runner r, ModuleInput input) throws ModuleStoppedException;
+    void process(Runner r, PlatformInput input) throws ModuleStoppedException;
 }

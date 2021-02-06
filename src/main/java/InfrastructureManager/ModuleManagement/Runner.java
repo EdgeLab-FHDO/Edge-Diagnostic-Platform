@@ -1,6 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
+import InfrastructureManager.PlatformObject;
 
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -10,12 +11,12 @@ import java.util.concurrent.Semaphore;
  * Implements the basic master functionality of reading from input, mapping and sending to output.
  * Each runner, has input and outputs which allow for static configuration of the master
  */
-public class Runner implements Runnable{
+public class Runner extends PlatformObject implements Runnable{
 
     private RunnerOperation runOperation;
 
     protected String name;
-    protected ModuleInput input;
+    protected PlatformInput input;
     protected List<Connection> connections;
 
     protected final Semaphore pauseBlock;
@@ -23,7 +24,8 @@ public class Runner implements Runnable{
     protected volatile boolean exit = false; //Flag to check status and be able to exit
     protected volatile boolean running = false; //Flag to see runner status
 
-    public Runner(String name, ModuleInput input) {
+    public Runner(ImmutablePlatformModule ownerModule,String name, PlatformInput input) {
+        super(ownerModule);
         this.name = name;
         this.input = input;
         this.pauseBlock = new Semaphore(0);

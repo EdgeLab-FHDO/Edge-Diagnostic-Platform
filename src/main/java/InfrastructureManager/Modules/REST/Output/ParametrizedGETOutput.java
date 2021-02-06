@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST.Output;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import spark.Request;
@@ -18,7 +19,7 @@ public class ParametrizedGETOutput extends GETOutput {
      * @param name Name of the output
      * @param URL Path in which the GET handler will be set (Resource will be created)
      */
-    public ParametrizedGETOutput(PlatformModule module, String name, String URL, String parameter) {
+    public ParametrizedGETOutput(ImmutablePlatformModule module, String name, String URL, String parameter) {
         super(module,name, URL);
         this.parameter = parameter;
     }

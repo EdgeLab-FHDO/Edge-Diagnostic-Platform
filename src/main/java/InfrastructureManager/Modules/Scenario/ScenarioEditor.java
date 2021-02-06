@@ -1,11 +1,10 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Scenario.Exception.Output.EmptyEventListException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioEditorException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioIOException;
-import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -20,28 +19,24 @@ import java.io.IOException;
  * - Save Scenarios to JSON Files
  * - Load Scenarios from JSON Files
  */
-public class ScenarioEditor extends ModuleOutput {
+public class ScenarioEditor extends PlatformOutput {
 
-    private Scenario scenario;
+    private final Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(PlatformModule module, String name) {
+    public ScenarioEditor(ImmutablePlatformModule module, String name, Scenario scenario) {
         super(module,name);
-        InjectableValues inject = new InjectableValues.Std()
-                .addValue(PlatformModule.class, module);
+        this.scenario = scenario;
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-        this.mapper.setInjectableValues(inject);
     }
 
     /**
      * Based on responses from the master executes the different functionalities
      * @param response Must be in the way "editor command" and additionally:
-     *                 - Create Scenario : Add the name of the scenario (editor create scenarioName)
      *                 - Add Event : Add the Command for the event and the execution time (editor addEvent event1 1000)
      *                 - Delete : Just the command. (editor deleteEvent)
      *                 - Save to file : Add the path of the folder in which the file will be saved (editor toFile src/resources/scenarios/)
-     *                 - Load from File: Add the path to the file (editor fromFile src/resources/scenario.json)
      *@throws ScenarioEditorException If the command is not defined or is missing arguments, or if one of the
      * internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
      */
@@ -51,11 +46,9 @@ public class ScenarioEditor extends ModuleOutput {
         if (command[0].equals("editor")) {
             try {
                 switch (command[1]) {
-                    case "create" -> create();
                     case "addEvent" -> addEvent(command[2], Integer.parseInt(command[3]));
                     case "deleteEvent" -> deleteLastEvent();
                     case "toFile" -> scenarioToFile(command[2]);
-                    case "fromFile" -> scenarioFromFile(command[2]);
                     default -> throw new ScenarioEditorException("Invalid command " + command[1]
                             + " for ScenarioEditor");
                 }
@@ -64,13 +57,6 @@ public class ScenarioEditor extends ModuleOutput {
                         + " to ScenarioEditor");
             }
         }
-    }
-
-    /**
-     * Create a new scenario (related to this editor)
-     */
-    private void create(){
-        scenario = new Scenario(this.getOwnerModule());
     }
 
     /**
@@ -105,18 +91,6 @@ public class ScenarioEditor extends ModuleOutput {
             mapper.writeValue(new File(path), this.scenario);
         } catch (IOException e) {
             throw new ScenarioIOException("Scenario " + scenario.getName() + " could not be saved", e);
-        }
-    }
-
-    /**
-     * Load scenario from a JSON file
-     * @param path Path of the file
-     */
-    private void scenarioFromFile(String path) throws ScenarioIOException {
-        try {
-            this.scenario = mapper.readValue(new File(path),Scenario.class);
-        } catch (IOException e) {
-            throw new ScenarioIOException("Scenario could not be loaded from path " + path, e);
         }
     }
 

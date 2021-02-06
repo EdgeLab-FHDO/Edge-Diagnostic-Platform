@@ -3,7 +3,9 @@ package InfrastructureManager.ModuleManagement.RawData;
 import InfrastructureManager.ModuleManagement.ModuleFactory.*;
 import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
 import InfrastructureManager.Modules.Console.RawData.ConsoleModuleConfigData;
-import InfrastructureManager.Modules.MatchMaking.RawData.MatchMakingModuleConfigData;
+import InfrastructureManager.Modules.MatchMaking.Naive.RawData.MatchMakingNaiveModuleConfigData;
+import InfrastructureManager.Modules.MatchMaking.Random.RawData.MatchMakingRandomModuleConfigData;
+import InfrastructureManager.Modules.MatchMaking.ScoreBased.RawData.MatchMakingScoreBasedModuleConfigData;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 import InfrastructureManager.Modules.RemoteExecution.RawData.RemoteExecutionModuleConfigData;
 import InfrastructureManager.Modules.Scenario.RawData.ScenarioModuleConfigData;
@@ -19,7 +21,9 @@ import com.fasterxml.jackson.annotation.*;
         @JsonSubTypes.Type(value = RESTModuleConfigData.class, name = "RESTModule"),
         @JsonSubTypes.Type(value = AdvantEdgeModuleConfigData.class, name = "AdvantEdgeModule"),
         @JsonSubTypes.Type(value = RemoteExecutionModuleConfigData.class, name = "RemoteExecutionModule"),
-        @JsonSubTypes.Type(value = MatchMakingModuleConfigData.class, name = "MatchMakingModule"),
+        @JsonSubTypes.Type(value = MatchMakingRandomModuleConfigData.class, name = "MatchMakingModule-Random"),
+        @JsonSubTypes.Type(value = MatchMakingNaiveModuleConfigData.class, name = "MatchMakingModule-Naive"),
+        @JsonSubTypes.Type(value = MatchMakingScoreBasedModuleConfigData.class, name = "MatchMakingModule-ScoreBased"),
         @JsonSubTypes.Type(value = NetworkModuleConfigData.class, name = "NetworkModule")
 })
 public abstract class ModuleConfigData {

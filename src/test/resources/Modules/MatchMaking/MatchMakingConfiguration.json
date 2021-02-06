@@ -16,7 +16,7 @@
         {"name": "clientGET", "URL": "/client/get_node/:client_id"}
       ]
     },
-    {"type" :  "MatchMakingModule", "name":  "mm", "matchMakerType":  "RANDOM"}
+    {"type" :  "MatchMakingModule-Random", "name":  "mm"}
   ],
 
   "connections" : [

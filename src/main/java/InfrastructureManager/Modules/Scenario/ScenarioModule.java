@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
@@ -27,8 +28,8 @@ public class ScenarioModule extends PlatformModule {
             Scenario scenario = scenarioFromFile(castedData.getPath());
             setInputs(scenario);
             this.scenario = (Scenario) this.getInputs().get(0);
-            setOutputs(new ScenarioEditor(this,this.getName() + ".editor"),
-                    new ScenarioDispatcher(this,this.getName() + ".dispatcher",scenario));
+            setOutputs(new ScenarioEditor(this,this.getName() + ".editor", scenario),
+                    new ScenarioDispatcher(this,this.getName() + ".dispatcher", scenario));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,7 +59,7 @@ public class ScenarioModule extends PlatformModule {
     private Scenario scenarioFromFile(String path) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         InjectableValues inject = new InjectableValues.Std()
-                .addValue(PlatformModule.class, this);
+                .addValue(ImmutablePlatformModule.class, this);
         mapper.setInjectableValues(inject);
         return mapper.readValue(new File(path),Scenario.class);
     }

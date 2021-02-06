@@ -1,18 +1,18 @@
 package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
+import InfrastructureManager.Modules.MatchMaking.Random.RandomMatchMaking;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class MatchMakingRandomTests {
 
-    private final MatchesList matchesList = new MatchesList();
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", MatchMakerType.RANDOM, matchesList);
+    private final MatchesList matchesList = new MatchesList(module);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new RandomMatchMaking(module), matchesList);
 
     @Test
     public void assignNodeToClientCompleteTest() throws InterruptedException, ModuleExecutionException {
