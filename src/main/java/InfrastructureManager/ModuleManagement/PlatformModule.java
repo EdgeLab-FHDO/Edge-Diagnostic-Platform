@@ -8,21 +8,15 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-public abstract class PlatformModule {
+public abstract class PlatformModule extends ImmutablePlatformModule {
 
-    public enum ModuleState { INITIAL, PAUSED, RUNNING }
-
-    private final List<ModuleInput> inputs;
-    private final List<ModuleOutput> outputs;
-    private String name;
-    private final Map<String, List<Connection>> inputConnections;
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
-    private ModuleDebugInput debugInput;
-
-    private volatile ModuleState state;
 
     protected RunnerOperation runnerOperation = (runner,input) -> {
         try {
@@ -50,12 +44,9 @@ public abstract class PlatformModule {
     }; //For other functionalities can be overridden
 
     protected PlatformModule() {
-        this.state = ModuleState.INITIAL;
-        this.inputs = new ArrayList<>();
-        this.outputs = new ArrayList<>();
+        super();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
-        this.inputConnections = new HashMap<>();
     }
 
     public abstract void configure(ModuleConfigData data);
@@ -64,42 +55,16 @@ public abstract class PlatformModule {
         this.name = name;
     }
 
-    protected void setInputs(ModuleInput... inputs) {
-        List<ModuleInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
+    protected void setInputs(PlatformInput... inputs) {
+        List<PlatformInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
         this.debugInput = new ModuleDebugInput(this,name + ".debug");
         temporalList.add(this.debugInput);
-        temporalList.forEach(i -> i.setRunner(new Runner(i.getName(), i)));
+        temporalList.forEach(i -> i.setRunner(new Runner(this,i.getName(), i)));
         this.inputs.addAll(temporalList); //Append them to the list
     }
 
-    protected void setOutputs(ModuleOutput... outputs) {
+    protected void setOutputs(PlatformOutput... outputs) {
         this.outputs.addAll(Arrays.asList(outputs));
-    }
-
-    public List<ModuleInput> getInputs() {
-        return inputs;
-    }
-
-    public List<ModuleOutput> getOutputs() {
-        return outputs;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ModuleState getState() {
-        return state;
-    }
-
-    public boolean isDeadThread(int index) {
-        return !inputRunnerThreads.isEmpty() && !inputRunnerThreads.get(index).isAlive();
-    }
-
-    public void restartThread(int index, int runnerIndex) {
-        Runner runner = inputRunners.get(runnerIndex);
-        inputRunnerThreads.set(index,new Thread(runner, runner.getName()));
-        inputRunnerThreads.get(index).start();
     }
 
     public void addConnection(String inputName, Connection connection) throws IncorrectInputException {
@@ -114,7 +79,16 @@ public abstract class PlatformModule {
         } else {
             throw new IncorrectInputException("Input not defined in module!");
         }
+    }
 
+    public void restartThread(int index, int runnerIndex) {
+        Runner runner = inputRunners.get(runnerIndex);
+        inputRunnerThreads.set(index,new Thread(runner, runner.getName()));
+        inputRunnerThreads.get(index).start();
+    }
+
+    public boolean isDeadThread(int index) {
+        return !inputRunnerThreads.isEmpty() && !inputRunnerThreads.get(index).isAlive();
     }
 
     public void start() {
@@ -148,15 +122,15 @@ public abstract class PlatformModule {
         inputRunners.forEach(r -> inputRunnerThreads.add(new Thread(r,r.getName())));
     }
 
-    private boolean hasInput(String inputName) {
-        return inputs.stream().map(ModuleInput::getName).anyMatch(inputName::equals);
+    protected boolean hasInput(String inputName) {
+        return this.getInputs().stream().map(PlatformInput::getName).anyMatch(inputName::equals);
     }
 
     private void configureRunners() {
-        for (ModuleInput in : inputs) {
-            if (inputConnections.containsKey(in.getName())) {
+        for (PlatformInput in : this.inputs) {
+            if (this.inputConnections.containsKey(in.getName())) {
                 Runner runner = in.getRunner();
-                runner.setConnections(inputConnections.get(in.getName()));
+                runner.setConnections(this.inputConnections.get(in.getName()));
                 runner.setRunOperation(this.runnerOperation);
                 inputRunners.add(runner);
             }
@@ -165,9 +139,5 @@ public abstract class PlatformModule {
 
     public String processCommand(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
-    }
-
-    public ModuleDebugInput getDebugInput() {
-        return debugInput;
     }
 }

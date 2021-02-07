@@ -5,6 +5,7 @@ import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.CommonTestingMethods;
@@ -44,7 +45,7 @@ public class ScenarioDispatcherTests {
         ModuleManager manager = Master.getInstance().getManager();
         manager.startAllModules();
         module = findModule(manager);
-        InjectableValues inject = new InjectableValues.Std().addValue(PlatformModule.class, module);
+        InjectableValues inject = new InjectableValues.Std().addValue(ImmutablePlatformModule.class, module);
         String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
         ObjectMapper mapper = new ObjectMapper();
         mapper.setInjectableValues(inject);

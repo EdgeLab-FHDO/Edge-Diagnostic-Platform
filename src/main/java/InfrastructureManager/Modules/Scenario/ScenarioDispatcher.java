@@ -1,7 +1,7 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
@@ -13,13 +13,13 @@ import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatche
  * - Run Scenarios
  * - Pause/Resume Scenarios
  */
-public class ScenarioDispatcher extends ModuleOutput {
+public class ScenarioDispatcher extends PlatformOutput {
 
     private final Scenario scenario;
     private final ScenarioModule ownerScenarioModule;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher(PlatformModule module, String name, Scenario scenario) {
+    public ScenarioDispatcher(ImmutablePlatformModule module, String name, Scenario scenario) {
         super(module,name);
         this.scenario = scenario;
         this.ownerScenarioModule = (ScenarioModule) module;
@@ -106,7 +106,7 @@ public class ScenarioDispatcher extends ModuleOutput {
      * Method to run the scenario
      */
     private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
-        this.getOwnerModule().getDebugInput().debug("starting scenario " + this.scenario.getName());
+        this.getLogger().debug("starting scenario " + this.scenario.getName());
         this.ownerScenarioModule.startScenario(startTime);
     }
 

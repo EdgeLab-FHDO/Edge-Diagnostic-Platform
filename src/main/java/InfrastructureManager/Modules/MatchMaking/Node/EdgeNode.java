@@ -1,8 +1,13 @@
 package InfrastructureManager.Modules.MatchMaking.Node;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.PlatformObject;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
 
-public class EdgeNode {
+public class EdgeNode extends PlatformObject {
 
     private final String id;
     private String ipAddress;
@@ -70,7 +75,9 @@ public class EdgeNode {
         this.location = location;
     }
 
-    public EdgeNode() {
+    @JsonCreator
+    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule) {
+        super(ownerModule);
         this.id = null;
         this.ipAddress = "null";
         this.connected = false;
@@ -81,7 +88,8 @@ public class EdgeNode {
         this.location = 0;
     }
 
-    public EdgeNode(String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation) {
+    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation) {
+        super(ownerModule);
         this.id = id;
         this.ipAddress = ip;
         this.connected = connected;

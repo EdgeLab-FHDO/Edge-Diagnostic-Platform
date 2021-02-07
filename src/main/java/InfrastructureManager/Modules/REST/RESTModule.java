@@ -21,7 +21,7 @@ public class RESTModule extends PlatformModule {
         String name = castedData.getName();
         String baseURL = castedData.getBaseURL();
         this.setName(name);
-        RestServerRunner.configure("REST_SERVER", castedData.getPort());
+        RestServerRunner.configure(this,"REST_SERVER", castedData.getPort());
         setInputs(RESTModuleConfiguration.getInputsFromData(castedData.getPOSTInputs(), baseURL, this));
         setOutputs(RESTModuleConfiguration.getOutputsFromData(castedData.getGETOutputs(), baseURL, this));
     }

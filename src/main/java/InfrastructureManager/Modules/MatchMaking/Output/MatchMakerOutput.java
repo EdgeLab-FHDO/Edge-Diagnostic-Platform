@@ -1,18 +1,15 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
-import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.MatchMakingAlgorithm;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.NaiveMatchMaking;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.RandomMatchMaking;
-import InfrastructureManager.Modules.MatchMaking.Algorithms.ScoreBasedMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Exception.*;
-import InfrastructureManager.Modules.MatchMaking.MatchMakerType;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
+import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,32 +17,25 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchMakerOutput extends ModuleOutput {
+public class MatchMakerOutput extends PlatformOutput {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper mapper;
-    private final MatchMakerType type;
     private final MatchesList sharedMatchesList;
     private final MatchMakingAlgorithm algorithm;
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
-    public MatchMakerOutput(PlatformModule module, String name, MatchMakerType type, MatchesList mapping) {
+    public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm, MatchesList mapping) {
         super(module,name);
-        this.type = type;
         this.sharedMatchesList = mapping;
-        this.algorithm = algorithmFromType();
+        this.algorithm = algorithm;
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
         this.clientList = new ArrayList<>();
-    }
-
-    private MatchMakingAlgorithm algorithmFromType () {
-        return switch (type) {
-            case RANDOM -> new RandomMatchMaking();
-            case NAIVE -> new NaiveMatchMaking();
-            case SCORE_BASED -> new ScoreBasedMatchMaking();
-        };
+        InjectableValues inject = new InjectableValues.Std()
+                .addValue(ImmutablePlatformModule.class, module);
+        mapper.setInjectableValues(inject);
     }
 
     private void assign(String thisClientID) throws MatchMakingModuleException, JsonProcessingException {
@@ -106,7 +96,7 @@ public class MatchMakerOutput extends ModuleOutput {
         //Get node location in list to replace later on
         int nodeLocationInList = this.nodeList.indexOf(thisNode);
         //node that we going to replace in our nodeList
-        EdgeNode updateNode = new EdgeNode(thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
+        EdgeNode updateNode = new EdgeNode(this.getOwnerModule(),thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
 
         //accounting usedResource (resource - usedResource)
         updateNode.updateComputingResource(usedResource);
@@ -160,7 +150,7 @@ public class MatchMakerOutput extends ModuleOutput {
         }
 
         //Initiating client history
-        EdgeClientHistory thisClientHistory = new EdgeClientHistory(thisClientID);
+        EdgeClientHistory thisClientHistory = new EdgeClientHistory(this.getOwnerModule(),thisClientID);
 
         for (EdgeNode thisNode : this.nodeList) {
             String thisNodeID = thisNode.getId();

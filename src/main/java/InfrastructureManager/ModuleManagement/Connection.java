@@ -4,15 +4,15 @@ import InfrastructureManager.Configuration.CommandSet;
 
 public class Connection {
 
-    private final ModuleOutput out;
+    private final PlatformOutput out;
     private final CommandSet commands;
 
-    public Connection(ModuleOutput out, CommandSet commands) {
+    public Connection(PlatformOutput out, CommandSet commands) {
         this.out = out;
         this.commands = commands;
     }
 
-    public ModuleOutput getOut() {
+    public PlatformOutput getOut() {
         return out;
     }
 
