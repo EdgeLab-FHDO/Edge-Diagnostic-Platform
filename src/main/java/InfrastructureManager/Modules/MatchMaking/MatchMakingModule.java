@@ -2,23 +2,32 @@ package InfrastructureManager.Modules.MatchMaking;
 
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
-import InfrastructureManager.Modules.MatchMaking.Input.matchMakerInput;
-import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
-import InfrastructureManager.Modules.MatchMaking.RawData.MatchMakingModuleConfigData;
 
 public class MatchMakingModule extends PlatformModule {
 
+    private final MatchesList sharedList;
+    private MatchMakingAlgorithm algorithm;
+
     public MatchMakingModule() {
         super();
+        this.sharedList = new MatchesList(this);
+    }
+
+    protected MatchesList getSharedList() {
+        return sharedList;
+    }
+
+    protected MatchMakingAlgorithm getAlgorithm() {
+        return algorithm;
+    }
+
+    protected void setAlgorithm(MatchMakingAlgorithm algorithm) {
+        this.algorithm = algorithm;
     }
 
     @Override
     public void configure(ModuleConfigData data) {
-        MatchMakingModuleConfigData castedData = (MatchMakingModuleConfigData) data;
-        String name = castedData.getName();
+        String name = data.getName();
         setName(name);
-        MatchesList sharedList = new MatchesList();
-        setInputs(new matchMakerInput(this, name + ".in", sharedList));
-        setOutputs(new MatchMakerOutput(this,name + ".out", castedData.getMatchMakerType(), sharedList));
     }
 }

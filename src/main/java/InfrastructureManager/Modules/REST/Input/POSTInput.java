@@ -1,8 +1,8 @@
 package InfrastructureManager.Modules.REST.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.REST.Exception.Input.ParsingArgumentNotDefinedException;
 import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
 import InfrastructureManager.Modules.REST.RestServerRunner;
@@ -20,7 +20,7 @@ import static spark.Spark.post;
 /**
  * Class to represent data coming from POST requests, it can be configured to extract parameters from the request body json
  */
-public class POSTInput extends ModuleInput {
+public class POSTInput extends PlatformInput {
 
     private final Queue<String> toRead;
 
@@ -41,7 +41,7 @@ public class POSTInput extends ModuleInput {
      * @param command Command that the input will send to the master, it can include parameters using '$'
      * @param toParse List of parameters in the JSON that the input will search for
      */
-    public POSTInput(PlatformModule module, String name, String URL, String command, List<String> toParse) {
+    public POSTInput(ImmutablePlatformModule module, String name, String URL, String command, List<String> toParse) {
         super(module, name);
         this.URL = URL;
         this.toParse = toParse;
@@ -51,7 +51,7 @@ public class POSTInput extends ModuleInput {
         this.readBlock = new Semaphore(0);
         this.responseBlock = new Semaphore(0);
         this.POSTHandler = (Request request, Response response) -> {
-            UnknownJSONObject o = new UnknownJSONObject(request.body());
+            UnknownJSONObject o = new UnknownJSONObject(this.getOwnerModule(),request.body());
             try {
                 this.toRead.offer(this.substituteCommand(command,o));
                 this.readBlock.release(); //Unblock the reading

@@ -12,8 +12,8 @@ import org.junit.Test;
 
 public class NodeLimitOutputTests {
 
-    private final LimitList list = new LimitList();
     RemoteExecutionModule module = new RemoteExecutionModule();
+    private final LimitList list = new LimitList(module);
     private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out", list);
 
     private void assertExceptionInOutput(Class<? extends Exception> exceptionClass, String expectedMessage, String command) {

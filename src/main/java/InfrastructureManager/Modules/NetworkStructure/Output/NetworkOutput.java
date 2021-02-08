@@ -1,14 +1,14 @@
 package InfrastructureManager.Modules.NetworkStructure.Output;
 
-import InfrastructureManager.ModuleManagement.PlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleOutput;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
 import InfrastructureManager.Modules.NetworkStructure.Network;
 
-public class NetworkOutput extends ModuleOutput{
+public class NetworkOutput extends PlatformOutput {
 	private Network network;
-	public NetworkOutput(PlatformModule module, String name, Network network) {
+	public NetworkOutput(ImmutablePlatformModule module, String name, Network network) {
 		super(module,name);
 		this.network = network;
 	}

@@ -1,10 +1,13 @@
-package InfrastructureManager.Modules.MatchMaking.Algorithms;
+package InfrastructureManager.Modules.MatchMaking.ScoreBased;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
+import InfrastructureManager.PlatformObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +20,7 @@ import java.util.*;
  *
  * @author Zero
  */
-public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
+public class ScoreBasedMatchMaking extends PlatformObject implements MatchMakingAlgorithm {
 
     //TODO: Weight should be dynamic
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -29,6 +32,10 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
     private static final long QOS_THRESHOLD = 100000;
 
     long deductScorePerSecond = 1;
+
+    public ScoreBasedMatchMaking(ImmutablePlatformModule ownerModule) {
+        super(ownerModule);
+    }
 
 
     /**
@@ -54,7 +61,7 @@ public class ScoreBasedMatchMaking implements MatchMakingAlgorithm {
         int numberOfUnqualified = 0; //to count the number of node we have been ruled out during iteration
         int totalNumberOfNode = nodeList.size();
         long bestScore = 0;
-        EdgeNode bestNode = new EdgeNode();
+        EdgeNode bestNode = new EdgeNode(this.getOwnerModule());
 
         //Get client requirement (required resource, network)
         long reqResource = thisClient.getReqResource();

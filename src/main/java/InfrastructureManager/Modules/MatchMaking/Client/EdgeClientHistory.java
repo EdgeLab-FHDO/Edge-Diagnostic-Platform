@@ -1,7 +1,9 @@
 package InfrastructureManager.Modules.MatchMaking.Client;
 
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
+import InfrastructureManager.PlatformObject;
 
 import java.util.*;
 
@@ -13,14 +15,15 @@ import java.util.*;
  *
  * @author Zero
  */
-public class EdgeClientHistory {
+public class EdgeClientHistory extends PlatformObject {
     private String id;
     //multimap with nodeID - history score
     private final HashMap<String, Long> nodeHistoryScoreHash = new HashMap<>();
     //multimap with client id - nodeID,connected time
     private final HashMap<String, Long> nodeLastConnectedTimeHash = new HashMap<>();
 
-    public EdgeClientHistory(String id) {
+    public EdgeClientHistory(ImmutablePlatformModule ownerModule,String id) {
+        super(ownerModule);
         this.id = id;
     }
 

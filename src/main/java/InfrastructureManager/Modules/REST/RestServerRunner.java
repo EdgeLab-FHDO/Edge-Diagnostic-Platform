@@ -1,5 +1,6 @@
 package InfrastructureManager.Modules.REST;
 
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.REST.Authentication.DummyAuthentication;
 import InfrastructureManager.Modules.REST.Authentication.RESTAuthenticator;
 import InfrastructureManager.ModuleManagement.Runner;
@@ -33,8 +34,8 @@ public class RestServerRunner extends Runner {
      * @param name Name of the output as defined in MasterOutput abstract class
      * @param port Port where the server will be exposed
      */
-    private RestServerRunner(String name, int port) throws InterruptedException {
-        super(name,null);
+    private RestServerRunner(ImmutablePlatformModule ownerModule, String name, int port) throws InterruptedException {
+        super(ownerModule,name,null);
         serverCheck.acquire();
         this.port = port;
         this.authenticator = new DummyAuthentication();
@@ -109,10 +110,10 @@ public class RestServerRunner extends Runner {
      * If called more than once will just configure the server once and the other times just return.
      * This should be called before getting the instance (`getRestServerRunner`)
      */
-    public static void configure(String name, int port) {
+    public static void configure(ImmutablePlatformModule ownerModule,String name, int port) {
         if(restRunner == null) {
             try {
-                restRunner = new RestServerRunner(name, port);
+                restRunner = new RestServerRunner(ownerModule,name, port);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 restRunner = null;

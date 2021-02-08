@@ -10,13 +10,13 @@
     </appender>
 
     <logger
-            name="InfrastructureManager.Modules.MatchMaking.Algorithms.ScoreBasedMatchMaking"
+            name="InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking"
             level="OFF"/>
     <logger
             name="InfrastructureManager.MatchMaking.MatchMaker"
             level="OFF"/>
     <logger
-            name="InfrastructureManager.Modules.MatchMaking.Algorithms.ScoreBasedMatchMaking"
+            name="InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking"
             level="OFF"/>
 
     <root level="OFF">

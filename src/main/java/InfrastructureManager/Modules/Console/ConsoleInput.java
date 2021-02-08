@@ -1,18 +1,18 @@
 package InfrastructureManager.Modules.Console;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.ModuleManagement.ModuleInput;
-import InfrastructureManager.ModuleManagement.PlatformModule;
+import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformInput;
 
 import java.util.Scanner;
 
 /**
- * Class representing input from the console as a form of ModuleInput
+ * Class representing input from the console as a form of PlatformInput
  */
-public class ConsoleInput extends ModuleInput {
+public class ConsoleInput extends PlatformInput {
     private final Scanner IN = new Scanner(System.in);
 
-    public ConsoleInput(PlatformModule module, String name) {
+    public ConsoleInput(ImmutablePlatformModule module, String name) {
         super(module,name);
     }
     /**
@@ -23,7 +23,7 @@ public class ConsoleInput extends ModuleInput {
     public String read() {
         System.out.println("Input >");
         String reading = IN.nextLine();
-        this.getOwnerModule().getDebugInput().debug(reading);
+        this.getLogger().debug(reading);
         return reading; //Wraps the nextLine method from the console scanner
     }
 
