@@ -20,7 +20,7 @@ public class MatchMakingNaiveModule  extends MatchMakingModule {
         String name = this.getName();
         MatchesList sharedList = this.getSharedList();
         MatchMakingNaiveModuleConfigData castedData = (MatchMakingNaiveModuleConfigData) data;
-        setInputs(new MatchMakerInput(this, name, sharedList));
-        setOutputs(new MatchMakerOutput(this, name, this.getAlgorithm(), sharedList));
+        setInputs(new MatchMakerInput(this, name + ".in", sharedList));
+        setOutputs(new MatchMakerOutput(this, name + ".out", this.getAlgorithm(), sharedList));
     }
 }
