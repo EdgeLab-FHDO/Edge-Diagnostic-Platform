@@ -21,7 +21,7 @@ public class MatchMakingRandomModule extends MatchMakingModule {
         MatchesList sharedList = this.getSharedList();
         //If something from the data needs to be used to create IOS
         MatchMakingRandomModuleConfigData castedData = (MatchMakingRandomModuleConfigData) data;
-        setInputs(new MatchMakerInput(this, name, sharedList));
-        setOutputs(new MatchMakerOutput(this, name, this.getAlgorithm(), sharedList));
+        setInputs(new MatchMakerInput(this, name + ".in", sharedList));
+        setOutputs(new MatchMakerOutput(this, name + ".out", this.getAlgorithm(), sharedList));
     }
 }
