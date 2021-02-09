@@ -8,12 +8,18 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public abstract class PlatformModule extends ImmutablePlatformModule {
+public abstract class PlatformModule implements ImmutablePlatformModule {
+
+    public enum ModuleState { INITIAL, PAUSED, RUNNING }
+
+    protected final List<PlatformInput> inputs;
+    protected final List<PlatformOutput> outputs;
+    protected final Map<String, List<Connection>> inputConnections;
+    protected String name;
+    protected ModuleDebugInput debugInput;
+    protected volatile ModuleState state;
 
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
@@ -44,12 +50,45 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
     }; //For other functionalities can be overridden
 
     protected PlatformModule() {
-        super();
+        this.state = ModuleState.INITIAL;
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
+        this.inputConnections = new HashMap<>();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
     }
 
     public abstract void configure(ModuleConfigData data);
+
+    @Override
+    public List<PlatformInput> getInputs() {
+        return Collections.unmodifiableList(inputs);
+    }
+
+    @Override
+    public List<PlatformOutput> getOutputs() {
+        return Collections.unmodifiableList(outputs);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ModuleState getState() {
+        return state;
+    }
+
+    @Override
+    public Map<String, List<Connection>> getInputConnections() {
+        return Collections.unmodifiableMap(inputConnections);
+    }
+
+    @Override
+    public ModuleDebugInput getDebugInput() {
+        return debugInput;
+    }
 
     public void setName(String name) {
         this.name = name;

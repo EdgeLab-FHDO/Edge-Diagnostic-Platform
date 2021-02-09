@@ -1,7 +1,7 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
-import InfrastructureManager.ModuleManagement.ImmutablePlatformModule.ModuleState;
+import InfrastructureManager.ModuleManagement.PlatformModule.ModuleState;
 import InfrastructureManager.PlatformObject;
 
 public abstract class PlatformOutput extends PlatformObject {

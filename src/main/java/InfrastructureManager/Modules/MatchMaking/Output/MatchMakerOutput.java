@@ -1,6 +1,7 @@
 package InfrastructureManager.Modules.MatchMaking.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
