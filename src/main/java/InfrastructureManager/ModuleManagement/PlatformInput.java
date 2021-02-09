@@ -4,7 +4,6 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"runner", "ownerModule"})
 public abstract class PlatformInput extends PlatformObject {
 
     private final String name;
