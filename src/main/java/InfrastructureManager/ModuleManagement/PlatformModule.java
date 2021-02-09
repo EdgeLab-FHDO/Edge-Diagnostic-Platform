@@ -14,12 +14,12 @@ public abstract class PlatformModule implements ImmutablePlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
-    protected final List<PlatformInput> inputs;
-    protected final List<PlatformOutput> outputs;
-    protected final Map<String, List<Connection>> inputConnections;
-    protected String name;
-    protected ModuleDebugInput debugInput;
-    protected volatile ModuleState state;
+    private final List<PlatformInput> inputs;
+    private final List<PlatformOutput> outputs;
+    private final Map<String, List<Connection>> inputConnections;
+    private String name;
+    private ModuleDebugInput debugInput;
+    private volatile ModuleState state;
 
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
