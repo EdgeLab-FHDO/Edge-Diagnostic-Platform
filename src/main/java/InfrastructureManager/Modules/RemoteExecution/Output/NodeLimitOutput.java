@@ -8,11 +8,8 @@ import InfrastructureManager.Modules.RemoteExecution.LimitList;
 
 public class NodeLimitOutput extends PlatformOutput {
 
-    private final LimitList sharedList;
-
-    public NodeLimitOutput(ImmutablePlatformModule module, String name, LimitList list) {
+    public NodeLimitOutput(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.sharedList = list;
     }
 
     @Override
@@ -36,7 +33,9 @@ public class NodeLimitOutput extends PlatformOutput {
     private void addToLimitList(String tag, String limit, String period_ms) throws InvalidLimitParametersException {
         try {
             int quota_ms = (int) (Double.parseDouble(limit) * Integer.parseInt(period_ms));
-            this.sharedList.putValue(tag, quota_ms + "_" + period_ms);
+            this.getOwnerModuleWithGlobalVar()
+                    .getResource("limit_list")
+                    .modify(tag, quota_ms + "_" + period_ms);
         } catch (NumberFormatException | NullPointerException e) {
             throw new InvalidLimitParametersException("Parameters to set limits were invalid", e);
         }

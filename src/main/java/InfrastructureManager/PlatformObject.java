@@ -1,5 +1,6 @@
 package InfrastructureManager;
 
+import InfrastructureManager.ModuleManagement.GlobalVarAccessPlatformModule;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleDebugInput;
 
@@ -27,6 +28,11 @@ public abstract class PlatformObject {
      */
     protected ImmutablePlatformModule getOwnerModule() {
         return ownerModule;
+    }
+
+
+    protected GlobalVarAccessPlatformModule getOwnerModuleWithGlobalVar() {
+        return (GlobalVarAccessPlatformModule) ownerModule;
     }
 
     /**

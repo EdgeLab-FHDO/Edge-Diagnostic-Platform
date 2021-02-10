@@ -10,15 +10,16 @@ public class RemoteExecutionModule extends PlatformModule {
 
     public RemoteExecutionModule() {
         super();
+        LimitList sharedList = new LimitList(this);
+        this.addGlobalVariable("limit_list", sharedList);
     }
 
     @Override
     public void configure(ModuleConfigData data) {
         String name = data.getName();
         setName(name);
-        LimitList sharedList = new LimitList(this);
-        setInputs(new NodeLimitInput(this, name + ".limit.in", sharedList));
+        setInputs(new NodeLimitInput(this, name + ".limit.in"));
         setOutputs(new SSHClient(this,name + ".ssh.out"),
-                new NodeLimitOutput(this,name + ".limit.out", sharedList));
+                new NodeLimitOutput(this,name + ".limit.out"));
     }
 }

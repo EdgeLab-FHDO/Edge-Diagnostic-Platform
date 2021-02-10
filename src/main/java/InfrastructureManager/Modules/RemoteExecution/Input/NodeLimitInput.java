@@ -10,9 +10,9 @@ public class NodeLimitInput extends PlatformInput {
     private final LimitList sharedList;
     private String toSend;
 
-    public NodeLimitInput(ImmutablePlatformModule module, String name, LimitList list) {
+    public NodeLimitInput(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.sharedList = list;
+        this.sharedList = (LimitList) this.getOwnerModuleWithGlobalVar().getResource("limit_list");
         this.toSend = null;
     }
 

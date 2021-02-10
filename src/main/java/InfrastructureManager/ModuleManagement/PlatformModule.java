@@ -10,7 +10,7 @@ import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
 import java.util.*;
 
-public abstract class PlatformModule implements ImmutablePlatformModule {
+public abstract class PlatformModule implements ImmutablePlatformModule, GlobalVarAccessPlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
@@ -23,6 +23,8 @@ public abstract class PlatformModule implements ImmutablePlatformModule {
 
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
+
+    private final Map<String, ModuleSharedResource> globalVariables;
 
     protected RunnerOperation runnerOperation = (runner,input) -> {
         try {
@@ -56,6 +58,7 @@ public abstract class PlatformModule implements ImmutablePlatformModule {
         this.inputConnections = new HashMap<>();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
+        this.globalVariables = new HashMap<>();
     }
 
     public abstract void configure(ModuleConfigData data);
@@ -88,6 +91,15 @@ public abstract class PlatformModule implements ImmutablePlatformModule {
     @Override
     public ModuleDebugInput getDebugInput() {
         return debugInput;
+    }
+
+    @Override
+    public ModuleSharedResource getResource(String resourceName) {
+        return this.globalVariables.get(resourceName);
+    }
+
+    public void addGlobalVariable(String resourceName,ModuleSharedResource resource) {
+        this.globalVariables.put(resourceName, resource);
     }
 
     public void setName(String name) {
