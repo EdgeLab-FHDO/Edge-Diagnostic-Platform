@@ -10,7 +10,7 @@ import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
 import java.util.*;
 
-public abstract class PlatformModule implements ImmutablePlatformModule, GlobalVarAccessPlatformModule {
+public abstract class PlatformModule implements ImmutablePlatformModule {
 
     public enum ModuleState { INITIAL, PAUSED, RUNNING }
 
@@ -21,10 +21,10 @@ public abstract class PlatformModule implements ImmutablePlatformModule, GlobalV
     private ModuleDebugInput debugInput;
     private volatile ModuleState state;
 
+    private final Map<String,Runner> inputRunnerMap;
+
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
-
-    private final Map<String, ModuleSharedResource> globalVariables;
 
     protected RunnerOperation runnerOperation = (runner,input) -> {
         try {
@@ -58,7 +58,7 @@ public abstract class PlatformModule implements ImmutablePlatformModule, GlobalV
         this.inputConnections = new HashMap<>();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
-        this.globalVariables = new HashMap<>();
+        this.inputRunnerMap = new HashMap<>();
     }
 
     public abstract void configure(ModuleConfigData data);
@@ -93,15 +93,6 @@ public abstract class PlatformModule implements ImmutablePlatformModule, GlobalV
         return debugInput;
     }
 
-    @Override
-    public ModuleSharedResource getResource(String resourceName) {
-        return this.globalVariables.get(resourceName);
-    }
-
-    public void addGlobalVariable(String resourceName,ModuleSharedResource resource) {
-        this.globalVariables.put(resourceName, resource);
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -110,7 +101,10 @@ public abstract class PlatformModule implements ImmutablePlatformModule, GlobalV
         List<PlatformInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
         this.debugInput = new ModuleDebugInput(this,name + ".debug");
         temporalList.add(this.debugInput);
-        temporalList.forEach(i -> i.setRunner(new Runner(this,i.getName(), i)));
+        temporalList.forEach(i -> {
+            Runner r = new Runner(this,i.getName(), i);
+            inputRunnerMap.put(i.getName(),r);
+        });
         this.inputs.addAll(temporalList); //Append them to the list
     }
 
@@ -179,9 +173,10 @@ public abstract class PlatformModule implements ImmutablePlatformModule, GlobalV
 
     private void configureRunners() {
         for (PlatformInput in : this.inputs) {
-            if (this.inputConnections.containsKey(in.getName())) {
-                Runner runner = in.getRunner();
-                runner.setConnections(this.inputConnections.get(in.getName()));
+            String inputName = in.getName();
+            if (this.inputConnections.containsKey(inputName)) {
+                Runner runner = inputRunnerMap.get(inputName);
+                runner.setConnections(this.inputConnections.get(inputName));
                 runner.setRunOperation(this.runnerOperation);
                 inputRunners.add(runner);
             }

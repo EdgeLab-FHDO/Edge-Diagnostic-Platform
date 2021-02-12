@@ -1,8 +1,6 @@
 package InfrastructureManager.Modules.RemoteExecution;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.ModuleSharedResource;
-import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 
-public class LimitList extends PlatformObject implements ModuleSharedResource {
+public class LimitList extends RemoteExecutionModuleObject {
     private final ConcurrentMap<String, String> limitList;
     private final Semaphore block;
     private final ObjectMapper mapper;
@@ -22,7 +20,7 @@ public class LimitList extends PlatformObject implements ModuleSharedResource {
         this.mapper = new ObjectMapper();
     }
 
-    public ConcurrentMap<String, String> getLimitList() {
+    public ConcurrentMap<String, String> getList() {
         return limitList;
     }
 
@@ -35,13 +33,8 @@ public class LimitList extends PlatformObject implements ModuleSharedResource {
         }
     }
 
-    private void putValue(String key, String value) {
+    public void putValue(String key, String value) {
         this.limitList.put(key, value);
         this.block.release();
-    }
-
-    @Override
-    public void modify(String... data) {
-        this.putValue(data[0],data[1]);
     }
 }

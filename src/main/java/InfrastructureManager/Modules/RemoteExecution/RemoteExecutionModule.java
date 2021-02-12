@@ -6,12 +6,13 @@ import InfrastructureManager.Modules.RemoteExecution.Input.NodeLimitInput;
 import InfrastructureManager.Modules.RemoteExecution.Output.NodeLimitOutput;
 import InfrastructureManager.Modules.RemoteExecution.Output.SSHClient;
 
-public class RemoteExecutionModule extends PlatformModule {
+public class RemoteExecutionModule extends PlatformModule implements GlobalVarAccessREModule {
+
+    private final LimitList sharedList;
 
     public RemoteExecutionModule() {
         super();
-        LimitList sharedList = new LimitList(this);
-        this.addGlobalVariable("limit_list", sharedList);
+        this.sharedList = new LimitList(this);
     }
 
     @Override
@@ -21,5 +22,10 @@ public class RemoteExecutionModule extends PlatformModule {
         setInputs(new NodeLimitInput(this, name + ".limit.in"));
         setOutputs(new SSHClient(this,name + ".ssh.out"),
                 new NodeLimitOutput(this,name + ".limit.out"));
+    }
+
+    @Override
+    public LimitList getLimitList() {
+        return sharedList;
     }
 }
