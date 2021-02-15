@@ -5,6 +5,7 @@ import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
+import InfrastructureManager.Modules.Scenario.Exception.ScenarioNotSetUpException;
 
 /**
  * Scenario Handling class that is an Output of the master
@@ -13,15 +14,13 @@ import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatche
  * - Run Scenarios
  * - Pause/Resume Scenarios
  */
-public class ScenarioDispatcher extends PlatformOutput {
+public class ScenarioDispatcher extends ScenarioModuleObject implements PlatformOutput {
 
-    private final Scenario scenario;
     private final ScenarioModule ownerScenarioModule;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
-    public ScenarioDispatcher(ImmutablePlatformModule module, String name, Scenario scenario) {
+    public ScenarioDispatcher(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.scenario = scenario;
         this.ownerScenarioModule = (ScenarioModule) module;
     }
 
@@ -77,6 +76,8 @@ public class ScenarioDispatcher extends PlatformOutput {
             } catch (IndexOutOfBoundsException e){
                 throw new ScenarioDispatcherException("Arguments missing for command " + response
                         + " to ScenarioDispatcher");
+            } catch (ScenarioNotSetUpException e) {
+                throw  new ScenarioDispatcherException("Scenario could not be accessed in the module");
             }
         }
     }
@@ -84,21 +85,21 @@ public class ScenarioDispatcher extends PlatformOutput {
     /**
      * Method for stopping the current scenario
      */
-    private void stopScenario() {
+    private void stopScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.stopScenario();
     }
 
     /**
      * Method for pausing the scenario
      */
-    private void pauseScenario() {
+    private void pauseScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.pauseScenario();
     }
 
     /**
      * Method to resume the scenario if paused
      */
-    private void resumeScenario() {
+    private void resumeScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.resumeScenario();
     }
 
@@ -106,16 +107,6 @@ public class ScenarioDispatcher extends PlatformOutput {
      * Method to run the scenario
      */
     private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
-        this.getLogger().debug("starting scenario " + this.scenario.getName());
         this.ownerScenarioModule.startScenario(startTime);
-    }
-
-
-    /**
-     * Get the scenario assigned to this dispatcher
-     * @return Scenario to which all action will be performed
-     */
-    public Scenario getScenario() { //FOR TESTS
-        return scenario;
     }
 }

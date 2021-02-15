@@ -18,9 +18,8 @@ public class MatchMakingScoreBasedModule  extends MatchMakingModule {
         super.configure(data);
         setAlgorithm(new ScoreBasedMatchMaking(this));
         String name = this.getName();
-        MatchesList sharedList = this.getSharedList();
         MatchMakingScoreBasedModuleConfigData castedData = (MatchMakingScoreBasedModuleConfigData) data;
-        setInputs(new MatchMakerInput(this, name + ".in", sharedList));
-        setOutputs(new MatchMakerOutput(this, name + ".out", this.getAlgorithm(), sharedList));
+        setInputs(new MatchMakerInput(this, name + ".in"));
+        setOutputs(new MatchMakerOutput(this, name + ".out", this.getAlgorithm()));
     }
 }

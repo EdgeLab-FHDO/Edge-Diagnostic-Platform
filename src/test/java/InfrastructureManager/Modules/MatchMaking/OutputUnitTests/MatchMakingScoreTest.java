@@ -4,7 +4,6 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
-import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
 import InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking;
@@ -20,8 +19,7 @@ import java.util.regex.Pattern;
 public class MatchMakingScoreTest {
 
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchesList matchesList = new MatchesList(module);
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new ScoreBasedMatchMaking(module), matchesList);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new ScoreBasedMatchMaking(module));
 
     @Before
     public void register3NodesAnd2Clients() throws ModuleExecutionException {
@@ -63,7 +61,7 @@ public class MatchMakingScoreTest {
 
         matchMaker.execute("matchMaker assign_client client1");
         //client1 should be mapped to node1
-        String thisShouldBeNode1 = getNodeIDFromJSON(matchesList.getMapping().get("client1"));
+        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         Assert.assertEquals("node1", thisShouldBeNode1);
     }
 
@@ -89,7 +87,7 @@ public class MatchMakingScoreTest {
         Assert.assertEquals(8,thisShouldBe8);
 
         //Client 1 should connect to node 2 now cuz node 2 have better score
-        String thisShouldBeNode2 = getNodeIDFromJSON(matchesList.getMapping().get("client1"));
+        String thisShouldBeNode2 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         Assert.assertEquals("node2",thisShouldBeNode2);
     }
 

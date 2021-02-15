@@ -3,17 +3,15 @@ package InfrastructureManager.Modules.MatchMaking.Input;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
-import InfrastructureManager.Modules.MatchMaking.MatchesList;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 
-public class MatchMakerInput extends PlatformInput {
+public class MatchMakerInput extends MatchMakingModuleObject implements PlatformInput {
 
-    private final MatchesList sharedMatchesList;
     private String toSend;
 
-    public MatchMakerInput(ImmutablePlatformModule module, String name, MatchesList mapping) {
+    public MatchMakerInput(ImmutablePlatformModule module, String name) {
         super(module,name);
         toSend = "";
-        this.sharedMatchesList = mapping;
     }
 
     @Override
@@ -28,6 +26,6 @@ public class MatchMakerInput extends PlatformInput {
     public void response(ModuleExecutionException outputException) {}
 
     private String waitForMatch() throws InterruptedException {
-        return this.sharedMatchesList.getLastAdded();
+        return this.getSharedList().getLastAdded();
     }
 }

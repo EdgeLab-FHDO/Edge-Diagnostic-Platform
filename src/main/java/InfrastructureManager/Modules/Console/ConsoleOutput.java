@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * Class representing output to the console as a form of MasterOutput
  */
-public class ConsoleOutput extends PlatformOutput {
+public class ConsoleOutput extends ConsoleModuleObject implements PlatformOutput {
 
     public ConsoleOutput(ImmutablePlatformModule module, String name) {
         super(module, name);

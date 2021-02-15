@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
-public class MatchesList extends PlatformObject {
+public class MatchesList extends MatchMakingModuleObject {
     private final ConcurrentMap<String, String> matches; //Map Key:CLIENT_ID Value:NODE_JSON
     private final Semaphore block;
     private String lastClientAdded;

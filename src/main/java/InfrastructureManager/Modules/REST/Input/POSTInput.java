@@ -5,6 +5,7 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.REST.Exception.Input.ParsingArgumentNotDefinedException;
 import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
+import InfrastructureManager.Modules.REST.RESTModuleObject;
 import InfrastructureManager.Modules.REST.RestServerRunner;
 import spark.Request;
 import spark.Response;
@@ -20,7 +21,7 @@ import static spark.Spark.post;
 /**
  * Class to represent data coming from POST requests, it can be configured to extract parameters from the request body json
  */
-public class POSTInput extends PlatformInput {
+public class POSTInput extends RESTModuleObject implements PlatformInput {
 
     private final Queue<String> toRead;
 

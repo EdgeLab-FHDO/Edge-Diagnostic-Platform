@@ -1,7 +1,6 @@
 package InfrastructureManager.Modules.REST.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Output.RESTOutputException;
 import spark.Request;
 import spark.Response;

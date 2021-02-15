@@ -6,6 +6,7 @@ import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Exception.*;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchMakerOutput extends PlatformOutput {
+public class MatchMakerOutput extends MatchMakingModuleObject implements PlatformOutput {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper mapper;
@@ -26,9 +27,9 @@ public class MatchMakerOutput extends PlatformOutput {
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
-    public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm, MatchesList mapping) {
+    public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm) {
         super(module,name);
-        this.sharedMatchesList = mapping;
+        this.sharedMatchesList = this.getSharedList();
         this.algorithm = algorithm;
         this.mapper = new ObjectMapper();
         this.nodeList = new ArrayList<>();
