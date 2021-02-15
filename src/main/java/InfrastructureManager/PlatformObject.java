@@ -3,12 +3,14 @@ package InfrastructureManager;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleDebugInput;
 import InfrastructureManager.ModuleManagement.PlatformModule;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Base class for objects of the platform. All objects that are used in / are part of a module,
  * must extend this class, in order to have access to its module's {@link ModuleDebugInput} and
  * be able to log information.
  */
+@JsonIgnoreProperties({"ownerModule", "name","ownerModuleState", "logger"})
 public abstract class PlatformObject {
 
     private final ImmutablePlatformModule ownerModule;
