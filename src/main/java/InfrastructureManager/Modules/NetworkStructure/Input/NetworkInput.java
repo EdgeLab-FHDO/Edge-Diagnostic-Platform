@@ -5,8 +5,10 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 
 import InfrastructureManager.Modules.NetworkStructure.Network;
+import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
+import InfrastructureManager.PlatformObject;
 
-public class NetworkInput extends PlatformInput {
+public class NetworkInput extends NetworkModuleObject implements PlatformInput {
 	
 	private final Network network;
 	
