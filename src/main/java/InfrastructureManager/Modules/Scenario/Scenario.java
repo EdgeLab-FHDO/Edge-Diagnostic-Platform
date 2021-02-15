@@ -18,7 +18,7 @@ import java.util.concurrent.Semaphore;
  * Class representing an scenario, as an object with a name and a list of events
  */
 @JsonIgnoreProperties({"startBlock","startTime","currentIndex", "pausedTime",
-        "resumedTime","started","ownerModule", "name"})
+        "resumedTime","started"})
 public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     private final List<Event> eventList;
