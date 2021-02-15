@@ -11,7 +11,7 @@ import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleCo
 /**
  * Class implementing MasterOutput, for utilities within the master
  */
-public class ModuleController extends PlatformOutput {
+public class ModuleController extends UtilityModuleObject implements PlatformOutput {
 
     public ModuleController(ImmutablePlatformModule module, String name) {
         super(module,name);
