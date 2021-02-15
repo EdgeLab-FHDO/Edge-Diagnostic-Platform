@@ -1,13 +1,14 @@
 package InfrastructureManager.Modules.MatchMaking.Node;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
-public class EdgeNode extends PlatformObject {
+public class EdgeNode extends MatchMakingModuleObject {
 
     private final String id;
     private String ipAddress;

@@ -1,8 +1,10 @@
 package InfrastructureManager.Modules.Scenario;
 
+import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
+import InfrastructureManager.ModuleManagement.Runner;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -16,8 +18,8 @@ import java.util.concurrent.Semaphore;
  * Class representing an scenario, as an object with a name and a list of events
  */
 @JsonIgnoreProperties({"startBlock","startTime","currentIndex", "pausedTime",
-        "resumedTime","started", "name", "runner", "ownerModule"})
-public class Scenario extends PlatformInput {
+        "resumedTime","started"})
+public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     private final List<Event> eventList;
     private final Semaphore startBlock;
@@ -122,12 +124,10 @@ public class Scenario extends PlatformInput {
 
     public void pause() {
         this.pausedTime += System.currentTimeMillis();
-        this.getRunner().pause();
     }
 
     public void resume() {
         this.resumedTime += System.currentTimeMillis();
-        this.getRunner().resume();
     }
 
     public void stop() {
@@ -135,7 +135,6 @@ public class Scenario extends PlatformInput {
         this.resumedTime = 0L;
         currentIndex = 0;
         this.started = false;
-        this.getRunner().exit();
         //System.out.println("FINISHED SCENARIO: " + this.getName());
     }
     /**

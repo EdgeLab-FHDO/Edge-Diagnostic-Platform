@@ -9,7 +9,7 @@ import java.util.Scanner;
 /**
  * Class representing input from the console as a form of PlatformInput
  */
-public class ConsoleInput extends PlatformInput {
+public class ConsoleInput extends ConsoleModuleObject implements PlatformInput {
     private final Scanner IN = new Scanner(System.in);
 
     public ConsoleInput(ImmutablePlatformModule module, String name) {

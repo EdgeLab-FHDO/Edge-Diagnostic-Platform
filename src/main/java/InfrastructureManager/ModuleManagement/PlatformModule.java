@@ -8,12 +8,20 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModulePausedEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleStoppedException;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public abstract class PlatformModule extends ImmutablePlatformModule {
+public abstract class PlatformModule implements ImmutablePlatformModule {
+
+    public enum ModuleState { INITIAL, PAUSED, RUNNING }
+
+    private final List<PlatformInput> inputs;
+    private final List<PlatformOutput> outputs;
+    private final Map<String, List<Connection>> inputConnections;
+    private String name;
+    private ModuleDebugInput debugInput;
+    private volatile ModuleState state;
+
+    private final Map<String,Runner> inputRunnerMap;
 
     private final List<Runner> inputRunners;
     private final List<Thread> inputRunnerThreads;
@@ -44,12 +52,46 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
     }; //For other functionalities can be overridden
 
     protected PlatformModule() {
-        super();
+        this.state = ModuleState.INITIAL;
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
+        this.inputConnections = new HashMap<>();
         this.inputRunners = new ArrayList<>();
         this.inputRunnerThreads = new ArrayList<>();
+        this.inputRunnerMap = new HashMap<>();
     }
 
     public abstract void configure(ModuleConfigData data);
+
+    @Override
+    public List<PlatformInput> getInputs() {
+        return Collections.unmodifiableList(inputs);
+    }
+
+    @Override
+    public List<PlatformOutput> getOutputs() {
+        return Collections.unmodifiableList(outputs);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ModuleState getState() {
+        return state;
+    }
+
+    @Override
+    public Map<String, List<Connection>> getInputConnections() {
+        return Collections.unmodifiableMap(inputConnections);
+    }
+
+    @Override
+    public ModuleDebugInput getDebugInput() {
+        return debugInput;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -59,7 +101,10 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
         List<PlatformInput> temporalList = new ArrayList<>(Arrays.asList(inputs));
         this.debugInput = new ModuleDebugInput(this,name + ".debug");
         temporalList.add(this.debugInput);
-        temporalList.forEach(i -> i.setRunner(new Runner(this,i.getName(), i)));
+        temporalList.forEach(i -> {
+            Runner r = new Runner(this,i.getName(), i);
+            inputRunnerMap.put(i.getName(),r);
+        });
         this.inputs.addAll(temporalList); //Append them to the list
     }
 
@@ -128,9 +173,10 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
 
     private void configureRunners() {
         for (PlatformInput in : this.inputs) {
-            if (this.inputConnections.containsKey(in.getName())) {
-                Runner runner = in.getRunner();
-                runner.setConnections(this.inputConnections.get(in.getName()));
+            String inputName = in.getName();
+            if (this.inputConnections.containsKey(inputName)) {
+                Runner runner = inputRunnerMap.get(inputName);
+                runner.setConnections(this.inputConnections.get(inputName));
                 runner.setRunOperation(this.runnerOperation);
                 inputRunners.add(runner);
             }
@@ -139,5 +185,13 @@ public abstract class PlatformModule extends ImmutablePlatformModule {
 
     public String processCommand(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
+    }
+
+    protected Runner getRunnerFromInput(String inputName) throws IncorrectInputException {
+        Runner result = this.inputRunnerMap.get(inputName);
+        if (result == null) {
+            throw new IncorrectInputException("Input not defined in module!");
+        }
+        return result;
     }
 }

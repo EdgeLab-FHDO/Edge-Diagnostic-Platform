@@ -4,15 +4,14 @@ import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefine
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.Console.ConsoleModule;
-import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
 import InfrastructureManager.Modules.MatchMaking.Naive.MatchMakingNaiveModule;
 import InfrastructureManager.Modules.MatchMaking.Random.MatchMakingRandomModule;
 import InfrastructureManager.Modules.MatchMaking.ScoreBased.MatchMakingScoreBasedModule;
+import InfrastructureManager.Modules.NetworkStructure.NetworkModule;
 import InfrastructureManager.Modules.REST.RESTModule;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import InfrastructureManager.Modules.Utility.UtilityModule;
-import InfrastructureManager.Modules.NetworkStructure.NetworkModule;
 
 public class ModuleFactory {
 

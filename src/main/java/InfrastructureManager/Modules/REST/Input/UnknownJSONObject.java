@@ -2,7 +2,7 @@ package InfrastructureManager.Modules.REST.Input;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.REST.Exception.Input.UnsupportedJSONTypeException;
-import InfrastructureManager.PlatformObject;
+import InfrastructureManager.Modules.REST.RESTModuleObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Class to abstract a JSON object which has unknown parameters (Both type and value)
  */
-public class UnknownJSONObject extends PlatformObject {
+public class UnknownJSONObject extends RESTModuleObject {
 
     private final JsonNode tree;
     private final String body;

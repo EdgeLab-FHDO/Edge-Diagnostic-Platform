@@ -2,51 +2,21 @@ package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-public abstract class ImmutablePlatformModule {
-    public enum ModuleState { INITIAL, PAUSED, RUNNING }
+public interface ImmutablePlatformModule {
+    void configure(ModuleConfigData data);
 
-    protected final List<PlatformInput> inputs;
-    protected final List<PlatformOutput> outputs;
-    protected final Map<String, List<Connection>> inputConnections;
-    protected String name;
-    protected ModuleDebugInput debugInput;
-    protected volatile ModuleState state;
+    List<PlatformInput> getInputs();
 
+    List<PlatformOutput> getOutputs();
 
-    public ImmutablePlatformModule() {
-        this.state = ModuleState.INITIAL;
-        this.inputs = new ArrayList<>();
-        this.outputs = new ArrayList<>();
-        this.inputConnections = new HashMap<>();
-    }
+    String getName();
 
-    public abstract void configure(ModuleConfigData data);
+    PlatformModule.ModuleState getState();
 
-    public List<PlatformInput> getInputs() {
-        return Collections.unmodifiableList(inputs);
-    }
+    Map<String, List<Connection>> getInputConnections();
 
-    public List<PlatformOutput> getOutputs() {
-        return Collections.unmodifiableList(outputs);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ModuleState getState() {
-        return state;
-    }
-
-    protected Map<String, List<Connection>> getInputConnections() {
-        return Collections.unmodifiableMap(inputConnections);
-    }
-
-    public ModuleDebugInput getDebugInput() {
-        return debugInput;
-    }
-
-
+    ModuleDebugInput getDebugInput();
 }

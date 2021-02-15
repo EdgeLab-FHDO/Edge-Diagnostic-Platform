@@ -1,13 +1,14 @@
 package InfrastructureManager.Modules.MatchMaking.Client;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
-public class EdgeClient extends PlatformObject {
+public class EdgeClient extends MatchMakingModuleObject {
 
     private final String id;
     private long reqResource; //required computation resource
