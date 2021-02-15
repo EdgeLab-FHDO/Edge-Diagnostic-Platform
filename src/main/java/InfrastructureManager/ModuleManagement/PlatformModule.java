@@ -186,4 +186,12 @@ public abstract class PlatformModule implements ImmutablePlatformModule {
     public String processCommand(String fromInput, CommandSet commands) throws ResponseNotDefinedException {
         return commands.getResponse(fromInput);
     }
+
+    protected Runner getRunnerFromInput(String inputName) throws IncorrectInputException {
+        Runner result = this.inputRunnerMap.get(inputName);
+        if (result == null) {
+            throw new IncorrectInputException("Input not defined in module!");
+        }
+        return result;
+    }
 }

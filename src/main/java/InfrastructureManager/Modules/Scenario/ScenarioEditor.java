@@ -19,14 +19,14 @@ import java.io.IOException;
  * - Save Scenarios to JSON Files
  * - Load Scenarios from JSON Files
  */
-public class ScenarioEditor extends PlatformOutput {
+public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutput {
 
     private final Scenario scenario;
     private final ObjectMapper mapper;
 
-    public ScenarioEditor(ImmutablePlatformModule module, String name, Scenario scenario) {
+    public ScenarioEditor(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.scenario = scenario;
+        this.scenario = this.getScenario();
         //When saving to a file, make so the JSON string is indented and "pretty"
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
@@ -92,13 +92,5 @@ public class ScenarioEditor extends PlatformOutput {
         } catch (IOException e) {
             throw new ScenarioIOException("Scenario " + scenario.getName() + " could not be saved", e);
         }
-    }
-
-    /**
-     * Get the scenario being edited
-     * @return Scenario being edited in the editor
-     */
-    public Scenario getScenario() { //FOR TESTS
-        return scenario;
     }
 }

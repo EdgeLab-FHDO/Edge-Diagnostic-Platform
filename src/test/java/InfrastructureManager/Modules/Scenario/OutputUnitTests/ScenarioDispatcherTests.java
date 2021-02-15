@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 public class ScenarioDispatcherTests {
 
     private ScenarioDispatcher dispatcher;
-    private static Scenario scenario;
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent;
     private static ScenarioModule module = new ScenarioModule();
@@ -45,16 +44,11 @@ public class ScenarioDispatcherTests {
         ModuleManager manager = Master.getInstance().getManager();
         manager.startAllModules();
         module = findModule(manager);
-        InjectableValues inject = new InjectableValues.Std().addValue(ImmutablePlatformModule.class, module);
-        String scenarioPath = "src/test/resources/Modules/Scenario/dummyScenario.json";
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setInjectableValues(inject);
-        scenario = mapper.readValue(new File(scenarioPath), Scenario.class);
     }
 
     @Before
     public void init() {
-        dispatcher = new ScenarioDispatcher(module,"dummy.dispatcher", scenario);
+        dispatcher = new ScenarioDispatcher(module,"dummy.dispatcher");
     }
 
     private static ScenarioModule findModule(ModuleManager manager) throws ModuleNotFoundException, ModuleManagerException {
