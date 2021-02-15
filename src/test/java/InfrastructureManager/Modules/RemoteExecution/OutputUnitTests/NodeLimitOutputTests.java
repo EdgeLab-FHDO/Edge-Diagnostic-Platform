@@ -13,7 +13,7 @@ import org.junit.Test;
 public class NodeLimitOutputTests {
 
     RemoteExecutionModule module = new RemoteExecutionModule();
-    private final LimitList list = (LimitList) module.getResource("limit_list");
+    private final LimitList list = module.getLimitList();
     private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out");
 
     private void assertExceptionInOutput(Class<? extends Exception> exceptionClass, String expectedMessage, String command) {
@@ -24,14 +24,14 @@ public class NodeLimitOutputTests {
     public void limitsAreAddedWithDefaultPeriod() throws ModuleExecutionException {
         output.execute("limit cores node1 0.5");
         String expectedLimitForNode1 = "50000_100000";
-        Assert.assertEquals(expectedLimitForNode1, list.getLimitList().get("node1"));
+        Assert.assertEquals(expectedLimitForNode1, list.getList().get("node1"));
     }
 
     @Test
     public void limitsAreAddedWithCustomPeriod() throws ModuleExecutionException {
         output.execute("limit cores node1 0.5 1000");
         String expectedLimitForNode1 = "500_1000";
-        Assert.assertEquals(expectedLimitForNode1, list.getLimitList().get("node1"));
+        Assert.assertEquals(expectedLimitForNode1, list.getList().get("node1"));
     }
 
     @Test
