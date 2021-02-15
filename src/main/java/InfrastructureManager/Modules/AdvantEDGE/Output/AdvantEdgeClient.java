@@ -1,12 +1,13 @@
 package InfrastructureManager.Modules.AdvantEDGE.Output;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.ModuleManagement.PlatformOutput;
+import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModuleObject;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.ErrorInResponseException;
 import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkCharacteristicsUpdate;
 import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkEvent;
 import InfrastructureManager.Modules.AdvantEDGE.Output.NetworkCharacteristic.NetworkParameters;
-import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Utils.FileParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,7 +20,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-public class AdvantEdgeClient extends PlatformOutput {
+public class AdvantEdgeClient extends AdvantEdgeModuleObject implements PlatformOutput {
     //The controller API is exposed on port 80 & 443 of the node where AdvantEDGE is deployed.
     private final String requestPath;
     private final HttpClient client = HttpClient.newBuilder()
