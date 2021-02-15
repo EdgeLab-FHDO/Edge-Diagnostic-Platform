@@ -3,7 +3,7 @@ package InfrastructureManager.Modules.MatchMaking;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 
-public class MatchMakingModule extends PlatformModule {
+public class MatchMakingModule extends PlatformModule implements GlobalVarAccessMMModule {
 
     private final MatchesList sharedList;
     private MatchMakingAlgorithm algorithm;
@@ -13,7 +13,8 @@ public class MatchMakingModule extends PlatformModule {
         this.sharedList = new MatchesList(this);
     }
 
-    protected MatchesList getSharedList() {
+    @Override
+    public MatchesList getSharedList() {
         return sharedList;
     }
 

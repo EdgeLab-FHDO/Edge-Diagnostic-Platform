@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
 
-public class FileOutput extends PlatformOutput {
+public class FileOutput extends UtilityModuleObject implements PlatformOutput {
 
     private Charset encoding;
 

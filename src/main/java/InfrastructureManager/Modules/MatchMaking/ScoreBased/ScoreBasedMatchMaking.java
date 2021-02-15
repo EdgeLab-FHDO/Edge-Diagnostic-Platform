@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.MatchMaking.ScoreBased;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeFoundInHistoryException;
@@ -20,7 +21,7 @@ import java.util.*;
  *
  * @author Zero
  */
-public class ScoreBasedMatchMaking extends PlatformObject implements MatchMakingAlgorithm {
+public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements MatchMakingAlgorithm {
 
     //TODO: Weight should be dynamic
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

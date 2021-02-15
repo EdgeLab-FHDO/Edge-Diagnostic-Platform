@@ -8,6 +8,7 @@ import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.F
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.InvalidFileException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.FileSending.SCPProtocolException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.SSH.SSHException;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModuleObject;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -16,7 +17,7 @@ import com.jcraft.jsch.Session;
 import java.io.*;
 import java.util.Arrays;
 
-public class SSHClient extends PlatformOutput {
+public class SSHClient extends RemoteExecutionModuleObject implements PlatformOutput {
 
     private final JSch jsch;
     private String username;

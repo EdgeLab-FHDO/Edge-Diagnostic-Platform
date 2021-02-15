@@ -1,11 +1,12 @@
 package InfrastructureManager.ModuleManagement;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.PlatformObject;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class ModuleDebugInput extends PlatformInput {
+public class ModuleDebugInput extends PlatformObject implements PlatformInput {
 
     private final BlockingQueue<String> debugData;
 

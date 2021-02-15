@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.MatchMaking.Naive;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingAlgorithm;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
+import InfrastructureManager.Modules.MatchMaking.MatchMakingModuleObject;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Exception.NoNodeSatisfyRequirementException;
 import InfrastructureManager.PlatformObject;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NaiveMatchMaking extends PlatformObject implements MatchMakingAlgorithm {
+public class NaiveMatchMaking extends MatchMakingModuleObject implements MatchMakingAlgorithm {
     private static final long ACCEPTABLE_PING = 300; //use this as parameter before put them in the calculation
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

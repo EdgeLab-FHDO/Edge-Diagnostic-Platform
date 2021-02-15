@@ -4,15 +4,12 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.InvalidLimitParametersException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.NodeLimitException;
-import InfrastructureManager.Modules.RemoteExecution.LimitList;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModuleObject;
 
-public class NodeLimitOutput extends PlatformOutput {
+public class NodeLimitOutput extends RemoteExecutionModuleObject implements PlatformOutput {
 
-    private final LimitList sharedList;
-
-    public NodeLimitOutput(ImmutablePlatformModule module, String name, LimitList list) {
+    public NodeLimitOutput(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.sharedList = list;
     }
 
     @Override
@@ -36,7 +33,7 @@ public class NodeLimitOutput extends PlatformOutput {
     private void addToLimitList(String tag, String limit, String period_ms) throws InvalidLimitParametersException {
         try {
             int quota_ms = (int) (Double.parseDouble(limit) * Integer.parseInt(period_ms));
-            this.sharedList.putValue(tag, quota_ms + "_" + period_ms);
+            this.getLimitList().putValue(tag, quota_ms + "_" + period_ms);
         } catch (NumberFormatException | NullPointerException e) {
             throw new InvalidLimitParametersException("Parameters to set limits were invalid", e);
         }

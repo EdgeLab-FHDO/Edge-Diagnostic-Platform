@@ -4,15 +4,16 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.RemoteExecution.LimitList;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModuleObject;
 
-public class NodeLimitInput extends PlatformInput {
+public class NodeLimitInput extends RemoteExecutionModuleObject implements PlatformInput {
 
     private final LimitList sharedList;
     private String toSend;
 
-    public NodeLimitInput(ImmutablePlatformModule module, String name, LimitList list) {
+    public NodeLimitInput(ImmutablePlatformModule module, String name) {
         super(module,name);
-        this.sharedList = list;
+        this.sharedList = this.getLimitList();
         this.toSend = null;
     }
 
