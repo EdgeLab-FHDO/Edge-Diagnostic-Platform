@@ -3,7 +3,6 @@ package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
-import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Naive.NaiveMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
@@ -17,8 +16,7 @@ import java.util.regex.Pattern;
 public class MatchMakingNaiveTest {
 
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchesList matchesList = new MatchesList(module);
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new NaiveMatchMaking(module), matchesList);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new NaiveMatchMaking(module));
 
     @Before
     public void register3NodesAnd2Clients() throws ModuleExecutionException {
@@ -59,11 +57,11 @@ public class MatchMakingNaiveTest {
 
         matchMaker.execute("matchMaker assign_client client1");
         //client1 should be mapped to node1 because is closer
-        String thisShouldBeNode1 = getNodeIDFromJSON(matchesList.getMapping().get("client1"));
+        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         Assert.assertEquals("node1", thisShouldBeNode1);
 
         matchMaker.execute("matchMaker assign_client client2");
-        String thisShouldBeNode2 = getNodeIDFromJSON(matchesList.getMapping().get("client2"));
+        String thisShouldBeNode2 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client2"));
         //Should be node 2 because node2 is closer to client 2 than others
         Assert.assertEquals("node2", thisShouldBeNode2);
     }
@@ -76,7 +74,7 @@ public class MatchMakingNaiveTest {
         //Re assign client 1
         matchMaker.execute("matchMaker assign_client client1");
         //Should still be node 1, the distance hasn't changed yet
-        String thisShouldBeNode1 = getNodeIDFromJSON(matchesList.getMapping().get("client1"));
+        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         Assert.assertEquals("node1", thisShouldBeNode1);
     }
 
@@ -88,7 +86,7 @@ public class MatchMakingNaiveTest {
         //update node2 so it will be damn far away from client 2, making client 2 must connect to node 1
         matchMaker.execute("matchMaker register_node {\"id\":\"node2\",\"ipAddress\":\"92.183.84.109:42589\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":133}");
         matchMaker.execute("matchMaker assign_client client2");
-        String thisShouldBeNode1ForThis = getNodeIDFromJSON(matchesList.getMapping().get("client2"));
+        String thisShouldBeNode1ForThis = getNodeIDFromJSON(module.getSharedList().getMapping().get("client2"));
         //Should be node 1 because node1 is closer to client 2 than others
         Assert.assertEquals("node1", thisShouldBeNode1ForThis);
     }

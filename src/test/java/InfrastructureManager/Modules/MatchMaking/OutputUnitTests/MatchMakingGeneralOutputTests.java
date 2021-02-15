@@ -4,7 +4,6 @@ import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutio
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.MatchMaking.Exception.MatchMakingModuleException;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
-import InfrastructureManager.Modules.MatchMaking.MatchesList;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
 import InfrastructureManager.Modules.MatchMaking.Random.RandomMatchMaking;
 import org.junit.Assert;
@@ -13,8 +12,7 @@ import org.junit.Test;
 public class MatchMakingGeneralOutputTests {
 
     private final MatchMakingModule module = new MatchMakingModule();
-    private final MatchesList matchesList = new MatchesList(module);
-    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new RandomMatchMaking(module), matchesList);
+    private final MatchMakerOutput matchMaker = new MatchMakerOutput(module,"mm", new RandomMatchMaking(module));
 
     @Test
     public void registerNodeTest() throws ModuleExecutionException {
