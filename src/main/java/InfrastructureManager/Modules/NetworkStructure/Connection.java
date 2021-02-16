@@ -8,18 +8,18 @@ package InfrastructureManager.Modules.NetworkStructure;
 public class Connection {
 	private String connectionId;
 	private NetworkLimits networkCapacity;
-	
-   
+
+
 	/**
-	* Parameterized constructor for class Connection
-	* @param connectionId 		integer
-	* @param networkCapacity 		
-	*/
-    public Connection(String connectionId, NetworkLimits networkCapacity) {
-        this.connectionId = connectionId;
-        this.networkCapacity = networkCapacity;
-    }
-    
+	 * Parameterized constructor for class Connection
+	 * @param connectionId 		integer
+	 * @param networkCapacity 		
+	 */
+	public Connection(String connectionId, NetworkLimits networkCapacity) {
+		this.connectionId = connectionId;
+		this.networkCapacity = networkCapacity;
+	}
+
 	/**
 	 * Getter function
 	 * @return connectionId
@@ -27,7 +27,7 @@ public class Connection {
 	public String getConnectionId() {
 		return connectionId;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return networkCapacity
@@ -35,7 +35,7 @@ public class Connection {
 	public NetworkLimits getNetworkCapacity() {
 		return networkCapacity;
 	}
-	
+
 	/**
 	 * Setter function
 	 * @param networkCapacity
@@ -43,5 +43,5 @@ public class Connection {
 	public void setNetworkCapacity(NetworkLimits networkCapacity) {
 		this.networkCapacity =  networkCapacity;
 	}
-    
+
 }

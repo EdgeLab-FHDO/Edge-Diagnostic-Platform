@@ -9,26 +9,26 @@ package InfrastructureManager.Modules.NetworkStructure;
 public class ApplicationInstanceDeviceRelation {
 	private ApplicationInstance application;
 	private Device device;
-	
+
 	/**
-	* Parameterized constructor for class ApplicationInstanceDeviceRelation
-	* @param application 	application object
-	* @param device 		device object
-	*/
+	 * Parameterized constructor for class ApplicationInstanceDeviceRelation
+	 * @param application 	application object
+	 * @param device 		device object
+	 */
 	public ApplicationInstanceDeviceRelation(ApplicationInstance application,Device device) {
 		this.application = application;
 		this.device = device;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return application
 	 */
-	
+
 	public ApplicationInstance getApplication() {
 		return this.application;		
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return device
@@ -36,5 +36,5 @@ public class ApplicationInstanceDeviceRelation {
 	public Device getApplicationDevice() {
 		return this.device;		
 	}
-		
+
 }

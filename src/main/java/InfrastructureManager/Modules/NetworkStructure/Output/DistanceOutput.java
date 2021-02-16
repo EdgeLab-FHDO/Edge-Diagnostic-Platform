@@ -3,29 +3,31 @@ package InfrastructureManager.Modules.NetworkStructure.Output;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.NetworkStructure.Network;
-//import InfrastructureManager.Modules.NetworkStructure.SharedLocation;
-import InfrastructureManager.Modules.NetworkStructure.Location;
 import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
 import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
 
-public class LocationOutput extends NetworkModuleObject implements PlatformOutput{
+public class DistanceOutput extends NetworkModuleObject implements PlatformOutput{
 	private Network network;
-	public LocationOutput(ImmutablePlatformModule module, String name,Network network) {
+	public DistanceOutput(ImmutablePlatformModule module, String name,Network network) {
 		super(module,name);
 		this.network = network;
 	}
 	public void execute(String response) throws NetworkModuleException  {
 		String[] commandLine = response.split(" ");
-		if (commandLine[0].equals("location")) {
+		if (commandLine[0].equals("distance")) {
 			try {
 				switch (commandLine[1]) {
-				case "get_device_location" -> {
-					Location location =this.network.getCurrentDeviceLocation(commandLine[2]);
-					this.getSharedLocation().putValue(commandLine[2],location);
+				case "get_physical_distance_devices" -> {
+					double distance =this.network.getphysicalDistanceBetweenDevices(commandLine[2],commandLine[3]);
+					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
 				}
-				case "get_application_location" -> {
-					Location location =this.network.getCurrentApplicationLocation(commandLine[2]);
-					this.getSharedLocation().putValue(commandLine[2],location);
+				case "get_physical_distance_application" -> {
+					double distance =this.network.getphysicalDistanceBetweenApplications(commandLine[2],commandLine[3]);
+					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
+				}
+				case "get_network_distance" -> {
+					double distance =this.network.getNetworkDistance(commandLine[2],commandLine[3]);
+					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
 				}
 				default -> throw new NetworkModuleException("Invalid command " + commandLine[1]
 						+ " for NetworkModule");

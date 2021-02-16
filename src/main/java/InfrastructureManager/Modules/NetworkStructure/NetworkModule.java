@@ -2,23 +2,41 @@ package InfrastructureManager.Modules.NetworkStructure;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.NetworkStructure.RawData.NetworkModuleConfigData;
+import InfrastructureManager.Modules.NetworkStructure.Input.DistanceInput;
+import InfrastructureManager.Modules.NetworkStructure.Output.DistanceOutput;
+import InfrastructureManager.Modules.NetworkStructure.Input.LocationInput;
+import InfrastructureManager.Modules.NetworkStructure.Output.LocationOutput;
 /**
  * This class contains NetworkModule information.
  *
  * @author Shankar Lokeshwara
  */
 public class NetworkModule extends PlatformModule implements GlobalVarAccessNetworkModule{
+	private SharedLocation sharedLocation;
+	private SharedDistance sharedDistance;
+	public NetworkModule() {
+		super();
+		this.sharedLocation = new SharedLocation(this);
+		this.sharedDistance =  new SharedDistance(this);
+	}
+	@Override
+	public void configure(ModuleConfigData data) {
+		NetworkModuleConfigData castedData = (NetworkModuleConfigData) data;
+		String name = data.getName();
+		setName(name);
+		Network network = new Network();
+		setInputs(new LocationInput(this, name + ".location.in",network),
+				new DistanceInput(this,name + ".distance.in",network));
+		setOutputs(new LocationOutput(this,name + ".location.out",network),
+				new DistanceOutput(this,name + ".distance.out",network));
+	} 
+	@Override
+	public SharedLocation getSharedLocation(){
+		return this.sharedLocation;
+	}
 
-    public NetworkModule() {
-        super();
-    }
-    @Override
-    public void configure(ModuleConfigData data) {
-    	NetworkModuleConfigData castedData = (NetworkModuleConfigData) data;
-    }
-
-    @Override
-    public String getSharedResource() { //TODO: This is an example with a String, change the type accordingly
-        return null;
-    }
+	@Override
+	public SharedDistance getSharedDistance(){
+		return this.sharedDistance;
+	}
 }

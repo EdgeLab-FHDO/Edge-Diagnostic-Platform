@@ -5,20 +5,20 @@ package InfrastructureManager.Modules.NetworkStructure;
  * @author Shankar Lokeshwara
  */
 public class LocationConnectionRelation {
-	
+
 	private Connection connection;
 	private Location location;
-	
+
 	/**
-	* Parameterized constructor for LocationConnectionRelation Class
-	* @param connection 	
-	* @param location 			
-	*/
+	 * Parameterized constructor for LocationConnectionRelation Class
+	 * @param connection 	
+	 * @param location 			
+	 */
 	public LocationConnectionRelation(Connection connection,Location location) {
 		this.connection = connection;
 		this.location = location;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return location
@@ -26,7 +26,7 @@ public class LocationConnectionRelation {
 	public Location getLocationRelation () {
 		return this.location;	
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return connection
@@ -34,5 +34,5 @@ public class LocationConnectionRelation {
 	public Connection getConnectionRelation () {
 		return this.connection;	
 	}
-	
+
 }

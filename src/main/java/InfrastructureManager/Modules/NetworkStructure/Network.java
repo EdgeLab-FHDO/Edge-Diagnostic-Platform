@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  */
 
 public class Network {
-	enum Update {ADD,DELETE};
+	public enum Update {ADD,DELETE};
 	private final ObjectMapper mapper;
 	private List<Device> deviceList;
 	private List<Connection> connectionList;
@@ -90,7 +89,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.deviceList) {
 			Device device = (Device)obj;	
-			if (device.getDeviceId() == deviceId)
+			if (device.getDeviceId().equals(deviceId))
 			{
 				idx = this.deviceList.indexOf(obj);
 			}
@@ -109,13 +108,13 @@ public class Network {
 			this.deviceList.add(device);
 		}
 		else if(update == Network.Update.DELETE) {
-				for (Object obj : this.deviceList) {
-					Device device1 = (Device)obj;
-					if (device1.getDeviceId() == device.getDeviceId())
-					{
-						this.deviceList.remove(this.deviceList.indexOf(obj));
-					}
-				} 
+			for (Object obj : this.deviceList) {
+				Device device1 = (Device)obj;
+				if (device1.getDeviceId().equals(device.getDeviceId()))
+				{
+					this.deviceList.remove(this.deviceList.indexOf(obj));
+				}
+			} 
 		}
 	}
 
@@ -130,7 +129,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.connectionList) {
 			Connection connection = (Connection)obj;
-			if (connection.getConnectionId() == ConnectionId)
+			if (connection.getConnectionId().equals(ConnectionId))
 			{
 				idx = this.connectionList.indexOf(obj);
 			}
@@ -151,7 +150,7 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.connectionList) {
 				Connection connection1 = (Connection)obj;
-				if (connection1.getConnectionId() == connection.getConnectionId())
+				if (connection1.getConnectionId().equals(connection.getConnectionId()))
 				{
 					this.connectionList.remove(this.connectionList.indexOf(obj));
 				}
@@ -168,7 +167,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.locationList) {
 			Location location = (Location)obj;
-			if (location.getLocationId() == LocationId)
+			if (location.getLocationId().equals(LocationId))
 			{
 				idx = this.locationList.indexOf(obj);
 			}
@@ -189,15 +188,15 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.locationList) {
 				Location location1 = (Location)obj;
-				if (location1.getLocationId() == location.getLocationId())
+				if (location1.getLocationId().equals(location.getLocationId()))
 				{
 					this.locationList.remove(this.locationList.indexOf(obj));
 				}
 			} 
 		}
 	}
-	
-	
+
+
 	/**
 	 * Getter function to get a particular application from applicationList
 	 * @param applicationId
@@ -207,7 +206,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.applicationList) {
 			ApplicationInstance application = (ApplicationInstance)obj;
-			if (application.getApplicationType().getApplicationId() == ApplicationId)
+			if (application.getApplicationType().getApplicationId().equals( ApplicationId))
 			{
 				idx = this.applicationList.indexOf(obj);
 			}
@@ -228,7 +227,7 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.applicationList) {
 				ApplicationInstance application1 = (ApplicationInstance)obj;
-				if (application1.getApplicationType().getApplicationId() == application.getApplicationType().getApplicationId())
+				if (application1.getApplicationType().getApplicationId().equals(application.getApplicationType().getApplicationId()))
 				{
 					this.applicationList.remove(this.applicationList.indexOf(obj));
 				}
@@ -245,7 +244,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.applicationDeviceList) {
 			ApplicationInstanceDeviceRelation applicationDevice = (ApplicationInstanceDeviceRelation)obj;
-			if ((applicationDevice.getApplication().getApplicationType().getApplicationId() == id) || applicationDevice.getApplicationDevice().getDeviceId() == id )
+			if ((applicationDevice.getApplication().getApplicationType().getApplicationId().equals(id)) || applicationDevice.getApplicationDevice().getDeviceId().equals(id))
 			{
 				idx = this.applicationDeviceList.indexOf(obj);
 			}
@@ -266,8 +265,8 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.applicationDeviceList) {
 				ApplicationInstanceDeviceRelation applicationDevice1 = (ApplicationInstanceDeviceRelation)obj;
-				if (applicationDevice1.getApplication().getApplicationType().getApplicationId() == applicationDevice.getApplication().getApplicationType().getApplicationId() ||
-				applicationDevice1.getApplicationDevice().getDeviceId() == applicationDevice.getApplicationDevice().getDeviceId())
+				if (applicationDevice1.getApplication().getApplicationType().getApplicationId().equals(applicationDevice.getApplication().getApplicationType().getApplicationId()) ||
+						applicationDevice1.getApplicationDevice().getDeviceId().equals(applicationDevice.getApplicationDevice().getDeviceId()))
 				{
 					this.applicationDeviceList.remove(this.applicationDeviceList.indexOf(obj));
 				}
@@ -284,7 +283,7 @@ public class Network {
 		int idx=0;
 		for (Object obj : this.locationConnectionList) {
 			LocationConnectionRelation locationConnection = (LocationConnectionRelation)obj;
-			if ((locationConnection.getConnectionRelation().getConnectionId() == id) || locationConnection.getLocationRelation().getLocationId()== id )
+			if ((locationConnection.getConnectionRelation().getConnectionId().equals(id)) || locationConnection.getLocationRelation().getLocationId().equals(id))
 			{
 				idx = this.locationConnectionList.indexOf(obj);
 			}
@@ -305,8 +304,8 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.locationConnectionList) {
 				LocationConnectionRelation locationConnection1 = (LocationConnectionRelation)obj;
-				if (locationConnection1.getConnectionRelation().getConnectionId() == locationConnection.getConnectionRelation().getConnectionId() ||
-						locationConnection1.getLocationRelation().getLocationId() == locationConnection.getLocationRelation().getLocationId())
+				if (locationConnection1.getConnectionRelation().getConnectionId().equals(locationConnection.getConnectionRelation().getConnectionId()) ||
+						locationConnection1.getLocationRelation().getLocationId().equals(locationConnection.getLocationRelation().getLocationId()))
 				{
 					this.locationConnectionList.remove(this.locationConnectionList.indexOf(obj));
 				}
@@ -324,7 +323,7 @@ public class Network {
 		DeviceLocationRelation deviceLocation = null;
 		for (Object obj : this.deviceLocationList) {
 			DeviceLocationRelation deviceLocationObj = (DeviceLocationRelation)obj;
-			if ((deviceLocationObj.getDevice().getDeviceId() == id) || deviceLocationObj.getLocation().getLocationId() == id )
+			if ((deviceLocationObj.getDevice().getDeviceId().equals(id)) || deviceLocationObj.getLocation().getLocationId().equals(id) )
 			{
 				deviceLocation = this.deviceLocationList.get(this.deviceLocationList.indexOf(obj));
 			}
@@ -345,8 +344,8 @@ public class Network {
 		else if(update == Network.Update.DELETE) {
 			for (Object obj : this.deviceLocationList) {
 				DeviceLocationRelation deviceLocation1 = (DeviceLocationRelation)obj;
-				if (deviceLocation1.getDevice().getDeviceId()== deviceLocation.getDevice().getDeviceId() ||
-				deviceLocation1.getLocation().getLocationId() == deviceLocation.getLocation().getLocationId())
+				if (deviceLocation1.getDevice().getDeviceId().equals(deviceLocation.getDevice().getDeviceId()) ||
+						deviceLocation1.getLocation().getLocationId().equals(deviceLocation.getLocation().getLocationId()))
 				{
 					this.deviceLocationList.remove(this.deviceLocationList.indexOf(obj));
 				}
@@ -354,20 +353,29 @@ public class Network {
 		}
 	}
 	/**
-	 * Function to get location of a particular device or application instance
-	 * @param deviceId/applicationId
+	 * Function to get location of a particular device instance
+	 * @param deviceId
 	 */
-    public Location getCurrentLocation(String id) {
-    	Location location = null;
-    	if(id == this.getDeviceLocationRelationFromList(id).getDevice().getDeviceId()) {
-    		location = this.getDeviceLocationRelationFromList(id).getLocation();  		
-    	}
-    	else if (id==this.getApplicationInstanceDeviceRelationFromList(id).getApplication().getApplicationType().getApplicationId()) {
-    		location = this.getDeviceLocationRelationFromList(this.getApplicationInstanceDeviceRelationFromList(id).getApplicationDevice().getDeviceId()).getLocation();
-    	}
-        return location;
-    }
-    
+	public Location getCurrentDeviceLocation(String id) {
+		Location location = null;
+		if(id.equals(this.getDeviceLocationRelationFromList(id).getDevice().getDeviceId())) {
+			location = this.getDeviceLocationRelationFromList(id).getLocation();  		
+		}
+		return location;
+	}
+
+	/**
+	 * Function to get location of a particular application instance
+	 * @param applicationId
+	 */
+	public Location getCurrentApplicationLocation(String id) {
+		Location location = null;
+		if (id.equals(this.getApplicationInstanceDeviceRelationFromList(id).getApplication().getApplicationType().getApplicationId())) {
+			location = this.getDeviceLocationRelationFromList(this.getApplicationInstanceDeviceRelationFromList(id).getApplicationDevice().getDeviceId()).getLocation();
+		}
+		return location;
+	}
+
 	/**
 	 * Function to calculate distance between two locations.
 	 * @param sourceLocation and destinationLocation
@@ -379,40 +387,52 @@ public class Network {
 		double distance = 0;
 		if ((source.getLatitude() == destination.getLatitude()) && (source.getLongitude() == destination.getLongitude())) {
 			distance =  0;
-			}
+		}
 
 		else {
 			double theta = source.getLongitude() - destination.getLongitude();
 			double sourceLatitudeRadians = Math.toRadians(source.getLatitude());
 			double destinationLatitudeRadians = Math.toRadians(destination.getLatitude());
-	        distance = Math.acos(Math.sin(sourceLatitudeRadians)*Math.sin(destinationLatitudeRadians) + Math.cos(sourceLatitudeRadians)*Math.cos(destinationLatitudeRadians)*Math.cos(Math.toRadians(theta)));
-	        distance = earthRadius * distance;     
-	        }
+			distance = Math.acos(Math.sin(sourceLatitudeRadians)*Math.sin(destinationLatitudeRadians) + Math.cos(sourceLatitudeRadians)*Math.cos(destinationLatitudeRadians)*Math.cos(Math.toRadians(theta)));
+			distance = earthRadius * distance;     
+		}
 		return distance;
 	}
-    
+
 	/**
-	 * Function to get physical distance between devices or between application instances.
+	 * Function to get physical distance between devices
 	 * @param sourceId and destinationId
 	 */
-    public double getphysicalDistance(String sourceId, String destinationId) {
-    	Location sourceLocation,destinationLocation;
-    	sourceLocation = getCurrentLocation(sourceId);
-    	destinationLocation = getCurrentLocation(destinationId);
-    	double distance = this.calculateDistance(sourceLocation,destinationLocation);
-    	return distance;
-    }
-    
+	public double getphysicalDistanceBetweenDevices(String sourceId, String destinationId) {
+		Location sourceLocation,destinationLocation;
+		sourceLocation = getCurrentDeviceLocation(sourceId);
+		destinationLocation = getCurrentDeviceLocation(destinationId);
+		double distance = this.calculateDistance(sourceLocation,destinationLocation);
+		return distance;
+	}
+
+	/**
+	 * Function to get physical distance between application instances.
+	 * @param sourceId and destinationId
+	 */
+	public double getphysicalDistanceBetweenApplications(String sourceId, String destinationId) {
+		Location sourceLocation,destinationLocation;
+		sourceLocation = getCurrentApplicationLocation(sourceId);
+		destinationLocation = getCurrentApplicationLocation(destinationId);
+		double distance = this.calculateDistance(sourceLocation,destinationLocation);
+		return distance;
+	}
+
 	/**
 	 * Function to get network distance between devices or between application instances.
 	 * @param sourceId and destinationId
 	 */
-    public double getNetworkDistance(String sourceId, String destinationId) {
-    	Connection source,destination;
-    	source = this.getConnectionFromList(sourceId);
-    	destination = this.getConnectionFromList(destinationId);
-    	double distance = source.getNetworkCapacity().getLatency() + destination.getNetworkCapacity().getLatency() ;
-    	return distance;
-    }  
+	public double getNetworkDistance(String sourceId, String destinationId) {
+		Connection source,destination;
+		source = this.getConnectionFromList(sourceId);
+		destination = this.getConnectionFromList(destinationId);
+		double distance = source.getNetworkCapacity().getLatency() + destination.getNetworkCapacity().getLatency() ;
+		return distance;
+	}  
 
 }

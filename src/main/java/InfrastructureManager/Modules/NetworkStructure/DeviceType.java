@@ -7,19 +7,19 @@ package InfrastructureManager.Modules.NetworkStructure;
  */
 
 public class DeviceType {
-	enum TypeId {UE,POA,FOG,EDGE,CLOUD,NONE} //Types of the device ID's
-	enum Mobility {MOVABLE,NONMOVABLE,NONE} //Types of devices based on mobility
-	
+	public enum TypeId {UE,POA,FOG,EDGE,CLOUD,NONE} //Types of the device ID's
+	public enum Mobility {MOVABLE,NONMOVABLE,NONE} //Types of devices based on mobility
+
 	private TypeId typeIdentifier;
 	private Mobility mobilityType;
 	private String deviceName;
-	
+
 	/**
-	* Parameterized constructor for DeviceType Class
-	* @param TypeId 				
-	* @param mobilityType
-	* @param deviceName
-	*/
+	 * Parameterized constructor for DeviceType Class
+	 * @param TypeId 				
+	 * @param mobilityType
+	 * @param deviceName
+	 */
 	public DeviceType(TypeId typeIdentifier,Mobility mobilityType,String deviceName) {
 		this.typeIdentifier = typeIdentifier;
 		this.mobilityType = mobilityType;
@@ -30,24 +30,24 @@ public class DeviceType {
 	 * @return typeIdentifier
 	 */
 	public TypeId getTypeId()
-    {
-        return typeIdentifier;
-    }
+	{
+		return typeIdentifier;
+	}
 	/**
 	 * Getter function
 	 * @return mobilityType
 	 */
 	public Mobility getMobility()
-    {
-        return mobilityType;
-    }	
+	{
+		return mobilityType;
+	}	
 	/**
 	 * Getter function
 	 * @return deviceName
 	 */
 	public String getDeviceName() {
-        return deviceName;
-    }
-	
+		return deviceName;
+	}
+
 }
 
