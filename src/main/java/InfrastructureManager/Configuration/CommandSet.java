@@ -21,6 +21,11 @@ public class CommandSet {
      */
     private Map<String,String> commands;
 
+    /**
+     * Auxiliary map to help with "$" parameter mapping. Stores the command as key (e.g "example" in
+     * "example $param1 $param2") and as value a list of integers which are the positions of the parameters
+     * to be replaced in the response
+     */
     private final Map<String,List<Integer>> parameterMapping;
 
     /**
