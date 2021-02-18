@@ -41,5 +41,6 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: javadocs_v1 # The branch the action should deploy to.
-          FOLDER: docs # The folder the action should deploy.
+          TARGET_FOLDER: docs # Documentation will be deployed to this folder in the defined branch
+          FOLDER: javadocs # The folder the action should deploy from (Created with gradle).
           CLEAN: true # Automatically remove deleted files from the deploy branch
