@@ -51,6 +51,6 @@ dependencies {
 }
 
 javadoc {
-    destinationDir = file("${rootDir}/javadocs")
+    destinationDir = file("${rootDir}/docs")
     options.addBooleanOption('html5', true)
 }
