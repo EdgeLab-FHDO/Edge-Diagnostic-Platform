@@ -40,7 +40,6 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: javadocs_v1 # The branch the action should deploy to.
-          TARGET_FOLDER: docs # Documentation will be deployed to this folder in the defined branch
+          BRANCH: javadocs_gh_pages # The branch the action should deploy to.
           FOLDER: javadocs # The folder the action should deploy from (Created with gradle).
           CLEAN: true # Automatically remove deleted files from the deploy branch
