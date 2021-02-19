@@ -3,7 +3,7 @@ package InfrastructureManager.Modules.Utility.OutputUnitTests;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.InvalidEncodingException;
-import InfrastructureManager.Modules.Utility.FileOutput;
+import InfrastructureManager.Modules.Utility.Output.FileOutput;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 import org.junit.Assert;
 import org.junit.BeforeClass;
