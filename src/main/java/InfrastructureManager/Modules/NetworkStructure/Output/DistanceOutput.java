@@ -19,15 +19,15 @@ public class DistanceOutput extends NetworkModuleObject implements PlatformOutpu
 				switch (commandLine[1]) {
 				case "get_physical_distance_devices" -> {
 					double distance =this.network.getphysicalDistanceBetweenDevices(commandLine[2],commandLine[3]);
-					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
+					this.getSharedDistance().putValuetoQueue(distance);
 				}
 				case "get_physical_distance_application" -> {
 					double distance =this.network.getphysicalDistanceBetweenApplications(commandLine[2],commandLine[3]);
-					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
+					this.getSharedDistance().putValuetoQueue(distance);
 				}
 				case "get_network_distance" -> {
 					double distance =this.network.getNetworkDistance(commandLine[2],commandLine[3]);
-					this.getSharedDistance().putValue(commandLine[2]+commandLine[3],distance);
+					this.getSharedDistance().putValuetoQueue(distance);
 				}
 				default -> throw new NetworkModuleException("Invalid command " + commandLine[1]
 						+ " for NetworkModule");
@@ -35,6 +35,9 @@ public class DistanceOutput extends NetworkModuleObject implements PlatformOutpu
 			} catch (ArrayIndexOutOfBoundsException e) {
 				throw new NetworkModuleException("Arguments missing for command " + response
 						+ " for NetworkModule");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 

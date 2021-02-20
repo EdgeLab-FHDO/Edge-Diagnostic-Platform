@@ -30,7 +30,7 @@ public class DistanceOutputTests {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void deviceLocationverification() throws ModuleExecutionException {
+	public void deviceLocationverification() throws ModuleExecutionException, InterruptedException {
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
 		ComputeLimits computelimits = new ComputeLimits(1,2,3);
 		Device device1 = new Device("100","192.168.0.1",devicetype,computelimits);
@@ -43,8 +43,8 @@ public class DistanceOutputTests {
 		network.updateDeviceLocationList(deviceLocation2, Network.Update.ADD);
 		DistanceOutput output = new DistanceOutput(module,"location.out",network);
 		output.execute("distance get_physical_distance_devices 100 200");
-		double expectedDistance = 2982.9202837016414f;
-		Assert.assertEquals(expectedDistance, sharedDistance.getDistanceList().get("100200"),0.5);
+		String expectedDistance = "2982.9202837016414";
+		Assert.assertEquals(expectedDistance, sharedDistance.getdistanceAsString());
 	}
 
 

@@ -42,7 +42,7 @@ public class DistanceInputTests {
 		DistanceOutput output = new DistanceOutput(module,"location.out",network);
 		DistanceInput input = new DistanceInput(module,"distance.in",network);
 		output.execute("distance get_physical_distance_devices 100 200");
-		String expectedString = "set_distance {\"100200\":2982.9202837016414}";
+		String expectedString = "distance 2982.9202837016414";
 		Assert.assertEquals(expectedString, input.read());
 	}
 
@@ -71,7 +71,7 @@ public class DistanceInputTests {
 		DistanceOutput output = new DistanceOutput(module,"distance.out",network);
 		DistanceInput input = new DistanceInput(module,"distance.in",network);
 		output.execute("distance get_physical_distance_application Application1 Application2");
-		String expected = "set_distance {\"Application1Application2\":2982.9202837016414}";
+		String expected = "distance 2982.9202837016414";
 		Assert.assertEquals(expected, input.read());
 	}
 
@@ -86,7 +86,7 @@ public class DistanceInputTests {
 		DistanceOutput output = new DistanceOutput(module,"location.out",network);
 		DistanceInput input = new DistanceInput(module,"distance.in",network);
 		output.execute("distance get_network_distance Connection1 Connection2");
-		String expectedString = "set_distance {\"Connection1Connection2\":2.0}";
+		String expectedString = "distance 2.0";
 		Assert.assertEquals(expectedString, input.read());
 	}
 

@@ -431,7 +431,7 @@ public class Network {
 		Connection source,destination;
 		source = this.getConnectionFromList(sourceId);
 		destination = this.getConnectionFromList(destinationId);
-		double distance = source.getNetworkCapacity().getLatency() + destination.getNetworkCapacity().getLatency() ;
+		double distance = source.getNetworkCapacity().getLatency() + destination.getNetworkCapacity().getLatency() ; // Write a function to get the network path. To write a search algorithm //One path between source and destination
 		return distance;
 	}  
 

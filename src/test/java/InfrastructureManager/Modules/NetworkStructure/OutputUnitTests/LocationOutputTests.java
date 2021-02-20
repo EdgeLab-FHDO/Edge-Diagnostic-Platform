@@ -15,6 +15,8 @@ import InfrastructureManager.Modules.NetworkStructure.NetworkModule;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 public class LocationOutputTests {
 
 	NetworkModule module = new NetworkModule();
@@ -30,7 +32,7 @@ public class LocationOutputTests {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void deviceLocationverification() throws ModuleExecutionException {
+	public void deviceLocationverification() throws ModuleExecutionException, JsonProcessingException, InterruptedException {
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
 		ComputeLimits computelimits = new ComputeLimits(1,2,3);
 		Device device1 = new Device("100","192.168.0.1",devicetype,computelimits);
@@ -39,8 +41,8 @@ public class LocationOutputTests {
 		network.updateDeviceLocationList(deviceLocation1, Network.Update.ADD);
 		LocationOutput output = new LocationOutput(module,"location.out",network);
 		output.execute("location get_device_location 100");
-		double expectedLocationfordevice100 = 15.5f;
-		Assert.assertEquals(expectedLocationfordevice100, sharedLocation.getLocationList().get("100").getLatitude(),0.5);
+		String expectedLocationfordevice100 = "{\"locationId\":\"location1\",\"latitude\":15.5,\"longitude\":25.5}";
+		Assert.assertEquals(expectedLocationfordevice100, sharedLocation.getLocationAsJsonBody());
 	}
 
 

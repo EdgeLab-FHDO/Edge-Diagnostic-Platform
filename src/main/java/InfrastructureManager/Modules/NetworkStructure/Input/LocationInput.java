@@ -1,6 +1,9 @@
 package InfrastructureManager.Modules.NetworkStructure.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.NetworkStructure.SharedLocation;
@@ -17,14 +20,19 @@ public class LocationInput extends NetworkModuleObject implements PlatformInput 
 		this.toSend = null;
 	}
 
-	protected String waitForLocationList() throws InterruptedException {
-		return sharedLocation.getListAsBody();
-	}
 	@Override
-	public String read() throws InterruptedException {
-		toSend = "set_location " + waitForLocationList();
-		String aux = toSend;
-		toSend = "";
+	public String read() {
+		String aux = "";
+		try {
+			toSend = "location" + sharedLocation.getLocationAsJsonBody();
+			aux=toSend;
+		}
+		catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+		catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 		return aux;
 	}
 

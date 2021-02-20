@@ -6,6 +6,8 @@ import InfrastructureManager.Modules.NetworkStructure.Input.DistanceInput;
 import InfrastructureManager.Modules.NetworkStructure.Output.DistanceOutput;
 import InfrastructureManager.Modules.NetworkStructure.Input.LocationInput;
 import InfrastructureManager.Modules.NetworkStructure.Output.LocationOutput;
+import InfrastructureManager.Modules.NetworkStructure.Input.NetworkInput;
+import InfrastructureManager.Modules.NetworkStructure.Output.NetworkOutput;
 /**
  * This class contains NetworkModule information.
  *
@@ -25,9 +27,11 @@ public class NetworkModule extends PlatformModule implements GlobalVarAccessNetw
 		String name = data.getName();
 		setName(name);
 		Network network = new Network();
-		setInputs(new LocationInput(this, name + ".location.in",network),
+		setInputs(new NetworkInput(this, name + ".network.in",network),
+				new LocationInput(this, name + ".location.in",network),
 				new DistanceInput(this,name + ".distance.in",network));
-		setOutputs(new LocationOutput(this,name + ".location.out",network),
+		setOutputs(new NetworkOutput(this,name + ".network.out",network),
+				new LocationOutput(this,name + ".location.out",network),
 				new DistanceOutput(this,name + ".distance.out",network));
 	} 
 	@Override

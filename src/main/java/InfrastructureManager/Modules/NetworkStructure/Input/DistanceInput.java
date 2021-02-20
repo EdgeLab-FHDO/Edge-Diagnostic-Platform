@@ -1,6 +1,9 @@
 package InfrastructureManager.Modules.NetworkStructure.Input;
 
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.NetworkStructure.Network;
@@ -17,15 +20,9 @@ public class DistanceInput extends NetworkModuleObject implements PlatformInput 
 		this.toSend = null;
 	}
 
-	protected String waitForDistanceList() throws InterruptedException {
-		return sharedDistance.getListAsBody();
-	}
 	@Override
 	public String read() throws InterruptedException {
-		toSend = "set_distance " + waitForDistanceList();
-		String aux = toSend;
-		toSend = "";
-		return aux;
+		return "distance " + this.sharedDistance.getdistanceAsString();
 	}
 
 	@Override

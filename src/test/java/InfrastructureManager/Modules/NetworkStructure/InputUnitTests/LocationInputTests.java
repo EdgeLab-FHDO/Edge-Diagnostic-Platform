@@ -35,7 +35,7 @@ public class LocationInputTests {
 		LocationOutput output = new LocationOutput(module,"location.out",network);
 		LocationInput input = new LocationInput(module,"location.in",network);
 		output.execute("location get_device_location 100");
-		String expected = "set_location {\"100\":{\"locationId\":\"location1\",\"latitude\":15.5,\"longitude\":25.5}}";
+		String expected = "location{\"locationId\":\"location1\",\"latitude\":15.5,\"longitude\":25.5}";
 		Assert.assertEquals(expected, input.read());
 	}
 
@@ -56,7 +56,7 @@ public class LocationInputTests {
 		LocationOutput output = new LocationOutput(module,"location.out",network);
 		LocationInput input = new LocationInput(module,"location.in",network);
 		output.execute("location get_application_location Application1");
-		String expected = "set_location {\"Application1\":{\"locationId\":\"location1\",\"latitude\":15.5,\"longitude\":25.5}}";
+		String expected = "location{\"locationId\":\"location1\",\"latitude\":15.5,\"longitude\":25.5}";
 		Assert.assertEquals(expected, input.read());
 	}
 

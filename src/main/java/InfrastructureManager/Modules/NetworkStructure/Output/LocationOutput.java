@@ -21,11 +21,11 @@ public class LocationOutput extends NetworkModuleObject implements PlatformOutpu
 				switch (commandLine[1]) {
 				case "get_device_location" -> {
 					Location location =this.network.getCurrentDeviceLocation(commandLine[2]);
-					this.getSharedLocation().putValue(commandLine[2],location);
+					this.getSharedLocation().putValuetoQueue(location);
 				}
 				case "get_application_location" -> {
 					Location location =this.network.getCurrentApplicationLocation(commandLine[2]);
-					this.getSharedLocation().putValue(commandLine[2],location);
+					this.getSharedLocation().putValuetoQueue(location);
 				}
 				default -> throw new NetworkModuleException("Invalid command " + commandLine[1]
 						+ " for NetworkModule");
@@ -33,6 +33,10 @@ public class LocationOutput extends NetworkModuleObject implements PlatformOutpu
 			} catch (ArrayIndexOutOfBoundsException e) {
 				throw new NetworkModuleException("Arguments missing for command " + response
 						+ " for NetworkModule");
+			}
+			catch (InterruptedException e) {
+			throw new NetworkModuleException("Arguments missing for command " + response
+					+ " for NetworkModule");
 			}
 		}
 
