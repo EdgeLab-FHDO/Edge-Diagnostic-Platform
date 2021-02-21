@@ -2,6 +2,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.NetworkStructure.RawData.NetworkModuleConfigData;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedDistance;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedLocation;
 import InfrastructureManager.Modules.NetworkStructure.Input.DistanceInput;
 import InfrastructureManager.Modules.NetworkStructure.Output.DistanceOutput;
 import InfrastructureManager.Modules.NetworkStructure.Input.LocationInput;

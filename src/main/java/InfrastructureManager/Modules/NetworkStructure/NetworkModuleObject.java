@@ -2,7 +2,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.PlatformObject;
-import InfrastructureManager.Modules.NetworkStructure.SharedLocation;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedDistance;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedLocation;
 public class NetworkModuleObject extends PlatformObject {
 	public NetworkModuleObject(ImmutablePlatformModule ownerModule) {
 		super(ownerModule);

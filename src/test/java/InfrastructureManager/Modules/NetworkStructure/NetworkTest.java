@@ -166,6 +166,35 @@ public class NetworkTest {
 		Assert.assertEquals(20.5,location.getLongitude(),0.5);
 	}
 
+	@Test
+	public void getNetworkDistance() {
+		NetworkLimits networkLimits1 = new NetworkLimits(0.5f,0.25f,1.5,3.0);
+		NetworkLimits networkLimits2 = new NetworkLimits(4.5f,1.2f,2.5,2.0);
+		NetworkLimits networkLimits3 = new NetworkLimits(6.5f,2.2f,3.5,4.0);
+		NetworkLimits networkLimits4 = new NetworkLimits(8.5f,3.2f,4.5,6.0);
+		NetworkLimits networkLimits5 = new NetworkLimits(10.5f,4.2f,5.5,7.0);
+		NetworkLimits networkLimits6 = new NetworkLimits(20.5f,5.2f,6.5,8.0);
+		NetworkLimits networkLimits7 = new NetworkLimits(30.5f,6.2f,7.5,9.0);
+		NetworkLimits networkLimits8 = new NetworkLimits(40.5f,7.2f,8.5,10.0);
+		Connection connection1 = new Connection("Connection1",networkLimits1);
+		Connection connection2 = new Connection("Connection2",networkLimits2);
+		Connection connection3 = new Connection("Connection3",networkLimits3);
+		Connection connection4 = new Connection("Connection4",networkLimits4);
+		Connection connection5 = new Connection("Connection5",networkLimits5);
+		Connection connection6 = new Connection("Connection6",networkLimits6);
+		Connection connection7 = new Connection("Connection7",networkLimits7);
+		Connection connection8 = new Connection("Connection8",networkLimits8);
+		network.updateConnectionList(connection1, Network.Update.ADD);
+		network.updateConnectionList(connection2, Network.Update.ADD);
+		network.updateConnectionList(connection3, Network.Update.ADD);
+		network.updateConnectionList(connection4, Network.Update.ADD);
+		network.updateConnectionList(connection5, Network.Update.ADD);
+		network.updateConnectionList(connection6, Network.Update.ADD);
+		network.updateConnectionList(connection7, Network.Update.ADD);
+		network.updateConnectionList(connection8, Network.Update.ADD);
+		double distance = network.getNetworkDistance("Connection2","Connection7");
+		Assert.assertEquals(81.0,distance,0.5);
+	}
 
 	@Test
 	public void saveNetworkTest() throws JsonProcessingException {

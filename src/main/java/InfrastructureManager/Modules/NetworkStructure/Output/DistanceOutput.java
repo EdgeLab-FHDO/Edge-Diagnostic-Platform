@@ -36,8 +36,8 @@ public class DistanceOutput extends NetworkModuleObject implements PlatformOutpu
 				throw new NetworkModuleException("Arguments missing for command " + response
 						+ " for NetworkModule");
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new NetworkModuleException("Error while creating scenario " + response
+						+ " for NetworkModule");
 			}
 		}
 

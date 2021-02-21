@@ -8,7 +8,7 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
 import InfrastructureManager.Modules.NetworkStructure.Network;
 import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
-import InfrastructureManager.Modules.NetworkStructure.SharedDistance;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedDistance;
 
 public class DistanceInput extends NetworkModuleObject implements PlatformInput {
 

@@ -35,8 +35,8 @@ public class LocationOutput extends NetworkModuleObject implements PlatformOutpu
 						+ " for NetworkModule");
 			}
 			catch (InterruptedException e) {
-			throw new NetworkModuleException("Arguments missing for command " + response
-					+ " for NetworkModule");
+				throw new NetworkModuleException("Error while creating scenario " + response
+						+ " for NetworkModule");
 			}
 		}
 

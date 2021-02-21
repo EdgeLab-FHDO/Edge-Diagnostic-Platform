@@ -3,7 +3,7 @@ package InfrastructureManager.Modules.NetworkStructure.OutputUnitTests;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
-import InfrastructureManager.Modules.NetworkStructure.SharedDistance;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedDistance;
 import InfrastructureManager.Modules.NetworkStructure.Output.DistanceOutput;
 import InfrastructureManager.Modules.NetworkStructure.ComputeLimits;
 import InfrastructureManager.Modules.NetworkStructure.Device;

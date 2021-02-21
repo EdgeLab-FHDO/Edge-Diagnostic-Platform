@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
-import InfrastructureManager.Modules.NetworkStructure.SharedLocation;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedLocation;
 import InfrastructureManager.Modules.NetworkStructure.Network;
 import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
 
@@ -21,18 +21,16 @@ public class LocationInput extends NetworkModuleObject implements PlatformInput 
 	}
 
 	@Override
-	public String read() {
+	public String read() throws InterruptedException {
 		String aux = "";
 		try {
 			toSend = "location" + sharedLocation.getLocationAsJsonBody();
 			aux=toSend;
 		}
 		catch (JsonProcessingException e) {
-            e.printStackTrace();
+			aux= null;
         }
-		catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
 		return aux;
 	}
 

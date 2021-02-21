@@ -424,14 +424,33 @@ public class Network {
 	}
 
 	/**
+	 * Function to get connection index from connectionList using id.
+	 * @param id
+	 */
+	public int getIndexFromConnectionList(String id) {
+		int idx=0;
+		for (Object obj : this.connectionList) {
+			Connection connection = (Connection)obj;
+			if (connection.getConnectionId().equals(id))
+			{
+				idx = this.connectionList.indexOf(obj);
+			}
+		}
+		return idx;
+	}  
+	
+	/**
 	 * Function to get network distance between devices or between application instances.
 	 * @param sourceId and destinationId
 	 */
 	public double getNetworkDistance(String sourceId, String destinationId) {
-		Connection source,destination;
-		source = this.getConnectionFromList(sourceId);
-		destination = this.getConnectionFromList(destinationId);
-		double distance = source.getNetworkCapacity().getLatency() + destination.getNetworkCapacity().getLatency() ; // Write a function to get the network path. To write a search algorithm //One path between source and destination
+		int sourceidx = this.getIndexFromConnectionList(sourceId);
+		int destinationidx = this.getIndexFromConnectionList(destinationId);
+		double distance = 0;
+		for (int i =0;i<connectionList.size();i++) {
+			if(i>=sourceidx && i<=destinationidx)
+				distance = distance +  this.connectionList.get(i).getNetworkCapacity().getLatency();
+		}
 		return distance;
 	}  
 

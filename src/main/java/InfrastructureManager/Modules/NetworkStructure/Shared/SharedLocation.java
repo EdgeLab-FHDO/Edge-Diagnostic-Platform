@@ -1,7 +1,9 @@
-package InfrastructureManager.Modules.NetworkStructure;
+package InfrastructureManager.Modules.NetworkStructure.Shared;
 
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
+import InfrastructureManager.Modules.NetworkStructure.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

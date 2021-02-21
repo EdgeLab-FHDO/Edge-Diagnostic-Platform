@@ -1,15 +1,11 @@
-package InfrastructureManager.Modules.NetworkStructure;
+package InfrastructureManager.Modules.NetworkStructure.Shared;
 
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Semaphore;
+
 
 public class SharedDistance extends NetworkModuleObject {
 	private final BlockingQueue distanceQueue;
