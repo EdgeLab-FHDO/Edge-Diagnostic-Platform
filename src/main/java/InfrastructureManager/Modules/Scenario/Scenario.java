@@ -1,10 +1,8 @@
 package InfrastructureManager.Modules.Scenario;
 
-import InfrastructureManager.ModuleManagement.Exception.Creation.IncorrectInputException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformInput;
-import InfrastructureManager.ModuleManagement.Runner;
 import InfrastructureManager.Modules.Scenario.Exception.Input.InvalidTimeException;
 import InfrastructureManager.Modules.Scenario.Exception.Input.OwnerModuleNotSetUpException;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -15,7 +13,10 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
- * Class representing an scenario, as an object with a name and a list of events
+ * Class representing an scenario, defined as a series of events that happen with a defined and guaranteed timing.
+ * <p>
+ * This class is a form of Platform input, in the sense that gives the different commands for the platform to read and process with the
+ * defined timing.
  */
 @JsonIgnoreProperties({"startBlock","startTime","currentIndex", "pausedTime",
         "resumedTime","started"})
@@ -31,8 +32,12 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
 
     /**
-     * Constructor of the class
+     * Constructor of the class. Creates a new Scenario and initializes al internall fields.
+     * Because it will normally be called by a {@link com.fasterxml.jackson.databind.ObjectMapper} it
+     * uses the {@link JacksonInject} annotation to indicate that the pointer to the owner module is to
+     * be injected on runtime before deserialization.
      *
+     * @param module Owner module of this scenario.
      */
     public Scenario(@JacksonInject ImmutablePlatformModule module) {
         super(module, module.getName() + ".scenario");
@@ -45,6 +50,18 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
         this.started = false;
     }
 
+    /**
+     * Implementation of the {@link PlatformInput} interface. It controls the execution of the different events in the scenario
+     * and returns the different corresponding commands.
+     * <p>
+     * In other words, it returns the command of an event, blocks for the defined time for the next event and then
+     * returns the other command (This with all events in the scenario).
+     * <p>
+     * This blocks until the scenario is started.
+     *
+     * @return Command of the current event in the scenario. Returns null when an error occurs or when the scenario is finished
+     * @throws InterruptedException If interrupted while waiting on an event.
+     */
     @Override
     public String read() throws InterruptedException {
         if (!started) {
@@ -66,11 +83,17 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
         }
     }
 
+    /**
+     * Ignores exceptions in the execution process.
+     *
+     * @param outputException Exception happening in the platform's execution process. This value is null if the process went correctly (No exception was raised)
+     */
     @Override
     public void response(ModuleExecutionException outputException) {}
 
     /**
-     * Get the event list of the current scenario
+     * Get the event list of the scenario
+     *
      * @return Event List of the scenario
      */
     public List<Event> getEventList() {
@@ -79,7 +102,9 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     /**
      * Set the start time of the scenario
+     *
      * @param startTime Absolute time in milliseconds (Since UNIX epoch)
+     * @throws InvalidTimeException If the passed time is in the past compared to the instant when this method was called
      */
     public void setStartTime(long startTime) throws InvalidTimeException {
         if (startTime >= System.currentTimeMillis()) {
@@ -91,6 +116,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     /**
      * Get the defined start time for the scenario
+     *
      * @return Defined absolute time in milliseconds (Since UNIX epoch)
      */
     public long getStartTime() {
@@ -99,6 +125,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     /**
      * Add an event to the scenario
+     *
      * @param event Event to be added
      */
     public void addEvent(Event event) {
@@ -107,12 +134,20 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
 
     /**
      * Delete an Event from the scenario
+     *
      * @param index Index in the event list of the scenario to be deleted
      */
     public void deleteEvent(int index) {
         this.eventList.remove(index);
     }
 
+    /**
+     * Start the scenario.
+     *
+     * This unblocks the {@link #read()} method and makes the object start returning commands
+     *
+     * @throws OwnerModuleNotSetUpException If the owner module was not correctly configured while instantiating.
+     */
     public void start() throws OwnerModuleNotSetUpException {
         if (this.getOwnerModule() == null) {
             throw new OwnerModuleNotSetUpException("Owner module of the scenario has not been set up");
@@ -122,14 +157,23 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
         this.startBlock.release();
     }
 
+    /**
+     * Pauses the scenario.
+     */
     public void pause() {
         this.pausedTime += System.currentTimeMillis();
     }
 
+    /**
+     * Resumes the scenario.
+     */
     public void resume() {
         this.resumedTime += System.currentTimeMillis();
     }
 
+    /**
+     * Stops the scenario.
+     */
     public void stop() {
         this.pausedTime = 0L;
         this.resumedTime = 0L;
@@ -137,9 +181,13 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
         this.started = false;
         //System.out.println("FINISHED SCENARIO: " + this.getName());
     }
+
     /**
-     * Wait for executing the states according to their relative execution times
+     * Waits for the defined execution time in an event and returns its command
+     *
      * @param e Event to be waited for
+     * @return Command of e
+     * @throws InvalidTimeException If errors with the timing make the waiting time negative.
      */
     private String waitForEvent (Event e) throws InvalidTimeException {
         long absoluteTime = this.getStartTime() + (resumedTime - pausedTime) + e.getExecutionTime();

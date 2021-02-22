@@ -8,17 +8,28 @@ import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatche
 import InfrastructureManager.Modules.Scenario.Exception.ScenarioNotSetUpException;
 
 /**
- * Scenario Handling class that is an Output of the master
- * Allows for handling scenarios in the following ways :
- * - Load scenarios from JSON files
- * - Run Scenarios
- * - Pause/Resume Scenarios
+ * Class that represent Scenario lifecycle management as a platform output.
+ *
+ * This type of output is used for executing (including running, pausing and stopping) the scenario of its owner module by controlling its execution.
+ *
+ * It provides the following functionalities:
+ *
+ * - Running a Scenario
+ * - Pausing a running Scenario
+ * - Resuming a paused Scenario
+ * - Stopping an Scenario's execution
  */
 public class ScenarioDispatcher extends ScenarioModuleObject implements PlatformOutput {
 
     private final ScenarioModule ownerScenarioModule;
     private static final int DEFAULT_DELAY = 1000; //1 second default delay
 
+    /**
+     * Constructor of the class. Creates a new Scenario dispatcher.
+     *
+     * @param module Owner module of this output
+     * @param name   Name of this output. Normally hardcoded "MODULE_NAME.dispatcher"
+     */
     public ScenarioDispatcher(ImmutablePlatformModule module, String name) {
         super(module,name);
         this.ownerScenarioModule = (ScenarioModule) module;
@@ -26,15 +37,16 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
 
 
     /**
-     * Based on responses from the master executes the different functionalities
-     * @param response Must be in the way "dispatcher command" and additionally:
-     *                 - Loading Scenario : Should include the path of the file (dispatcher fromFile src/resources/scenario.json)
+     * Based on processed responses from the inputs executes the different functionalities
+     *
+     * @param response Must be in the way "dispatcher COMMAND" and additionally:
      *                 - Running Scenario : If command is only "dispatcher run" the scenario is run right away, if the "-d" flag is
      *                 used, a delayed start time can be given using either the "-r" flag for a relative time or "-a" flag for
      *                 an absolute time input (Milliseconds since UNIX epoch), followed by the desired time in milliseconds
      *                 - Other functionalities : Just the command.
-     * @throws ScenarioDispatcherException If the command passed is invalid or incomplete
-     * @throws InvalidTimeException If when running the scenario there is a problem with the timing
+     * @throws ScenarioDispatcherException  If the command passed is invalid or incomplete
+     * @throws InvalidTimeException         If when running the scenario there is a problem with the timing
+     * @throws OwnerModuleNotSetUpException If the Scenario's owner module was not correctly configured in its instantiation.
      */
     @Override
     public void execute(String response) throws ScenarioDispatcherException, InvalidTimeException, OwnerModuleNotSetUpException {
@@ -83,7 +95,9 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
     }
 
     /**
-     * Method for stopping the current scenario
+     * Method for stopping the scenario
+     *
+     * @throws ScenarioNotSetUpException If the owner module does not have a runner configured for its scenario
      */
     private void stopScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.stopScenario();
@@ -91,6 +105,8 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
 
     /**
      * Method for pausing the scenario
+     *
+     * @throws ScenarioNotSetUpException If the owner module does not have a runner configured for its scenario.
      */
     private void pauseScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.pauseScenario();
@@ -98,6 +114,8 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
 
     /**
      * Method to resume the scenario if paused
+     *
+     * @throws ScenarioNotSetUpException If the owner module does not have a runner configured for its scenario.
      */
     private void resumeScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.resumeScenario();
@@ -105,6 +123,10 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
 
     /**
      * Method to run the scenario
+     *
+     * @param startTime The start time of the scenario. This is an absolute time input (Milliseconds since UNIX epoch)
+     * @throws InvalidTimeException         If the starting time is in the past when compared with the time when this method was called
+     * @throws OwnerModuleNotSetUpException If the Owner module of the scenario was not set up during instantiation
      */
     private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
         this.ownerScenarioModule.startScenario(startTime);
