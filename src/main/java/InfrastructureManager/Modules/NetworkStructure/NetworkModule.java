@@ -18,6 +18,7 @@ import InfrastructureManager.Modules.NetworkStructure.Output.NetworkOutput;
 public class NetworkModule extends PlatformModule implements GlobalVarAccessNetworkModule{
 	private SharedLocation sharedLocation;
 	private SharedDistance sharedDistance;
+	private Network network = new Network();
 	public NetworkModule() {
 		super();
 		this.sharedLocation = new SharedLocation(this);
@@ -28,13 +29,13 @@ public class NetworkModule extends PlatformModule implements GlobalVarAccessNetw
 		NetworkModuleConfigData castedData = (NetworkModuleConfigData) data;
 		String name = data.getName();
 		setName(name);
-		Network network = new Network();
-		setInputs(new NetworkInput(this, name + ".network.in",network),
-				new LocationInput(this, name + ".location.in",network),
-				new DistanceInput(this,name + ".distance.in",network));
-		setOutputs(new NetworkOutput(this,name + ".network.out",network),
-				new LocationOutput(this,name + ".location.out",network),
-				new DistanceOutput(this,name + ".distance.out",network));
+
+		setInputs(new NetworkInput(this, name + ".network.in",this.getNetwork()),
+				new LocationInput(this, name + ".location.in"),
+				new DistanceInput(this,name + ".distance.in"));
+		setOutputs(new NetworkOutput(this,name + ".network.out",this.getNetwork()),
+				new LocationOutput(this,name + ".location.out",this.getNetwork()),
+				new DistanceOutput(this,name + ".distance.out",this.getNetwork()));
 	} 
 	@Override
 	public SharedLocation getSharedLocation(){
@@ -45,4 +46,13 @@ public class NetworkModule extends PlatformModule implements GlobalVarAccessNetw
 	public SharedDistance getSharedDistance(){
 		return this.sharedDistance;
 	}
+	
+	protected Network getNetwork() {
+        return network;
+    }
+
+    protected void setNetwork(Network network) {
+        this.network = network;
+    }
+
 }

@@ -14,7 +14,7 @@ public class DistanceInput extends NetworkModuleObject implements PlatformInput 
 
 	private final SharedDistance sharedDistance;
 	private String toSend;
-	public DistanceInput(ImmutablePlatformModule module,String name,Network network) {
+	public DistanceInput(ImmutablePlatformModule module,String name) {
 		super(module,name);
 		this.sharedDistance = this.getSharedDistance();	
 		this.toSend = null;

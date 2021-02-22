@@ -14,7 +14,7 @@ public class LocationInput extends NetworkModuleObject implements PlatformInput 
 
 	private final SharedLocation sharedLocation;
 	private String toSend;
-	public LocationInput(ImmutablePlatformModule module,String name,Network network) {
+	public LocationInput(ImmutablePlatformModule module,String name) {
 		super(module,name);
 		this.sharedLocation = this.getSharedLocation();	
 		this.toSend = null;
