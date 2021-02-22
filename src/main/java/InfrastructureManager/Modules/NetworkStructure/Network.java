@@ -7,12 +7,6 @@ import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleExc
 
 import java.util.List;
 
-/**
- * This class contains network information.
- *
- * @author Shankar Lokeshwara
- */
-
 public class Network {
 	enum Update {ADD,DELETE};
 	private final ObjectMapper mapper;
@@ -24,9 +18,6 @@ public class Network {
 	private List<LocationConnectionRelation> locationConnectionList;
 	private List<DeviceLocationRelation> deviceLocationList;
 
-	/**
-	 * Default constructor for Network Class
-	 */
 	public Network() {
 		this.mapper = new ObjectMapper();
 		deviceList = new ArrayList<>();
@@ -38,10 +29,6 @@ public class Network {
 		deviceLocationList = new ArrayList<>();
 	}
 
-	/**
-	 * Function to read JSON string and update network class
-	 * @param String
-	 */
 	public void loadNetwork(String readString) throws JsonProcessingException{
 
 		//New object created as the called object cannot be accessed as a whole. Therefore new object is created to update the calling object members with values from json string
@@ -50,10 +37,6 @@ public class Network {
 				);
 	}
 
-	/**
-	 * Function to update network class
-	 * @param Network object
-	 */
 	public void copyNetwork(Network network) {
 		this.deviceList = network.deviceList;
 		this.connectionList = network.connectionList;
@@ -65,10 +48,6 @@ public class Network {
 	}
 
 
-	/**
-	 * Function to save JSON string
-	 * @return String
-	 */
 	public String saveNetwork() throws InterruptedException{
 		try {
 			String json = this.mapper.writeValueAsString(this);
@@ -81,11 +60,6 @@ public class Network {
 	}
 
 
-	/**
-	 * Getter function to get a particular device from deviceList
-	 * @param deviceId
-	 * @return Device
-	 */
 	public Device getDeviceFromList(String deviceId)	{
 		int idx=0;
 		for (Object obj : this.deviceList) {
@@ -98,11 +72,6 @@ public class Network {
 		return this.deviceList.get(idx);
 	}
 
-	/**
-	 * Function to update a particular device in deviceList
-	 * @param Device
-	 * @param UpdateType // ADD or DELETE
-	 */
 	public void updateDeviceList(Device device,Network.Update update){
 		if (update == Network.Update.ADD)
 		{
@@ -121,11 +90,6 @@ public class Network {
 
 
 
-	/**
-	 * Getter function to get a particular connection from connectionList
-	 * @param ConnectionId
-	 * @return Connection
-	 */
 	public Connection getConnectionFromList(String ConnectionId)	{
 		int idx=0;
 		for (Object obj : this.connectionList) {
@@ -138,11 +102,6 @@ public class Network {
 		return this.connectionList.get(idx);
 	}
 
-	/**
-	 * Function to update a particular connection in connectionList
-	 * @param Connection
-	 * @param UpdateType // ADD or DELETE
-	 */
 	public void updateConnectionList(Connection connection,Network.Update update){
 		if (update == Network.Update.ADD)
 		{
@@ -159,11 +118,6 @@ public class Network {
 		}
 	}
 
-	/**
-	 * Getter function to get a particular location from locationList
-	 * @param LocationId
-	 * @return Location
-	 */
 	public Location getLocationFromList(String LocationId)	{
 		int idx=0;
 		for (Object obj : this.locationList) {
@@ -176,11 +130,6 @@ public class Network {
 		return this.locationList.get(idx);
 	}
 
-	/**
-	 * Function to update a particular location in locationList
-	 * @param Location
-	 * @param UpdateType // ADD or DELETE
-	 */
 	public void updateLocationList(Location location,Network.Update update){
 		if (update == Network.Update.ADD)
 		{
@@ -198,11 +147,6 @@ public class Network {
 	}
 	
 	
-	/**
-	 * Getter function to get a particular application from applicationList
-	 * @param applicationId
-	 * @return ApplicationInstance
-	 */
 	public ApplicationInstance getApplicationInstanceFromList(String ApplicationId)	{
 		int idx=0;
 		for (Object obj : this.applicationList) {
@@ -215,11 +159,6 @@ public class Network {
 		return this.applicationList.get(idx);
 	}
 
-	/**
-	 * Function to update a particular application in applicationList
-	 * @param application
-	 * @param UpdateType // ADD or DELETE
-	 */
 	public void updateApplicationInstanceList(ApplicationInstance application,Network.Update update){
 		if (update == Network.Update.ADD)
 		{
@@ -236,50 +175,26 @@ public class Network {
 		}
 	}
 
-	/**
-	 * Getter function
-	 * @return applicationDeviceList
-	 */
 	public List<ApplicationInstanceDeviceRelation> getApplicationDeviceList() {
 		return applicationDeviceList;
 	}
 
-	/**
-	 * Getter function
-	 * @return locationConnectionList
-	 */
 	public List<LocationConnectionRelation> getLocationConnectionList() {
 		return locationConnectionList;
 	}
 
-	/**
-	 * Getter function
-	 * @return deviceLocationList
-	 */
 	public List<DeviceLocationRelation> getDeviceLocationList() {
 		return deviceLocationList;
 	}
 
-	/**
-	 * Setter function
-	 * @param applicationDeviceList
-	 */
 	public void setApplicationDeviceList(List<ApplicationInstanceDeviceRelation> applicationDeviceList) {
 		this.applicationDeviceList = applicationDeviceList;
 	}
 
-	/**
-	 * Setter function
-	 * @param locationConnectionList
-	 */
 	public void setLocationConnectionList(List<LocationConnectionRelation> locationConnectionList) {
 		this.locationConnectionList = locationConnectionList;
 	}
 
-	/**
-	 * Setter function
-	 * @param deviceLocationList
-	 */
 	public void setDeviceLocationList(List<DeviceLocationRelation> deviceLocationList) {
 		this.deviceLocationList = deviceLocationList;
 	}
