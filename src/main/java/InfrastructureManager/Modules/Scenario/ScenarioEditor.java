@@ -12,18 +12,26 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Scenario Handling class that is an Output of the master
- * Allows for handling scenarios in the following ways :
- * - Create Scenarios
- * - Add/ Delete Event to Scenarios
- * - Save Scenarios to JSON Files
- * - Load Scenarios from JSON Files
+ * Class that represent Scenario editing as a platform output.
+ *
+ * This type of output is used for modifying the Scenario inside an ScenarioModule.
+ *
+ * It provides the following functionalities:
+ *
+ * - Add and delete Events from a Scenario
+ * - Saving a Scenario to a JSON file
  */
 public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutput {
 
     private final Scenario scenario;
     private final ObjectMapper mapper;
 
+    /**
+     * Constructor of the class. Creates a new Scenario editor.
+     *
+     * @param module Owner module of this output
+     * @param name   Name of this output. Normally hardcoded "MODULE_NAME.editor"
+     */
     public ScenarioEditor(ImmutablePlatformModule module, String name) {
         super(module,name);
         this.scenario = this.getScenario();
@@ -32,13 +40,13 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
     }
 
     /**
-     * Based on responses from the master executes the different functionalities
-     * @param response Must be in the way "editor command" and additionally:
+     * Based on processed responses from the inputs executes the different functionalities
+     *
+     * @param response Must be in the way "editor COMMAND" and additionally:
      *                 - Add Event : Add the Command for the event and the execution time (editor addEvent event1 1000)
      *                 - Delete : Just the command. (editor deleteEvent)
      *                 - Save to file : Add the path of the folder in which the file will be saved (editor toFile src/resources/scenarios/)
-     *@throws ScenarioEditorException If the command is not defined or is missing arguments, or if one of the
-     * internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
+     * @throws ScenarioEditorException If the command is not defined or is missing arguments, or if one of the internal functions throws either a {@link ScenarioIOException} or {@link EmptyEventListException}
      */
     @Override
     public void execute(String response) throws ScenarioEditorException {
@@ -60,8 +68,9 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
     }
 
     /**
-     * Add an event to an already loaded (from file or created) scenario
-     * @param command Command of the event
+     * Add an event to a scenario-
+     *
+     * @param command       Command of the event
      * @param executionTime Relative execution time of the event (in ms)
      */
     private void addEvent(String command, int executionTime){
@@ -69,7 +78,9 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
     }
 
     /**
-     * Delete the last event from a loaded scenario (from file or created)
+     * Delete the last event from a Scenario
+     *
+     * @throws EmptyEventListException If the scenario has no events to delete
      */
     private void deleteLastEvent() throws EmptyEventListException {
         if (scenario.getEventList().isEmpty()) {
@@ -81,8 +92,12 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
     }
 
     /**
-     * Save the loaded scenario (from file or created) to a JSON file
+     * Save a scenario to a JSON file.
+     *
+     * The file will be automatically named as "MODULE_NAME.json" according to the owner module's name.
+     *
      * @param path Path of the folder to save the file (Filename is automatic)
+     * @throws ScenarioIOException If an error happens while writing to the file.
      */
     private void scenarioToFile(String path) throws ScenarioIOException {
         String processedName = scenario.getName().substring(0, scenario.getName().indexOf('.'));

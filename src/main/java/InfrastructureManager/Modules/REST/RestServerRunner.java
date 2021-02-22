@@ -17,6 +17,15 @@ import java.util.function.Consumer;
 
 import static spark.Spark.*;
 
+/**
+ * Built-in REST Server of the platform.
+ *
+ * Implements a REST server based on configured routes, which defined URIs and callbacks to functions to generate responses.
+ * The server, can be set-up to be exposed in any available port. although by default is configured in port 4657 by the
+ * RESTModule
+ *
+ * Defined as a {@link Runner} for it to be executed in a separate thread on run-time.
+ */
 public class RestServerRunner extends Runner {
 
     private final int port;
@@ -31,8 +40,13 @@ public class RestServerRunner extends Runner {
 
     /**
      * Create a new server, private according to singleton implementation
-     * @param name Name of the output as defined in MasterOutput abstract class
-     * @param port Port where the server will be exposed
+     *
+     * This method blocks until the server is started to finish the configuration.
+     *
+     * @param ownerModule Owner module of the server
+     * @param name        Name of the server. Normally called "REST_SERVER".
+     * @param port        Port where the server will be exposed
+     * @throws InterruptedException If interrupted while blocked.
      */
     private RestServerRunner(ImmutablePlatformModule ownerModule, String name, int port) throws InterruptedException {
         super(ownerModule,name,null);
@@ -74,6 +88,7 @@ public class RestServerRunner extends Runner {
 
     /**
      * Sends an HTTP request to the defined heartbeat path, to check health of the server
+     *
      * @return true if the server is running normally (response 200), false otherwise
      */
     private boolean serverIsRunning(){
@@ -96,7 +111,9 @@ public class RestServerRunner extends Runner {
 
     /**
      * Method for getting the Singleton REST Server instance.
-     * @throws IllegalStateException If `configure()` method has not been called yet
+     *
+     * @return The rest server instance
+     * @throws ServerNotConfiguredException If the server has not been configured (with {@link #configure(ImmutablePlatformModule, String, int)})
      */
     public static RestServerRunner getInstance() throws ServerNotConfiguredException {
         if(restRunner == null) {
@@ -108,7 +125,11 @@ public class RestServerRunner extends Runner {
     /**
      * Configure name and port to the rest server singleton.
      * If called more than once will just configure the server once and the other times just return.
-     * This should be called before getting the instance (`getRestServerRunner`)
+     * This should be called before getting the instance with {@link #getInstance()}
+     *
+     * @param ownerModule Owner module of the server
+     * @param name        Name of the server. Normally called "REST_SERVER".
+     * @param port        Port where the server will be exposed.
      */
     public static void configure(ImmutablePlatformModule ownerModule,String name, int port) {
         if(restRunner == null) {
@@ -121,12 +142,18 @@ public class RestServerRunner extends Runner {
         }
     }
 
+    /**
+     * Start the rest server.
+     */
     @Override
     public void run() {
         this.startServerIfNotRunning();
         running = true;
     }
 
+    /**
+     * Kill the server and exit the thread.
+     */
     @Override
     public void exit() {
         killServer();

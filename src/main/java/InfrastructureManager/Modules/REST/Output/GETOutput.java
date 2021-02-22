@@ -12,8 +12,10 @@ import spark.Route;
 import static spark.Spark.get;
 
 /**
- * Class to represent a MasterOutput that generates a REST resource to be consumed by GET requests
- * given the path in which the resource will be available and the json body of the desired response
+ * Class that represents providing REST resources to be consumed by GET requests as an output for the platform.
+ * <p>
+ * Outputs of this type represent generic GET routes that can be customized regarding URL.
+ * This customization includes the creation of routes that handle named parameters in the path (for example parameter name in /hello/:name).
  */
 public class GETOutput extends RESTModuleObject implements PlatformOutput {
 
@@ -23,7 +25,7 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
     protected boolean isActivated; //To check if REST server is running
 
     /**
-     * Spark route to handle incoming GET requests, reads from the defined queue and creates the resource
+     * Spark route to handle incoming GET requests, reads from the last saved value and creates the resource
      */
     protected Route GETHandler = (Request request, Response response) -> {
         response.type("application/json");
@@ -32,8 +34,10 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
 
     /**
      * Constructor, creates a generic GET output based on the path to create the resource
-     * @param name Name of the output
-     * @param URL Path in which the GET handler will be set (Resource will be created)
+     *
+     * @param module Owner module of the outpuut
+     * @param name   Name of the output
+     * @param URL    Path in which the GET handler will be set (Resource will be created)
      */
     public GETOutput(ImmutablePlatformModule module, String name, String URL) {
         super(module,name);
@@ -43,9 +47,10 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
     }
 
     /**
-     * Based on a command from the master creates a rest resource with a path and a json body
-     * @param response Must be in the way "toGET command" where command can be:
-     *                 - resource: Plus json body as string (Ex. toGET resource {\"name\": \"example\"})
+     * Based on processed responses from the inputs executes the different functionalities
+     *
+     * @param response Must be in the way "toGET COMMAND" and additionally:
+     *                 - Json body of the resource as string (Ex. toGET resource {\"name\": \"example\"})
      * @throws RESTOutputException if an invalid or incomplete command is passed
      */
     @Override
@@ -84,8 +89,9 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
     }
 
     /**
-     * Adds a given JSON body to the queue of the output.
+     * Adds a given JSON body to be outputted.
      * Checks first if the route has been created (Output is activated)
+     *
      * @param jsonBody JSON body that will be a GET resource
      */
     protected void addResource(String jsonBody) {

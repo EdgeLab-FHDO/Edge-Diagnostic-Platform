@@ -6,7 +6,7 @@ import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerEx
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.Utility.Exception.ModuleController.ModuleControllerException;
-import InfrastructureManager.Modules.Utility.ModuleController;
+import InfrastructureManager.Modules.Utility.Output.ModuleController;
 import InfrastructureManager.Modules.Utility.UtilityModule;
 import org.junit.BeforeClass;
 import org.junit.Test;

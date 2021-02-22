@@ -17,7 +17,9 @@ public class UnknownJSONObject extends RESTModuleObject {
 
     /**
      * Constructor of the class
-     * @param jsonBody Body to create the object from
+     *
+     * @param ownerModule Owner module of this object
+     * @param jsonBody    Body to create the object from
      * @throws JsonProcessingException If an error occurs while parsing
      */
     public UnknownJSONObject(ImmutablePlatformModule ownerModule, String jsonBody) throws JsonProcessingException {
@@ -30,9 +32,10 @@ public class UnknownJSONObject extends RESTModuleObject {
     /**
      * Get the string representation of a parameter's value in the passed json based only on the name of the parameter.
      * Right now, supports parameters with string, boolean, floating point and integer values (Not arrays or objects)
+     *
      * @param fieldName Name of a parameter in the JSON object
      * @return String representation of the value of the parameter
-     * @throws IllegalArgumentException if the parameter type is not supported (Array, JSON object, null)
+     * @throws UnsupportedJSONTypeException if the parameter type is not supported (Array, JSON object, null)
      */
     public String getValue(String fieldName) throws UnsupportedJSONTypeException {
         JsonNode node = tree.get(fieldName);
@@ -48,6 +51,7 @@ public class UnknownJSONObject extends RESTModuleObject {
 
     /**
      * Get the json body of the object as string
+     *
      * @return Body as string
      */
     public String getBody() {

@@ -1,12 +1,19 @@
 package InfrastructureManager.Modules.Scenario;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * MasterInputInterface class representing an Event (Triggered in the scenarios)
- * The definition of the event objects comes from a JSON file
+ * Class representing an Event (Triggered in the scenarios)
+ *
+ * Events are the building blocks of an {@link Scenario}.
+ *
+ *
+ * An event is defined as a set of:
+ * - A command to send to the platform
+ * - An execution time for the command
+ *
+ * @see <a href="https://github.com/EdgeLab-FHDO/Edge-Diagnostic-Platform/wiki/Scenario-Definition#events">Wiki Entry</a>
  */
 public class Event{
 
@@ -14,8 +21,9 @@ public class Event{
     private final long executionTime; //Execution time relative to the scenario start (in ms)
 
     /**
-     * Constructor of the class
-     * @param command Command of the event (To be interpreted by the master)
+     * Constructor of the class. Creates new event. Uses the {@link JsonProperty} annotation to extract information
+     * from the "command" and "executionTime" fields while deserializing the Scenario JSON file
+     * @param command Command of the event (To be interpreted by the platform)
      * @param executionTime Execution time of the event in milliseconds, relative to the start of the scenario
      */
     @JsonCreator

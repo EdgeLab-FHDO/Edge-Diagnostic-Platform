@@ -7,12 +7,18 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
- * Class implementing the Runnable interface to be run in different threads by the master.
- * Implements the basic master functionality of reading from input, mapping and sending to output.
- * Each runner, has input and outputs which allow for static configuration of the master
+ * Class implementing the Runnable interface to be run in different threads.
+ *
+ * The operation it performs when running is configurable and normally done by a {@link PlatformModule}
+ *
+ * Each runner is related to an input and in most cases, performs the operation of reading from input, mapping
+ * and sending to output.
  */
 public class Runner extends PlatformObject implements Runnable{
 
+    /**
+     * Function as an object representing the operation this runner will do when a thread is created for it and it runs
+     */
     private RunnerOperation runOperation;
 
     protected String name;
@@ -24,6 +30,12 @@ public class Runner extends PlatformObject implements Runnable{
     protected volatile boolean exit = false; //Flag to check status and be able to exit
     protected volatile boolean running = false; //Flag to see runner status
 
+    /**
+     * Creates a new Runner based on its ownerModule, a name and the input it is bounded to.
+     * @param ownerModule Owner module of this runner. This will normally trigger its execution
+     * @param name Name for this runner
+     * @param input Input to bound to this runner. One runner can only be related to one input.
+     */
     public Runner(ImmutablePlatformModule ownerModule,String name, PlatformInput input) {
         super(ownerModule);
         this.name = name;
@@ -31,17 +43,26 @@ public class Runner extends PlatformObject implements Runnable{
         this.pauseBlock = new Semaphore(0);
     }
 
+    /**
+     * For the input related to this runner, receives the connections that input has to different outputs
+     * @param connections List of connections between the input and different outputs
+     */
     public void setConnections(List<Connection> connections) {
         this.connections = connections;
     }
 
+    /**
+     * Returns the connections defined for the input related to this runner
+     * @return List of connections between the input and different outputs
+     */
     public List<Connection> getConnections() {
         return connections;
     }
 
     /**
      * Overriding of the run method in the Runnable interface
-     * Implement controls the exit, pause and execution of the runner
+     * Checks for exit and pause flags and runs the operation defined in {@link #setRunOperation(RunnerOperation)} in a loop.
+     * The loop only finished when {@link #exit()} is called on the runner
      */
     @Override
     public void run() {

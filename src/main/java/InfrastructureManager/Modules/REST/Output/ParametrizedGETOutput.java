@@ -8,6 +8,10 @@ import spark.Response;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Subclass of {@link GETOutput} that represent outputs that handle resource creation when the defined
+ * URL has path parameters included. This means, the resource created is to be binded with a specific parameter (e.g. "id").
+ */
 public class ParametrizedGETOutput extends GETOutput {
 
     private final String parameter;
@@ -15,14 +19,24 @@ public class ParametrizedGETOutput extends GETOutput {
 
     /**
      * Constructor, creates a generic GET output based on the path to create the resource
-     * @param name Name of the output
-     * @param URL Path in which the GET handler will be set (Resource will be created)
+     *
+     * @param module    Owner module of this output
+     * @param name      Name of the output
+     * @param URL       Path in which the GET handler will be set (Resource will be created)
+     * @param parameter Parameter which is present in the URL.
      */
     public ParametrizedGETOutput(ImmutablePlatformModule module, String name, String URL, String parameter) {
         super(module,name, URL);
         this.parameter = parameter;
     }
 
+    /**
+     * Based on processed responses from the inputs executes the different functionalities
+     * @param response Must be in the way "toGET COMMAND" and additionally:
+     *                 - Parameter to which the resource will be bound.
+     *                 - Json body of the resource as string (Ex. toGET resource {\"name\": \"example\"})
+     * @throws RESTOutputException if an invalid or incomplete command is passed.
+     */
     @Override
     public void execute(String response) throws RESTOutputException {
         String[] command = response.split(" ",4);
@@ -40,6 +54,11 @@ public class ParametrizedGETOutput extends GETOutput {
         }
     }
 
+    /**
+     * Synchronize the thread with the RestServerRunner using a guarded block to ensure that the get handler is only activated if
+     * the REST server is already running.
+     * Only runs once at the beginning
+     */
     @Override
     protected void activate() {
         this.GETHandler = (Request request, Response response) -> {
@@ -57,6 +76,12 @@ public class ParametrizedGETOutput extends GETOutput {
         super.activate();
     }
 
+    /**
+     * Adds a given JSON body to be outputted.
+     * Checks first if the route has been created (Output is activated)
+     * @param parameter Parameter value to which the jsonBody is related
+     * @param jsonBody JSON body that will be a GET resource
+     */
     protected void addResource(String parameter, String jsonBody) {
         if (!this.isActivated) {
             this.activate();
