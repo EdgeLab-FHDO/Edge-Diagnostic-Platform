@@ -24,7 +24,7 @@ public class ConsoleOutput extends ConsoleModuleObject implements PlatformOutput
      * Method for outputting to the console
      * @param response Message to be outputted to the console.
      *                The command has to be preceded by "console".
-     *                 For example: "console hello" -> prints hello.
+     *                 For example: "console hello" prints hello.
      *                 If more than one argument is passed, they should be separated by spaces and will be printed in the same way
      * @throws ConsoleOutputException if the command is missing arguments (no argument passed after "console")
      */

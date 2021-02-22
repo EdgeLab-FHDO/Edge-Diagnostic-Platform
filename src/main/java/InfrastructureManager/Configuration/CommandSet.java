@@ -38,7 +38,7 @@ public class CommandSet {
 
     /**
      * Set the command set to a given map
-     * @param config Map<String,String> element containing the commands in the form of ({command} : {response})
+     * @param config Map element containing the commands where for each entry, the key is the command and the value is the response.
      */
     public void set(Map<String, String> config) {
         this.commands = config;
@@ -47,7 +47,7 @@ public class CommandSet {
 
     /**
      * Return the commands in form of a map
-     * @return Map<String,String> element containing the commands in the form of ({command} : {response})
+     * @return Map element containing the commands where for each entry, the key is the command and the value is the response.
      */
     public Map<String, String> get() {
         return this.commands;

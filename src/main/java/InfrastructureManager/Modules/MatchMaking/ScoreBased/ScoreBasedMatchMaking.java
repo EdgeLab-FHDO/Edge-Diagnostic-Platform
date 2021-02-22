@@ -16,12 +16,15 @@ import java.util.*;
 
 /**
  * Score-based match making algorithm.
- * Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
- * Weight: 1 - 10 - 10 - 10
  *
  * @author Zero
  */
 public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements MatchMakingAlgorithm {
+
+    /*
+    Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
+    Weight: 1 - 10 - 10 - 10
+     */
 
     //TODO: Weight should be dynamic
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -162,8 +165,6 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
 
 
     /**
-     * Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
-     * Weight: 1 - 10 - 10 - 10
      * Calculate node score after get rid of the bad nodes. Used this when we do have to iterate all nodes in the list for match making.
      *
      * @param nodeResource node's available resource
@@ -173,6 +174,11 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
      * @author Zero
      */
     private long getScore(long nodeResource, long nodeNetwork, long pingNumber, long nodeHistoryScore) {
+        /*
+        Score = Wd_D + Wc_C + Wn_N + Wh_H --- D = ping, C = res, N = network, H = history
+        Weight: 1 - 10 - 10 - 10
+         */
+
         //Initiate calculating variable
         long result;
 
@@ -188,7 +194,7 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
     }
 
     /**
-     * -----------------------Get Ping between client & node-----------------------
+     * Get Ping between client and node.
      * This should be dynamic base on some short of triangulation if possible. Or just throw random number for now
      * <p>
      * Ver 0.1: Using 2 int numbers, and calculate the distance between them.
