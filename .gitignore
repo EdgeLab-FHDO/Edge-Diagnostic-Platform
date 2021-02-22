@@ -1,7 +1,0 @@
-/.gradle/
-/.idea/
-/build
-/out/
-Dockerfile
-src/test/resources/testScenario.json
-/UTF16

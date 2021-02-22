@@ -1,2 +1,0 @@
-#run javac to build java classes from java files
-export JAVA_HOME=/usr/local/jdk-11.0.2 && export PATH=$PATH:$JAVA_HOME/bin && find -name "*.java" > sources.txt && javac -cp gen/opencv-450.jar:usr/share/java/jackson-core-2.4.2.jar:usr/share/java/jackson-databind-2.4.2.jar:usr/share/java/jackson-annotations-2.4.2.jar @sources.txt
