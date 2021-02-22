@@ -11,20 +11,20 @@ public class NetworkRequirements {
 	private float requiredJitter;
 	private double requiredThroughput;
 	private double requiredPacketLoss;
-	
+
 	/**
-	* Parameterized constructor for NetworkRequirements Class
-	* @param requiredLatency 	
-	* @param requiredThroughput 
-	* @param requiredPacketLoss 			
-	*/
+	 * Parameterized constructor for NetworkRequirements Class
+	 * @param requiredLatency 	
+	 * @param requiredThroughput 
+	 * @param requiredPacketLoss 			
+	 */
 	public NetworkRequirements(float requiredLatency,float requiredJitter,double requiredThroughput,double requiredPacketLoss) {
 		this.requiredLatency = requiredLatency;
 		this.requiredJitter = requiredJitter;
 		this.requiredThroughput = requiredThroughput;
 		this.requiredPacketLoss = requiredPacketLoss;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return requiredLatency
@@ -32,7 +32,7 @@ public class NetworkRequirements {
 	public float getRequiredLatency() {
 		return requiredLatency;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return requiredJitter
@@ -40,7 +40,7 @@ public class NetworkRequirements {
 	public float getRequiredJitter() {
 		return requiredJitter;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return requiredThroughput
@@ -48,7 +48,7 @@ public class NetworkRequirements {
 	public double getRequiredThroughput() {
 		return requiredThroughput;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return requiredPacketLoss
@@ -56,5 +56,5 @@ public class NetworkRequirements {
 	public double getRequiredPacketLoss() {
 		return requiredPacketLoss;
 	}
-	
+
 }

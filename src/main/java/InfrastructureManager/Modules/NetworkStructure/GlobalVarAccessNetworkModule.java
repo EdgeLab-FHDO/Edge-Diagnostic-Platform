@@ -1,7 +1,10 @@
 package InfrastructureManager.Modules.NetworkStructure;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedDistance;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedLocation;
 
 interface GlobalVarAccessNetworkModule extends ImmutablePlatformModule {
-    String getSharedResource(); //TODO: This is an example of a String shared resource, change the type
+	SharedLocation getSharedLocation(); // Shared variable for location
+	SharedDistance getSharedDistance(); //Shared variable for physical or network distances
 }

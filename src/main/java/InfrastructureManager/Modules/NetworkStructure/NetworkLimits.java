@@ -11,20 +11,21 @@ public class NetworkLimits {
 	private float jitter;
 	private double throughput;
 	private double packetLoss;
-	
+
 	/**
-	* Parameterized constructor for NetworkLimits Class
-	* @param latency 	
-	* @param throughput 
-	* @param packetLoss 			
-	*/
+	 * Parameterized constructor for NetworkLimits Class
+	 * @param latency
+	 * @param jitter
+	 * @param throughput 
+	 * @param packetLoss 			
+	 */
 	public NetworkLimits(float latency,float jitter,double throughput,double packetLoss) {
 		this.latency = latency;
 		this.jitter = jitter;
 		this.throughput = throughput;
 		this.packetLoss = packetLoss;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return latency
@@ -32,7 +33,7 @@ public class NetworkLimits {
 	public float getLatency() {
 		return latency;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return jitter
@@ -40,7 +41,7 @@ public class NetworkLimits {
 	public float getJitter() {
 		return jitter;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return throughput
@@ -48,7 +49,7 @@ public class NetworkLimits {
 	public double getThroughput() {
 		return throughput;
 	}
-	
+
 	/**
 	 * Getter function
 	 * @return packetLoss
@@ -56,5 +57,5 @@ public class NetworkLimits {
 	public double getPacketLoss() {
 		return packetLoss;
 	}
-	
+
 }

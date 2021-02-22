@@ -3,7 +3,6 @@ package InfrastructureManager.Modules.NetworkStructure.Output;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
-import InfrastructureManager.PlatformObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
 import InfrastructureManager.Modules.NetworkStructure.Network;

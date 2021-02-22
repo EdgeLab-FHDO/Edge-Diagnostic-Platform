@@ -2,9 +2,6 @@ package InfrastructureManager.Modules.NetworkStructure;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertThrows;
-
-import java.util.Arrays;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
@@ -13,12 +10,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  * @author Shankar Lokeshwara
  */
 public class NetworkTest {
-	
+
 	/**
 	 * Test case to write JSON string
 	 */
 	Network network = new Network();
-	
+
 	@Test
 	public void updateDeviceListAddTest() {
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
@@ -45,8 +42,8 @@ public class NetworkTest {
 		Assert.assertEquals("Vodafone", device2.getDeviceType().getDeviceName());
 		Assert.assertEquals("Vodafone", device3.getDeviceType().getDeviceName());
 	}
-	
-	
+
+
 	@Test
 	public void updateDeviceListDeleteTest() {
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
@@ -54,7 +51,7 @@ public class NetworkTest {
 		Device device2 = new Device("200","192.168.0.2",devicetype,computelimits);
 		network.updateDeviceList(device2, Network.Update.DELETE);
 	}
-	
+
 	@Test
 	public void getDeviceFromListTest() {
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
@@ -64,7 +61,7 @@ public class NetworkTest {
 		Device device =	network.getDeviceFromList("400");
 		Assert.assertEquals("400", device.getDeviceId());
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void updateConnectionAddList() {
@@ -83,15 +80,15 @@ public class NetworkTest {
 		Assert.assertEquals(1.5, connection3.getNetworkCapacity().getThroughput(),0.5);
 		Assert.assertEquals(2.0, connection3.getNetworkCapacity().getPacketLoss(),0.5);
 	}
-	
-	
+
+
 	@Test
 	public void updateConnectionDeleteList() {
 		NetworkLimits networkLimits = new NetworkLimits(0.5f,0.2f,1.5,2.0);
 		Connection connection1 = new Connection("Connection1",networkLimits);
 		network.updateConnectionList(connection1, Network.Update.DELETE);
 	}
-	
+
 	@Test
 	public void getConnectionFromList() {
 		NetworkLimits networkLimits = new NetworkLimits(0.5f,0.2f,1.5,2.0);
@@ -100,7 +97,7 @@ public class NetworkTest {
 		Connection connection =	network.getConnectionFromList("Connection1");
 		Assert.assertEquals("Connection1", connection.getConnectionId());
 	}	
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void updateApplicationInstanceAddList() {
@@ -111,8 +108,8 @@ public class NetworkTest {
 		network.updateApplicationInstanceList(application1, Network.Update.ADD);
 		Assert.assertEquals(40.0,networkRequirements.getRequiredPacketLoss(),0.5);
 	}
-	
-	
+
+
 	@Test
 	public void updateApplicationInstanceDeleteList() {
 		ComputeRequirements computeRequirements = new ComputeRequirements(1.0f,2.0f,3.0f);
@@ -121,7 +118,7 @@ public class NetworkTest {
 		ApplicationInstance application1 = new ApplicationInstance(applicationType,ApplicationInstance.State.RUNNING);
 		network.updateApplicationInstanceList(application1, Network.Update.DELETE);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void getApplicationInstanceFromList() {
@@ -133,7 +130,7 @@ public class NetworkTest {
 		ApplicationInstance application = network.getApplicationInstanceFromList("Application1");
 		Assert.assertEquals(10.0f, application.getApplicationType().getNetworkSpecification().getRequiredLatency(),0.5);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void updateLocationAddList() {
@@ -149,14 +146,14 @@ public class NetworkTest {
 		Assert.assertEquals(15.5,location2.getLatitude(),0.5);
 		Assert.assertEquals(40.5,location3.getLongitude(),0.5);
 	}
-	
-	
+
+
 	@Test
 	public void updateLocationDeleteList() {
 		Location location1 = new Location("location1",10.5f,20.5f);
 		network.updateLocationList(location1, Network.Update.DELETE);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void getLocationFromList() {
@@ -168,11 +165,40 @@ public class NetworkTest {
 		Assert.assertEquals(10.5,location.getLatitude(),0.5);
 		Assert.assertEquals(20.5,location.getLongitude(),0.5);
 	}
-	
-	
+
 	@Test
-	public void saveNetworkTest() throws JsonProcessingException, InterruptedException {
-	 // create network object
+	public void getNetworkDistance() {
+		NetworkLimits networkLimits1 = new NetworkLimits(0.5f,0.25f,1.5,3.0);
+		NetworkLimits networkLimits2 = new NetworkLimits(4.5f,1.2f,2.5,2.0);
+		NetworkLimits networkLimits3 = new NetworkLimits(6.5f,2.2f,3.5,4.0);
+		NetworkLimits networkLimits4 = new NetworkLimits(8.5f,3.2f,4.5,6.0);
+		NetworkLimits networkLimits5 = new NetworkLimits(10.5f,4.2f,5.5,7.0);
+		NetworkLimits networkLimits6 = new NetworkLimits(20.5f,5.2f,6.5,8.0);
+		NetworkLimits networkLimits7 = new NetworkLimits(30.5f,6.2f,7.5,9.0);
+		NetworkLimits networkLimits8 = new NetworkLimits(40.5f,7.2f,8.5,10.0);
+		Connection connection1 = new Connection("Connection1",networkLimits1);
+		Connection connection2 = new Connection("Connection2",networkLimits2);
+		Connection connection3 = new Connection("Connection3",networkLimits3);
+		Connection connection4 = new Connection("Connection4",networkLimits4);
+		Connection connection5 = new Connection("Connection5",networkLimits5);
+		Connection connection6 = new Connection("Connection6",networkLimits6);
+		Connection connection7 = new Connection("Connection7",networkLimits7);
+		Connection connection8 = new Connection("Connection8",networkLimits8);
+		network.updateConnectionList(connection1, Network.Update.ADD);
+		network.updateConnectionList(connection2, Network.Update.ADD);
+		network.updateConnectionList(connection3, Network.Update.ADD);
+		network.updateConnectionList(connection4, Network.Update.ADD);
+		network.updateConnectionList(connection5, Network.Update.ADD);
+		network.updateConnectionList(connection6, Network.Update.ADD);
+		network.updateConnectionList(connection7, Network.Update.ADD);
+		network.updateConnectionList(connection8, Network.Update.ADD);
+		double distance = network.getNetworkDistance("Connection2","Connection7");
+		Assert.assertEquals(81.0,distance,0.5);
+	}
+
+	@Test
+	public void saveNetworkTest() throws JsonProcessingException {
+		// create network object
 		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
 		ComputeLimits computelimits = new ComputeLimits(1,2,3);
 		Device device1 = new Device("100","192.168.0.1",devicetype,computelimits);
@@ -187,30 +213,26 @@ public class NetworkTest {
 		network.updateApplicationInstanceList(application1, Network.Update.ADD);
 		Location location1 = new Location("location1",10.5f,20.5f);
 		network.updateLocationList(location1, Network.Update.ADD);
-		network.setApplicationDeviceList(Arrays.asList(new ApplicationInstanceDeviceRelation(network.getApplicationInstanceFromList("Application1"),network.getDeviceFromList("100"))));
-		network.setDeviceLocationList(Arrays.asList(new DeviceLocationRelation(network.getDeviceFromList("100"),network.getLocationFromList("location1"))));
-		network.setLocationConnectionList(Arrays.asList(new LocationConnectionRelation(network.getConnectionFromList("Connection1"),network.getLocationFromList("location1"))));
 		String writeString = network.saveNetwork();
-		System.out.println(writeString);
 	}
-	
+
 	/**
 	 * Test case to read JSON string
 	 */
 	//Commented as the JSON string read is exceeding memory and the test case fails due to that.
-//	@Test
-//	public void loadNetworkTest() throws JsonProcessingException {
-//		String jSON = "{\"applicationDeviceList\":[{\"application\":{\"applicationState\":\"RUNNING\",\"applicationType\":{\"applicationId\":\"Application1\",\"computeSpecification\":{\"requiredCpu\":1,\"requiredGpu\":2,\"requiredMemory\":3},\"networkSpecification\":{\"requiredLatency\":10,\"requiredJitter\":20,\"requiredThroughput\":30,\"requiredPacketLoss\":40}}},\"device\":{\"deviceId\":\"100\",\"deviceAddress\":\"192.168.0.1\",\"deviceType\":{\"deviceName\":\"Vodafone\",\"typeId\":\"UE\",\"mobility\":\"NONMOVABLE\"},\"computeLimits\":{\"cpuCount\":1,\"gpuCount\":2,\"memoryLimit\":3}}}],\"locationConnectionList\":[{\"locationRelation\":{\"locationId\":\"location1\",\"latitude\":10.5,\"longitude\":20.5},\"connectionRelation\":{\"connectionId\":\"Connection1\",\"networkCapacity\":{\"latency\":0.5,\"jitter\":0.2,\"throughput\":1.5,\"packetLoss\":2}}}],\"deviceLocationList\":[{\"location\":{\"locationId\":\"location1\",\"latitude\":10.5,\"longitude\":20.5},\"deviceLocation\":{\"deviceId\":\"100\",\"deviceAddress\":\"192.168.0.1\",\"deviceType\":{\"deviceName\":\"Vodafone\",\"typeId\":\"UE\",\"mobility\":\"NONMOVABLE\"},\"computeLimits\":{\"cpuCount\":1,\"gpuCount\":2,\"memoryLimit\":3}}}]}";
-//    	network.loadNetwork(jSON);
-//    	Device device =	network.getDeviceFromList("100");
-//		Assert.assertEquals("100", device.getDeviceId());
-//		Connection connection =	network.getConnectionFromList("Connection1");
-//		Assert.assertEquals("Connection1", connection.getConnectionId());
-//		Location location = network.getLocationFromList("location1");
-//		Assert.assertEquals("location1",location.getLocationId());
-//		Assert.assertEquals(10.5,location.getLatitude(),0.5);
-//		Assert.assertEquals(20.5,location.getLongitude(),0.5);
-//	}
-	
-	
+	//	@Test
+	//	public void loadNetworkTest() throws JsonProcessingException {
+	//		String jSON = "{\"applicationDeviceList\":[{\"application\":{\"applicationState\":\"RUNNING\",\"applicationType\":{\"applicationId\":\"Application1\",\"computeSpecification\":{\"requiredCpu\":1,\"requiredGpu\":2,\"requiredMemory\":3},\"networkSpecification\":{\"requiredLatency\":10,\"requiredJitter\":20,\"requiredThroughput\":30,\"requiredPacketLoss\":40}}},\"device\":{\"deviceId\":\"100\",\"deviceAddress\":\"192.168.0.1\",\"deviceType\":{\"deviceName\":\"Vodafone\",\"typeId\":\"UE\",\"mobility\":\"NONMOVABLE\"},\"computeLimits\":{\"cpuCount\":1,\"gpuCount\":2,\"memoryLimit\":3}}}],\"locationConnectionList\":[{\"locationRelation\":{\"locationId\":\"location1\",\"latitude\":10.5,\"longitude\":20.5},\"connectionRelation\":{\"connectionId\":\"Connection1\",\"networkCapacity\":{\"latency\":0.5,\"jitter\":0.2,\"throughput\":1.5,\"packetLoss\":2}}}],\"deviceLocationList\":[{\"location\":{\"locationId\":\"location1\",\"latitude\":10.5,\"longitude\":20.5},\"deviceLocation\":{\"deviceId\":\"100\",\"deviceAddress\":\"192.168.0.1\",\"deviceType\":{\"deviceName\":\"Vodafone\",\"typeId\":\"UE\",\"mobility\":\"NONMOVABLE\"},\"computeLimits\":{\"cpuCount\":1,\"gpuCount\":2,\"memoryLimit\":3}}}]}";
+	//    	network.loadNetwork(jSON);
+	//    	Device device =	network.getDeviceFromList("100");
+	//		Assert.assertEquals("100", device.getDeviceId());
+	//		Connection connection =	network.getConnectionFromList("Connection1");
+	//		Assert.assertEquals("Connection1", connection.getConnectionId());
+	//		Location location = network.getLocationFromList("location1");
+	//		Assert.assertEquals("location1",location.getLocationId());
+	//		Assert.assertEquals(10.5,location.getLatitude(),0.5);
+	//		Assert.assertEquals(20.5,location.getLongitude(),0.5);
+	//	}
+
+
 }
