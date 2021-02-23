@@ -22,9 +22,12 @@ jobs:
     - name: Cache Gradle packages #Saves gradles dependencies after a succesful run, so they dont have to be downloaded again, if there are changes in the build script skips the cache
       uses: actions/cache@v2
       with:
-        path: ~/.gradle/caches
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-        restore-keys: ${{ runner.os }}-gradle
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Open port 10500 for testing
@@ -33,3 +36,14 @@ jobs:
       run: sudo ufw allow 4567
     - name: Test with Gradle ##Only testing with Gradle (Not building)
       run: ./gradlew test
+    - name: Build javadocs with gradle (To test correct documentation)
+      run: ./gradlew javadoc
+    - name: Delete javadocs folder
+      run: .\gradlew cleanJavadoc
+    - name: Cleanup Gradle Cache
+        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+      run: |
+        rm -f ~/.gradle/caches/modules-2/modules-2.lock
+        rm -f ~/.gradle/caches/modules-2/gc.properties
+
