@@ -7,6 +7,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 
 public class Connection {
 	private String connectionId;
+	private String deviceRelationId;
+	private String locationRelationId;
 	private NetworkLimits networkCapacity;
 
 
@@ -15,8 +17,10 @@ public class Connection {
 	 * @param connectionId 		integer
 	 * @param networkCapacity 		
 	 */
-	public Connection(String connectionId, NetworkLimits networkCapacity) {
+	public Connection(String connectionId,NetworkLimits networkCapacity) {
 		this.connectionId = connectionId;
+		this.deviceRelationId = "";
+		this.locationRelationId = "";
 		this.networkCapacity = networkCapacity;
 	}
 
@@ -30,12 +34,46 @@ public class Connection {
 
 	/**
 	 * Getter function
+	 * @return deviceRelationId
+	 */
+	public String getDeviceRelationId() {
+		return deviceRelationId;
+	}
+
+	/**
+	 * Getter function
+	 * @return locationRelationId
+	 */
+	public String getLocationRelationId() {
+		return locationRelationId;
+	}
+
+	
+	
+	/**
+	 * Getter function
 	 * @return networkCapacity
 	 */
 	public NetworkLimits getNetworkCapacity() {
 		return networkCapacity;
 	}
 
+	/**
+	 * Setter function
+	 * @param deviceRelationId
+	 */
+	public void setNetworkCapacity(String deviceRelationId) {
+		this.deviceRelationId =  deviceRelationId;
+	}
+	
+	/**
+	 * Setter function
+	 * @param locationRelationId
+	 */
+	public void setLocationRelationId(String locationRelationId) {
+		this.locationRelationId =  locationRelationId;
+	}
+	
 	/**
 	 * Setter function
 	 * @param networkCapacity

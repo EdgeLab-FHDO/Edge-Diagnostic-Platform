@@ -9,7 +9,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 public class ApplicationInstance {
 	public enum State {RUNNING,COMPLETED,SUSPENDED,PAUSED}
 	private ApplicationType application; 
-	private State applicationState; 
+	private State applicationState;
+	private String deviceRelationId;
 
 
 	/**
@@ -19,6 +20,7 @@ public class ApplicationInstance {
 	public ApplicationInstance(ApplicationType application, State initialState) {
 		this.application = application;
 		this.applicationState = initialState;
+		this.deviceRelationId = "";
 	}
 
 	/**
@@ -36,6 +38,14 @@ public class ApplicationInstance {
 	public State getApplicationState() {
 		return applicationState;
 	}
+	
+	/**
+	 * Getter function
+	 * @return deviceRelationId
+	 */
+	public String getDeviceRelationId() {
+		return deviceRelationId;
+	}
 
 	/**
 	 * Setter function
@@ -44,5 +54,14 @@ public class ApplicationInstance {
 	public void setApplicationState(State applicationState) {
 		this.applicationState = applicationState;
 	}
+	
+	/**
+	 * Setter function
+	 * @param deviceRelationId
+	 */
+	public void setDeviceRelationId(String deviceRelationId) {
+		this.deviceRelationId = deviceRelationId;
+	}
+
 
 }

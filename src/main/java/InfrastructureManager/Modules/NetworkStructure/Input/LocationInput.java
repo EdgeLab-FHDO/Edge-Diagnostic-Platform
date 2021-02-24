@@ -24,7 +24,7 @@ public class LocationInput extends NetworkModuleObject implements PlatformInput 
 	public String read() throws InterruptedException {
 		String aux = "";
 		try {
-			toSend = "location" + sharedLocation.getLocationAsJsonBody();
+			toSend = "location " + sharedLocation.getLocationAsJsonBody();
 			aux=toSend;
 		}
 		catch (JsonProcessingException e) {

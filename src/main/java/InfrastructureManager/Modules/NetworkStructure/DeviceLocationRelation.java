@@ -6,18 +6,30 @@ package InfrastructureManager.Modules.NetworkStructure;
  */
 
 public class DeviceLocationRelation {
-
+	private String deviceLocationRelationId;
 	private Device device;
 	private Location location;
 
 	/**
 	 * Parameterized constructor of Class DeviceLocationRelation 
+	 *@param deviceLocationRelationId
 	 * @param Device 				
 	 * @param Location
 	 */
-	public DeviceLocationRelation(Device device,Location location) {
+	public DeviceLocationRelation(String deviceLocationRelationId,Device device,Location location) {
+		this.deviceLocationRelationId=deviceLocationRelationId;
 		this.device = device;
-		this.location = location;		
+		this.device.setLocationRelationId(deviceLocationRelationId);
+		this.location = location;
+		this.location.setDeviceRelationId(deviceLocationRelationId);
+	}
+	
+	/**
+	 * Getter function
+	 * @return location
+	 */
+	public String getDeviceLocationRelationId() {
+		return this.deviceLocationRelationId;		
 	}
 
 	/**

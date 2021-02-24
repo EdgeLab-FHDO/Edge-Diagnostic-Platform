@@ -7,24 +7,25 @@ import InfrastructureManager.Modules.NetworkStructure.Network;
 import InfrastructureManager.Modules.NetworkStructure.Location;
 import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
 import InfrastructureManager.Modules.NetworkStructure.Exception.NetworkModuleException;
+import InfrastructureManager.Modules.NetworkStructure.Shared.SharedNetwork;
 
 public class LocationOutput extends NetworkModuleObject implements PlatformOutput{
-	private Network network;
-	public LocationOutput(ImmutablePlatformModule module, String name,Network network) {
+	private final SharedNetwork sharednetwork;
+	public LocationOutput(ImmutablePlatformModule module, String name) {
 		super(module,name);
-		this.network = network;
+		this.sharednetwork = getSharedNetwork();
 	}
 	public void execute(String response) throws NetworkModuleException  {
 		String[] commandLine = response.split(" ");
 		if (commandLine[0].equals("location")) {
 			try {
 				switch (commandLine[1]) {
-				case "get_device_location" -> {
-					Location location =this.network.getCurrentDeviceLocation(commandLine[2]);
+				case "device" -> {
+					Location location =this.sharednetwork.computeCurrentDeviceLocation(commandLine[2]);
 					this.getSharedLocation().putValuetoQueue(location);
 				}
-				case "get_application_location" -> {
-					Location location =this.network.getCurrentApplicationLocation(commandLine[2]);
+				case "application" -> {
+					Location location =this.sharednetwork.computeCurrentApplicationLocation(commandLine[2]);
 					this.getSharedLocation().putValuetoQueue(location);
 				}
 				default -> throw new NetworkModuleException("Invalid command " + commandLine[1]

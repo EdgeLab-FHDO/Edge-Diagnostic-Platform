@@ -9,6 +9,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 
 public class Location {
 	private String locationId;
+	private String deviceRelationId;
+	private String connectionRelationId;
 	private float latitude;
 	private float longitude;
 
@@ -20,6 +22,8 @@ public class Location {
 	 */
 	public Location(String locationId,float latitude,float longitude) {
 		this.locationId = locationId;
+		this.deviceRelationId = "";
+		this.connectionRelationId = "";
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -30,6 +34,22 @@ public class Location {
 	 */
 	public String getLocationId() {
 		return locationId;
+	}
+	
+	/**
+	 * Getter function
+	 * @return deviceRelationId
+	 */
+	public String getDeviceRelationId() {
+		return deviceRelationId;
+	}
+	
+	/**
+	 * Getter function
+	 * @return connectionRelationId
+	 */
+	public String getConnectionRelationId() {
+		return connectionRelationId;
 	}
 
 	/**
@@ -64,6 +84,22 @@ public class Location {
 	 */
 	public void setLongitude(float longitude) {
 		this.longitude = longitude;
+	}	
+	
+	/**
+	 * Setter function
+	 * @param deviceRelationId
+	 */
+	public void setDeviceRelationId(String deviceRelationId) {
+		this.deviceRelationId = deviceRelationId;
+	}	
+	
+	/**
+	 * Setter function
+	 * @param connectionRelationId
+	 */
+	public void setConnectionRelationId(String connectionRelationId) {
+		this.connectionRelationId = connectionRelationId;
 	}	
 
 	//ToDO - Additional functions might be required later

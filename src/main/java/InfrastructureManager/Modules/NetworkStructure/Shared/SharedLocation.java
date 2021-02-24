@@ -6,17 +6,15 @@ import InfrastructureManager.Modules.NetworkStructure.NetworkModuleObject;
 import InfrastructureManager.Modules.NetworkStructure.Location;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SharedLocation extends NetworkModuleObject {
-	private final BlockingQueue locationQueue;
+	private final LinkedBlockingQueue<Location> locationQueue;
 	private final ObjectMapper mapper;
 
 	public SharedLocation(ImmutablePlatformModule ownerModule) {
 		super(ownerModule);
-		this.locationQueue = new ArrayBlockingQueue<>(25);
+		this.locationQueue = new LinkedBlockingQueue<Location>();
 		this.mapper = new ObjectMapper();
 	}
 

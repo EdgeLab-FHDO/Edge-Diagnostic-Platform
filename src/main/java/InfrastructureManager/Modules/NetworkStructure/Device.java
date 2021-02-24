@@ -8,6 +8,8 @@ package InfrastructureManager.Modules.NetworkStructure;
 
 public class Device {
 	private String deviceId;
+	private String applicationRelationId;
+	private String locationRelationId;
 	private String deviceAddress;
 	private DeviceType deviceType;
 	private ComputeLimits computeLimits;
@@ -22,6 +24,8 @@ public class Device {
 	 */
 	public Device(String deviceId,String deviceAddress, DeviceType deviceType,ComputeLimits computeLimits) {
 		this.deviceId = deviceId;
+		this.applicationRelationId = "";
+		this.locationRelationId = "";
 		this.deviceAddress = deviceAddress;
 		this.deviceType = deviceType;
 		this.computeLimits = computeLimits;
@@ -33,6 +37,23 @@ public class Device {
 	 */
 	public String getDeviceId() {
 		return deviceId;
+	}
+	
+	/**
+	 * Getter function
+	 * @return applicationRelationId
+	 */
+	public String getApplicationRelationId() {
+		return applicationRelationId;
+	}
+	
+	
+	/**
+	 * Getter function
+	 * @return locationRelationId
+	 */
+	public String getLocationRelationId() {
+		return locationRelationId;
 	}
 
 	/**
@@ -74,5 +95,21 @@ public class Device {
 	 */
 	public void setComputeLimits(ComputeLimits computeLimits) {
 		this.computeLimits = computeLimits;
+	}
+	
+	/**
+	 * Setter function
+	 * @param applicationRelationId
+	 */
+	public void setApplicationRelationId(String applicationRelationId) {
+		this.applicationRelationId = applicationRelationId;
+	}
+	
+	/**
+	 * Setter function
+	 * @param locationRelationId
+	 */
+	public void setLocationRelationId(String locationRelationId) {
+		this.locationRelationId = locationRelationId;
 	}
 }

@@ -1,10 +1,9 @@
 package InfrastructureManager.Modules.NetworkStructure;
-import java.util.ArrayList;
+import java.util.HashMap;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import java.util.List;
+import java.util.Map;
 
 /**
  * This class contains network information.
@@ -13,353 +12,258 @@ import java.util.List;
  */
 
 public class Network {
-	public enum Update {ADD,DELETE};
 	private final ObjectMapper mapper;
-	private List<Device> deviceList;
-	private List<Connection> connectionList;
-	private List<Location> locationList;
-	private List<ApplicationInstance> applicationList;
-	private List<ApplicationInstanceDeviceRelation> applicationDeviceList;
-	private List<LocationConnectionRelation> locationConnectionList;
-	private List<DeviceLocationRelation> deviceLocationList;
+	private Map<String, Device> deviceMap;
+	private Map<String, Connection> connectionMap;
+	private Map<String, Location> locationMap;
+	private Map<String, ApplicationInstance> applicationMap;
+	private Map<String, ApplicationInstanceDeviceRelation> applicationDeviceMap;
+	private Map<String, LocationConnectionRelation> locationConnectionMap;
+	private Map<String, DeviceLocationRelation> deviceLocationMap;
 
 	/**
 	 * Default constructor for Network Class
 	 */
 	public Network() {
 		this.mapper = new ObjectMapper();
-		deviceList = new ArrayList<>();
-		connectionList = new ArrayList<>();
-		locationList = new ArrayList<>();
-		applicationList = new ArrayList<>();
-		applicationDeviceList = new ArrayList<>();
-		locationConnectionList= new ArrayList<>();
-		deviceLocationList = new ArrayList<>();
+		deviceMap = new HashMap<>();
+		connectionMap = new HashMap<>();
+		locationMap = new HashMap<>();
+		applicationMap = new HashMap<>();
+		applicationDeviceMap = new HashMap<>();
+		locationConnectionMap= new HashMap<>();
+		deviceLocationMap = new HashMap<>();
 	}
 
 	/**
-	 * Function to read JSON string and update network class
-	 * @param String
+	 * Getter function to get a particular device from deviceMap
+	 * @param deviceId
+	 * @return Device
 	 */
+	public Device getDevice(String deviceId)	{
+		return this.deviceMap.get(deviceId);
+	}
+
+	/**
+	 * Function to add a new device to deviceMap
+	 * @param Device
+	 */
+	public void addDevice(Device device){
+			this.deviceMap.put(device.getDeviceId(),device);
+	}
+
+	/**
+	 * Function to delete a particular device from deviceMap
+	 * @param deviceId
+	 */
+	public void removeDevice(String deviceId){
+			deviceMap.remove(deviceId);
+	}
+	
+
+
+	/**
+	 * Getter function to get a particular connection from connectionMap
+	 * @param connectionId
+	 */
+	public Connection getConnection(String connectionId)	{
+		return this.connectionMap.get(connectionId);
+	}
+
+	/**
+	 * Function to add a particular connection to connectionMap
+	 * @param Connection
+	 */
+	public void addConnection(Connection connection){
+		this.connectionMap.put(connection.getConnectionId(),connection);
+	}
+	
+	/**
+	 * Function to delete a particular connection from connectionMap
+	 * @param Connection
+	 */
+	public void removeConnection(String connectionId){
+		this.connectionMap.remove(connectionId);
+	}
+
+	/**
+	 * Getter function to get a particular location from locationMap
+	 * @param locationId
+	 * @return Location
+	 */
+	public Location getLocation(String locationId)	{
+		return this.locationMap.get(locationId);
+	}
+
+	/**
+	 * Function to add a particular location to locationMap
+	 * @param Location
+	 */
+	public void addLocation(Location location){
+		this.locationMap.put(location.getLocationId(),location);
+	}
+	
+	/**
+	 * Function to delete a particular location from locationMap
+	 */
+	public void removeLocation(String locationId){
+		this.locationMap.remove(locationId);
+	}
+
+
+	/**
+	 * Getter function to get a particular application from applicationMap
+	 * @param applicationId
+	 * @return ApplicationInstance
+	 */
+	public ApplicationInstance getApplicationInstance(String ApplicationId)	{
+		return this.applicationMap.get(ApplicationId);
+	}
+
+	/**
+	 * Function to add a particular application to applicationMap
+	 * @param application
+	 */
+	public void addApplicationInstance(ApplicationInstance application){
+		this.applicationMap.put(application.getApplicationType().getApplicationId(),application);
+	}
+	
+	/**
+	 * Function to delete a particular application from applicationMap
+	 */
+	public void removeApplicationInstance(String ApplicationId){
+		this.applicationMap.remove(ApplicationId);
+	}
+
+	/**
+	 * Getter function to get a particular ApplicationInstanceDeviceRelation from applicationdeviceMap
+	 * @param applicationDeviceRelationId
+	 * @return ApplicationInstanceDeviceRelation
+	 */
+	public ApplicationInstanceDeviceRelation getApplicationInstanceDeviceRelation(String applicationDeviceRelationId)	{
+		return this.applicationDeviceMap.get(applicationDeviceRelationId);
+	}
+
+	/**
+	 * Function to add a particular applicationDevice in applicationdeviceMap
+	 * @param applicationDevice
+	 */
+	public void addApplicationDeviceRelation(ApplicationInstanceDeviceRelation applicationDevice){
+		this.applicationDeviceMap.put(applicationDevice.getApplicationDeviceRelationId(),applicationDevice);
+
+	}
+	
+	/**
+	 * Function to remove a particular applicationDevice in applicationdeviceMap
+	 * @param applicationDeviceRelationId
+	 */
+	public void removeApplicationDeviceRelation(String applicationDeviceRelationId){
+		this.applicationDeviceMap.remove(applicationDeviceRelationId);
+
+	}
+
+	/**
+	 * Getter function to get a particular LocationConnectionRelation from locationConnectionMap
+	 * @param locationConnectionRelationId
+	 * @return LocationConnectionRelation
+	 */
+	public LocationConnectionRelation getLocationConnectionRelation(String locationConnectionRelationId)	{
+		return this.locationConnectionMap.get(locationConnectionRelationId);
+	}
+
+	/**
+	 * Function to add a particular locationConnection to locationConnectionMap
+	 * @param locationConnection
+	 */
+	public void addLocationConnectionRelation(LocationConnectionRelation locationConnection){
+		this.locationConnectionMap.put(locationConnection.getLocationConnectionRelationId(),locationConnection);
+	}
+
+	/**
+	 * Function to remove a particular locationConnection from locationConnectionMap
+	 * @param locationConnectionRelationId
+	 */
+	public void removeLocationConnectionRelation(String locationConnectionRelationId){
+		this.locationConnectionMap.remove(locationConnectionRelationId);
+	}
+
+	/**
+	 * Getter function to get a particular DeviceLocationRelation from deviceLocationMap
+	 * @param deviceLocationRelationId
+	 * @return DeviceLocationRelation
+	 */
+	public DeviceLocationRelation getDeviceLocationRelation(String deviceLocationRelationId)	{
+		return this.deviceLocationMap.get(deviceLocationRelationId);
+	}
+
+	/**
+	 * Function to add a particular deviceLocation to deviceLocationMap
+	 * @param deviceLocation
+	 */
+	public void addDeviceLocationRelation(DeviceLocationRelation deviceLocation){
+		this.deviceLocationMap.put(deviceLocation.getDeviceLocationRelationId(),deviceLocation);
+	}
+	
+	/**
+	 * Function to remove a particular deviceLocation to deviceLocationMap
+	 * @param deviceLocationRelationId
+	 */
+	public void removeDeviceLocationRelation(String deviceLocationRelationId){
+		this.deviceLocationMap.remove(deviceLocationRelationId);
+	}
+	
 	public void loadNetwork(String readString) throws JsonProcessingException{
 
 		//New object created as the called object cannot be accessed as a whole. Therefore new object is created to update the calling object members with values from json string
-		Network clonedObject = this.mapper.readValue(readString,Network.class);
-		copyNetwork(clonedObject
-				);
+		Network clonedObject = new Network();
+		
+		Map<String, Device> jsonMap = this.mapper.readValue(readString,
+			    new TypeReference<Map<String,Device>>(){});
+		
+		this.deviceMap = jsonMap;
+		//this.mapper.readValue(readString,Network.class);
+		//copyNetwork(clonedObject);
 	}
 
-	/**
-	 * Function to update network class
-	 * @param Network object
-	 */
 	public void copyNetwork(Network network) {
-		this.deviceList = network.deviceList;
-		this.connectionList = network.connectionList;
-		this.locationList = network.locationList;
-		this.applicationList = network.applicationList;
-		this.applicationDeviceList = network.applicationDeviceList;
-		this.locationConnectionList = network.locationConnectionList;
-		this.deviceLocationList = network.deviceLocationList;
+		this.deviceMap = network.deviceMap;
+		this.connectionMap = network.connectionMap;
+		this.locationMap = network.locationMap;
+		this.applicationMap = network.applicationMap;
+		this.applicationDeviceMap = network.applicationDeviceMap;
+		this.locationConnectionMap = network.locationConnectionMap;
+		this.deviceLocationMap = network.deviceLocationMap;
 	}
 
 
-	/**
-	 * Function to save JSON string
-	 * @return String
-	 */
-	public String saveNetwork(){
+	public String saveNetwork() throws InterruptedException{
 		try {
-			String json = this.mapper.writeValueAsString(this);
-			return json;
+			String jsonString = this.mapper.writeValueAsString(this.deviceMap);
+			//String jsonString = "{\"deviceMap\" : " + this.mapper.writeValueAsString(this.deviceMap);
+//			jsonString = jsonString + ","+ "\"connectionMap\":" + this.mapper.writeValueAsString(this.connectionMap);
+//			jsonString = jsonString + ","+ "\"locationMap\":" + this.mapper.writeValueAsString(this.locationMap);
+//			jsonString = jsonString + ","+ "\"applicationMap\":" + this.mapper.writeValueAsString(this.applicationMap);
+//			jsonString = jsonString + ","+ "\"applicationDeviceMap\":" + this.mapper.writeValueAsString(this.applicationDeviceMap);
+//			jsonString = jsonString + ","+ "\"locationConnectionMap\":" + this.mapper.writeValueAsString(this.locationConnectionMap);
+//			jsonString = jsonString + ","+ "\"deviceLocationMap\":" + this.mapper.writeValueAsString(this.deviceLocationMap) +"}";
+			return jsonString;
 		}
 		catch(JsonProcessingException e) {
 			return null;
 		}
 
 	}
-
-
-	/**
-	 * Getter function to get a particular device from deviceList
-	 * @param deviceId
-	 * @return Device
-	 */
-	public Device getDeviceFromList(String deviceId)	{
-		int idx=0;
-		for (Object obj : this.deviceList) {
-			Device device = (Device)obj;	
-			if (device.getDeviceId().equals(deviceId))
-			{
-				idx = this.deviceList.indexOf(obj);
-			}
-		}
-		return this.deviceList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular device in deviceList
-	 * @param Device
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateDeviceList(Device device,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.deviceList.add(device);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.deviceList) {
-				Device device1 = (Device)obj;
-				if (device1.getDeviceId().equals(device.getDeviceId()))
-				{
-					this.deviceList.remove(this.deviceList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-
-
-	/**
-	 * Getter function to get a particular connection from connectionList
-	 * @param ConnectionId
-	 * @return Connection
-	 */
-	public Connection getConnectionFromList(String ConnectionId)	{
-		int idx=0;
-		for (Object obj : this.connectionList) {
-			Connection connection = (Connection)obj;
-			if (connection.getConnectionId().equals(ConnectionId))
-			{
-				idx = this.connectionList.indexOf(obj);
-			}
-		}
-		return this.connectionList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular connection in connectionList
-	 * @param Connection
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateConnectionList(Connection connection,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.connectionList.add(connection);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.connectionList) {
-				Connection connection1 = (Connection)obj;
-				if (connection1.getConnectionId().equals(connection.getConnectionId()))
-				{
-					this.connectionList.remove(this.connectionList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-	/**
-	 * Getter function to get a particular location from locationList
-	 * @param LocationId
-	 * @return Location
-	 */
-	public Location getLocationFromList(String LocationId)	{
-		int idx=0;
-		for (Object obj : this.locationList) {
-			Location location = (Location)obj;
-			if (location.getLocationId().equals(LocationId))
-			{
-				idx = this.locationList.indexOf(obj);
-			}
-		}
-		return this.locationList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular location in locationList
-	 * @param Location
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateLocationList(Location location,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.locationList.add(location);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.locationList) {
-				Location location1 = (Location)obj;
-				if (location1.getLocationId().equals(location.getLocationId()))
-				{
-					this.locationList.remove(this.locationList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-
-	/**
-	 * Getter function to get a particular application from applicationList
-	 * @param applicationId
-	 * @return ApplicationInstance
-	 */
-	public ApplicationInstance getApplicationInstanceFromList(String ApplicationId)	{
-		int idx=0;
-		for (Object obj : this.applicationList) {
-			ApplicationInstance application = (ApplicationInstance)obj;
-			if (application.getApplicationType().getApplicationId().equals( ApplicationId))
-			{
-				idx = this.applicationList.indexOf(obj);
-			}
-		}
-		return this.applicationList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular application in applicationList
-	 * @param application
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateApplicationInstanceList(ApplicationInstance application,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.applicationList.add(application);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.applicationList) {
-				ApplicationInstance application1 = (ApplicationInstance)obj;
-				if (application1.getApplicationType().getApplicationId().equals(application.getApplicationType().getApplicationId()))
-				{
-					this.applicationList.remove(this.applicationList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-	/**
-	 * Getter function to get a particular ApplicationInstanceDeviceRelation from applicationDeviceList
-	 * @param id
-	 * @return ApplicationInstanceDeviceRelation
-	 */
-	public ApplicationInstanceDeviceRelation getApplicationInstanceDeviceRelationFromList(String id)	{
-		int idx=0;
-		for (Object obj : this.applicationDeviceList) {
-			ApplicationInstanceDeviceRelation applicationDevice = (ApplicationInstanceDeviceRelation)obj;
-			if ((applicationDevice.getApplication().getApplicationType().getApplicationId().equals(id)) || applicationDevice.getApplicationDevice().getDeviceId().equals(id))
-			{
-				idx = this.applicationDeviceList.indexOf(obj);
-			}
-		}
-		return this.applicationDeviceList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular applicationDevice in applicationDeviceList
-	 * @param applicationDevice
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateapplicationDeviceList(ApplicationInstanceDeviceRelation applicationDevice,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.applicationDeviceList.add(applicationDevice);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.applicationDeviceList) {
-				ApplicationInstanceDeviceRelation applicationDevice1 = (ApplicationInstanceDeviceRelation)obj;
-				if (applicationDevice1.getApplication().getApplicationType().getApplicationId().equals(applicationDevice.getApplication().getApplicationType().getApplicationId()) ||
-						applicationDevice1.getApplicationDevice().getDeviceId().equals(applicationDevice.getApplicationDevice().getDeviceId()))
-				{
-					this.applicationDeviceList.remove(this.applicationDeviceList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-	/**
-	 * Getter function to get a particular LocationConnectionRelation from locationConnectionList
-	 * @param id
-	 * @return LocationConnectionRelation
-	 */
-	public LocationConnectionRelation getLocationConnectionRelationFromList(String id)	{
-		int idx=0;
-		for (Object obj : this.locationConnectionList) {
-			LocationConnectionRelation locationConnection = (LocationConnectionRelation)obj;
-			if ((locationConnection.getConnectionRelation().getConnectionId().equals(id)) || locationConnection.getLocationRelation().getLocationId().equals(id))
-			{
-				idx = this.locationConnectionList.indexOf(obj);
-			}
-		}
-		return this.locationConnectionList.get(idx);
-	}
-
-	/**
-	 * Function to update a particular locationConnection in locationConnectionList
-	 * @param locationConnection
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updatelocationConnectionList(LocationConnectionRelation locationConnection,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.locationConnectionList.add(locationConnection);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.locationConnectionList) {
-				LocationConnectionRelation locationConnection1 = (LocationConnectionRelation)obj;
-				if (locationConnection1.getConnectionRelation().getConnectionId().equals(locationConnection.getConnectionRelation().getConnectionId()) ||
-						locationConnection1.getLocationRelation().getLocationId().equals(locationConnection.getLocationRelation().getLocationId()))
-				{
-					this.locationConnectionList.remove(this.locationConnectionList.indexOf(obj));
-				}
-			} 
-		}
-	}
-
-
-	/**
-	 * Getter function to get a particular DeviceLocationRelation from deviceLocationList
-	 * @param id
-	 * @return DeviceLocationRelation
-	 */
-	public DeviceLocationRelation getDeviceLocationRelationFromList(String id)	{
-		DeviceLocationRelation deviceLocation = null;
-		for (Object obj : this.deviceLocationList) {
-			DeviceLocationRelation deviceLocationObj = (DeviceLocationRelation)obj;
-			if ((deviceLocationObj.getDevice().getDeviceId().equals(id)) || deviceLocationObj.getLocation().getLocationId().equals(id) )
-			{
-				deviceLocation = this.deviceLocationList.get(this.deviceLocationList.indexOf(obj));
-			}
-		}
-		return (deviceLocation);
-	}
-
-	/**
-	 * Function to update a particular deviceLocation in deviceLocationList
-	 * @param deviceLocation
-	 * @param UpdateType // ADD or DELETE
-	 */
-	public void updateDeviceLocationList(DeviceLocationRelation deviceLocation,Network.Update update){
-		if (update == Network.Update.ADD)
-		{
-			this.deviceLocationList.add(deviceLocation);
-		}
-		else if(update == Network.Update.DELETE) {
-			for (Object obj : this.deviceLocationList) {
-				DeviceLocationRelation deviceLocation1 = (DeviceLocationRelation)obj;
-				if (deviceLocation1.getDevice().getDeviceId().equals(deviceLocation.getDevice().getDeviceId()) ||
-						deviceLocation1.getLocation().getLocationId().equals(deviceLocation.getLocation().getLocationId()))
-				{
-					this.deviceLocationList.remove(this.deviceLocationList.indexOf(obj));
-				}
-			} 
-		}
-	}
+	
+	
 	/**
 	 * Function to get location of a particular device instance
 	 * @param deviceId
+	 * @return Location
 	 */
-	public Location getCurrentDeviceLocation(String id) {
+	public Location getCurrentDeviceLocation(Device device) {
 		Location location = null;
-		if(id.equals(this.getDeviceLocationRelationFromList(id).getDevice().getDeviceId())) {
-			location = this.getDeviceLocationRelationFromList(id).getLocation();  		
+		if(this.deviceMap.containsValue(device)) {
+			location = this.getDeviceLocationRelation(device.getLocationRelationId()).getLocation();  		
 		}
 		return location;
 	}
@@ -367,11 +271,13 @@ public class Network {
 	/**
 	 * Function to get location of a particular application instance
 	 * @param applicationId
+	 * * @return Location
 	 */
-	public Location getCurrentApplicationLocation(String id) {
+	public Location getCurrentApplicationLocation(ApplicationInstance application) {
 		Location location = null;
-		if (id.equals(this.getApplicationInstanceDeviceRelationFromList(id).getApplication().getApplicationType().getApplicationId())) {
-			location = this.getDeviceLocationRelationFromList(this.getApplicationInstanceDeviceRelationFromList(id).getApplicationDevice().getDeviceId()).getLocation();
+		if (this.applicationMap.containsValue(application)){
+			location = this.getDeviceLocationRelation(this.getApplicationInstanceDeviceRelation(application.getDeviceRelationId()).getApplicationDevice().getLocationRelationId()).getLocation();
+			//location = this.getDeviceLocationRelation(this.getApplicationInstanceDeviceRelation(this.getApplicationInstance(application.getApplicationType().getApplicationId()).getDeviceRelationId()).getApplicationDevice().getLocationRelationId()).getLocation();
 		}
 		return location;
 	}
@@ -405,8 +311,8 @@ public class Network {
 	 */
 	public double getphysicalDistanceBetweenDevices(String sourceId, String destinationId) {
 		Location sourceLocation,destinationLocation;
-		sourceLocation = getCurrentDeviceLocation(sourceId);
-		destinationLocation = getCurrentDeviceLocation(destinationId);
+		sourceLocation = getCurrentDeviceLocation(this.getDevice(sourceId));
+		destinationLocation = getCurrentDeviceLocation(this.getDevice(destinationId));
 		double distance = this.calculateDistance(sourceLocation,destinationLocation);
 		return distance;
 	}
@@ -417,41 +323,53 @@ public class Network {
 	 */
 	public double getphysicalDistanceBetweenApplications(String sourceId, String destinationId) {
 		Location sourceLocation,destinationLocation;
-		sourceLocation = getCurrentApplicationLocation(sourceId);
-		destinationLocation = getCurrentApplicationLocation(destinationId);
+		sourceLocation = getCurrentApplicationLocation(this.getApplicationInstance(sourceId));
+		destinationLocation = getCurrentApplicationLocation(this.getApplicationInstance(destinationId));
+		double distance = this.calculateDistance(sourceLocation,destinationLocation);
+		return distance;
+	}
+	
+	/**
+	 * Function to get physical distance between locations.
+	 * @param sourceId and destinationId
+	 */
+	public double getphysicalDistanceBetweenlocations(String sourceId, String destinationId) {
+		Location sourceLocation,destinationLocation;
+		sourceLocation = getLocation(sourceId);
+		destinationLocation = getLocation(destinationId);
 		double distance = this.calculateDistance(sourceLocation,destinationLocation);
 		return distance;
 	}
 
 	/**
-	 * Function to get connection index from connectionList using id.
+	 * Function to get connection index from connectionMap using id.
 	 * @param id
 	 */
-	public int getIndexFromConnectionList(String id) {
-		int idx=0;
-		for (Object obj : this.connectionList) {
-			Connection connection = (Connection)obj;
-			if (connection.getConnectionId().equals(id))
-			{
-				idx = this.connectionList.indexOf(obj);
-			}
-		}
-		return idx;
-	}  
+//	public int getIndexFromConnectionMap(String id) {
+//		int idx=0;
+//		for (Object obj : this.connectionMap) {
+//			Connection connection = (Connection)obj;
+//			if (connection.getConnectionId().equals(id))
+//			{
+//				idx = this.connectionMap.indexOf(obj);
+//			}
+//		}
+//		return idx;
+//	}  
 	
 	/**
 	 * Function to get network distance between devices or between application instances.
 	 * @param sourceId and destinationId
 	 */
 	public double getNetworkDistance(String sourceId, String destinationId) {
-		int sourceidx = this.getIndexFromConnectionList(sourceId);
-		int destinationidx = this.getIndexFromConnectionList(destinationId);
-		double distance = 0;
-		for (int i =0;i<connectionList.size();i++) {
-			if(i>=sourceidx && i<=destinationidx)
-				distance = distance +  this.connectionList.get(i).getNetworkCapacity().getLatency();
-		}
-		return distance;
+//		int sourceidx = this.getIndexFromConnectionMap(sourceId);
+//		int destinationidx = this.getIndexFromConnectionMap(destinationId);
+//		double distance = 0;
+//		for (int i =0;i<connectionMap.size();i++) {
+//			if(i>=sourceidx && i<=destinationidx)
+//				distance = distance +  this.connectionMap.get(i).getNetworkCapacity().getLatency();
+//		}
+		return 0;
 	}  
 
 }
