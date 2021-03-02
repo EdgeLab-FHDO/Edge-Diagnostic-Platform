@@ -39,7 +39,7 @@ jobs:
     - name: Build javadocs with gradle (To test correct documentation)
       run: ./gradlew javadoc
     - name: Delete javadocs folder
-      run: .\gradlew cleanJavadoc
+      run: ./gradlew cleanJavadoc
     - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
         # Restoring these files from a GitHub Actions cache might cause problems for future builds.
