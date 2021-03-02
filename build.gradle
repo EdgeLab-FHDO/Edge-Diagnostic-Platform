@@ -18,13 +18,6 @@ jar {
     }
 }
 
-jar {
-    //jar for Applications
-    manifest {
-        attributes "Main-Class": "Application.DockerApp"
-    }
-}
-
 run {
     //Informs Gradle that we are using System.in as our console input (required for Scanner to work properly)
     standardInput = System.in
