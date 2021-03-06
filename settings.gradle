@@ -1,2 +1,2 @@
 rootProject.name = 'Edge-Diagnostic-Platform'
-include('EdgeDiagnosticsApp:DiagnosticsClient','EdgeDiagnosticsApp:DiagnosticsServer')
+include('EdgeDiagnosticsApp:DiagnosticsClient','EdgeDiagnosticsApp:DiagnosticsServer','EdgeDiagnosticsApp:CommonUtils')
