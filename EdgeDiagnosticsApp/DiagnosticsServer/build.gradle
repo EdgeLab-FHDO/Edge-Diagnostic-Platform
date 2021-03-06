@@ -28,6 +28,8 @@ application {
     mainClassName = 'DiagnosticsServer.Server'
 }
 
+run.onlyIf {project.hasProperty('runDServer')}
+
 
 task fatJar(type: Jar) {
     manifest {

@@ -28,6 +28,8 @@ application {
     mainClassName = 'DiagnosticsClient.Client'
 }
 
+run.onlyIf {project.hasProperty('runDClient')}
+
 
 task fatJar(type: Jar) {
     manifest {
