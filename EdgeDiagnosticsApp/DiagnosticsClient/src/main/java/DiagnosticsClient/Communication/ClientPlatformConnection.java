@@ -1,9 +1,9 @@
 package DiagnosticsClient.Communication;
 
 
-import DiagnosticsClient.Communication.Exception.JSONException;
 import REST.BasicPlatformConnection;
 import REST.Exception.RESTClientException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ClientPlatformConnection extends BasicPlatformConnection {
 
@@ -16,7 +16,7 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
         this.getServerURL = getServerURL;
     }
 
-    public ServerInformation getServer(String jsonRepresentation) throws RESTClientException, JSONException {
+    public ServerInformation getServer(String jsonRepresentation) throws RESTClientException, JsonProcessingException {
         this.getClient().post(assignURL,jsonRepresentation);
         String response = this.getClient().get(getServerURL);
         return new ServerInformation(response);
