@@ -14,8 +14,9 @@ public class ServerInformation {
         JsonNode node;
         try {
             node = mapper.readTree(response);
-            this.ipAddress = node.findValue("address").asText();
-            this.port = node.findValue("port").asInt();
+            String[] completeAddress = node.findValue("ipAddress").asText().split(":");
+            this.ipAddress = completeAddress[0];
+            this.port = Integer.parseInt(completeAddress[1]);
         } catch (JsonProcessingException e) {
             throw new JSONException("Error while parsing server information", e);
         }
