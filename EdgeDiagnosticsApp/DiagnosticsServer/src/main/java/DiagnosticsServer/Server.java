@@ -3,26 +3,26 @@ package DiagnosticsServer;
 import DiagnosticsServer.Communication.Exception.ServerCommunicationException;
 import DiagnosticsServer.Communication.RawServerData;
 import DiagnosticsServer.Communication.ServerPlatformConnection;
+import DiagnosticsServer.Load.Exception.LoadReceivingException;
+import DiagnosticsServer.Load.ServerLoadManager;
+import LoadManagement.BasicLoadManager.ConnectionType;
+import LoadManagement.BasicLoadManager.LoadType;
 import REST.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Server {
 
+    private final ServerLoadManager loadManager;
     private final int port;
 
     public Server(int port, String baseURL, String registerURL) throws ServerCommunicationException {
         try {
             this.port = port;
+            this.loadManager = new ServerLoadManager(this.port);
             ServerPlatformConnection connection = new ServerPlatformConnection(baseURL, registerURL);
             connection.register(this.getJsonRepresentation());
         } catch (RESTClientException | UnknownHostException | JsonProcessingException e) {
@@ -43,23 +43,10 @@ public class Server {
         return mapper.writeValueAsString(rawServerData);
     }
 
-    private void startTCP() {
-        String reading = "";
-        try (
-                ServerSocket serverSocket = new ServerSocket(this.port);
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-        ){
-            System.out.println("Waiting");
-            while (!reading.equals("exit")) {
-                reading = in.readLine();
-                out.println(reading.equals("exit") ? "Bye" : reading);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void receiveLoad(ConnectionType connection, LoadType load) throws LoadReceivingException {
+        this.loadManager.setConnectionType(connection);
+        this.loadManager.setLoadType(load);
+        this.loadManager.receiveLoad();
     }
 
     public static void main(String[] args) {
@@ -69,11 +56,11 @@ public class Server {
                 String registerURL = args[1];
                 Server activeInstance = new Server(4444, baseURL,registerURL);
                 System.out.println("starting TCP");
-                activeInstance.startTCP();
+                activeInstance.receiveLoad(ConnectionType.TCP,LoadType.PING);
             } else {
                 System.out.println("No arguments");
             }
-        } catch (ServerCommunicationException e) {
+        } catch (ServerCommunicationException | LoadReceivingException e) {
             e.printStackTrace();
             System.exit(-1);
         }

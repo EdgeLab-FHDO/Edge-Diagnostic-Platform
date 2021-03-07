@@ -2,29 +2,25 @@ package DiagnosticsClient;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.Exception.ClientCommunicationException;
-import DiagnosticsClient.Communication.Exception.TCP.ServerNotSetUpException;
-import DiagnosticsClient.Communication.Exception.TCP.TCPConnectionException;
 import DiagnosticsClient.Communication.ServerInformation;
+import DiagnosticsClient.Load.ClientLoadManager;
+import DiagnosticsClient.Load.Exception.LoadSendingException;
+import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import REST.Exception.RESTClientException;
+import LoadManagement.BasicLoadManager.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
-    private ServerInformation server;
+    private final ClientLoadManager loadManager;
 
     public Client(String baseURL, String registerURL, String assignURL, String getServerURL) throws ClientCommunicationException {
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL, assignURL, getServerURL);
             connection.register(this.getJsonRepresentation());
-            this.server = connection.getServer(this.getJsonRepresentation());
-        } catch (JsonProcessingException | RESTClientException e) {
+            ServerInformation server = connection.getServer(this.getJsonRepresentation());
+            this.loadManager = new ClientLoadManager(server);
+        } catch (JsonProcessingException | RESTClientException | ServerNotSetUpException e) {
             throw new ClientCommunicationException("Communication with diagnostics platform failed: ", e);
         }
     }
@@ -34,24 +30,10 @@ public class Client {
         return  "{\"id\":\"" + id + "\"}";
     }
 
-    public void connectTCP() throws TCPConnectionException {
-        String reading = "";
-        if (this.server == null) throw new ServerNotSetUpException("Client is not connected to the server");
-        try (
-                Socket clientSocket = new Socket(server.getIpAddress(),server.getPort());
-                Scanner stdin = new Scanner(System.in);
-                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-        ) {
-            while (!reading.equals("exit")) {
-                reading = stdin.nextLine();
-                System.out.println("Sent: " + reading);
-                out.println(reading);
-                System.out.println("The server said: " + in.readLine());
-            }
-        } catch (IOException e) {
-            throw new TCPConnectionException("TCP Connection failed: ",e);
-        }
+    public void sendLoad(ConnectionType connection, LoadType load) throws LoadSendingException {
+        this.loadManager.setConnectionType(connection);
+        this.loadManager.setLoadType(load);
+        this.loadManager.sendLoad();
     }
 
     public static void main(String[] args) {
@@ -62,11 +44,11 @@ public class Client {
                 String assignURL = args[2];
                 String getServerURL = args[3];
                 Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
-                activeClient.connectTCP();
+                activeClient.sendLoad(ConnectionType.TCP,LoadType.PING);
             } else {
                 System.out.println("No arguments");
             }
-        } catch (ClientCommunicationException e) {
+        } catch (ClientCommunicationException | LoadSendingException e) {
             e.printStackTrace();
             System.exit(-1);
         }

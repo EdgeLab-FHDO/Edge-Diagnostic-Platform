@@ -1,6 +1,4 @@
-package DiagnosticsClient.Communication.Exception.TCP;
-
-import DiagnosticsClient.Communication.Exception.TCP.TCPConnectionException;
+package DiagnosticsClient.Load.Exception.TCP;
 
 public class ServerNotSetUpException extends TCPConnectionException {
     public ServerNotSetUpException(String message) {
