@@ -12,6 +12,7 @@ public class TCPLoadSender implements LoadSender{
 
     @Override
     public void sendPing(String address, int port) throws TCPConnectionException {
+        long requestTimeStamp = System.currentTimeMillis();
         byte[] pingMessage = "ping".getBytes();
         int dataLength = pingMessage.length;
         if (dataLength > 255 | dataLength < 1) throw new TCPConnectionException("Invalid length for ping message");
@@ -25,8 +26,12 @@ public class TCPLoadSender implements LoadSender{
             System.out.println(screenMessage);
             out.write(dataLength); //First byte to indicate message size
             out.write(pingMessage);
+            long processingTimeClient = System.currentTimeMillis() - requestTimeStamp;
             out.flush();
-            System.out.println("Response: " + in.readLine());
+            String response = in.readLine();
+            long returnTime = System.currentTimeMillis() - requestTimeStamp;
+            String latency = String.valueOf(returnTime - processingTimeClient);
+            System.out.println("Response: " + response + " Latency:" + latency + " ms");
         } catch (IOException e) {
             throw new TCPConnectionException("TCP Connection failed: ",e);
         }
