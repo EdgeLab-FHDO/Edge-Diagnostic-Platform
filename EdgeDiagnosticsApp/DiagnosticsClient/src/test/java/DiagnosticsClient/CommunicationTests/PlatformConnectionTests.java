@@ -1,24 +1,13 @@
 package DiagnosticsClient.CommunicationTests;
 
-import DiagnosticsClient.Client;
 import DiagnosticsClient.Communication.ClientPlatformConnection;
-import DiagnosticsClient.Communication.Exception.ClientCommunicationException;
 import DiagnosticsClient.Communication.ServerInformation;
 import REST.Exception.RESTClientException;
-import REST.RequestMaker;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
