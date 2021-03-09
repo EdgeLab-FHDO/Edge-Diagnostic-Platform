@@ -6,7 +6,7 @@ import DiagnosticsServer.Communication.ServerPlatformConnection;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.ServerLoadManager;
 import LoadManagement.BasicLoadManager.ConnectionType;
-import LoadManagement.BasicLoadManager.LoadType;
+import LoadManagement.LoadType;
 import REST.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,7 +56,7 @@ public class Server {
                 String registerURL = args[1];
                 Server activeInstance = new Server(4444, baseURL,registerURL);
                 System.out.println("starting TCP");
-                activeInstance.receiveLoad(ConnectionType.TCP,LoadType.PING);
+                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
             } else {
                 System.out.println("No arguments");
             }

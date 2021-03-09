@@ -16,19 +16,15 @@ public class ClientLoadManager extends BasicLoadManager {
         this.port = serverInformation.getPort();
     }
 
-    public void sendLoad() throws LoadSendingException {
+    public void sendLoad(DiagnosticsLoad load) throws LoadSendingException {
         LoadSender sender = getSender();
-        switch (this.getLoadType()) {
-            case PING -> sender.sendPing(address,port);
-            case FILE -> sender.sendFile(address,port);
-            case VIDEO -> sender.sendVideo(address,port);
-        }
+        sender.send(load);
     }
 
     private LoadSender getSender() {
         return switch (this.getConnectionType()) {
-            case TCP -> new TCPLoadSender();
-            case UDP -> new UDPLoadSender();
+            case TCP -> new TCPLoadSender(address,port);
+            case UDP -> new UDPLoadSender(address,port);
         };
     }
 }

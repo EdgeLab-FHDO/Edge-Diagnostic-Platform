@@ -18,11 +18,14 @@ public class TCPLoadReceiver implements LoadReceiver {
                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
                 BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream())
         ){
-            int bufferSize = in.read(); //First byte to indicate message size
-            byte[] data = new byte[bufferSize];
-            int bytesReceived = in.read(data);
-            String readingString = new String(data);
-            out.println(readingString + " Data Read: " + bytesReceived + " bytes");
+            while (true) {
+                int bufferSize = in.read(); //First byte to indicate message size
+                if (bufferSize < 0) break;
+                byte[] data = new byte[bufferSize];
+                int bytesReceived = in.read(data);
+                //String readingString = new String(data);
+                out.println("Data Read: " + bytesReceived + " bytes");
+            }
 
         } catch (IOException e) {
             throw new TCPConnectionException("TCP connection failed", e);

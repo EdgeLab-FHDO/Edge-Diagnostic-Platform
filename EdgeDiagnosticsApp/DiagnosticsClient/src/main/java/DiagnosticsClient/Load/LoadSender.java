@@ -2,8 +2,23 @@ package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 
-public interface LoadSender {
-    void sendPing(String address, int port) throws LoadSendingException;
-    void sendFile(String address, int port) throws LoadSendingException;
-    void sendVideo(String address, int port) throws LoadSendingException;
+public abstract class LoadSender {
+
+    private final String address;
+    private final int port;
+
+    public LoadSender(String address, int port) {
+        this.address = address;
+        this.port = port;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public abstract void send(DiagnosticsLoad load) throws LoadSendingException;
 }

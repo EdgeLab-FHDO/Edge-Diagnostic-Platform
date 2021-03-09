@@ -2,13 +2,23 @@ package DiagnosticsServer.Load;
 
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import LoadManagement.BasicLoadManager;
+import LoadManagement.LoadType;
 
 public class ServerLoadManager extends BasicLoadManager {
 
     private final int port;
+    private LoadType loadType;
 
     public ServerLoadManager(int port) {
         this.port = port;
+    }
+
+    public void setLoadType(LoadType loadType) {
+        this.loadType = loadType;
+    }
+
+    public LoadType getLoadType() {
+        return loadType;
     }
 
     public void receiveLoad() throws LoadReceivingException {

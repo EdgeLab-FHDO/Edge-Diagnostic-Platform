@@ -1,18 +1,14 @@
 package DiagnosticsClient.Load;
 
-public class UDPLoadSender implements LoadSender {
-    @Override
-    public void sendPing(String address, int port) {
+import DiagnosticsClient.Load.Exception.LoadSendingException;
 
+public class UDPLoadSender extends LoadSender {
+    public UDPLoadSender(String address, int port) {
+        super(address, port);
     }
 
     @Override
-    public void sendFile(String address, int port) {
-
-    }
-
-    @Override
-    public void sendVideo(String address, int port) {
+    public void send(DiagnosticsLoad load) throws LoadSendingException {
 
     }
 }

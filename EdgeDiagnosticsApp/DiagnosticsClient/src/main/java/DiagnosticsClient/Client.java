@@ -4,8 +4,10 @@ import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.Exception.ClientCommunicationException;
 import DiagnosticsClient.Communication.ServerInformation;
 import DiagnosticsClient.Load.ClientLoadManager;
+import DiagnosticsClient.Load.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
+import DiagnosticsClient.Load.PingLoad;
 import REST.Exception.RESTClientException;
 import LoadManagement.BasicLoadManager.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,10 +32,9 @@ public class Client {
         return  "{\"id\":\"" + id + "\"}";
     }
 
-    public void sendLoad(ConnectionType connection, LoadType load) throws LoadSendingException {
+    public void sendLoad(ConnectionType connection, DiagnosticsLoad load) throws LoadSendingException {
         this.loadManager.setConnectionType(connection);
-        this.loadManager.setLoadType(load);
-        this.loadManager.sendLoad();
+        this.loadManager.sendLoad(load);
     }
 
     public static void main(String[] args) {
@@ -44,7 +45,8 @@ public class Client {
                 String assignURL = args[2];
                 String getServerURL = args[3];
                 Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
-                activeClient.sendLoad(ConnectionType.TCP,LoadType.PING);
+                PingLoad ping = new PingLoad(4,1000,1);
+                activeClient.sendLoad(ConnectionType.TCP,ping);
             } else {
                 System.out.println("No arguments");
             }
