@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.net.StandardSocketOptions.IP_TOS;
@@ -56,7 +57,8 @@ public class TCPLoadSender extends LoadSender {
         int times = load.getTimes();
         int messagesSent = 0;
         int interval = load.getPingInterval_ms();
-        List<Long> latencies = new ArrayList<>();
+        long[] latencies = new long[load.getTimes()];
+        //List<Long> latencies = new ArrayList<>();
         if (dataLength > 255 | dataLength < 1) throw new TCPConnectionException("Invalid length for ping message");
         String screenMessage = "Pinging " + address + ":" + port + " with " +
                 dataLength + " bytes of data " + times + " times. Protocol TCP";
@@ -68,14 +70,13 @@ public class TCPLoadSender extends LoadSender {
             configureSocket(clientSocket);
             printSocketOptions(clientSocket);
             System.out.println(screenMessage);
-            while (messagesSent < times) {
-                latencies.add(singlePing(pingMessage,out,in));
+            for (int i = 0; i < latencies.length; i++) {
+                latencies[i] = singlePing(pingMessage,out,in);
                 Thread.sleep(interval);
-                messagesSent++;
             }
             System.out.println("Ping load test finished");
-            double avgLatency = latencies.stream().mapToLong(i -> i).average().orElse(0);
-            System.out.println("Average latency: " + avgLatency + " ns. Data size =" + latencies.size());
+            double avgLatency = Arrays.stream(latencies).average().orElse(0);
+            System.out.println("Average latency: " + avgLatency + " ns. Data size =" + latencies.length);
         } catch (IOException | InterruptedException e) {
             throw new TCPConnectionException("TCP Connection failed: ",e);
         }
