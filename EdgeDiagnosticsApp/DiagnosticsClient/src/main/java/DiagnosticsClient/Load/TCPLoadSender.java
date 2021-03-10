@@ -7,10 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static java.net.StandardSocketOptions.IP_TOS;
 import static java.net.StandardSocketOptions.SO_LINGER;
@@ -44,9 +41,8 @@ public class TCPLoadSender extends LoadSender {
         out.write(pingData);
         out.flush();
         String response = in.readLine();
-        long latency = System.nanoTime() - startTime;
         //System.out.println("Response: " + response + " Latency:" + latency + " ns");
-        return latency;
+        return System.nanoTime() - startTime;
     }
 
     private void sendPing(PingLoad load) throws TCPConnectionException {
@@ -55,10 +51,8 @@ public class TCPLoadSender extends LoadSender {
         byte[] pingMessage = load.getData();
         int dataLength = pingMessage.length;
         int times = load.getTimes();
-        int messagesSent = 0;
         int interval = load.getPingInterval_ms();
         long[] latencies = new long[load.getTimes()];
-        //List<Long> latencies = new ArrayList<>();
         if (dataLength > 255 | dataLength < 1) throw new TCPConnectionException("Invalid length for ping message");
         String screenMessage = "Pinging " + address + ":" + port + " with " +
                 dataLength + " bytes of data " + times + " times. Protocol TCP";

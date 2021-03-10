@@ -1,9 +1,11 @@
 package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Load.Exception.LoadSendingException;
+import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 
 import static java.net.StandardSocketOptions.*;
 
@@ -23,24 +25,42 @@ public class UDPLoadSender extends LoadSender {
         }
     }
 
-    private void sendPing(PingLoad load) {
+    private long singlePing(byte[] data, InetAddress address, int port ,DatagramSocket socket) throws IOException {
+        byte[] receivingDataBuffer = new byte[data.length];
+        DatagramPacket outPackage = new DatagramPacket(data, data.length,address,port);
+        DatagramPacket inPackage = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+        long startTime = System.nanoTime();
+        socket.send(outPackage);
+        socket.receive(inPackage);
+        long latency = System.nanoTime() - startTime;
+        //String response = new String(inPackage.getData());
+        //System.out.println("Response: " + response + " Latency:" + latency + " ns");
+        return latency;
+    }
+
+    private void sendPing(PingLoad load) throws UDPConnectionException {
         try (
                 DatagramSocket clientSocket = new DatagramSocket();
         ){
             configureSocket(clientSocket);
             printSocketOptions(clientSocket);
+            long[] latencies = new long[load.getTimes()];
             byte[] message = load.getData();
+            int interval = load.getPingInterval_ms();
             InetAddress address = InetAddress.getByName(this.getAddress());
             int port = this.getPort();
-            DatagramPacket packet = new DatagramPacket(message, message.length,address,port);
-            clientSocket.send(packet);
-            packet = new DatagramPacket(message, message.length);
-            clientSocket.receive(packet);
-            String received = new String(packet.getData());
-            System.out.println("Received: " + received);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Pinging " + this.getAddress() + ":" + port + " with " +
+                    message.length + " bytes of data " + load.getTimes() + " times. Protocol UDP");
+            for (int i = 0; i < latencies.length; i++) {
+                latencies[i] = singlePing(message,address,port,clientSocket);
+                Thread.sleep(interval);
+            }
+            singlePing("exit".getBytes(),address,port,clientSocket); //Exit message for the server
+            System.out.println("Ping load test finished");
+            double avgLatency = Arrays.stream(latencies).average().orElse(0);
+            System.out.println("Average latency: " + avgLatency + " ns. Data size =" + latencies.length);
+        } catch (IOException | InterruptedException e) {
+            throw new UDPConnectionException("UDP Connection failed: ", e);
         }
     }
 
