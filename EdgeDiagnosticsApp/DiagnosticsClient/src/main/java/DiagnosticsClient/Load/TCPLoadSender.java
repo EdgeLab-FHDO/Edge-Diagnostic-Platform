@@ -97,14 +97,16 @@ public class TCPLoadSender extends LoadSender {
         socket.setSendBufferSize(socketConfig.getSendBufferSize());
         socket.setOption(SO_LINGER,socketConfig.getLinger());
         socket.setOption(IP_TOS,socketConfig.getIpTOS());
+        socket.setSoTimeout(socketConfig.getTimeout());
     }
 
     private void printSocketOptions(Socket socket) throws IOException {
-        System.out.println("Socket properties");
+        System.out.println("TCP Socket properties: ");
         var options = socket.supportedOptions();
         for (var option: options) {
-            System.out.print(option.name() + " : ");
+            System.out.print("\t" + option.name() + " : ");
             System.out.println(socket.getOption(option));
         }
+        System.out.println("\t" + "SO_TIMEOUT : " + socket.getSoTimeout());
     }
 }

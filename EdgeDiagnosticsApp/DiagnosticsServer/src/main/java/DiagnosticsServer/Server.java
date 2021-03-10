@@ -54,9 +54,9 @@ public class Server {
             if (args.length > 0) {
                 String baseURL = args[0];
                 String registerURL = args[1];
-                Server activeInstance = new Server(4444, baseURL,registerURL);
-                System.out.println("starting TCP");
-                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
+                Server activeInstance = new Server(4445, baseURL,registerURL);
+                System.out.println("starting UDP");
+                activeInstance.receiveLoad(ConnectionType.UDP, LoadType.PING);
             } else {
                 System.out.println("No arguments");
             }
