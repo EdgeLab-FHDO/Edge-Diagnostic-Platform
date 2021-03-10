@@ -8,6 +8,7 @@ import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.LoadTypes.PingLoad;
+import DiagnosticsClient.Load.TCP.TCPClientSocketOptions;
 import DiagnosticsClient.Load.UDP.UDPClientSocketOptions;
 import REST.Exception.RESTClientException;
 import LoadManagement.BasicLoadManager.*;
@@ -51,10 +52,10 @@ public class Client {
                 String getServerURL = args[3];
                 Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
                 PingLoad ping = new PingLoad(4,1000,1);
-                //TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default
-                UDPClientSocketOptions options = new UDPClientSocketOptions(); //Default
+                TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default
+                //UDPClientSocketOptions options = new UDPClientSocketOptions(); //Default
                 activeClient.setSocketOptions(options);
-                activeClient.sendLoad(ConnectionType.UDP,ping);
+                activeClient.sendLoad(ConnectionType.TCP,ping);
             } else {
                 System.out.println("No arguments");
             }

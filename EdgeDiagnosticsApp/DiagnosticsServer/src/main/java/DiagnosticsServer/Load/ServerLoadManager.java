@@ -10,6 +10,7 @@ public class ServerLoadManager extends BasicLoadManager {
 
     private final int port;
     private LoadType loadType;
+    private ServerSocketOptions options;
 
     public ServerLoadManager(int port) {
         this.port = port;
@@ -23,19 +24,20 @@ public class ServerLoadManager extends BasicLoadManager {
         return loadType;
     }
 
+    public void setSocketOptions(ServerSocketOptions options) {
+        this.options = options;
+    }
+
     public void receiveLoad() throws LoadReceivingException {
         LoadReceiver receiver = getReceiver();
-        switch (this.getLoadType()) {
-            case PING -> receiver.receivePing(port);
-            case FILE -> receiver.receiveFile(port);
-            case VIDEO -> receiver.receiveVideo(port);
-        }
+        if (this.options != null) receiver.changeSocketConfiguration(options);
+        receiver.receive(this.getLoadType());
     }
 
     private LoadReceiver getReceiver() {
         return switch (this.getConnectionType()) {
-            case TCP -> new TCPLoadReceiver();
-            case UDP -> new UDPLoadReceiver();
+            case TCP -> new TCPLoadReceiver(port);
+            case UDP -> new UDPLoadReceiver(port);
         };
     }
 }

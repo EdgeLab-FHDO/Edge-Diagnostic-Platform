@@ -5,6 +5,8 @@ import DiagnosticsServer.Communication.RawServerData;
 import DiagnosticsServer.Communication.ServerPlatformConnection;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.ServerLoadManager;
+import DiagnosticsServer.Load.ServerSocketOptions;
+import DiagnosticsServer.Load.UDP.UDPServerSocketOptions;
 import LoadManagement.BasicLoadManager.ConnectionType;
 import LoadManagement.LoadType;
 import REST.Exception.RESTClientException;
@@ -49,14 +51,21 @@ public class Server {
         this.loadManager.receiveLoad();
     }
 
+    public void setSocketOptions(ServerSocketOptions options) {
+        this.loadManager.setSocketOptions(options);
+    }
+
     public static void main(String[] args) {
         try {
             if (args.length > 0) {
                 String baseURL = args[0];
                 String registerURL = args[1];
                 Server activeInstance = new Server(4445, baseURL,registerURL);
-                System.out.println("starting UDP");
-                activeInstance.receiveLoad(ConnectionType.UDP, LoadType.PING);
+                ServerSocketOptions options = new ServerSocketOptions();
+                //UDPServerSocketOptions options = new UDPServerSocketOptions();
+                activeInstance.setSocketOptions(options);
+                System.out.println("Starting Server");
+                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
             } else {
                 System.out.println("No arguments");
             }
