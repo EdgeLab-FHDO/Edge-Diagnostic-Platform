@@ -1,4 +1,6 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.TCP;
+
+import DiagnosticsClient.Load.ClientSocketOptions;
 
 public class TCPClientSocketOptions extends ClientSocketOptions {
     private boolean keepAlive;

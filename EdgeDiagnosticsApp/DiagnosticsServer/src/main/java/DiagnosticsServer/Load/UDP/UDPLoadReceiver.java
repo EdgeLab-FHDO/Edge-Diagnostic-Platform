@@ -1,7 +1,8 @@
-package DiagnosticsServer.Load;
+package DiagnosticsServer.Load.UDP;
 
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.Exception.UDP.UDPConnectionException;
+import DiagnosticsServer.Load.LoadReceiver;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

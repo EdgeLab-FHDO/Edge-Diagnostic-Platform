@@ -1,4 +1,4 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.LoadTypes;
 
 import LoadManagement.LoadType;
 

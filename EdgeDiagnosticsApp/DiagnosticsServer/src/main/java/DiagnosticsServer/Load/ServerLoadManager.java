@@ -1,6 +1,8 @@
 package DiagnosticsServer.Load;
 
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
+import DiagnosticsServer.Load.TCP.TCPLoadReceiver;
+import DiagnosticsServer.Load.UDP.UDPLoadReceiver;
 import LoadManagement.BasicLoadManager;
 import LoadManagement.LoadType;
 

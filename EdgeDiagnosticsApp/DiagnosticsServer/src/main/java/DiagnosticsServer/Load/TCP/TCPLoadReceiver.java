@@ -1,7 +1,8 @@
-package DiagnosticsServer.Load;
+package DiagnosticsServer.Load.TCP;
 
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.Exception.TCP.TCPConnectionException;
+import DiagnosticsServer.Load.LoadReceiver;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

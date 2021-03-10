@@ -3,6 +3,9 @@ package DiagnosticsClient.Load;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import DiagnosticsClient.Communication.ServerInformation;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
+import DiagnosticsClient.Load.TCP.TCPLoadSender;
+import DiagnosticsClient.Load.UDP.UDPLoadSender;
 import LoadManagement.BasicLoadManager;
 
 public class ClientLoadManager extends BasicLoadManager {

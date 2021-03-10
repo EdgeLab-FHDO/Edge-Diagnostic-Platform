@@ -1,4 +1,6 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.UDP;
+
+import DiagnosticsClient.Load.ClientSocketOptions;
 
 public class UDPClientSocketOptions extends ClientSocketOptions {
 

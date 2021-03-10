@@ -1,5 +1,6 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.LoadTypes;
 
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import LoadManagement.LoadType;
 
 import java.util.concurrent.ThreadLocalRandom;

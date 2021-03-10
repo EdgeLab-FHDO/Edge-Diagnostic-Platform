@@ -1,6 +1,7 @@
 package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Load.Exception.LoadSendingException;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 
 public abstract class LoadSender {
 

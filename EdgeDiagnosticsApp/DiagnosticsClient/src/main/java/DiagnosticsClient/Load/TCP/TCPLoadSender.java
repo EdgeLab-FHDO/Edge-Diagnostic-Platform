@@ -1,6 +1,10 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.TCP;
 
+import DiagnosticsClient.Load.ClientSocketOptions;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.TCP.TCPConnectionException;
+import DiagnosticsClient.Load.LoadSender;
+import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

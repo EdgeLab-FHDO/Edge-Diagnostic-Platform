@@ -1,7 +1,11 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Load.UDP;
 
+import DiagnosticsClient.Load.ClientSocketOptions;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;
+import DiagnosticsClient.Load.LoadSender;
+import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.IOException;
 import java.net.*;
