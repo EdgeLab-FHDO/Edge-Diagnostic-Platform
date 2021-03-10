@@ -21,4 +21,5 @@ public abstract class LoadSender {
     }
 
     public abstract void send(DiagnosticsLoad load) throws LoadSendingException;
+    public abstract void changeSocketConfiguration(ClientSocketOptions options);
 }

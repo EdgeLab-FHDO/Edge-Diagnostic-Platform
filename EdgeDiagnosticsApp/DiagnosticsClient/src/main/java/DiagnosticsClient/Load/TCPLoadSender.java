@@ -7,13 +7,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.net.StandardSocketOptions.IP_TOS;
+import static java.net.StandardSocketOptions.SO_LINGER;
+
 public class TCPLoadSender extends LoadSender {
+
+    private TCPClientSocketOptions socketConfig;
 
     public TCPLoadSender(String address, int port) {
         super(address, port);
+        socketConfig = new TCPClientSocketOptions(); //Start with default values
     }
 
     @Override
@@ -23,6 +30,11 @@ public class TCPLoadSender extends LoadSender {
             case FILE -> sendFile();
             case VIDEO -> sendVideo();
         }
+    }
+
+    @Override
+    public void changeSocketConfiguration(ClientSocketOptions options) {
+        this.socketConfig = (TCPClientSocketOptions) options;
     }
 
     private long singlePing(byte[] pingData, BufferedOutputStream out, BufferedReader in) throws IOException {
@@ -53,6 +65,8 @@ public class TCPLoadSender extends LoadSender {
                 BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
         ) {
+            configureSocket(clientSocket);
+            printSocketOptions(clientSocket);
             System.out.println(screenMessage);
             while (messagesSent < times) {
                 latencies.add(singlePing(pingMessage,out,in));
@@ -73,5 +87,24 @@ public class TCPLoadSender extends LoadSender {
 
     private void sendVideo() {
 
+    }
+
+    private void configureSocket(Socket socket) throws IOException {
+        socket.setKeepAlive(socketConfig.getKeepAlive());
+        socket.setTcpNoDelay(!socketConfig.getNagleAlgorithm());
+        socket.setReuseAddress(socketConfig.getReuseAddress());
+        socket.setReceiveBufferSize(socketConfig.getReceiveBufferSize());
+        socket.setSendBufferSize(socketConfig.getSendBufferSize());
+        socket.setOption(SO_LINGER,socketConfig.getLinger());
+        socket.setOption(IP_TOS,socketConfig.getIpTOS());
+    }
+
+    private void printSocketOptions(Socket socket) throws IOException {
+        System.out.println("Socket properties");
+        var options = socket.supportedOptions();
+        for (var option: options) {
+            System.out.print(option.name() + " : ");
+            System.out.println(socket.getOption(option));
+        }
     }
 }
