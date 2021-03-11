@@ -13,7 +13,8 @@
         {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]},
         {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
         {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
-        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]}
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
+        {"name" : "report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
@@ -157,6 +158,20 @@
       "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in" : "rest.report",
+      "out" : "util.fileOut",
+      "commands" : {
+        "report_latency $path $content": "file_out append $path $content"
+      }
+    },
+    {
+      "in" : "rest.report",
+      "out" : "console.out",
+      "commands" : {
+        "report_latency $path $content": "console append to $path information: $content"
       }
     }
   ]

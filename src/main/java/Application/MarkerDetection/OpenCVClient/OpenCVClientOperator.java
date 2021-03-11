@@ -1,15 +1,20 @@
 package Application.MarkerDetection.OpenCVClient;
 
 import Application.Utilities.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opencv.core.Mat;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -19,6 +24,7 @@ public class OpenCVClientOperator {
     private DataOutputStream out;
     private DetectMarker detector;
     private ObjectMapper mapper;
+    private String clientId;
 
     //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
     private final String fileName= "singlemarkerssource.png";
@@ -26,9 +32,11 @@ public class OpenCVClientOperator {
     private final String fileExtension = "png";
     private Mat subject;
     private BufferedImage currentImage;
+    private List<String> reportQueue;
 
     public Semaphore ipLock;
     public Semaphore serverLock;
+    public Semaphore reportLock;
 
     //Server Communication Properties
     public boolean utilizeServer;
@@ -39,6 +47,7 @@ public class OpenCVClientOperator {
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
     public ProcessingRunner processingRunner;
+    public LatencyReporterRunner reportRunner;
 
     private static OpenCVClientOperator instance = null;
 
@@ -48,9 +57,12 @@ public class OpenCVClientOperator {
         mapper = new ObjectMapper();
         ipLock = new Semaphore(1);
         serverLock = new Semaphore(1);
+        reportLock = new Semaphore(1);
         utilizeServer = false;
         detector = new DetectMarker();
         connected = false;
+        reportQueue = new ArrayList<>();
+        clientId = "";
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -125,13 +137,13 @@ public class OpenCVClientOperator {
 
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
-        String clientId = "";
         String masterUrl = "";
         String beatCommand = "";
         String getServerCommand = "";
+        String latencyReportCommand = "";
         processingRunner = new ProcessingRunner();
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -154,6 +166,10 @@ public class OpenCVClientOperator {
                         getServerCommand = argument[1];
                         missingParameterList.remove("GET_SERVER_COMMAND");
                         break;
+                    case "LATENCY_REPORT_COMMAND":
+                        latencyReportCommand = argument[1];
+                        missingParameterList.remove("LATENCY_REPORT_COMMAND");
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
                 }
@@ -165,10 +181,12 @@ public class OpenCVClientOperator {
         }
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
-        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
+        String reportUrl = masterUrl + latencyReportCommand;
 
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
+        reportRunner = new LatencyReporterRunner(reportUrl);
     }
 
     public void detectMarkerInServer() throws RemoteExecutionException {
@@ -194,14 +212,71 @@ public class OpenCVClientOperator {
         detector.detect(subject);
     }
 
-    public void markerDetection() {
+    //TODO move this to a latency reporter utility
+    public void queueLatencyReport(String location, boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
+        String timestamp = new SimpleDateFormat("YYYY-mm-dd_HH:mm:ss").format(new Date());
+        long latency = (endTime-startTime)/1000000;
+        String reportedIp="";
+        if(debugMode) {
+            System.out.println("[" + timestamp + "] Detected in " + location + " Execution Time: " + latency + "ms");
+        }
+        try {
+            ipLock.acquire();
+            reportedIp = ip;
+        } finally {
+            ipLock.release();
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode resultObject = mapper.createObjectNode();
+        resultObject.put("timestamp", timestamp);
+        resultObject.put("latency", latency);
+        resultObject.put("use_server", serverUsage);
+        resultObject.put("server_ip", reportedIp);
+
+        String result = mapper.writeValueAsString(resultObject);
+
+        try {
+            reportLock.acquire();
+            reportQueue.add(result);
+        } finally {
+            reportLock.release();
+        }
+    }
+
+    public String getReportBody() {
+        String returnedResult = "";
+        try {
+            reportLock.acquire();
+            if(!reportQueue.isEmpty()) {
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode result = mapper.createObjectNode();
+                String reportFileName = "report_" + clientId + ".txt";
+
+                result.put("path", reportFileName);
+                result.put("content", String.join("", reportQueue));
+                returnedResult = mapper.writeValueAsString(result);
+                reportQueue.clear();
+            }
+        } catch (InterruptedException | JsonProcessingException e) {
+            e.printStackTrace();
+        } finally {
+            reportLock.release();
+        }
+        return returnedResult;
+    }
+
+    public void markerDetection() throws JsonProcessingException, InterruptedException {
         Mat result;
         long startTime = System.nanoTime();
         String location = "Client";
         subject = ImageProcessor.getImageMat(fileName);
+        boolean serverUsage = false;
 
         try {
             serverLock.acquire();
+            serverUsage = utilizeServer;
+
             if(utilizeServer) {
                 detectMarkerInServer();
                 location = "Server";
@@ -210,6 +285,7 @@ public class OpenCVClientOperator {
             }
         } catch (RemoteExecutionException e) {
             detectMarkerInClient();
+            serverUsage = false;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -221,8 +297,6 @@ public class OpenCVClientOperator {
 
         long endTime = System.nanoTime();
 
-        if(debugMode) {
-            System.out.println("Detected in " + location + " Execution Time: " + ((endTime-startTime)/1000000) + "ms");
-        }
+        queueLatencyReport(location, serverUsage, startTime, endTime);
     }
 }

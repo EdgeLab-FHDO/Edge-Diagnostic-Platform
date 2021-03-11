@@ -7,6 +7,7 @@ public class OpenCVClient {
     private Thread processingThread;
     private Thread masterCommunicationThread;
     private Thread heartBeatThread;
+    private Thread latencyReporterThread;
 
     public static void main(String[] args) {
         OpenCVUtil.initOpenCVSharedLibrary();
@@ -21,10 +22,13 @@ public class OpenCVClient {
             activeClient.masterCommunicationThread.start();
             activeClient.processingThread = new Thread(activeOperator.processingRunner, "ProcessingThread");
             activeClient.processingThread.start();
+            activeClient.latencyReporterThread = new Thread(activeOperator.reportRunner, "LatencyReporterThread");
+            activeClient.latencyReporterThread.start();
 
             activeClient.heartBeatThread.join();
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
+            activeClient.latencyReporterThread.join();
         } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
         }
