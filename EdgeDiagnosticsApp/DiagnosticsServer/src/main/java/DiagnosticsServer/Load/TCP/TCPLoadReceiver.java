@@ -69,7 +69,7 @@ public class TCPLoadReceiver extends LoadReceiver {
                     BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
                     DataInputStream in2 = new DataInputStream(clientSocket.getInputStream())
             ){
-                long fileSize = in2.readLong();
+                int fileSize = in2.readInt();
                 int count;
                 byte[] buffer = new byte[4 * 1024];
                 while (fileSize > 0 && (count = in.read(buffer)) > 0) {

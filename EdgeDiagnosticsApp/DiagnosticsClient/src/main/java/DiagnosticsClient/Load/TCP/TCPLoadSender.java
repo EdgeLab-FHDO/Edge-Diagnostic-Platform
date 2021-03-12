@@ -94,14 +94,17 @@ public class TCPLoadSender extends LoadSender {
             System.out.println("Sending file " + fileName + "(" + fileSize + " bytes) to " + address
                     + ":" + port + ". Protocol TCP");
             int bytesRead;
-            out2.writeLong(fileSize);
+            long startTime = System.nanoTime();
+            out2.writeInt((int) fileSize); //Send file size first as a 32bit number (Max size 2GB)
             byte[] buffer = new byte[4 * 1024];
             while ((bytesRead = inFile.read(buffer)) > 0) {
                 out.write(buffer, 0, bytesRead);
             }
             out.flush();
             String response = in.readLine();
+            long latency = System.nanoTime() - startTime;
             System.out.println("Response: " + response);
+            System.out.println("Latency : " + latency + " ns");
             load.getFileToSend().deleteOnExit();
 
         } catch (IOException e) {
