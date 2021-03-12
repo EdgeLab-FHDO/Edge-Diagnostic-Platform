@@ -6,9 +6,7 @@ import DiagnosticsServer.Load.LoadReceiver;
 import DiagnosticsServer.Load.ServerSocketOptions;
 import LoadManagement.LoadType;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -61,6 +59,31 @@ public class TCPLoadReceiver extends LoadReceiver {
 
     private void receiveFile() throws LoadReceivingException {
 
+        try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
+            configureSocket(serverSocket);
+            File tempFile = File.createTempFile("file_load_test","tmp");
+            try (
+                    Socket clientSocket = serverSocket.accept();
+                    FileOutputStream outFile = new FileOutputStream(tempFile);
+                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
+                    BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
+                    DataInputStream in2 = new DataInputStream(clientSocket.getInputStream())
+            ){
+                long fileSize = in2.readLong();
+                int count;
+                byte[] buffer = new byte[4 * 1024];
+                while (fileSize > 0 && (count = in.read(buffer)) > 0) {
+                    outFile.write(buffer,0,count);
+                    fileSize -= count;
+                }
+                outFile.close();
+                long receivedData = tempFile.length();
+                String response = "Received " + receivedData + " bytes";
+                out.println(response);
+            }
+        } catch (IOException e) {
+            throw new TCPConnectionException("TCP connection failed", e);
+        }
     }
 
 

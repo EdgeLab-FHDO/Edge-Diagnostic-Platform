@@ -65,7 +65,7 @@ public class Server {
                 //UDPServerSocketOptions options = new UDPServerSocketOptions();
                 activeInstance.setSocketOptions(options);
                 System.out.println("Starting Server");
-                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
+                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.FILE);
             } else {
                 System.out.println("No arguments");
             }

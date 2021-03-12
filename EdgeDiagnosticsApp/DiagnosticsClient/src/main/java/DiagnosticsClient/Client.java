@@ -7,12 +7,16 @@ import DiagnosticsClient.Load.*;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
+import DiagnosticsClient.Load.LoadTypes.FileLoad;
 import DiagnosticsClient.Load.LoadTypes.PingLoad;
 import DiagnosticsClient.Load.TCP.TCPClientSocketOptions;
 import DiagnosticsClient.Load.UDP.UDPClientSocketOptions;
 import REST.Exception.RESTClientException;
 import LoadManagement.BasicLoadManager.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Client {
 
@@ -52,10 +56,13 @@ public class Client {
                 String getServerURL = args[3];
                 Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
                 PingLoad ping = new PingLoad(4,1000,1);
+                FileLoad file = new FileLoad(8 * 1024L);
+                //FileLoad file = new FileLoad("src/main/resources/test2.txt");
                 TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default
                 //UDPClientSocketOptions options = new UDPClientSocketOptions(); //Default
                 activeClient.setSocketOptions(options);
-                activeClient.sendLoad(ConnectionType.TCP,ping);
+                //activeClient.sendLoad(ConnectionType.TCP,ping);
+                activeClient.sendLoad(ConnectionType.TCP,file);
             } else {
                 System.out.println("No arguments");
             }
