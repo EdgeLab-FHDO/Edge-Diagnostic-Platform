@@ -5,23 +5,29 @@ plugins {
 }
 application {
     //Necessary configuration for application plugin, path to the main method
-    mainClassName 'InfrastructureManager.Master'
+    mainClassName = 'InfrastructureManager.Master'
 }
 
 group 'de.fh-dortmund'
 version '0.5'
 
-jar {
-    //Include the Main-Class Attribute so that the generated jar is executable using java -jar
-    manifest {
-        attributes "Main-Class": "InfrastructureManager.Master"
+task printInfo() {
+    doLast {
+        sourceSets.main.runtimeClasspath.files.each {
+            print "  " + it.path + "\n"
+        }
     }
 }
 
-jar {
-    //jar for Applications
+task fatJar(type: Jar) {
     manifest {
-        attributes "Main-Class": "Application.DockerApp"
+        attributes "Main-Class": mainClassName
+    }
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
 }
 
