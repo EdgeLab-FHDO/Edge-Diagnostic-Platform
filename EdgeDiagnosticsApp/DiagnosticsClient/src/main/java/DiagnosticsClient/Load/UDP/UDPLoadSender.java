@@ -5,6 +5,7 @@ import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;
 import DiagnosticsClient.Load.LoadSender;
+import DiagnosticsClient.Load.LoadTypes.FileLoad;
 import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.IOException;
@@ -26,7 +27,12 @@ public class UDPLoadSender extends LoadSender {
     public void send(DiagnosticsLoad load) throws LoadSendingException {
         switch (load.getType()) {
             case PING -> sendPing((PingLoad) load);
+            case FILE -> sendFile((FileLoad) load);
         }
+    }
+
+    private void sendFile(FileLoad load) {
+        System.err.println("File load not supported in UDP");
     }
 
     private long singlePing(byte[] data, InetAddress address, int port ,DatagramSocket socket) throws IOException {
