@@ -62,24 +62,32 @@ public class TCPLoadReceiver extends LoadReceiver {
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
             configureSocket(serverSocket);
             File tempFile = File.createTempFile("file_load_test","tmp");
+            FileOutputStream outFile = null;
             try (
                     Socket clientSocket = serverSocket.accept();
-                    FileOutputStream outFile = new FileOutputStream(tempFile);
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
                     BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
                     DataInputStream in2 = new DataInputStream(clientSocket.getInputStream())
             ){
-                int fileSize = in2.readInt();
-                int count;
-                byte[] buffer = new byte[4 * 1024];
-                while (fileSize > 0 && (count = in.read(buffer)) > 0) {
-                    outFile.write(buffer,0,count);
-                    fileSize -= count;
+                final int fileSize = in2.readInt();
+                int sizeCounter;
+                int count = 0;
+                while (count >= 0) {
+                    sizeCounter = fileSize;
+                    outFile = new FileOutputStream(tempFile);
+                    byte[] buffer = new byte[4 * 1024];
+                    while (sizeCounter > 0 && (count = in.read(buffer)) > 0) {
+                        outFile.write(buffer, 0, count);
+                        sizeCounter -= count;
+                    }
+                    outFile.close();
+                    long receivedData = tempFile.length();
+                    String response = "Received " + receivedData + " bytes";
+                    out.println(response);
                 }
-                outFile.close();
-                long receivedData = tempFile.length();
-                String response = "Received " + receivedData + " bytes";
-                out.println(response);
+            }
+            finally {
+                if (outFile != null) outFile.close();
             }
         } catch (IOException e) {
             throw new TCPConnectionException("TCP connection failed", e);

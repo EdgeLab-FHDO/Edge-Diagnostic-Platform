@@ -11,15 +11,21 @@ import java.io.RandomAccessFile;
 public class FileLoad extends DiagnosticsLoad {
 
     private final File fileToSend;
+    private final int times;
+    private final int waitBetweenSend_ms;
 
-    public FileLoad(long sizeInBytes) throws FileCreationException {
+    public FileLoad(int times, int waitBetweenSend_ms,long sizeInBytes) throws FileCreationException {
         super(LoadType.FILE);
+        this.times = times;
+        this.waitBetweenSend_ms = waitBetweenSend_ms;
         String path = "src/main/resources/fileLoad";
         this.fileToSend = createFileBySize(path, sizeInBytes);
     }
 
-    public FileLoad(String filePath) throws FileLoadException {
+    public FileLoad(int times, int waitBetweenSend_ms,String filePath) throws FileLoadException {
         super(LoadType.FILE);
+        this.times = times;
+        this.waitBetweenSend_ms = waitBetweenSend_ms;
         File temp = new File(filePath);
         if (!temp.exists()) throw new FileLoadException("File does not exist!");
         this.fileToSend = temp;
@@ -27,6 +33,14 @@ public class FileLoad extends DiagnosticsLoad {
 
     public File getFileToSend() {
         return fileToSend;
+    }
+
+    public int getTimes() {
+        return times;
+    }
+
+    public int getWaitBetweenSend_ms() {
+        return waitBetweenSend_ms;
     }
 
     private File createFileBySize(String path, long sizeInBytes) throws FileCreationException {

@@ -78,36 +78,54 @@ public class TCPLoadSender extends LoadSender {
         }
     }
 
-    private void sendFile(FileLoad load) throws TCPConnectionException {
-        String address = this.getAddress();
-        int port = this.getPort();
+    private long singleFile(File load, BufferedOutputStream out, BufferedReader in) throws TCPConnectionException {
         try (
-                Socket clientSocket = new Socket(address, port);
-                BufferedInputStream inFile = new BufferedInputStream(new FileInputStream(load.getFileToSend()));
-                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
-                DataOutputStream out2 = new DataOutputStream(clientSocket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                BufferedInputStream inFile = new BufferedInputStream(new FileInputStream(load))
         ){
-            configureSocket(clientSocket);
-            long fileSize = load.getFileToSend().length();
-            String fileName = load.getFileToSend().getName();
-            System.out.println("Sending file " + fileName + "(" + fileSize + " bytes) to " + address
-                    + ":" + port + ". Protocol TCP");
             int bytesRead;
             long startTime = System.nanoTime();
-            out2.writeInt((int) fileSize); //Send file size first as a 32bit number (Max size 2GB)
             byte[] buffer = new byte[4 * 1024];
             while ((bytesRead = inFile.read(buffer)) > 0) {
                 out.write(buffer, 0, bytesRead);
             }
             out.flush();
             String response = in.readLine();
-            long latency = System.nanoTime() - startTime;
-            System.out.println("Response: " + response);
-            System.out.println("Latency : " + latency + " ns");
-            load.getFileToSend().deleteOnExit();
-
+            //System.out.println("Response: " + response);
+            return System.nanoTime() - startTime;
         } catch (IOException e) {
+            throw new TCPConnectionException("Sending file failed", e);
+        }
+    }
+
+    private void sendFile(FileLoad load) throws TCPConnectionException {
+        String address = this.getAddress();
+        int port = this.getPort();
+        int times = load.getTimes();
+        int interval = load.getWaitBetweenSend_ms();
+        File fileToSend = load.getFileToSend();
+        long fileSize = fileToSend.length();
+        String fileName = fileToSend.getName();
+        long[] latencies = new long[times];
+        try (
+                Socket clientSocket = new Socket(address, port);
+                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
+                DataOutputStream out2 = new DataOutputStream(clientSocket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+        ){
+            configureSocket(clientSocket);
+            System.out.println("Sending file " + fileName + "(" + fileSize + " bytes) to " + address
+                    + ":" + port + ". Protocol TCP");
+            out2.writeInt((int) fileSize); //Send file size first as a 32bit number (Max size 2GB)
+            for (int i = 0; i < times; i++) {
+                latencies[i] = singleFile(fileToSend,out,in);
+                Thread.sleep(interval);
+            }
+            System.out.println("File load test finished");
+            double avgLatency = Arrays.stream(latencies).average().orElse(0);
+            System.out.println("Average latency: " + avgLatency + " ns. Times that the File was sent = "
+                    + latencies.length);
+            fileToSend.deleteOnExit();
+        } catch (IOException | InterruptedException e) {
             throw new TCPConnectionException("TCP Connection failed: ",e);
         }
     }
