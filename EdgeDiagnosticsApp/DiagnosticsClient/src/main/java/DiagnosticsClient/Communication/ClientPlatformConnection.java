@@ -11,7 +11,7 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
     private final String getServerURL;
 
     public ClientPlatformConnection(String baseURL, String registerURL, String assignURL, String getServerURL) {
-        super(baseURL,registerURL);
+        super(baseURL,registerURL,"");
         this.assignURL = assignURL;
         this.getServerURL = getServerURL;
     }
