@@ -2,6 +2,7 @@ plugins {
     //Application plugin which implicitly includes java plugin
     //Makes the app runnable on CL (gradle run)
     id 'application'
+    id "com.palantir.docker" version "0.26.0"
 }
 application {
     //Necessary configuration for application plugin, path to the main method
@@ -11,13 +12,7 @@ application {
 group 'de.fh-dortmund'
 version '0.5'
 
-task printInfo() {
-    doLast {
-        sourceSets.main.runtimeClasspath.files.each {
-            print "  " + it.path + "\n"
-        }
-    }
-}
+
 
 task fatJar(type: Jar) {
     manifest {
@@ -29,6 +24,13 @@ task fatJar(type: Jar) {
     from {
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
+}
+
+docker {
+    dependsOn fatJar
+    name "${project.name.toLowerCase()}:${project.version}"
+    dockerfile file('Dockerfile')
+    files tasks.fatJar.outputs.files
 }
 
 run {
