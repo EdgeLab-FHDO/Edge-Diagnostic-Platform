@@ -2,18 +2,19 @@ package Application.Utilities;
 
 import java.io.IOException;
 
-public class EdpHeartbeat {
+public class HeartBeatOperator {
     public String url;
     public String body;
     private final RESTHandler handler;
     
-    public EdpHeartbeat(String url, String body) {
+    public HeartBeatOperator(String url, String body) {
         this.url = url;
         this.body = body;
         this.handler = new RESTHandler();
     }
 
     public void beat() throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
+        System.out.println("trying to beat");
         handler.sendPostRequest(url, body);
     }
 }

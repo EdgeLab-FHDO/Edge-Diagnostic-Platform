@@ -10,6 +10,7 @@ RUN chmod +x install.sh && sync && ./install.sh && rm install.sh
 
 #copy and build codes
 COPY bash/OpenCVCommon/build_classes.sh build_classes.sh
+COPY java/Application/Commons/*.java /Application/Commons/
 COPY java/Application/MarkerDetection/OpenCVClient/*.java /Application/MarkerDetection/OpenCVClient/
 COPY java/Application/Utilities/*.java /Application/Utilities/
 WORKDIR /

@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import Application.Commons.CoreOperator;
 import Application.Utilities.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opencv.core.Mat;
@@ -15,7 +16,7 @@ import org.opencv.core.Mat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class OpenCVServerOperator {
+public class OpenCVServerOperator implements CoreOperator {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private DataInputStream in;
@@ -146,5 +147,11 @@ public class OpenCVServerOperator {
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+        startBeater();
+    }
+
+    @Override
+    public void startBeater() {
+        beatRunner.resume();
     }
 }

@@ -1,5 +1,6 @@
 package Application.MarkerDetection.OpenCVClient;
 
+import Application.Commons.CoreOperator;
 import Application.Utilities.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,14 +12,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class OpenCVClientOperator {
+public class OpenCVClientOperator implements CoreOperator {
     private Socket clientSocket;
     private BufferedReader in;
     private DataOutputStream out;
@@ -44,6 +44,7 @@ public class OpenCVClientOperator {
     private int port;
     public boolean connected;
 
+    public RegistrationRunner registrationRunner;
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
     public ProcessingRunner processingRunner;
@@ -63,6 +64,10 @@ public class OpenCVClientOperator {
         connected = false;
         reportQueue = new ArrayList<>();
         clientId = "";
+    }
+
+    public void startBeater() {
+        beatRunner.resume();
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -138,12 +143,13 @@ public class OpenCVClientOperator {
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
         String masterUrl = "";
+        String registerCommand = "";
         String beatCommand = "";
         String getServerCommand = "";
         String latencyReportCommand = "";
         processingRunner = new ProcessingRunner();
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -157,6 +163,10 @@ public class OpenCVClientOperator {
                     case "MASTER_URL":
                         masterUrl = argument[1];
                         missingParameterList.remove("MASTER_URL");
+                        break;
+                    case "REGISTER_COMMAND":
+                        registerCommand = argument[1];
+                        missingParameterList.remove("REGISTER_COMMAND");
                         break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
@@ -179,12 +189,15 @@ public class OpenCVClientOperator {
         if(missingParameterList.size() > 0) {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
+        String registrationUrl = masterUrl +registerCommand;
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
         String reportUrl = masterUrl + latencyReportCommand;
 
+        registrationRunner = new RegistrationRunner(instance, registrationUrl, beatBody);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+        beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
         reportRunner = new LatencyReporterRunner(reportUrl);
     }
