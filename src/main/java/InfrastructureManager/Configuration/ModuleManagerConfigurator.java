@@ -2,11 +2,13 @@ package InfrastructureManager.Configuration;
 
 import InfrastructureManager.Configuration.Exception.ConfigurationException;
 import InfrastructureManager.Configuration.RawData.ModulesConfigurationFileData;
+import InfrastructureManager.Master;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Configurator class for the {@link ModuleManager}, that reads the values in the configuration file
@@ -16,6 +18,27 @@ import java.io.IOException;
 public class ModuleManagerConfigurator {
 
     private final ModuleManager manager;
+
+    /**
+     * Constructor of the class. Uses an {@link ObjectMapper} object to read data from the default configuration file,
+     * and create an object that represents that data of the type {@link ModulesConfigurationFileData}.
+     * With this object, it creates and initializes a {@link ModuleManager}.
+     * @throws ConfigurationException If an error occurs while reading the file or parsing it from JSON.
+     */
+    public ModuleManagerConfigurator() throws ConfigurationException {
+        ObjectMapper mapper = new ObjectMapper();
+        manager = new ModuleManager();
+        String path = Master.DEFAULT_CONFIG_PATH;
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(path))
+        {
+            //Map the contents of the JSON file to a java object and initialize the manager with it.
+            manager.initialize(mapper.readValue(in, ModulesConfigurationFileData.class));
+
+            //manager.initialize(mapper.readValue(configFile, ModulesConfigurationFileData.class));
+        } catch (IOException e) {
+            throw new ConfigurationException("Error while reading JSON Config File",e);
+        }
+    }
 
     /**
      * Constructor of the class. Uses an {@link ObjectMapper} object to read data from a configuration file,

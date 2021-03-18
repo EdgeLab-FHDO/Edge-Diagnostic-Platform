@@ -4,9 +4,9 @@
 /out/
 src/test/resources/testScenario.json
 /UTF16
-EdgeDiagnosticsApp/DiagnosticsClient/build
-EdgeDiagnosticsApp/DiagnosticsServer/build
-EdgeDiagnosticsApp/CommonUtils/build
-EdgeDiagnosticsApp/DiagnosticsClient/out
-EdgeDiagnosticsApp/DiagnosticsServer/out
-EdgeDiagnosticsApp/CommonUtils/out
+/EdgeDiagnosticsApp/CommonUtils/build/
+/EdgeDiagnosticsApp/CommonUtils/out/
+/EdgeDiagnosticsApp/DiagnosticsClient/build/
+/EdgeDiagnosticsApp/DiagnosticsClient/out/
+/EdgeDiagnosticsApp/DiagnosticsServer/build/
+/EdgeDiagnosticsApp/DiagnosticsServer/out/
