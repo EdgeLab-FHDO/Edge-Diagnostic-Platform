@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 
 public class HeartBeatRunner implements Runnable {
     //TODO implement and use exit and running values
-    private final HeartBeatOperator beater;
+    public final HeartBeatOperator beater;
 
     private final int interval;
 

@@ -22,7 +22,11 @@ public class OpenCVServerOperator implements CoreOperator {
     private DataInputStream in;
     private PrintWriter out;
     private DetectMarker detector;
+
+    private String serverId;
+    private String serverIp;
     private int port;
+    private boolean connected;
 
     private String fileName;
 
@@ -30,7 +34,7 @@ public class OpenCVServerOperator implements CoreOperator {
 
     public ServerRunner serverRunner;
     public HeartBeatRunner beatRunner;
-    private boolean connected;
+    private String beatBody;
 
     private static OpenCVServerOperator instance = null;
 
@@ -40,6 +44,9 @@ public class OpenCVServerOperator implements CoreOperator {
         fileName= "read.png";
         detector = new DetectMarker();
         connected = false;
+        beatBody = "";
+        serverId = "";
+        serverIp = "";
     }
 
     public void startConnection() throws IOException {
@@ -49,11 +56,13 @@ public class OpenCVServerOperator implements CoreOperator {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new DataInputStream(clientSocket.getInputStream());
             connected = true;
+            updateBeatBody();
         }
     }
 
     public void processing() throws IOException, IllegalArgumentException {
         currentImage = ImageIO.read(in);
+        
         if(currentImage != null) {
             Mat subject = ImageProcessor.getBufferedImageMat(currentImage);
 
@@ -83,6 +92,7 @@ public class OpenCVServerOperator implements CoreOperator {
             clientSocket.close();
             serverSocket.close();
             connected = false;
+            updateBeatBody();
         } catch (IOException | NullPointerException e) {
             throw new RemoteExecutionException(e);
         }
@@ -99,10 +109,7 @@ public class OpenCVServerOperator implements CoreOperator {
         String[] argument;
         String masterUrl = "";
         String beatCommand = "";
-        String serverId = "";
-        String serverIp = "";
         int interval = 1000;
-        boolean connected = false;
         serverRunner = new ServerRunner();
 
         List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
@@ -128,9 +135,6 @@ public class OpenCVServerOperator implements CoreOperator {
                         beatCommand = argument[1];
                         missingParameterList.remove("BEAT_COMMAND");
                         break;
-                    case "CONNECTED":
-                        connected = Boolean.parseBoolean(argument[1]);
-                        break;
                     case "PORT":
                         port = Integer.parseInt(argument[1]);
                         missingParameterList.remove("PORT");
@@ -149,9 +153,18 @@ public class OpenCVServerOperator implements CoreOperator {
         }
 
         String beatUrl = masterUrl + beatCommand;
-        String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
+        updateBeatBodyContent();
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         startMasterCommunication();
+    }
+
+    private void updateBeatBodyContent() {
+        beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
+    }
+
+    private void updateBeatBody() {
+        updateBeatBodyContent();
+        beatRunner.beater.setBody(beatBody);
     }
 
     @Override

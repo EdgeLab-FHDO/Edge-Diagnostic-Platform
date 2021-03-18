@@ -16,4 +16,8 @@ public class HeartBeatOperator {
     public void beat() throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
         handler.sendPostRequest(url, body);
     }
+
+    public void setBody(String body){
+        this.body = body;
+    }
 }
