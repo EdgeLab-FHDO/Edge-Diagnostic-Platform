@@ -1,5 +1,14 @@
 package DiagnosticsClient.Load;
 
+import DiagnosticsClient.Load.TCP.TCPClientSocketOptions;
+import DiagnosticsClient.Load.UDP.UDPClientSocketOptions;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION)
+@JsonSubTypes({@JsonSubTypes.Type(TCPClientSocketOptions.class),
+        @JsonSubTypes.Type(UDPClientSocketOptions.class)})
 public class ClientSocketOptions {
     private int receiveBufferSize;
     private int sendBufferSize;
@@ -16,6 +25,7 @@ public class ClientSocketOptions {
         this.timeout = 0;
     }
 
+    @JsonGetter("reuseAddress")
     public boolean getReuseAddress() {
         return reuseAddress;
     }

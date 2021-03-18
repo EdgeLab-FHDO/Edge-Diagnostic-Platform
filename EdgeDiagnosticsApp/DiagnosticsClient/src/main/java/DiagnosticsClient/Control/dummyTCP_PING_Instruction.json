@@ -2,7 +2,8 @@
   "load" : {
     "type" : "PING",
     "repetitions" : 1000,
-    "interval" : 1
+    "interval" : 1,
+    "dataLength" : 4
   },
   "connection" : {
     "type" : "TCP",

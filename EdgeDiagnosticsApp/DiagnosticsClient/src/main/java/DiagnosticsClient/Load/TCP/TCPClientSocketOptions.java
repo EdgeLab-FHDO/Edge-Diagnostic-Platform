@@ -1,6 +1,7 @@
 package DiagnosticsClient.Load.TCP;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 public class TCPClientSocketOptions extends ClientSocketOptions {
     private boolean keepAlive;
@@ -16,6 +17,7 @@ public class TCPClientSocketOptions extends ClientSocketOptions {
         this.linger=-1;
     }
 
+    @JsonGetter("keepAlive")
     public boolean getKeepAlive() {
         return keepAlive;
     }
@@ -24,6 +26,7 @@ public class TCPClientSocketOptions extends ClientSocketOptions {
         this.keepAlive = keepAlive;
     }
 
+    @JsonGetter("nagleAlgorithm")
     public boolean getNagleAlgorithm() {
         return nagleAlgorithm;
     }

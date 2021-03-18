@@ -17,7 +17,8 @@
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
-        {"name": "get2", "URL": "/client/get_node/:client_id"}
+        {"name": "get2", "URL": "/client/get_node/:client_id"},
+        {"name" : "get_diag", "URL": "/diagnostics/instructions"}
       ]
     },
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
@@ -157,6 +158,13 @@
       "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.get_diag",
+      "commands" : {
+        "dummy_ping" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
       }
     }
   ]

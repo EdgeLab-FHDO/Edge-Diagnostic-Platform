@@ -3,6 +3,9 @@ package DiagnosticsClient.Load.LoadTypes;
 import DiagnosticsClient.Load.Exception.FileLoad.FileCreationException;
 import DiagnosticsClient.Load.Exception.FileLoad.FileLoadException;
 import LoadManagement.LoadType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,21 +13,26 @@ import java.io.RandomAccessFile;
 
 public class FileLoad extends RepetitiveLoad {
 
+    @JsonIgnore
     private final File fileToSend;
 
-    public FileLoad(int times, int waitBetweenSend_ms,long sizeInBytes) throws FileCreationException {
+    @JsonCreator
+    public FileLoad(@JsonProperty("times") int times,
+                    @JsonProperty("interval") int waitBetweenSend_ms,
+                    @JsonProperty("dataLength") long sizeInBytes,
+                    @JsonProperty("src") String src) throws FileLoadException {
         super(LoadType.FILE,times,waitBetweenSend_ms,sizeInBytes);
-        String path = "src/main/resources/fileLoad";
-        this.fileToSend = createFileBySize(path, sizeInBytes);
+        if (src == null || src.equals("")) {
+            String path = "src/main/resources/fileLoad";
+            this.fileToSend = createFileBySize(path, sizeInBytes);
+        } else {
+            File temp = new File(src);
+            if (!temp.exists()) throw new FileLoadException("File does not exist!");
+            this.fileToSend = temp;
+            this.setDataLength(temp.length());
+        }
     }
 
-    public FileLoad(int times, int waitBetweenSend_ms,String filePath) throws FileLoadException {
-        super(LoadType.FILE,times,waitBetweenSend_ms,0);
-        File temp = new File(filePath);
-        if (!temp.exists()) throw new FileLoadException("File does not exist!");
-        this.fileToSend = temp;
-        this.setDataLength(temp.length());
-    }
 
     public File getFileToSend() {
         return fileToSend;

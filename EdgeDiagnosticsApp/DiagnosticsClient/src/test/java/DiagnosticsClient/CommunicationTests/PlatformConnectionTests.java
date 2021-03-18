@@ -21,7 +21,8 @@ public class PlatformConnectionTests {
             "http://localhost:10500/rest",
             "/client/register",
             "/client/assign",
-            "/client/get_node/diagnostics_client");
+            "/client/get_node/diagnostics_client",
+            "/diagnostics/instructions");
     private final String json = "{\"id\":\"diagnostics_client\"}";
 
 

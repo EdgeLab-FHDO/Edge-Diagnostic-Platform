@@ -1,6 +1,7 @@
 package DiagnosticsClient.Load.UDP;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
+import com.fasterxml.jackson.annotation.JsonGetter;
 
 public class UDPClientSocketOptions extends ClientSocketOptions {
 
@@ -16,6 +17,7 @@ public class UDPClientSocketOptions extends ClientSocketOptions {
         this.multicastLoop = true;
     }
 
+    @JsonGetter("broadcast")
     public boolean getBroadcast() {
         return broadcast;
     }
@@ -24,6 +26,7 @@ public class UDPClientSocketOptions extends ClientSocketOptions {
         this.broadcast = broadcast;
     }
 
+    @JsonGetter("multicastLoop")
     public boolean getMulticastLoop() {
         return multicastLoop;
     }

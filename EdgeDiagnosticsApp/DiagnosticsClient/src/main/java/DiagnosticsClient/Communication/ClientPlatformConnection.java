@@ -10,8 +10,10 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
     private final String assignURL;
     private final String getServerURL;
 
-    public ClientPlatformConnection(String baseURL, String registerURL, String assignURL, String getServerURL) {
-        super(baseURL,registerURL,"");
+    public ClientPlatformConnection(String baseURL, String registerURL,
+                                    String assignURL, String getServerURL,
+                                    String instructionsURL) {
+        super(baseURL,registerURL,instructionsURL);
         this.assignURL = assignURL;
         this.getServerURL = getServerURL;
     }

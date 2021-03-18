@@ -3,6 +3,8 @@ package DiagnosticsClient;
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.Exception.ClientCommunicationException;
 import DiagnosticsClient.Communication.ServerInformation;
+import DiagnosticsClient.Control.InstructionManager;
+import DiagnosticsClient.Control.RawData.Instruction;
 import DiagnosticsClient.Load.*;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
@@ -21,13 +23,17 @@ import java.io.IOException;
 public class Client {
 
     private final ClientLoadManager loadManager;
+    private final InstructionManager instructionManager;
 
-    public Client(String baseURL, String registerURL, String assignURL, String getServerURL) throws ClientCommunicationException {
+    public Client(String baseURL, String registerURL,
+                  String assignURL, String getServerURL,
+                  String instructionsURL) throws ClientCommunicationException {
         try {
-            ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL, assignURL, getServerURL);
+            ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL, assignURL, getServerURL, instructionsURL);
             connection.register(this.getJsonRepresentation());
             ServerInformation server = connection.getServer(this.getJsonRepresentation());
             this.loadManager = new ClientLoadManager(server);
+            this.instructionManager = new InstructionManager(connection.getInstructions());
         } catch (JsonProcessingException | RESTClientException | ServerNotSetUpException e) {
             throw new ClientCommunicationException("Communication with diagnostics platform failed: ", e);
         }
@@ -36,6 +42,12 @@ public class Client {
     private String getJsonRepresentation() {
         String id = "diagnostics_client";
         return  "{\"id\":\"" + id + "\"}";
+    }
+
+    public void sendLoad() throws LoadSendingException {
+        this.setSocketOptions(instructionManager.getSocketOptions());
+        this.sendLoad(instructionManager.getConnectionType(),
+                instructionManager.getLoad());
     }
 
     public void sendLoad(ConnectionType connection, DiagnosticsLoad load) throws LoadSendingException {
@@ -54,15 +66,17 @@ public class Client {
                 String registerURL = args[1];
                 String assignURL = args[2];
                 String getServerURL = args[3];
-                Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
-                PingLoad ping = new PingLoad(1000,1,4);
-                FileLoad file = new FileLoad(10,10,8 * 1024L);
+                String instructionsURL = args[4];
+                Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL, instructionsURL);
+                //PingLoad ping = new PingLoad(1000,1,4);
+                //FileLoad file = new FileLoad(10,10,8 * 1024L,"");
                 //FileLoad file = new FileLoad("src/main/resources/test2.txt");
-                TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default
+                //TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default
                 //UDPClientSocketOptions options = new UDPClientSocketOptions(); //Default
-                activeClient.setSocketOptions(options);
+                //activeClient.setSocketOptions(options);
                 //activeClient.sendLoad(ConnectionType.TCP,ping);
-                activeClient.sendLoad(ConnectionType.TCP,file);
+                //activeClient.sendLoad(ConnectionType.TCP,file);
+                activeClient.sendLoad();
             } else {
                 System.out.println("No arguments");
             }

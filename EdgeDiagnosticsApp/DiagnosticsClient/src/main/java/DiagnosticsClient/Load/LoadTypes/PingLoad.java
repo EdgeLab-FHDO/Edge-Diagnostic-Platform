@@ -2,14 +2,21 @@ package DiagnosticsClient.Load.LoadTypes;
 
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import LoadManagement.LoadType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PingLoad extends RepetitiveLoad {
 
+    @JsonIgnore
     private byte[] data;
 
-    public PingLoad(int times, int pingInterval_ms,long dataLength) {
+    @JsonCreator
+    public PingLoad(@JsonProperty("times") int times,
+                    @JsonProperty("interval") int pingInterval_ms,
+                    @JsonProperty("dataLength") long dataLength) {
         super(LoadType.PING,times,pingInterval_ms,dataLength);
         fillData(dataLength);
     }
