@@ -55,7 +55,7 @@ public class Client {
                 String assignURL = args[2];
                 String getServerURL = args[3];
                 Client activeClient = new Client(baseURL,registerURL,assignURL,getServerURL);
-                PingLoad ping = new PingLoad(4,1000,1);
+                PingLoad ping = new PingLoad(1000,1,4);
                 FileLoad file = new FileLoad(10,10,8 * 1024L);
                 //FileLoad file = new FileLoad("src/main/resources/test2.txt");
                 TCPClientSocketOptions options = new TCPClientSocketOptions(); // Default

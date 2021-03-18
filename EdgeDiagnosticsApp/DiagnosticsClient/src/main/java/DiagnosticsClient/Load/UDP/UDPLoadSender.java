@@ -56,7 +56,7 @@ public class UDPLoadSender extends LoadSender {
             printSocketOptions(clientSocket);
             long[] latencies = new long[load.getTimes()];
             byte[] message = load.getData();
-            int interval = load.getPingInterval_ms();
+            int interval = load.getInterval_ms();
             InetAddress address = InetAddress.getByName(this.getAddress());
             int port = this.getPort();
             System.out.println("Pinging " + this.getAddress() + ":" + port + " with " +

@@ -53,8 +53,8 @@ public class TCPLoadSender extends LoadSender {
         byte[] pingMessage = load.getData();
         int dataLength = pingMessage.length;
         int times = load.getTimes();
-        int interval = load.getPingInterval_ms();
-        long[] latencies = new long[load.getTimes()];
+        int interval = load.getInterval_ms();
+        long[] latencies = new long[times];
         if (dataLength > 255 | dataLength < 1) throw new TCPConnectionException("Invalid length for ping message");
         String screenMessage = "Pinging " + address + ":" + port + " with " +
                 dataLength + " bytes of data " + times + " times. Protocol TCP";
@@ -66,7 +66,7 @@ public class TCPLoadSender extends LoadSender {
             configureSocket(clientSocket);
             printSocketOptions(clientSocket);
             System.out.println(screenMessage);
-            for (int i = 0; i < latencies.length; i++) {
+            for (int i = 0; i < times; i++) {
                 latencies[i] = singlePing(pingMessage,out,in);
                 Thread.sleep(interval);
             }
@@ -101,9 +101,9 @@ public class TCPLoadSender extends LoadSender {
         String address = this.getAddress();
         int port = this.getPort();
         int times = load.getTimes();
-        int interval = load.getWaitBetweenSend_ms();
+        int interval = load.getInterval_ms();
         File fileToSend = load.getFileToSend();
-        long fileSize = fileToSend.length();
+        long fileSize = load.getDataLength();
         String fileName = fileToSend.getName();
         long[] latencies = new long[times];
         try (
