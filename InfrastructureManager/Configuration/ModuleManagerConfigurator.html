@@ -116,6 +116,12 @@ extends java.lang.Object</pre>
 </thead>
 <tbody>
 <tr class="altColor">
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E()">ModuleManagerConfigurator</a></span>()</code></th>
+<td class="colLast">
+<div class="block">Constructor of the class.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(java.lang.String)">ModuleManagerConfigurator</a></span>&#8203;(java.lang.String&nbsp;configurationFilePath)</code></th>
 <td class="colLast">
 <div class="block">Constructor of the class.</div>
@@ -173,6 +179,20 @@ extends java.lang.Object</pre>
 </a>
 <h2>Constructor Details</h2>
 <ul class="blockList">
+<li class="blockList">
+<section class="detail">
+<h3><a id="&lt;init&gt;()">ModuleManagerConfigurator</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">ModuleManagerConfigurator</span>()
+                          throws <span class="exceptions"><a href="Exception/ConfigurationException.html" title="class in InfrastructureManager.Configuration.Exception">ConfigurationException</a></span></div>
+<div class="block">Constructor of the class. Uses an <code>ObjectMapper</code> object to read data from the default configuration file,
+ and create an object that represents that data of the type <a href="RawData/ModulesConfigurationFileData.html" title="class in InfrastructureManager.Configuration.RawData"><code>ModulesConfigurationFileData</code></a>.
+ With this object, it creates and initializes a <a href="../ModuleManagement/ModuleManager.html" title="class in InfrastructureManager.ModuleManagement"><code>ModuleManager</code></a>.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="Exception/ConfigurationException.html" title="class in InfrastructureManager.Configuration.Exception">ConfigurationException</a></code> - If an error occurs while reading the file or parsing it from JSON.</dd>
+</dl>
+</section>
+</li>
 <li class="blockList">
 <section class="detail">
 <h3><a id="&lt;init&gt;(java.lang.String)">ModuleManagerConfigurator</a></h3>
