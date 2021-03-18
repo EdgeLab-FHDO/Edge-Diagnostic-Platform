@@ -9,6 +9,7 @@ import InfrastructureManager.Modules.REST.RESTModule;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -105,5 +106,11 @@ public class POSTInputTests {
         Assert.assertEquals(500, response.getStatusCode());
         Assert.assertEquals(expected, response.asString());
         thread.interrupt();
+    }
+
+    @AfterClass
+    public static void close() throws ModuleManagerException {
+        Master.getInstance().getManager().exitAllModules();
+        Master.resetInstance();
     }
 }

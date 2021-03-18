@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.REST;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.REST.Exception.Server.ServerNotConfiguredException;
+import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 
 /**
@@ -61,6 +62,10 @@ public class RESTModule extends PlatformModule {
     @Override
     public void start() {
         startServerThread();
+        this.getOutputs().forEach( o -> {
+            GETOutput output = (GETOutput) o;
+            output.activate();
+        });
         super.start();
     }
 

@@ -60,7 +60,7 @@ public class ParametrizedGETOutput extends GETOutput {
      * Only runs once at the beginning
      */
     @Override
-    protected void activate() {
+    public void activate() {
         this.GETHandler = (Request request, Response response) -> {
             response.type("application/json");
             String parameterFromRequest = request.params(":" + this.parameter);
@@ -83,9 +83,9 @@ public class ParametrizedGETOutput extends GETOutput {
      * @param jsonBody JSON body that will be a GET resource
      */
     protected void addResource(String parameter, String jsonBody) {
-        if (!this.isActivated) {
+        /*if (!this.isActivated) {
             this.activate();
-        }
+        }*/
         this.info.put(parameter, jsonBody);
     }
 }

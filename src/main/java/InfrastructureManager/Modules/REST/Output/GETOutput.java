@@ -76,7 +76,7 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      * the REST server is already running.
      * Only runs once at the beginning
      */
-    protected void activate() {
+    public void activate() {
         try {
             RestServerRunner.serverCheck.acquire();
             get(this.URL, this.GETHandler);
@@ -95,9 +95,9 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      * @param jsonBody JSON body that will be a GET resource
      */
     protected void addResource(String jsonBody) {
-        if (!this.isActivated) {
+        /*if (!this.isActivated) {
             this.activate();
-        }
+        }*/
         this.toSend = jsonBody;
     }
 }
