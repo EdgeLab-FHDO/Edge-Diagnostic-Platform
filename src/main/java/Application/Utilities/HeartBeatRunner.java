@@ -7,14 +7,17 @@ public class HeartBeatRunner implements Runnable {
     //TODO implement and use exit and running values
     private final HeartBeatOperator beater;
 
+    private final int interval;
+
     private volatile boolean exit = false;
     private volatile boolean running = true;
     private volatile boolean paused = false;
     private final Semaphore pauseBlock;
 
-    public HeartBeatRunner(String url, String body) {
+    public HeartBeatRunner(String url, String body, int interval) {
         beater = new HeartBeatOperator(url, body);
         pauseBlock = new Semaphore(1);
+        this.interval = interval;
     }
     @Override
     public void run() {
@@ -29,7 +32,7 @@ public class HeartBeatRunner implements Runnable {
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(interval);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

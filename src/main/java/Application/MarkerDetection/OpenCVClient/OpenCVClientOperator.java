@@ -149,6 +149,7 @@ public class OpenCVClientOperator implements CoreOperator {
         String getServerCommand = "";
         String latencyReportCommand = "";
         processingRunner = new ProcessingRunner();
+        int interval = 1000;
 
         List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND"));
 
@@ -181,6 +182,9 @@ public class OpenCVClientOperator implements CoreOperator {
                         latencyReportCommand = argument[1];
                         missingParameterList.remove("LATENCY_REPORT_COMMAND");
                         break;
+                    case "INTERVAL":
+                        interval = Integer.parseInt(argument[1]);
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
                 }
@@ -197,7 +201,7 @@ public class OpenCVClientOperator implements CoreOperator {
         String reportUrl = masterUrl + latencyReportCommand;
 
         registrationRunner = new RegistrationRunner(instance, registrationUrl, beatBody);
-        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
         masterCommunicationRunner.pause();

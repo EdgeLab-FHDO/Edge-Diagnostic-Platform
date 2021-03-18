@@ -101,6 +101,7 @@ public class OpenCVServerOperator implements CoreOperator {
         String beatCommand = "";
         String serverId = "";
         String serverIp = "";
+        int interval = 1000;
         boolean connected = false;
         serverRunner = new ServerRunner();
 
@@ -134,6 +135,9 @@ public class OpenCVServerOperator implements CoreOperator {
                         port = Integer.parseInt(argument[1]);
                         missingParameterList.remove("PORT");
                         break;
+                    case "INTERVAL":
+                        interval = Integer.parseInt(argument[1]);
+                        break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
                 }
@@ -146,7 +150,7 @@ public class OpenCVServerOperator implements CoreOperator {
 
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
-        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         startMasterCommunication();
     }
 
