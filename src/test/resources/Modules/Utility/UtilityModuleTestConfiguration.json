@@ -9,7 +9,7 @@
       "in" : "console.in",
       "out" : "console.out",
       "commands" : {
-        "test $param" : "console $param"
+        "test $param" : "console oe $param"
       }
     },
     {

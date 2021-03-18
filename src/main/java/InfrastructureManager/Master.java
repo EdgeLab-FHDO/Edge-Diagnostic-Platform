@@ -8,6 +8,7 @@ import InfrastructureManager.ModuleManagement.ModuleManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Master Class of the Infrastructure Manager, singleton class.
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class Master {
 
-    private static final String DEFAULT_CONFIG_PATH = "src/main/resources/Configuration.json";
+    public static final String DEFAULT_CONFIG_PATH = "Configuration.json";
     private static Master instance = null;
 
     private ModuleManager manager;
@@ -30,7 +31,12 @@ public class Master {
      * @throws ConfigurationException if an error occurs while parsing the file or configuring the module manager
      */
     public void configure(String configPath) throws ConfigurationException {
-        ModuleManagerConfigurator configurator = new ModuleManagerConfigurator(configPath);
+        ModuleManagerConfigurator configurator;
+        if (!(configPath == null)) {
+            configurator = new ModuleManagerConfigurator(configPath);
+        } else {
+            configurator = new ModuleManagerConfigurator();
+        }
         manager = configurator.getConfiguredManager();
     }
 
@@ -100,7 +106,7 @@ public class Master {
                 }
             }
         }
-        return DEFAULT_CONFIG_PATH;
+        return null;
     }
 
     public static void main(String[] args) {
