@@ -20,6 +20,6 @@ public class RegistrationOperator {
     public void register() throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
         System.out.println("trying to register");
         handler.sendPostRequest(url, body);
-        activeOperator.startBeater();
+        activeOperator.startMasterCommunication();
     }
 }

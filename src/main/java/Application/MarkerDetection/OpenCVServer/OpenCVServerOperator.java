@@ -147,11 +147,11 @@ public class OpenCVServerOperator implements CoreOperator {
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
-        startBeater();
+        startMasterCommunication();
     }
 
     @Override
-    public void startBeater() {
+    public void startMasterCommunication() {
         beatRunner.resume();
     }
 }

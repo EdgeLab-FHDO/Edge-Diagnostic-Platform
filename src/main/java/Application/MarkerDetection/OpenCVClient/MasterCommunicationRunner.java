@@ -1,6 +1,7 @@
 package Application.MarkerDetection.OpenCVClient;
 
 import java.io.IOException;
+import java.util.concurrent.Semaphore;
 
 public class MasterCommunicationRunner implements Runnable {
     //TODO today, request assign client during the first time
@@ -8,16 +9,23 @@ public class MasterCommunicationRunner implements Runnable {
     private ConnectionEvaluator evaluation;
     public MasterCommunicator communicator;
 
+    private volatile boolean exit = false;
+    private volatile boolean running = true;
+    private volatile boolean paused = false;
+    private final Semaphore pauseBlock;
+
     public MasterCommunicationRunner(String masterUrl) {
         activeOperator = OpenCVClientOperator.getInstance();
         evaluation = new ConnectionEvaluator();
         communicator = new MasterCommunicator(masterUrl);
+        pauseBlock = new Semaphore(1);
     }
 
     @Override
     public void run() {
-        while(true) {
+        while(!exit) {
             try {
+                checkPause();
                 activeOperator.setupTcpConnection(communicator.getServer());
                 activeOperator.setServerUtilization(true);
             } catch (InterruptedException | IllegalArgumentException | IOException e) {
@@ -43,5 +51,26 @@ public class MasterCommunicationRunner implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    private void checkPause() throws InterruptedException {
+        if (paused) {
+            running = false;
+            pauseBlock.acquire();
+        }
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void resume() {
+        paused = false;
+        running = true;
+        pauseBlock.release();
     }
 }

@@ -66,8 +66,9 @@ public class OpenCVClientOperator implements CoreOperator {
         clientId = "";
     }
 
-    public void startBeater() {
+    public void startMasterCommunication() {
         beatRunner.resume();
+        masterCommunicationRunner.resume();
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -199,6 +200,7 @@ public class OpenCVClientOperator implements CoreOperator {
         beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
+        masterCommunicationRunner.pause();
         reportRunner = new LatencyReporterRunner(reportUrl);
     }
 
