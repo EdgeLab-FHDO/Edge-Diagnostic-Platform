@@ -31,7 +31,7 @@ docker {
     name "${project.name.toLowerCase()}:${project.version}"
     dockerfile file('Dockerfile')
     files tasks.fatJar.outputs.files
-    tag 'JuanDockerHub', "jpcr3108/${project.name.toLowerCase()}:${project.version}"
+    tag 'DockerHub', "edgelabfh/${project.name.toLowerCase()}:${project.version}"
 }
 
 run {
