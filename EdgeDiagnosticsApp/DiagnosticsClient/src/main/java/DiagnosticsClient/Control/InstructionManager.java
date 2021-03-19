@@ -10,25 +10,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class InstructionManager {
 
     private Instruction instruction;
+    private final ObjectMapper mapper;
 
-    public InstructionManager(String instructionJson) {
-        ObjectMapper mapper = new ObjectMapper();
+    public InstructionManager() {
+        mapper = new ObjectMapper();
+        instruction = null;
+    }
+
+    public Instruction createInstruction(String instructionJson) {
         try {
             instruction = mapper.readValue(instructionJson,Instruction.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-    }
-
-    public DiagnosticsLoad getLoad() {
-        return this.instruction.getLoad();
-    }
-
-    public BasicLoadManager.ConnectionType getConnectionType() {
-        return this.instruction.getConnection().getType();
-    }
-
-    public ClientSocketOptions getSocketOptions() {
-        return this.instruction.getConnection().getSocketOptions();
+        return instruction;
     }
 }
