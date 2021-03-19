@@ -170,7 +170,7 @@ java.lang.String&nbsp;parameter)</code></th>
 </thead>
 <tbody>
 <tr class="altColor" id="i0">
-<td class="colFirst"><code>protected void</code></td>
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#activate()">activate</a></span>()</code></th>
 <td class="colLast">
 <div class="block">Synchronize the thread with the RestServerRunner using a guarded block to ensure that the get handler is only activated if
@@ -279,7 +279,7 @@ java.lang.String&nbsp;parameter)</span></div>
 <li class="blockList">
 <section class="detail">
 <h3><a id="activate()">activate</a></h3>
-<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">activate</span>()</div>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">activate</span>()</div>
 <div class="block">Synchronize the thread with the RestServerRunner using a guarded block to ensure that the get handler is only activated if
  the REST server is already running.
  Only runs once at the beginning</div>
@@ -294,8 +294,7 @@ java.lang.String&nbsp;parameter)</span></div>
 <h3><a id="addResource(java.lang.String,java.lang.String)">addResource</a></h3>
 <div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">addResource</span>&#8203;(<span class="arguments">java.lang.String&nbsp;parameter,
 java.lang.String&nbsp;jsonBody)</span></div>
-<div class="block">Adds a given JSON body to be outputted.
- Checks first if the route has been created (Output is activated)</div>
+<div class="block">Adds a given JSON body to be outputted.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameter</code> - Parameter value to which the jsonBody is related</dd>
