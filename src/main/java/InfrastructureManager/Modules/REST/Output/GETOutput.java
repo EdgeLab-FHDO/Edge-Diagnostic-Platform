@@ -90,14 +90,10 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
 
     /**
      * Adds a given JSON body to be outputted.
-     * Checks first if the route has been created (Output is activated)
      *
      * @param jsonBody JSON body that will be a GET resource
      */
     protected void addResource(String jsonBody) {
-        /*if (!this.isActivated) {
-            this.activate();
-        }*/
         this.toSend = jsonBody;
     }
 }

@@ -57,7 +57,8 @@ public class RESTModule extends PlatformModule {
     }
 
     /**
-     * Starts the module and additionally starts the REST server.
+     * Starts the module and additionally starts the REST server. It also activates the outputs, so
+     * the paths defined by them are valid as soon as the REST server starts
      */
     @Override
     public void start() {
