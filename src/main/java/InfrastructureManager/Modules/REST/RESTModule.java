@@ -3,6 +3,7 @@ package InfrastructureManager.Modules.REST;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.REST.Exception.Server.ServerNotConfiguredException;
+import InfrastructureManager.Modules.REST.Output.GETOutput;
 import InfrastructureManager.Modules.REST.RawData.RESTModuleConfigData;
 
 /**
@@ -56,11 +57,16 @@ public class RESTModule extends PlatformModule {
     }
 
     /**
-     * Starts the module and additionally starts the REST server.
+     * Starts the module and additionally starts the REST server. It also activates the outputs, so
+     * the paths defined by them are valid as soon as the REST server starts
      */
     @Override
     public void start() {
         startServerThread();
+        this.getOutputs().forEach( o -> {
+            GETOutput output = (GETOutput) o;
+            output.activate();
+        });
         super.start();
     }
 
