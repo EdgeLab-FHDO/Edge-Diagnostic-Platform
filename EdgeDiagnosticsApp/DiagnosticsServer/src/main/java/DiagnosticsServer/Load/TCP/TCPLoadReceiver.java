@@ -35,6 +35,7 @@ public class TCPLoadReceiver extends LoadReceiver {
     }
 
     private void receivePing() throws LoadReceivingException {
+        System.out.println("Configured for PING TCP load");
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
             configureSocket(serverSocket);
             try (
@@ -50,6 +51,7 @@ public class TCPLoadReceiver extends LoadReceiver {
                     //String readingString = new String(data);
                     out.println("Data Read: " + bytesReceived + " bytes");
                 }
+                System.out.println("Finished PING TCP");
             }
         } catch (IOException e) {
             throw new TCPConnectionException("TCP connection failed", e);
@@ -58,7 +60,7 @@ public class TCPLoadReceiver extends LoadReceiver {
 
 
     private void receiveFile() throws LoadReceivingException {
-
+        System.out.println("Configured for FILE TCP load");
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
             configureSocket(serverSocket);
             File tempFile = File.createTempFile("file_load_test","tmp");
@@ -85,6 +87,7 @@ public class TCPLoadReceiver extends LoadReceiver {
                     String response = "Received " + receivedData + " bytes";
                     out.println(response);
                 }
+                System.out.println("Finished FILE UDP");
             }
             finally {
                 if (outFile != null) outFile.close();

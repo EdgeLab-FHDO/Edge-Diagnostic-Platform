@@ -64,7 +64,7 @@ public class TCPLoadSender extends LoadSender {
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
         ) {
             configureSocket(clientSocket);
-            printSocketOptions(clientSocket);
+            //printSocketOptions(clientSocket);
             System.out.println(screenMessage);
             for (int i = 0; i < times; i++) {
                 latencies[i] = singlePing(pingMessage,out,in);

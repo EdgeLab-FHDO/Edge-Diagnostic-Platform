@@ -1,9 +1,10 @@
 {
   "load" : {
-    "type" : "PING",
-    "times" : 1000,
-    "interval" : 1,
-    "dataLength" : 4
+    "type" : "FILE",
+    "times" : 10,
+    "interval" : 10,
+    "dataLength" : 4096,
+    "src" : ""
   },
   "connection" : {
     "type" : "TCP",

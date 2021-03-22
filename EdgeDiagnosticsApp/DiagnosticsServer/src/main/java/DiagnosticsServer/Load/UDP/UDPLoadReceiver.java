@@ -37,6 +37,7 @@ public class UDPLoadReceiver extends LoadReceiver {
     }
 
     private void receivePing() throws LoadReceivingException {
+        System.out.println("Configured for PING UDP load");
         try (
                 DatagramSocket serverSocket = new DatagramSocket(this.getPort())
         ){
@@ -59,7 +60,7 @@ public class UDPLoadReceiver extends LoadReceiver {
                 serverSocket.send(outPacket);
 
             }
-            System.out.println("Bye");
+            System.out.println("Finished PING UDP");
         } catch (IOException e) {
             throw new UDPConnectionException("UDP Connection failed: ", e);
         }
@@ -81,8 +82,8 @@ public class UDPLoadReceiver extends LoadReceiver {
         socket.setSendBufferSize(socketConfig.getSendBufferSize());
         socket.setSoTimeout(socketConfig.getTimeout());
         socket.setBroadcast(socketConfig.getBroadcast());
-        socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
-        socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
+        //socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
+        //socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
         socket.setOption(IP_TOS,socketConfig.getIpTOS());
     }
 

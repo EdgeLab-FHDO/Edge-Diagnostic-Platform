@@ -86,8 +86,8 @@ public class UDPLoadSender extends LoadSender {
         socket.setSendBufferSize(socketConfig.getSendBufferSize());
         socket.setSoTimeout(socketConfig.getTimeout());
         socket.setBroadcast(socketConfig.getBroadcast());
-        socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
-        socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
+        //socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
+        //socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
         socket.setOption(IP_TOS,socketConfig.getIpTOS());
     }
 
