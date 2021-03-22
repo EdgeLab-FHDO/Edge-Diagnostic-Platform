@@ -1,14 +1,13 @@
-package DiagnosticsClient;
+package Multithreading;
 
-import DiagnosticsClient.Communication.ClientPlatformConnection;
-import REST.Exception.RESTClientException;
+import REST.BasicPlatformConnection;
 
 public class HeartBeatRunner extends AbstractRunner {
 
-    private final ClientPlatformConnection connection;
+    private final BasicPlatformConnection connection;
     private final String body;
 
-    public HeartBeatRunner(ClientPlatformConnection connection, String body) {
+    public HeartBeatRunner(BasicPlatformConnection connection, String body) {
         this.connection = connection;
         this.body = body;
     }

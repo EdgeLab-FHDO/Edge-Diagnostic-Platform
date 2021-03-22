@@ -2,11 +2,13 @@ package DiagnosticsClient.Control.RawData;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
-import LoadManagement.BasicLoadManager;
+import LoadManagement.BasicLoadManager.ConnectionType;
+import LoadManagement.LoadType;
+import Multithreading.Instruction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClientInstruction {
+public class ClientInstruction implements Instruction {
     private final DiagnosticsLoad load;
     private final ClientConnectionInstructions connection;
 
@@ -29,7 +31,13 @@ public class ClientInstruction {
         return connection.getSocketOptions();
     }
 
-    public BasicLoadManager.ConnectionType getConnectionType() {
+    @Override
+    public LoadType getLoadType() {
+        return this.load.getType();
+    }
+
+    @Override
+    public ConnectionType getConnectionType() {
         return  connection.getType();
     }
 }

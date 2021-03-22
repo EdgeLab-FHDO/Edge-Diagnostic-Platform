@@ -1,4 +1,4 @@
-package DiagnosticsClient;
+package Multithreading;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

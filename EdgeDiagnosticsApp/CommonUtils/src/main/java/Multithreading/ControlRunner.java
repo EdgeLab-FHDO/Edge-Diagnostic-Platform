@@ -1,20 +1,18 @@
-package DiagnosticsClient;
+package Multithreading;
 
-import DiagnosticsClient.Communication.ClientPlatformConnection;
-import DiagnosticsClient.Control.InstructionManager;
-import DiagnosticsClient.Control.RawData.ClientInstruction;
+import REST.BasicPlatformConnection;
 import REST.Exception.RESTClientException;
 
 public class ControlRunner extends AbstractRunner {
 
-    private final ClientPlatformConnection connection;
-    private final InstructionManager manager;
+    private final BasicPlatformConnection connection;
+    private final BasicInstructionManager manager;
     private final InstructionQueue instructionQueue;
     private String lastInstruction;
 
-    public ControlRunner(ClientPlatformConnection connection, InstructionQueue queue) {
+    public ControlRunner(BasicPlatformConnection connection, BasicInstructionManager manager, InstructionQueue queue) {
         this.connection = connection;
-        this.manager = new InstructionManager();
+        this.manager = manager;
         this.instructionQueue = queue;
         this.lastInstruction = "";
     }
@@ -24,7 +22,7 @@ public class ControlRunner extends AbstractRunner {
         try {
             String instructionString = connection.getInstructions();
             if (!instructionString.equals(lastInstruction)) {
-                ClientInstruction instruction = manager.createInstruction(instructionString);
+                Instruction instruction =manager.createInstruction(instructionString);
                 instructionQueue.add(instruction);
                 lastInstruction = instructionString;
             }

@@ -1,23 +1,20 @@
-package DiagnosticsClient;
-
-import DiagnosticsClient.Control.RawData.ClientInstruction;
+package Multithreading;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class InstructionQueue {
-
-    private final BlockingQueue<ClientInstruction> queue;
+    private final BlockingQueue<Instruction> queue;
 
     public InstructionQueue() {
         this.queue = new ArrayBlockingQueue<>(10);
     }
 
-    public void add(ClientInstruction instruction) throws InterruptedException {
+    public void add(Instruction instruction) throws InterruptedException {
         this.queue.put(instruction);
     }
 
-    public ClientInstruction get() throws InterruptedException {
+    public Instruction get() throws InterruptedException {
         return this.queue.take();
     }
 }

@@ -3,10 +3,11 @@ package DiagnosticsServer.Control.RawData;
 import DiagnosticsServer.Load.ServerSocketOptions;
 import LoadManagement.BasicLoadManager;
 import LoadManagement.LoadType;
+import Multithreading.Instruction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ServerInstruction {
+public class ServerInstruction implements Instruction {
     private final LoadType loadType;
     private final ServerConnectionInstructions connection;
 
@@ -17,6 +18,7 @@ public class ServerInstruction {
         this.connection = connection;
     }
 
+    @Override
     public LoadType getLoadType() {
         return loadType;
     }
@@ -29,6 +31,7 @@ public class ServerInstruction {
         return this.connection.getSocketOptions();
     }
 
+    @Override
     public BasicLoadManager.ConnectionType getConnectionType() {
         return this.connection.getType();
     }

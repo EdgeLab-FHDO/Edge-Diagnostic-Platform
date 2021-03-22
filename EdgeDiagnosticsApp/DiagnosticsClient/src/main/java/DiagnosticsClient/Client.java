@@ -11,12 +11,12 @@ import java.util.Scanner;
 
 public class Client {
 
-    private final RunnerManager manager;
+    private final ClientRunnerManager manager;
 
     public Client(String baseURL, String registerURL,
                   String assignURL, String getServerURL,
                   String instructionsURL) throws ClientCommunicationException {
-        manager = new RunnerManager();
+        manager = new ClientRunnerManager();
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL, assignURL, getServerURL, instructionsURL);
             connection.register(this.getJsonRepresentation());
@@ -32,7 +32,7 @@ public class Client {
         return  "{\"id\":\"" + id + "\"}";
     }
 
-    public RunnerManager getManager() {
+    public ClientRunnerManager getManager() {
         return manager;
     }
 
