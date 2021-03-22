@@ -1,15 +1,12 @@
 package DiagnosticsClient.Control;
 
-import DiagnosticsClient.Control.RawData.Instruction;
-import DiagnosticsClient.Load.ClientSocketOptions;
-import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
-import LoadManagement.BasicLoadManager;
+import DiagnosticsClient.Control.RawData.ClientInstruction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InstructionManager {
 
-    private Instruction instruction;
+    private ClientInstruction instruction;
     private final ObjectMapper mapper;
 
     public InstructionManager() {
@@ -17,9 +14,9 @@ public class InstructionManager {
         instruction = null;
     }
 
-    public Instruction createInstruction(String instructionJson) {
+    public ClientInstruction createInstruction(String instructionJson) {
         try {
-            instruction = mapper.readValue(instructionJson,Instruction.class);
+            instruction = mapper.readValue(instructionJson, ClientInstruction.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

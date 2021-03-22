@@ -6,18 +6,18 @@ import LoadManagement.BasicLoadManager;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Instruction {
+public class ClientInstruction {
     private final DiagnosticsLoad load;
-    private final ConnectionInstructions connection;
+    private final ClientConnectionInstructions connection;
 
     @JsonCreator
-    public Instruction(@JsonProperty("load") DiagnosticsLoad load,
-                       @JsonProperty("connection") ConnectionInstructions connection) {
+    public ClientInstruction(@JsonProperty("load") DiagnosticsLoad load,
+                             @JsonProperty("connection") ClientConnectionInstructions connection) {
         this.load = load;
         this.connection = connection;
     }
 
-    public ConnectionInstructions getConnection() {
+    public ClientConnectionInstructions getConnection() {
         return connection;
     }
 

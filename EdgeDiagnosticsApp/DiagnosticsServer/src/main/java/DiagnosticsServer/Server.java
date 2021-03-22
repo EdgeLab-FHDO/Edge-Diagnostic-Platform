@@ -3,10 +3,11 @@ package DiagnosticsServer;
 import DiagnosticsServer.Communication.Exception.ServerCommunicationException;
 import DiagnosticsServer.Communication.RawServerData;
 import DiagnosticsServer.Communication.ServerPlatformConnection;
+import DiagnosticsServer.Control.RawData.ServerInstruction;
+import DiagnosticsServer.Control.ServerInstructionManager;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.ServerLoadManager;
 import DiagnosticsServer.Load.ServerSocketOptions;
-import DiagnosticsServer.Load.UDP.UDPServerSocketOptions;
 import LoadManagement.BasicLoadManager.ConnectionType;
 import LoadManagement.LoadType;
 import REST.Exception.RESTClientException;
@@ -19,14 +20,19 @@ import java.net.UnknownHostException;
 public class Server {
 
     private final ServerLoadManager loadManager;
+    private final ServerInstructionManager instructionManager;
+    private final String instruction;
     private final int port;
 
-    public Server(int port, String baseURL, String registerURL) throws ServerCommunicationException {
+    public Server(int port, String baseURL, String registerURL, String instructionsURL) throws ServerCommunicationException {
         try {
             this.port = port;
             this.loadManager = new ServerLoadManager(this.port);
-            ServerPlatformConnection connection = new ServerPlatformConnection(baseURL, registerURL);
+            this.instructionManager = new ServerInstructionManager();
+            ServerPlatformConnection connection = new ServerPlatformConnection(baseURL, registerURL, instructionsURL);
             connection.register(this.getJsonRepresentation());
+            instruction = connection.getInstructions();
+            System.out.println(instruction);
         } catch (RESTClientException | UnknownHostException | JsonProcessingException e) {
             throw new ServerCommunicationException("Communication with Diagnostics Platform failed: ", e);
         }
@@ -45,7 +51,13 @@ public class Server {
         return mapper.writeValueAsString(rawServerData);
     }
 
-    public void receiveLoad(ConnectionType connection, LoadType load) throws LoadReceivingException {
+    public void receiveLoad() throws LoadReceivingException {
+        ServerInstruction serverInstruction = instructionManager.createInstruction(instruction);
+        loadManager.setSocketOptions(serverInstruction.getSocketOptions());
+        receiveLoad(serverInstruction.getConnectionType(),serverInstruction.getLoadType());
+    }
+
+    private void receiveLoad(ConnectionType connection, LoadType load) throws LoadReceivingException {
         this.loadManager.setConnectionType(connection);
         this.loadManager.setLoadType(load);
         this.loadManager.receiveLoad();
@@ -60,12 +72,14 @@ public class Server {
             if (args.length > 0) {
                 String baseURL = args[0];
                 String registerURL = args[1];
-                Server activeInstance = new Server(4444, baseURL,registerURL);
-                ServerSocketOptions options = new ServerSocketOptions();
+                String instructionsURL = args[2];
+                Server activeInstance = new Server(4444, baseURL,registerURL, instructionsURL);
+                //ServerSocketOptions options = new ServerSocketOptions();
                 //UDPServerSocketOptions options = new UDPServerSocketOptions();
-                activeInstance.setSocketOptions(options);
+                //activeInstance.setSocketOptions(options);
                 System.out.println("Starting Server");
-                activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
+                //activeInstance.receiveLoad(ConnectionType.TCP, LoadType.PING);
+                activeInstance.receiveLoad();
             } else {
                 System.out.println("No arguments");
             }

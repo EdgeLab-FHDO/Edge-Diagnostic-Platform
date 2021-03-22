@@ -1,7 +1,7 @@
 package DiagnosticsClient;
 
 import DiagnosticsClient.Communication.ServerInformation;
-import DiagnosticsClient.Control.RawData.Instruction;
+import DiagnosticsClient.Control.RawData.ClientInstruction;
 import DiagnosticsClient.Load.ClientLoadManager;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
@@ -19,7 +19,7 @@ public class LoadRunner extends AbstractRunner {
     @Override
     public void runnerOperation() throws InterruptedException {
         try {
-            Instruction instruction = instructionQueue.get();
+            ClientInstruction instruction = instructionQueue.get();
             manager.setSocketOptions(instruction.getSocketOptions());
             manager.setConnectionType(instruction.getConnectionType());
             manager.sendLoad(instruction.getLoad());

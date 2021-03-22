@@ -1,5 +1,11 @@
 package DiagnosticsServer.Load;
 
+import DiagnosticsServer.Load.UDP.UDPServerSocketOptions;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = ServerSocketOptions.class)
+@JsonSubTypes({@JsonSubTypes.Type(UDPServerSocketOptions.class)})
 public class ServerSocketOptions {
     private int receiveBufferSize;
     private boolean reuseAddress;

@@ -2,7 +2,7 @@ package DiagnosticsClient;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Control.InstructionManager;
-import DiagnosticsClient.Control.RawData.Instruction;
+import DiagnosticsClient.Control.RawData.ClientInstruction;
 import REST.Exception.RESTClientException;
 
 public class ControlRunner extends AbstractRunner {
@@ -24,7 +24,7 @@ public class ControlRunner extends AbstractRunner {
         try {
             String instructionString = connection.getInstructions();
             if (!instructionString.equals(lastInstruction)) {
-                Instruction instruction = manager.createInstruction(instructionString);
+                ClientInstruction instruction = manager.createInstruction(instructionString);
                 instructionQueue.add(instruction);
                 lastInstruction = instructionString;
             }
