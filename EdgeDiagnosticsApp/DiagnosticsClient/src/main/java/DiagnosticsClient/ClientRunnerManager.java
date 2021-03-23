@@ -19,7 +19,7 @@ public class ClientRunnerManager extends BasicRunnerManager {
         ClientInstructionManager manager = new ClientInstructionManager();
         super.configure(connection,heartBeatBody);
         getRunners().add(new ControlRunner(connection,manager,instructionQueue));
-        getRunners().add(new LoadSendingRunner(serverInformation, instructionQueue));
+        getRunners().add(new LoadSendingRunner(connection,serverInformation, instructionQueue));
     }
 
 }

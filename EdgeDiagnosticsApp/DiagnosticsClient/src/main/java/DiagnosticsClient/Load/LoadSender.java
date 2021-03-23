@@ -3,14 +3,18 @@ package DiagnosticsClient.Load;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 
+import java.util.Map;
+
 public abstract class LoadSender {
 
     private final String address;
     private final int port;
+    private final Map<Integer,Long> latencyMeasurements;
 
-    public LoadSender(String address, int port) {
+    public LoadSender(String address, int port, Map<Integer,Long> latencyMeasurements) {
         this.address = address;
         this.port = port;
+        this.latencyMeasurements = latencyMeasurements;
     }
 
     public String getAddress() {
@@ -19,6 +23,14 @@ public abstract class LoadSender {
 
     public int getPort() {
         return port;
+    }
+
+    protected void addLatency(int iteration, long latency) {
+        this.latencyMeasurements.put(iteration,latency);
+    }
+
+    protected double getAverageLatency() {
+        return latencyMeasurements.values().stream().mapToLong(i -> i).average().orElse(0);
     }
 
     public abstract void send(DiagnosticsLoad load) throws LoadSendingException;

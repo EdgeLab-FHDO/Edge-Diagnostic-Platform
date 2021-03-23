@@ -53,12 +53,12 @@ public class UDPLoadReceiver extends LoadReceiver {
                 inPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
                 serverSocket.receive(inPacket);
                 receivedData = new String(inPacket.getData());
+                //System.out.println("Received = " + receivedData);
                 sendingDataBuffer = receivedData.getBytes();
                 replyAddress = inPacket.getAddress();
                 replyPort = inPacket.getPort();
                 outPacket = new DatagramPacket(sendingDataBuffer, sendingDataBuffer.length, replyAddress, replyPort);
                 serverSocket.send(outPacket);
-
             }
             System.out.println("Finished PING UDP");
         } catch (IOException e) {
@@ -82,8 +82,6 @@ public class UDPLoadReceiver extends LoadReceiver {
         socket.setSendBufferSize(socketConfig.getSendBufferSize());
         socket.setSoTimeout(socketConfig.getTimeout());
         socket.setBroadcast(socketConfig.getBroadcast());
-        //socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
-        //socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
         socket.setOption(IP_TOS,socketConfig.getIpTOS());
     }
 

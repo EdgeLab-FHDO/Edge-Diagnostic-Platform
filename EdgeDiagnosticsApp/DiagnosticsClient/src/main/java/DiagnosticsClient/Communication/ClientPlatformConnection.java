@@ -23,4 +23,9 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
         String response = this.getClient().get(getServerURL);
         return new ServerInformation(response);
     }
+
+    public void sendMeasurements(String latencyString) throws RESTClientException {
+        String measurementsURL = "/diagnostics/report";
+        this.getClient().post(measurementsURL,latencyString);
+    }
 }

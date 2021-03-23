@@ -8,9 +8,7 @@
       "timeout" : 0,
       "ipTOS" : 0,
       "sendBufferSize" : 65536,
-      "broadcast" : true,
-      "multicastLoop" : true,
-      "multicastTTL" : 1
+      "broadcast" : false
     }
   }
 }

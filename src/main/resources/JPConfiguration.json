@@ -1,0 +1,132 @@
+{
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {
+      "type" : "RESTModule",
+      "name":  "rest",
+      "port": 4567,
+      "baseURL": "/rest",
+      "POST" : [
+        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "diagnostic.report", "URL":  "/diagnostics/report", "command":  "latency_report $body", "information": []},
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]}
+      ],
+      "GET" : [
+        {"name": "mm.give_node", "URL": "/client/get_node/:client_id"},
+        {"name" : "diagnostic.client", "URL": "/diagnostics/instructions"},
+        {"name" :  "diagnostic.server", "URL":  "/diagnostics/server/instructions"}
+      ]
+    },
+    {"type" :  "MatchMakingModule-Random", "name":  "mm"}
+  ],
+
+  "connections" : [
+    {
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "mm.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "mm.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "console.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "console register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "console.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "console register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.assign",
+      "out" : "mm.out",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "console.out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "rest.mm.give_node",
+      "commands" : {
+        "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "ping_tcp" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "ping_tcp" : "toGET resource {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0}}}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "ping_udp" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":10,\"dataLength\":4},\"connection\":{\"type\":\"UDP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"broadcast\":false}}}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "ping_udp" : "toGET resource {\"loadType\":\"PING\",\"connection\":{\"type\":\"UDP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0,\"ipTOS\":0,\"sendBufferSize\":65536,\"broadcast\":false}}}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "file_tcp" : "toGET resource {\"load\":{\"type\":\"FILE\",\"times\":10,\"interval\":10,\"dataLength\":4096,\"src\":\"\"},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "file_tcp" : "toGET resource {\"loadType\":\"FILE\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0}}}"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
+      "out" : "console.out",
+      "commands" : {
+        "latency_report $latency_as_json_string" : "console report $latency_as_json_string"
+      }
+    }
+  ]
+}

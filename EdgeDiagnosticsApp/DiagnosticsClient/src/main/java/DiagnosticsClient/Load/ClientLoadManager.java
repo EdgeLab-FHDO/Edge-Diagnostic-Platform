@@ -1,5 +1,6 @@
 package DiagnosticsClient.Load;
 
+import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import DiagnosticsClient.Communication.ServerInformation;
@@ -7,17 +8,26 @@ import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.TCP.TCPLoadSender;
 import DiagnosticsClient.Load.UDP.UDPLoadSender;
 import LoadManagement.BasicLoadManager;
+import REST.Exception.RESTClientException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientLoadManager extends BasicLoadManager {
 
     private final String address;
     private final int port;
+    private Map<Integer, Long> latencyMeasurements;
+    private final ClientPlatformConnection connection;
     private ClientSocketOptions options;
 
-    public ClientLoadManager(ServerInformation serverInformation) throws ServerNotSetUpException {
+    public ClientLoadManager(ClientPlatformConnection connection, ServerInformation serverInformation) throws ServerNotSetUpException {
         if (serverInformation == null) throw new ServerNotSetUpException("Client is not connected to the server");
         this.address = serverInformation.getIpAddress();
         this.port = serverInformation.getPort();
+        this.connection = connection;
     }
 
     public void setSocketOptions(ClientSocketOptions options) {
@@ -30,10 +40,19 @@ public class ClientLoadManager extends BasicLoadManager {
         sender.send(load);
     }
 
+    public void reportMeasurements() throws JsonProcessingException, RESTClientException {
+        ObjectMapper mapper = new ObjectMapper();
+        String latencyString = mapper.writeValueAsString(latencyMeasurements);
+        connection.sendMeasurements(latencyString);
+    }
+
     private LoadSender getSender() {
+        latencyMeasurements = new HashMap<>();
         return switch (this.getConnectionType()) {
-            case TCP -> new TCPLoadSender(address,port);
-            case UDP -> new UDPLoadSender(address,port);
+            case TCP -> new TCPLoadSender(address,port,latencyMeasurements);
+            case UDP -> new UDPLoadSender(address,port,latencyMeasurements);
         };
     }
+
+
 }

@@ -11,6 +11,7 @@ import DiagnosticsClient.Load.LoadTypes.PingLoad;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
+import java.util.Map;
 
 import static java.net.StandardSocketOptions.*;
 
@@ -18,8 +19,8 @@ public class UDPLoadSender extends LoadSender {
 
     private UDPClientSocketOptions socketConfig;
 
-    public UDPLoadSender(String address, int port) {
-        super(address, port);
+    public UDPLoadSender(String address, int port, Map<Integer,Long> latencyMeasurements) {
+        super(address, port, latencyMeasurements);
         this.socketConfig = new UDPClientSocketOptions();
     }
 
@@ -43,8 +44,8 @@ public class UDPLoadSender extends LoadSender {
         socket.send(outPackage);
         socket.receive(inPackage);
         long latency = System.nanoTime() - startTime;
-        //String response = new String(inPackage.getData());
-        //System.out.println("Response: " + response + " Latency:" + latency + " ns");
+        /*String response = new String(inPackage.getData());
+        System.out.println("Response: " + response + " Latency:" + latency + " ns");*/
         return latency;
     }
 
@@ -53,7 +54,7 @@ public class UDPLoadSender extends LoadSender {
                 DatagramSocket clientSocket = new DatagramSocket();
         ){
             configureSocket(clientSocket);
-            printSocketOptions(clientSocket);
+            //printSocketOptions(clientSocket);
             long[] latencies = new long[load.getTimes()];
             byte[] message = load.getData();
             int interval = load.getInterval_ms();
@@ -86,8 +87,6 @@ public class UDPLoadSender extends LoadSender {
         socket.setSendBufferSize(socketConfig.getSendBufferSize());
         socket.setSoTimeout(socketConfig.getTimeout());
         socket.setBroadcast(socketConfig.getBroadcast());
-        //socket.setOption(IP_MULTICAST_LOOP, socketConfig.getMulticastLoop());
-        //socket.setOption(IP_MULTICAST_TTL, socketConfig.getMulticastTTL());
         socket.setOption(IP_TOS,socketConfig.getIpTOS());
     }
 

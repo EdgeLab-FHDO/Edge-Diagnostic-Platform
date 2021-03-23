@@ -13,9 +13,7 @@
       "receiveBufferSize" : 65536,
       "sendBufferSize" : 65536,
       "timeout" : 0,
-      "broadcast" : true,
-      "multicastLoop" : true,
-      "multicastTTL" : 1
+      "broadcast" : false
     }
   }
 }
