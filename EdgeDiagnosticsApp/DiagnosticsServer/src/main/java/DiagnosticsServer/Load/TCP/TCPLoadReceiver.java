@@ -87,7 +87,7 @@ public class TCPLoadReceiver extends LoadReceiver {
                     String response = "Received " + receivedData + " bytes";
                     out.println(response);
                 }
-                System.out.println("Finished FILE UDP");
+                System.out.println("Finished FILE TCP");
             }
             finally {
                 if (outFile != null) outFile.close();
