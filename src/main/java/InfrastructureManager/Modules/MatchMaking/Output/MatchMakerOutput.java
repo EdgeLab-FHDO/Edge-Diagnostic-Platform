@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class MatchMakerOutput extends MatchMakingModuleObject implements PlatformOutput {
 
@@ -27,8 +29,10 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
 
+
+
     public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm) {
-        super(module,name);
+        super(module, name);
         this.sharedMatchesList = this.getSharedList();
         this.algorithm = algorithm;
         this.mapper = new ObjectMapper();
@@ -60,7 +64,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             String thisNodeID = thisNode.getId();
 
             //list of node, for debugging purposes
-            nodeList.forEach(n -> logger.debug("{}",n));
+            nodeList.forEach(n -> logger.debug("{}", n));
 
             logger.info("assigned node info: \n{}", thisNode);
             logger.info("client info: \n{}", thisClient);
@@ -97,7 +101,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         //Get node location in list to replace later on
         int nodeLocationInList = this.nodeList.indexOf(thisNode);
         //node that we going to replace in our nodeList
-        EdgeNode updateNode = new EdgeNode(this.getOwnerModule(),thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
+        EdgeNode updateNode = new EdgeNode(this.getOwnerModule(), thisNodeID, thisNode.getIpAddress(), thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation());
 
         //accounting usedResource (resource - usedResource)
         updateNode.updateComputingResource(usedResource);
@@ -151,7 +155,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         }
 
         //Initiating client history
-        EdgeClientHistory thisClientHistory = new EdgeClientHistory(this.getOwnerModule(),thisClientID);
+        EdgeClientHistory thisClientHistory = new EdgeClientHistory(this.getOwnerModule(), thisClientID);
 
         for (EdgeNode thisNode : this.nodeList) {
             String thisNodeID = thisNode.getId();
@@ -225,9 +229,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     /**
      * Update the node with new info/data from REST input (JSON body)
      *
-     * @param nodeAsString  JSON string of updating node
-     * @throws NoNodeFoundException If the required node cannot be found in the node list
-     * @throws NoClientFoundException If the node is connected but the client cannot be found in the client list
+     * @param nodeAsString JSON string of updating node
+     * @throws NoNodeFoundException    If the required node cannot be found in the node list
+     * @throws NoClientFoundException  If the node is connected but the client cannot be found in the client list
      * @throws JsonProcessingException If there is an error while parsing the node object from the JSON body
      */
     private void updateNode(String nodeAsString) throws NoNodeFoundException, NoClientFoundException, JsonProcessingException {
@@ -308,7 +312,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             throw new ClientNotAssignedException("This client [" + thisClientID + "] is not connected to any nodes in the system");
         }
         //Get node that assigned to client
-        EdgeNode auxNode = this.mapper.readValue(sharedMatchesList.removeClient(thisClientID),EdgeNode.class);
+        EdgeNode auxNode = this.mapper.readValue(sharedMatchesList.removeClient(thisClientID), EdgeNode.class);
         String thisNodeID = auxNode.getId();
         EdgeNode thisNode = getNodeByID(thisNodeID);
 
@@ -370,6 +374,99 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
 
     }
 
+
+    /**
+     * create HeartBeat signal for client
+     *
+     * @param clientAsString JSON body of client to its heartbeat signal
+     */
+    //TODO: move abortCondition variable out of this class, but maybe, need talk
+    private void createHeartBeatForClient(String clientAsString) throws JsonProcessingException {
+
+        EdgeClient thisClient = this.mapper.readValue(clientAsString, EdgeClient.class);
+        String thisClientID = thisClient.getId();
+        boolean thisClientHeartBeat = true;
+
+        //endTime > currentTime = (extract from start time)
+
+        logger.info("this client = {}, heartBeat = {}");
+        heartBeatMap.put(thisClientID,thisClientHeartBeat);
+
+        //print hahsmap out debugging purposes only
+        Set<String> entry = heartBeatMap.keySet();
+        for (String clientID : entry){
+            Boolean heartBeatSignal = heartBeatMap.get(clientID);
+            logger.info("[{}] -- [{}]",clientID,heartBeatSignal)    ;
+
+        }
+
+        final boolean[] abortCondition = {false};
+
+        //TODO: make this runnable a new class (watch dog, maybe)
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                logger.info("watch dog for [{}] created. ",thisClientID);
+                while (!abortCondition[0]) {
+                    //check for heartbeat signal
+                    boolean checkHeartBeat = heartBeatMap.get(thisClientID);
+                    logger.info("[{}] heartbeat signal = [{}]",thisClientID,checkHeartBeat);
+                    logger.info("waiting for the next heart beat");
+                    //Wait for a set period
+                    try {
+                        Thread.sleep(heartBeatSleepTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    checkHeartBeat = heartBeatMap.get(thisClientID);
+
+                    //reset heart beat and keep watching
+                    if (checkHeartBeat) {
+                        logger.info("heart beat signal = [{}], resetting watch dog",checkHeartBeat);
+                        heartBeatMap.put(thisClientID,false);
+                    }
+                    //time out, abort this , tell the platform that client is offline
+                    if (!checkHeartBeat) {
+                        logger.info("Heart beat signal time out, [{}] status switched to [offline]",thisClientID);
+                        abortCondition[0] = true;
+                        //if client is matched with a node in the platform, disconnect client from the node
+                        if (sharedMatchesList.clientIsConnected(thisClientID)) {
+
+                            //TODO: these catches may be problematic later on
+                            try {
+                                updateAfterDisconnecting(clientAsString);
+                            } catch (MatchMakingModuleException e) {
+                                e.printStackTrace();
+                            } catch (JsonProcessingException e) {
+                                e.printStackTrace();
+                            }
+                            //TODO: add matched node
+                            logger.info("Disconnected this client [{}] from mapped node ", thisClientID);
+                        }
+                    }
+                }
+                logger.info("watch dog for [{}] closed.",thisClientID);
+            }
+        };
+
+        Thread watchDog = new Thread(r);
+        watchDog.start();
+    }
+
+    private void heartBeatSignalReceived(String heartBeatSignalAsString) throws JsonProcessingException {
+        EdgeClient thisClient = this.mapper.readValue(heartBeatSignalAsString, EdgeClient.class);
+        String thisClientID = thisClient.getId();
+        //TODO: add a new variable/type called heartBeat, with client/nodeID and a boolean
+        heartBeatMap.put(thisClientID,true);
+        logger.info("heart beat signal for [{}] received",thisClientID);
+    }
+
+    private int heartBeatSleepTime = 15000; //10,000 ms or 10s
+    //TODO: create new matchlist type for heartbeat pair
+    private HashMap<String, Boolean> heartBeatMap = new HashMap<>(); //<ClientID, HeartBeat>
+
+
+
     public List<EdgeNode> getNodeList() {
         return nodeList;
     }
@@ -385,7 +482,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             try {
                 switch (commandLine[1]) {
                     case "register_client" -> {
+                        //register client and create its corresponding heartbeat
                         registerClient(commandLine[2]);
+                        createHeartBeatForClient(commandLine[2]);
                         logger.info("client registered, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
                     case "register_node" -> {
@@ -400,6 +499,11 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                         updateAfterDisconnecting(commandLine[2]);
                         logger.info("client disconnected, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
+                    case "receive_heart_beat" -> {
+                        heartBeatSignalReceived(commandLine[2]);
+                        logger.info("heart beat received, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
+                    }
+
                     default -> throw new MatchMakingModuleException("Invalid command " + commandLine[1]
                             + " for MatchMaker");
                 }
