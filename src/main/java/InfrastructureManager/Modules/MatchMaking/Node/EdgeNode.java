@@ -18,6 +18,7 @@ public class EdgeNode extends MatchMakingModuleObject {
     private long location; //node's location, for ping calculation
     private long totalResource; //Maximum amount of resource the node have
     private long totalNetwork; // maximum amount of network bandwidth the node have
+    private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
 
     /*
    ------------------------Getter & setter function--------------------------------
@@ -54,6 +55,8 @@ public class EdgeNode extends MatchMakingModuleObject {
         return totalNetwork;
     }
 
+    public long getHeartBeatInterval(){ return heartBeatInterval;}
+
     public void setTotalNetwork(long thisTotalComputingResource) {
         this.totalNetwork = thisTotalComputingResource;
         this.network = thisTotalComputingResource;
@@ -87,9 +90,10 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalResource = 0;
         this.totalNetwork = 0;
         this.location = 0;
+        this.heartBeatInterval = 0;
     }
 
-    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation) {
+    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation, long thisHeartBeatInterval) {
         super(ownerModule);
         this.id = id;
         this.ipAddress = ip;
@@ -99,6 +103,7 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalNetwork = thisTotalNetworkBandwidth;
         this.totalResource = thisTotalComputingResource;
         this.location = thisLocation;
+        this.heartBeatInterval = thisHeartBeatInterval;
     }
 
     public void updateComputingResource(Long usedComputingResource) {
@@ -121,7 +126,8 @@ public class EdgeNode extends MatchMakingModuleObject {
                 "  totalResource : " + totalResource + ",\n" +
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
-                "  location : " + location + "\n}";
+                "  location : " + location + "\n + " +
+                "  heartBeatInterval : " + heartBeatInterval + "\n}";
     }
 
     @Override

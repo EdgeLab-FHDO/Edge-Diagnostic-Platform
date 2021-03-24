@@ -3,8 +3,10 @@ package InfrastructureManager.Modules.MatchMaking;
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.PlatformObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
@@ -30,8 +32,8 @@ public class MatchesList extends MatchMakingModuleObject {
         return lastClientAdded + " " + this.matches.get(lastClientAdded);
     }
 
-    public void putValue(String clientID, String nodeAsString) {
-        this.matches.put(clientID, nodeAsString);
+    public void putValue(String clientID, String nodeID) {
+        this.matches.put(clientID, nodeID);
         this.lastClientAdded = clientID;
         this.block.release();
     }
@@ -40,13 +42,22 @@ public class MatchesList extends MatchMakingModuleObject {
         return matches.containsKey(clientID);
     }
 
-    public boolean nodeIsAssigned(String nodeAsString) {
-        return matches.containsValue(nodeAsString);
+    public boolean nodeIsAssigned(String nodeID) {
+        return matches.containsValue(nodeID);
     }
 
-    public List<String> getConnectedClientsToNode(String nodeAsString) {
+
+
+
+
+    /**
+     * return a list of clients that connected to thisNode
+     * @param nodeID thisNode's in String
+     * @return
+     */
+    public List<String> getConnectedClientsToNode(String nodeID) {
         return matches.entrySet().stream()
-                .filter(e -> e.getValue().equals(nodeAsString))
+                .filter(e -> e.getValue().equals(nodeID))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }

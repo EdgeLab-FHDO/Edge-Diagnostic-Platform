@@ -14,7 +14,8 @@
         {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
         {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
         {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
-        {"name" : "heartBeatReceived","URL": "/client/heartbeat","command": "receive_heart_beat $body","information":  []},
+        {"name" : "clientHeartBeatReceived","URL": "/client/heartbeat","command": "client_receive_heart_beat $body","information":  []},
+        {"name" : "nodeHeartBeatReceived","URL": "/node/heartbeat","command": "node_receive_heart_beat $body","information":  []},
         {"name" : "disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
@@ -129,10 +130,18 @@
     },
 
     {
-      "in" : "rest.heartBeatReceived",
+      "in" : "rest.clientHeartBeatReceived",
       "out" : "mm.out",
       "commands" : {
-        "receive_heart_beat $client_as_json_string" : "matchMaker receive_heart_beat $client_as_json_string"
+        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.nodeHeartBeatReceived",
+      "out" : "mm.out",
+      "commands" : {
+        "node_receive_heart_beat $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
       }
     },
 
