@@ -17,9 +17,9 @@
             level="OFF"/>
     <logger
             name="InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking"
-            level="INFO"/>
+            level="OFF"/>
 
-    <root level="INFO">
+    <root level="OFF">
         <appender-ref ref="STDOUT"/>
     </root>
 
