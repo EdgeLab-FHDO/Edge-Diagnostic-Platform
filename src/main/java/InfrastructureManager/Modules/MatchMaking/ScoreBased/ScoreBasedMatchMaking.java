@@ -84,6 +84,7 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
             long pingNumber = getPing(thisClient, thisNode);
             long nodeHistoryWithClient = clientHistory.getHistoryScore(thisNodeID);
             long lastConnectedTime = clientHistory.getConnectedTime(thisNodeID);
+            boolean nodeIsOnline = thisNode.isOnline();
 
             //Get elapsed time to reduce history score
             long currentTime = System.currentTimeMillis();
@@ -99,6 +100,7 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
                 nodeHistoryScore = 0;
             }
             logger.info("node history score = {} = {} - {}", nodeHistoryScore, nodeHistoryWithClient, deductingScore);
+            logger.info("numberOfUnqualified = {}",numberOfUnqualified );
             //Update the score in the history info pack with this new score
             clientHistory.setHistoryScore(thisNodeID, nodeHistoryScore);
             clientHistory.setLastConnectedTime(thisNodeID, currentTime);
@@ -120,19 +122,17 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
                 numberOfUnqualified++;
                 continue;
             }
+
+            if(!nodeIsOnline){
+                logger.info("[{}] is not online",thisNodeID);
+                numberOfUnqualified++;
+                continue;
+            }
+
             if (pingNumber > ACCEPTABLE_PING) {
                 logger.info("[{}] is too far away from client, ping number is not acceptable: {} > {}", thisNodeID, pingNumber, ACCEPTABLE_PING);
                 numberOfUnqualified++;
                 continue;
-            }
-            //Check whether it's good enough to match, or we just return the rejectedNode
-            if (numberOfUnqualified >= totalNumberOfNode) {
-                logger.warn("\n" +
-                        ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
-                        "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
-                throw new NoNodeSatisfyRequirementException("\n" +
-                        ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
-                        "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
             }
 
             //calculate current node score and find best node
@@ -146,7 +146,16 @@ public class ScoreBasedMatchMaking extends MatchMakingModuleObject implements Ma
                 bestNode = thisNode;
                 bestScore = thisNodeScore;
             }
+        }
 
+        //When all nodes are unqualified.
+        if (numberOfUnqualified >= totalNumberOfNode) {
+            logger.warn("\n" +
+                    ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
+                    "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
+            throw new NoNodeSatisfyRequirementException("\n" +
+                    ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +
+                    "No nodes in system satisfy required parameters (Network, Resource, Distance)\n");
         }
 
 

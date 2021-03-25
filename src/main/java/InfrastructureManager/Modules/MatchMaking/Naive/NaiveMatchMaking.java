@@ -34,6 +34,7 @@ public class NaiveMatchMaking extends MatchMakingModuleObject implements MatchMa
             long distance = thisNode.getLocation() - clientLocation;
             //shortcut to take positive value only :))
             distance = Math.abs(distance);
+            boolean nodeIsOnline = thisNode.isOnline();
 
             //Eliminate the one that's not good (small or equal are ruled out, equal is ruled out because it's better to have some sort of buffer rather than 100% utilization
             if (thisNode.getResource() <= client.getReqResource()) {
@@ -57,6 +58,13 @@ public class NaiveMatchMaking extends MatchMakingModuleObject implements MatchMa
                 numberOfUnqualified++;
                 continue;
             }
+
+            if(!nodeIsOnline){
+                logger.info("[{}] is not online",thisNode.getId());
+                numberOfUnqualified++;
+                continue;
+            }
+
             if (numberOfUnqualified >= nodeList.size()) {
                 logger.warn("\n" +
                         ">>>>>>>>>>>>>>>>>>>>>>>>>    MATCH MAKING FAILED    <<<<<<<<<<<<<<<<<<<<<<<<\n" +

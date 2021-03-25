@@ -16,6 +16,7 @@ public class EdgeClient extends MatchMakingModuleObject {
     private long location; //current client location, (ping will be calculated here, more info in score based match making (SBMM))
     private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
     private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
+    private boolean online; //true = online, false = offline
 
     private EdgeClientHistory clientHistory;
 
@@ -29,17 +30,19 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.location = Long.MAX_VALUE;
         this.message = "no message"; // to send custom command if needed (similar to job fail, job done in history)
         this.heartBeatInterval = 0;
-
+        this.online = true;
     }
-    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message, long thisHeartBeatInterval) {
+
+    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule, String id, long reqRes, long reqNet, long location, String message, long thisHeartBeatInterval, boolean thisOnline) {
         super(ownerModule);
         this.id = id;
         this.reqResource = reqRes;
         this.reqNetwork = reqNet;
         this.location = location;
         this.message = message;
-        this.clientHistory = new EdgeClientHistory(ownerModule,id);
+        this.clientHistory = new EdgeClientHistory(ownerModule, id);
         this.heartBeatInterval = thisHeartBeatInterval;
+        this.online = thisOnline;
 
     }
 
@@ -59,7 +62,9 @@ public class EdgeClient extends MatchMakingModuleObject {
         return location;
     }
 
-    public String getMessage() {return message; }
+    public String getMessage() {
+        return message;
+    }
 
     public long getHeartBeatInterval() {
         return heartBeatInterval;
@@ -81,7 +86,17 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.location = location;
     }
 
-    public EdgeClientHistory getClientHistory(){return clientHistory;}
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean thisOnline) {
+        this.online = thisOnline;
+    }
+
+    public EdgeClientHistory getClientHistory() {
+        return clientHistory;
+    }
 
     @Override
     public String toString() {
@@ -92,7 +107,8 @@ public class EdgeClient extends MatchMakingModuleObject {
                 ", \n  location : " + location +
                 ", \n  message : " + message +
                 ", \n  heartBeatInterval : " + heartBeatInterval +
-                "\n";
+                ", \n  online : " + online +
+                "}\n";
     }
 
     @Override

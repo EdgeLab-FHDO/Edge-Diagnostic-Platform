@@ -19,6 +19,7 @@ public class EdgeNode extends MatchMakingModuleObject {
     private long totalResource; //Maximum amount of resource the node have
     private long totalNetwork; // maximum amount of network bandwidth the node have
     private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
+    private boolean online; //true = online, false = offline
 
     /*
    ------------------------Getter & setter function--------------------------------
@@ -91,9 +92,11 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalNetwork = 0;
         this.location = 0;
         this.heartBeatInterval = 0;
+        this.online = true;
+
     }
 
-    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation, long thisHeartBeatInterval) {
+    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation, long thisHeartBeatInterval,boolean thisOnline) {
         super(ownerModule);
         this.id = id;
         this.ipAddress = ip;
@@ -104,6 +107,8 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalResource = thisTotalComputingResource;
         this.location = thisLocation;
         this.heartBeatInterval = thisHeartBeatInterval;
+        this.online = thisOnline;
+
     }
 
     public void updateComputingResource(Long usedComputingResource) {
@@ -114,6 +119,13 @@ public class EdgeNode extends MatchMakingModuleObject {
         network = network - usedNetworkBandwidth;
     }
 
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
 
     //edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
@@ -127,7 +139,8 @@ public class EdgeNode extends MatchMakingModuleObject {
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
                 "  location : " + location + "\n" +
-                "  heartBeatInterval : " + heartBeatInterval + "\n}";
+                "  heartBeatInterval : " + heartBeatInterval + "\n" +
+                "  online : " + online + "}\n";
     }
 
     @Override
