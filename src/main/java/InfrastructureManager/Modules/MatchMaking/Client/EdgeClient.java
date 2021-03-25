@@ -15,6 +15,8 @@ public class EdgeClient extends MatchMakingModuleObject {
     private long reqNetwork;  //required network bandwidth
     private long location; //current client location, (ping will be calculated here, more info in score based match making (SBMM))
     private final String message; // use this as temp variable for sending status about client, such as its disconnected reason etc
+    private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
+
     private EdgeClientHistory clientHistory;
 
     @JsonCreator
@@ -26,8 +28,10 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.reqNetwork = Long.MAX_VALUE;
         this.location = Long.MAX_VALUE;
         this.message = "no message"; // to send custom command if needed (similar to job fail, job done in history)
+        this.heartBeatInterval = 0;
+
     }
-    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message) {
+    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule,String id, long reqRes, long reqNet, long location, String message, long thisHeartBeatInterval) {
         super(ownerModule);
         this.id = id;
         this.reqResource = reqRes;
@@ -35,6 +39,8 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.location = location;
         this.message = message;
         this.clientHistory = new EdgeClientHistory(ownerModule,id);
+        this.heartBeatInterval = thisHeartBeatInterval;
+
     }
 
     public String getId() {
@@ -55,6 +61,9 @@ public class EdgeClient extends MatchMakingModuleObject {
 
     public String getMessage() {return message; }
 
+    public long getHeartBeatInterval() {
+        return heartBeatInterval;
+    }
 
     public void setClientHistory(EdgeClientHistory clientHistory) {
         this.clientHistory = clientHistory;
@@ -82,6 +91,7 @@ public class EdgeClient extends MatchMakingModuleObject {
                 ", \n  required_network : " + reqNetwork +
                 ", \n  location : " + location +
                 ", \n  message : " + message +
+                ", \n  heartBeatInterval : " + heartBeatInterval +
                 "\n";
     }
 

@@ -172,6 +172,29 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         logger.info("this client history info: \n{}", thisClient.getClientHistory());
     }
 
+    private boolean isClientInList (String thisClientID){
+
+        for ( EdgeClient client : clientList){
+            String clientID = client.getId();
+            if (clientID.equals(thisClientID)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isNodeInList ( String thisNodeID){
+        for (EdgeNode node : nodeList){
+            String nodeID = node.getId();
+            if (nodeID.equals(thisNodeID)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     private void updateClient(String clientAsString) throws NoClientFoundException, JsonProcessingException {
         //Map the contents of the JSON file to a java object
         EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
@@ -457,6 +480,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
 
         //Print out for debugging purposes:
         logger.info("History after disconnecting: \n{}", thisClientHistoryInfo);
+        logger.info("Disconnected this client [{}] from [{}] ", thisClientID,thisNodeID);
+
     }
 
 
@@ -470,21 +495,11 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
 
         EdgeClient thisClient = this.mapper.readValue(clientAsString, EdgeClient.class);
         String thisClientID = thisClient.getId();
-        boolean thisClientHeartBeat = true;
 
-        //endTime > currentTime = (extract from start time)
+        long heartBeatInterval = thisClient.getHeartBeatInterval();
+        long createdTime = System.currentTimeMillis();
 
-        logger.info("this client = {}, heartBeat = {}");
-        clientHeartBeatMap.put(thisClientID,thisClientHeartBeat);
-
-        //print hahsmap out debugging purposes only
-        Set<String> entry = clientHeartBeatMap.keySet();
-        for (String clientID : entry){
-            Boolean heartBeatSignal = clientHeartBeatMap.get(clientID);
-            logger.info("[{}] -- [{}]",clientID,heartBeatSignal)    ;
-
-        }
-
+        //TODO: print map for debugging
         final boolean[] abortCondition = {false};
 
         //TODO: make this runnable a new class (watch dog, maybe)
@@ -494,21 +509,28 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                 logger.info("watch dog for [{}] created. ",thisClientID);
                 while (!abortCondition[0]) {
                     //check for heartbeat signal
-                    boolean checkHeartBeat = clientHeartBeatMap.get(thisClientID);
-                    logger.info("[{}] heartbeat signal = [{}]",thisClientID,checkHeartBeat);
-                    logger.info("waiting for the next heart beat");
+                    Long currentHeartBeatTime = clientHeartBeatMap.get(thisClientID);
+                    Timestamp currentHeartBeatTimeStamp = new Timestamp(currentHeartBeatTime);
+                    logger.info("{} : current heart beat arrival time for [{}]",currentHeartBeatTimeStamp,thisClientID);
+                    logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
                     //Wait for a set period
                     try {
-                        Thread.sleep(heartBeatSleepTime);
+                        Thread.sleep(heartBeatInterval);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    checkHeartBeat = clientHeartBeatMap.get(thisClientID);
+                    long clientHeartBeatArrivalTime = clientHeartBeatMap.get(thisClientID);
+                    long deadlineTime = clientHeartBeatArrivalTime + heartBeatInterval;
+                    long checkPointTime = System.currentTimeMillis();
+                    boolean checkHeartBeat = doWeStillHaveTime(deadlineTime,checkPointTime);
+                    Timestamp clientHeartBeatStartTimeStamp = new Timestamp(clientHeartBeatArrivalTime);
+                    Timestamp deadlineTimeStamp = new Timestamp(deadlineTime);
+                    Timestamp checkPointTimeStamp = new Timestamp (checkPointTime);
+                    logger.info("\n{} : heartbeat arrival time\n{} : heartBeat dead line\n{} : current time",clientHeartBeatStartTimeStamp,deadlineTimeStamp,checkPointTimeStamp);
 
                     //reset heart beat and keep watching
                     if (checkHeartBeat) {
                         logger.info("heart beat signal = [{}], resetting watch dog",checkHeartBeat);
-                        clientHeartBeatMap.put(thisClientID,false);
                     }
                     //time out, abort this , tell the platform that client is offline
                     if (!checkHeartBeat) {
@@ -517,16 +539,18 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                         //if client is matched with a node in the platform, disconnect client from the node
                         if (sharedMatchesList.clientIsConnected(thisClientID)) {
 
-                            //TODO: these catches may be problematic later on
+                            String mappedNodeID = sharedMatchesList.getMapping().get(thisClientID);
                             try {
-                                updateAfterDisconnecting(clientAsString);
-                            } catch (MatchMakingModuleException e) {
+                                disconnectAfterTimeOut(thisClientID,mappedNodeID,"timeout");
+                            } catch (NoClientFoundException e) {
                                 e.printStackTrace();
-                            } catch (JsonProcessingException e) {
+                            } catch (NoNodeFoundException e) {
+                                e.printStackTrace();
+                            } catch (ClientNotAssignedException e) {
+                                e.printStackTrace();
+                            } catch (NoNodeFoundInHistoryException e) {
                                 e.printStackTrace();
                             }
-                            //TODO: add matched node
-                            logger.info("Disconnected this client [{}] from mapped node ", thisClientID);
                         }
                     }
                 }
@@ -538,32 +562,50 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         watchDog.start();
     }
 
-    private void clientHeartBeatSignalReceived(String heartBeatSignalAsString) throws JsonProcessingException {
+    private void clientHeartBeatSignalReceived(String heartBeatSignalAsString) throws JsonProcessingException, NoClientFoundException {
         EdgeClient thisClient = this.mapper.readValue(heartBeatSignalAsString, EdgeClient.class);
         String thisClientID = thisClient.getId();
-        //TODO: add a new variable/type called heartBeat, with client/nodeID and a boolean
-        clientHeartBeatMap.put(thisClientID,true);
-        logger.info("heart beat signal for [{}] received",thisClientID);
+        //Check whether this client is registered or not
+        if (isClientInList(thisClientID)){
+            //Put the start time in the map
+            long startTime = System.currentTimeMillis();
+            Timestamp startTimeTimeStamp = new Timestamp(startTime);
+            clientHeartBeatMap.put(thisClientID,startTime);
+            logger.info("{}, heart beat received time", startTimeTimeStamp );
+            logger.info("heart beat signal for [{}] received",thisClientID);
+        }
+        else if (!isClientInList(thisClientID)){
+            logger.warn("[{}] is not registered, please register client before sending heartbeat", thisClientID);
+            throw new NoClientFoundException(thisClientID + " is not registered, please register client before sending heartbeat");
+        }
+
     }
 
-    private int heartBeatSleepTime = 15000; //10,000 ms or 10s
-    //TODO: create new matchlist type for heartbeat pair
-    private HashMap<String, Boolean> clientHeartBeatMap = new HashMap<>(); //<ClientID, HeartBeat>
+    //TODO: create new matchlist type for heartbeat pair, cuz concurrency
+    private HashMap<String, Long> clientHeartBeatMap = new HashMap<>(); //<ClientID, HeartBeat>
     private HashMap<String, Long> nodeHeartBeatMap = new HashMap<>();
 
-    private void nodeHeartBeatSignalReceived (String heartBeatSignalAsString) throws JsonProcessingException{
+    private void nodeHeartBeatSignalReceived (String heartBeatSignalAsString) throws JsonProcessingException, NoNodeFoundException {
         EdgeNode thisNode = this.mapper.readValue(heartBeatSignalAsString, EdgeNode.class);
         String thisNodeID = thisNode.getId();
         //Put the start time in the map
-        long startTime = System.currentTimeMillis();
-        nodeHeartBeatMap.put(thisNodeID, startTime);
-        logger.info("heart beat signal for [{}] received", thisNodeID);
+        if (isNodeInList(thisNodeID)){
+            long startTime = System.currentTimeMillis();
+            Timestamp startTimeTimeStamp = new Timestamp(startTime);
+            nodeHeartBeatMap.put(thisNodeID, startTime);
+            logger.info("{}, heart beat received time", startTimeTimeStamp );
+            logger.info("heart beat signal for [{}] received", thisNodeID);
+        }
+        else if (!isNodeInList(thisNodeID)){
+            logger.warn("[{}] is not registered, please register node before sending heartbeat", thisNodeID);
+            throw new NoNodeFoundException( thisNodeID+ " is not registered, please register client before sending heartbeat");
+        }
+
     }
 
-    private boolean doWeStillHaveTime (long inputTime, long currentTime){
-
+    private boolean doWeStillHaveTime (long deadlineTime, long currentTime){
         //when we still have enough time
-        if (inputTime <= currentTime){
+        if (deadlineTime >= currentTime){
             return true;
         }
 
@@ -575,20 +617,18 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
      *
      * @param nodeAsString JSON body of node to its heartbeat signal
      */
-    //TODO: move abortCondition variable out of this class, but maybe, need talk
     private void createHeartBeatForNode(String nodeAsString) throws JsonProcessingException {
 
         EdgeNode thisNode = this.mapper.readValue(nodeAsString, EdgeNode.class);
         String thisNodeID = thisNode.getId();
 
-        //TODO: maybe use TimeStamp instead of currentTimeMilis?
         long heartBeatInterval = thisNode.getHeartBeatInterval();
-        long createTime = System.currentTimeMillis();
-        nodeHeartBeatMap.put(thisNodeID,createTime);
+        long createdTime = System.currentTimeMillis();
+        nodeHeartBeatMap.put(thisNodeID,createdTime);
 
+        //TODO: print map for debugging
         final boolean[] abortCondition = {false};
 
-        //TODO: make this runnable a new class (watch dog, maybe)
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -596,7 +636,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                 while (!abortCondition[0]) {
 
                     //get deadline for next heartbeat
-                    long checkPointTime = System.currentTimeMillis() + heartBeatInterval;
+                    Long currentHeartBeatTime = nodeHeartBeatMap.get(thisNodeID);
+                    Timestamp currentHeartBeatTimeStamp = new Timestamp(currentHeartBeatTime);
+                    logger.info("{} : current heart beat arrival time for [{}]",currentHeartBeatTimeStamp,thisNodeID);
                     logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
                     //Wait for the heart beat interval
                     try {
@@ -604,12 +646,15 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
-                    Long nodeHeartBeatStartTime = nodeHeartBeatMap.get(thisNodeID);
-                    boolean checkHeartBeat = doWeStillHaveTime(nodeHeartBeatStartTime,checkPointTime);
-                    Timestamp nodeHeartBeatStartTimeStamp = new Timestamp(nodeHeartBeatStartTime);
-                    Timestamp checkPointTimeStamp = new Timestamp(checkPointTime);
-                    logger.info("\n{} : heartbeat arrival time\n{} : heartBeat dead line",nodeHeartBeatStartTimeStamp,checkPointTimeStamp);
+                    //TODO: make heartBeatMap a seperate class like MatchesList, because of concurrency
+                    Long nodeHeartBeatArrivalTime = nodeHeartBeatMap.get(thisNodeID);
+                    long deadlineTime = nodeHeartBeatArrivalTime + heartBeatInterval;
+                    long checkPointTime = System.currentTimeMillis();
+                    boolean checkHeartBeat = doWeStillHaveTime(deadlineTime,checkPointTime);
+                    Timestamp nodeHeartBeatStartTimeStamp = new Timestamp(nodeHeartBeatArrivalTime);
+                    Timestamp deadlineTimeStamp = new Timestamp(deadlineTime);
+                    Timestamp checkPointTimeStamp = new Timestamp (checkPointTime);
+                    logger.info("\n{} : heartbeat arrival time\n{} : heartBeat dead line\n{} : current time",nodeHeartBeatStartTimeStamp,deadlineTimeStamp,checkPointTimeStamp);
 
                     //reset heart beat and keep watching
                     if (checkHeartBeat) {
@@ -666,6 +711,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     }
                     case "register_node" -> {
                         registerNode(commandLine[2]);
+                        createHeartBeatForNode(commandLine[2]);
                         logger.info("node registered, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
                     case "assign_client" -> {
@@ -681,7 +727,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                         logger.info("client heart beat received, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
                     case "node_receive_heart_beat" -> {
-                        clientHeartBeatSignalReceived(commandLine[2]);
+                        nodeHeartBeatSignalReceived(commandLine[2]);
                         logger.info("node heart beat received, done with [outfunction]\n---------------------------------------------------------------------------------------\n");
                     }
 
