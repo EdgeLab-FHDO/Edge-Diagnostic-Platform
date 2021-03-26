@@ -3,7 +3,9 @@ package InfrastructureManager.Modules.MatchMaking.OutputUnitTests;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClient;
 import InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory;
+import InfrastructureManager.Modules.MatchMaking.Exception.MatchMakingModuleException;
 import InfrastructureManager.Modules.MatchMaking.MatchMakingModule;
+import InfrastructureManager.Modules.MatchMaking.Naive.NaiveMatchMaking;
 import InfrastructureManager.Modules.MatchMaking.Node.EdgeNode;
 import InfrastructureManager.Modules.MatchMaking.Output.MatchMakerOutput;
 import InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking;
@@ -12,6 +14,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,7 +94,58 @@ public class MatchMakingScoreTest {
 //        String thisShouldBeNode2 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         String thisShouldBeNode2 = module.getSharedList().getMapping().get("client1");
         Assert.assertEquals("node2",thisShouldBeNode2);
+    }
 
+    @Test
+    public void heartBeatTest() throws MatchMakingModuleException {
+        MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new NaiveMatchMaking(module));
+        String node = "{\"id\":\"node5\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55,\"heartBeatInterval\":5000}";
+        String client = "{\"id\":\"client5\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54,\"heartBeatInterval\":5000}";
+
+        matchMaker.execute("matchMaker register_node " + node);
+        matchMaker.execute("matchMaker register_client " + client);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //if we get this msg [Index -1 out of bounds for length 3] then there is no node5, check the code again
+        int node5Index = -1;
+        List<EdgeNode> nodeList = matchMaker.getNodeList();
+        for (EdgeNode thisNode : nodeList){
+            if (thisNode.getId().equals("node5")){
+                node5Index = nodeList.indexOf(thisNode);
+                break;
+            }
+        }
+
+        int client5Index = -1;
+        List<EdgeClient> clientList = matchMaker.getClientList();
+        for (EdgeClient thisClient : clientList){
+            if (thisClient.getId().equals("client5")){
+                client5Index = clientList.indexOf(thisClient);
+                break;
+            }
+        }
+        boolean nodeShouldBeOnline = matchMaker.getNodeList().get(node5Index).isOnline();
+        boolean clientShouldBeOnline = matchMaker.getClientList().get(client5Index).isOnline();
+        //Node and client should still be online, heart beat is deadline is 5s, only waited for 1s
+        Assert.assertEquals(true,nodeShouldBeOnline);
+        Assert.assertEquals(true,clientShouldBeOnline);
+
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        nodeShouldBeOnline = matchMaker.getNodeList().get(node5Index).isOnline();
+        clientShouldBeOnline = matchMaker.getClientList().get(client5Index).isOnline();
+
+        //Node and client should be offline now, heart beat is deadline is 5s, waited for 6s
+        Assert.assertEquals(false,nodeShouldBeOnline);
+        Assert.assertEquals(false,clientShouldBeOnline);
     }
 
     private String getNodeIDFromJSON(String nodeAsString) throws Exception {
