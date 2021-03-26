@@ -2,6 +2,8 @@ package InfrastructureManager.Modules.MatchMaking;
 
 import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.PlatformObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ public class MatchesList extends MatchMakingModuleObject {
     private final ConcurrentMap<String, String> matches; //Map Key:CLIENT_ID Value:NODE_JSON
     private final Semaphore block;
     private String lastClientAdded;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public MatchesList(ImmutablePlatformModule ownerModule) {
         super(ownerModule);
@@ -33,6 +36,7 @@ public class MatchesList extends MatchMakingModuleObject {
     }
 
     public void putValue(String clientID, String nodeID) {
+        logger.info("clientID = {}\nnodeID = {}",clientID,nodeID);
         this.matches.put(clientID, nodeID);
         this.lastClientAdded = clientID;
         this.block.release();

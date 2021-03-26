@@ -33,7 +33,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     private final List<EdgeClient> clientList;
     private ConcurrentMap<String, Long> clientHeartBeatMap = new ConcurrentHashMap<>(); //<ClientID, HeartBeat>
     private ConcurrentMap<String, Long> nodeHeartBeatMap = new ConcurrentHashMap<>(); //NodeID, heartbeat
-    private final long watchDogWaitTime = 5000;
+    private final long watchDogWaitTime = 500;
 
 
     public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm) {
@@ -57,7 +57,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         if (!clientIsOnline){
             logger.warn("[{}] is offline, unable to match",thisClientID);
             logger.info("client info: {}", thisClient);
-            //TODO: throws client offline exception?
             throw new ClientIsOfflineException("this [" + thisClientID + "] is offline");
         }
         //If thisClient has already been matched,
@@ -349,12 +348,15 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             throw new ClientNotAssignedException("This client [" + thisClientID + "] is not connected to any nodes in the system");
         }
         //Get node that assigned to client
-        EdgeNode auxNode = this.mapper.readValue(sharedMatchesList.removeClient(thisClientID), EdgeNode.class);
-        String thisNodeID = auxNode.getId();
+//        EdgeNode auxNode = this.mapper.readValue(sharedMatchesList.getMapping().get(thisClientID), EdgeNode.class);
+//        String thisNodeID = auxNode.getId();
+        String thisNodeID = sharedMatchesList.getMapping().get(thisClientID);
         EdgeNode thisNode = getNodeByID(thisNodeID);
 
         logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
 
+        //disconnecting client with node
+        sharedMatchesList.removeClient(thisClientID);
             /*
             -----------------------------UPDATING NODE INFO----------------------------------------------------------
              */
@@ -504,7 +506,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
      *
      * @param clientAsString JSON body of client to its heartbeat signal
      */
-    //TODO: move abortCondition variable out of this class, but maybe, need talk
     private void createHeartBeatForClient(String clientAsString) throws JsonProcessingException, NoClientFoundException {
 
         EdgeClient thisClientFromString = this.mapper.readValue(clientAsString, EdgeClient.class);
@@ -517,11 +518,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         long createdTime = System.currentTimeMillis();
         clientHeartBeatMap.put(thisClientID,createdTime);
 
-
-        //TODO: print map for debugging
         final boolean[] abortCondition = {false};
 
-        //TODO: make this runnable a new class (watch dog, maybe)
+
         Runnable r = new Runnable() {
             @Override
             public void run() {
@@ -654,7 +653,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         long createdTime = System.currentTimeMillis();
         nodeHeartBeatMap.put(thisNodeID,createdTime);
 
-        //TODO: print map for debugging
         final boolean[] abortCondition = {false};
 
         Runnable r = new Runnable() {
@@ -674,7 +672,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //TODO: make heartBeatMap a seperate class like MatchesList, because of concurrency
                     Long nodeHeartBeatArrivalTime = nodeHeartBeatMap.get(thisNodeID);
                     long deadlineTime = nodeHeartBeatArrivalTime + heartBeatInterval;
                     long checkPointTime = System.currentTimeMillis();

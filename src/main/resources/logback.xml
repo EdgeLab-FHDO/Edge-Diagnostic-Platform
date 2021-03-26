@@ -10,9 +10,6 @@
     </appender>
 
     <logger
-            name="InfrastructureManager.Modules.MatchMaking.ScoreBased.ScoreBasedMatchMaking"
-            level="OFF"/>
-    <logger
             name="InfrastructureManager.MatchMaking.MatchMaker"
             level="OFF"/>
     <logger
