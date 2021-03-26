@@ -150,8 +150,10 @@ extends <a href="MatchMakingModuleObject.html" title="class in InfrastructureMan
 </tr>
 <tr class="rowColor" id="i1">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConnectedClientsToNode(java.lang.String)">getConnectedClientsToNode</a></span>&#8203;(java.lang.String&nbsp;nodeAsString)</code></th>
-<td class="colLast">&nbsp;</td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getConnectedClientsToNode(java.lang.String)">getConnectedClientsToNode</a></span>&#8203;(java.lang.String&nbsp;nodeID)</code></th>
+<td class="colLast">
+<div class="block">return a list of clients that connected to thisNode</div>
+</td>
 </tr>
 <tr class="altColor" id="i2">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -165,13 +167,13 @@ extends <a href="MatchMakingModuleObject.html" title="class in InfrastructureMan
 </tr>
 <tr class="altColor" id="i4">
 <td class="colFirst"><code>boolean</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nodeIsAssigned(java.lang.String)">nodeIsAssigned</a></span>&#8203;(java.lang.String&nbsp;nodeAsString)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#nodeIsAssigned(java.lang.String)">nodeIsAssigned</a></span>&#8203;(java.lang.String&nbsp;nodeID)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i5">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#putValue(java.lang.String,java.lang.String)">putValue</a></span>&#8203;(java.lang.String&nbsp;clientID,
-java.lang.String&nbsp;nodeAsString)</code></th>
+java.lang.String&nbsp;nodeID)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i6">
@@ -248,7 +250,7 @@ java.lang.String&nbsp;nodeAsString)</code></th>
 <section class="detail">
 <h3><a id="putValue(java.lang.String,java.lang.String)">putValue</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">putValue</span>&#8203;(<span class="arguments">java.lang.String&nbsp;clientID,
-java.lang.String&nbsp;nodeAsString)</span></div>
+java.lang.String&nbsp;nodeID)</span></div>
 </section>
 </li>
 <li class="blockList">
@@ -260,13 +262,19 @@ java.lang.String&nbsp;nodeAsString)</span></div>
 <li class="blockList">
 <section class="detail">
 <h3><a id="nodeIsAssigned(java.lang.String)">nodeIsAssigned</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">nodeIsAssigned</span>&#8203;(<span class="arguments">java.lang.String&nbsp;nodeAsString)</span></div>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">nodeIsAssigned</span>&#8203;(<span class="arguments">java.lang.String&nbsp;nodeID)</span></div>
 </section>
 </li>
 <li class="blockList">
 <section class="detail">
 <h3><a id="getConnectedClientsToNode(java.lang.String)">getConnectedClientsToNode</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">java.util.List&lt;java.lang.String&gt;</span>&nbsp;<span class="memberName">getConnectedClientsToNode</span>&#8203;(<span class="arguments">java.lang.String&nbsp;nodeAsString)</span></div>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">java.util.List&lt;java.lang.String&gt;</span>&nbsp;<span class="memberName">getConnectedClientsToNode</span>&#8203;(<span class="arguments">java.lang.String&nbsp;nodeID)</span></div>
+<div class="block">return a list of clients that connected to thisNode</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>nodeID</code> - thisNode's in String</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+</dl>
 </section>
 </li>
 <li class="blockList">

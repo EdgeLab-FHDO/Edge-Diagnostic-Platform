@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -121,13 +121,15 @@ extends <a href="../MatchMakingModuleObject.html" title="class in Infrastructure
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long)">EdgeNode</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean)">EdgeNode</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 java.lang.String&nbsp;ip,
 boolean&nbsp;connected,
 long&nbsp;thisTotalComputingResource,
 long&nbsp;thisTotalNetworkBandwidth,
-long&nbsp;thisLocation)</code></th>
+long&nbsp;thisLocation,
+long&nbsp;thisHeartBeatInterval,
+boolean&nbsp;thisOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -159,81 +161,96 @@ long&nbsp;thisLocation)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i1">
-<td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
+<td class="colFirst"><code>long</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getHeartBeatInterval()">getHeartBeatInterval</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i2">
 <td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIpAddress()">getIpAddress</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getId()">getId</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i3">
-<td class="colFirst"><code>long</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLocation()">getLocation</a></span>()</code></th>
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getIpAddress()">getIpAddress</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i4">
 <td class="colFirst"><code>long</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNetwork()">getNetwork</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getLocation()">getLocation</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i5">
 <td class="colFirst"><code>long</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResource()">getResource</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getNetwork()">getNetwork</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i6">
 <td class="colFirst"><code>long</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTotalNetwork()">getTotalNetwork</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getResource()">getResource</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i7">
 <td class="colFirst"><code>long</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTotalResource()">getTotalResource</a></span>()</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTotalNetwork()">getTotalNetwork</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i8">
+<td class="colFirst"><code>long</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getTotalResource()">getTotalResource</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i9">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isConnected()">isConnected</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i9">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setConnected(boolean)">setConnected</a></span>&#8203;(boolean&nbsp;connected)</code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
 <tr class="altColor" id="i10">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setIpAddress(java.lang.String)">setIpAddress</a></span>&#8203;(java.lang.String&nbsp;ipAddress)</code></th>
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isOnline()">isOnline</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i11">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setConnected(boolean)">setConnected</a></span>&#8203;(boolean&nbsp;connected)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i12">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalNetwork(long)">setTotalNetwork</a></span>&#8203;(long&nbsp;thisTotalComputingResource)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setIpAddress(java.lang.String)">setIpAddress</a></span>&#8203;(java.lang.String&nbsp;ipAddress)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i13">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalResource(long)">setTotalResource</a></span>&#8203;(long&nbsp;thisTotalNetworkBandwidth)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i14">
-<td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnline(boolean)">setOnline</a></span>&#8203;(boolean&nbsp;online)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i15">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateComputingResource(java.lang.Long)">updateComputingResource</a></span>&#8203;(java.lang.Long&nbsp;usedComputingResource)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalNetwork(long)">setTotalNetwork</a></span>&#8203;(long&nbsp;thisTotalComputingResource)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i16">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalResource(long)">setTotalResource</a></span>&#8203;(long&nbsp;thisTotalNetworkBandwidth)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i17">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i18">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateComputingResource(java.lang.Long)">updateComputingResource</a></span>&#8203;(java.lang.Long&nbsp;usedComputingResource)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i19">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateNetworkBandwidth(java.lang.Long)">updateNetworkBandwidth</a></span>&#8203;(java.lang.Long&nbsp;usedNetworkBandwidth)</code></th>
 <td class="colLast">&nbsp;</td>
@@ -278,14 +295,16 @@ long&nbsp;thisLocation)</code></th>
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long)">EdgeNode</a></h3>
+<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean)">EdgeNode</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">EdgeNode</span>&#8203;(<span class="arguments"><a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 java.lang.String&nbsp;ip,
 boolean&nbsp;connected,
 long&nbsp;thisTotalComputingResource,
 long&nbsp;thisTotalNetworkBandwidth,
-long&nbsp;thisLocation)</span></div>
+long&nbsp;thisLocation,
+long&nbsp;thisHeartBeatInterval,
+boolean&nbsp;thisOnline)</span></div>
 </section>
 </li>
 </ul>
@@ -348,6 +367,12 @@ long&nbsp;thisLocation)</span></div>
 </li>
 <li class="blockList">
 <section class="detail">
+<h3><a id="getHeartBeatInterval()">getHeartBeatInterval</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">long</span>&nbsp;<span class="memberName">getHeartBeatInterval</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
 <h3><a id="setTotalNetwork(long)">setTotalNetwork</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setTotalNetwork</span>&#8203;(<span class="arguments">long&nbsp;thisTotalComputingResource)</span></div>
 </section>
@@ -386,6 +411,18 @@ long&nbsp;thisLocation)</span></div>
 <section class="detail">
 <h3><a id="updateNetworkBandwidth(java.lang.Long)">updateNetworkBandwidth</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">updateNetworkBandwidth</span>&#8203;(<span class="arguments">java.lang.Long&nbsp;usedNetworkBandwidth)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="isOnline()">isOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isOnline</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setOnline(boolean)">setOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setOnline</span>&#8203;(<span class="arguments">boolean&nbsp;online)</span></div>
 </section>
 </li>
 <li class="blockList">
