@@ -3,7 +3,8 @@ package DiagnosticsServer;
 import DiagnosticsServer.Communication.Exception.ServerCommunicationException;
 import DiagnosticsServer.Communication.RawServerData;
 import DiagnosticsServer.Communication.ServerPlatformConnection;
-import REST.Exception.RESTClientException;
+import Communication.Exception.RESTClientException;
+import RunnerManagement.Exception.RunnersNotConfiguredException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,27 +49,30 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            if (args.length > 0) {
-                String baseURL = args[0];
-                String registerURL = args[1];
-                String instructionsURL = args[2];
-                Server activeInstance = new Server(4444, baseURL,registerURL, instructionsURL);
-                System.out.println("Starting Server");
-                activeInstance.getManager().startRunners();
 
-                // Temporary exit ----------------------
-                Scanner in = new Scanner(System.in);
-                String input;
-                do {
-                    input = in.nextLine();
-                } while (!input.equals("exit"));
-                activeInstance.getManager().stopRunners();
-                //----------------------------------------
+            String baseURL = args[0];
+            String registerURL = args[1];
+            String instructionsURL = args[2];
+            Server activeInstance = new Server(4444, baseURL,registerURL, instructionsURL);
+            System.out.println("Starting Server");
+            activeInstance.getManager().startRunners();
 
-            } else {
-                System.out.println("No arguments");
-            }
-        } catch (ServerCommunicationException e) {
+            // Temporary exit ----------------------
+            Scanner in = new Scanner(System.in);
+            String input;
+            do {
+                input = in.nextLine();
+            } while (!input.equals("exit"));
+            activeInstance.getManager().stopRunners();
+            //----------------------------------------
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.err.println("To use the program the following arguments are expected:\n" +
+                    "1. Base URL\n" +
+                    "2. Register URL\n" +
+                    "3. Instructions URL\n");
+            System.exit(-1);
+        } catch (ServerCommunicationException | RunnersNotConfiguredException e) {
             e.printStackTrace();
             System.exit(-1);
         }

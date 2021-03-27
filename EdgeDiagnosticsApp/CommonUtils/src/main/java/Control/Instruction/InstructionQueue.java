@@ -1,4 +1,4 @@
-package Multithreading;
+package Control.Instruction;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;

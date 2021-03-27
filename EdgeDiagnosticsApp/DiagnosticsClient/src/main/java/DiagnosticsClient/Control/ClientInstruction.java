@@ -1,10 +1,10 @@
-package DiagnosticsClient.Control.RawData;
+package DiagnosticsClient.Control;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import LoadManagement.BasicLoadManager.ConnectionType;
 import LoadManagement.LoadType;
-import Multithreading.Instruction;
+import Control.Instruction.Instruction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

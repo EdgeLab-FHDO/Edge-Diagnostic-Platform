@@ -1,6 +1,6 @@
-package Multithreading;
+package Communication;
 
-import REST.BasicPlatformConnection;
+import RunnerManagement.AbstractRunner;
 
 public class HeartBeatRunner extends AbstractRunner {
 

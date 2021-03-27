@@ -1,15 +1,14 @@
 package DiagnosticsClient.Load.TCP;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
-import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.TCP.TCPConnectionException;
 import DiagnosticsClient.Load.LoadSender;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.LoadTypes.FileLoad;
 import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Map;
 
 import static java.net.StandardSocketOptions.IP_TOS;
@@ -43,8 +42,7 @@ public class TCPLoadSender extends LoadSender {
         out.write(pingData.length);
         out.write(pingData);
         out.flush();
-        String response = in.readLine();
-        //System.out.println("Response: " + response + " Latency:" + latency + " ns");
+        in.readLine();
         return System.nanoTime() - startTime;
     }
 
@@ -89,8 +87,7 @@ public class TCPLoadSender extends LoadSender {
                 out.write(buffer, 0, bytesRead);
             }
             out.flush();
-            String response = in.readLine();
-            //System.out.println("Response: " + response);
+            in.readLine();
             return System.nanoTime() - startTime;
         } catch (IOException e) {
             throw new TCPConnectionException("Sending file failed", e);
@@ -105,7 +102,6 @@ public class TCPLoadSender extends LoadSender {
         File fileToSend = load.getFileToSend();
         long fileSize = load.getDataLength();
         String fileName = fileToSend.getName();
-        long[] latencies = new long[times];
         try (
                 Socket clientSocket = new Socket(address, port);
                 BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());

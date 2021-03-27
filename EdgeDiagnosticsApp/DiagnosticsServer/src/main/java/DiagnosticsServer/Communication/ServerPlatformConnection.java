@@ -1,6 +1,6 @@
 package DiagnosticsServer.Communication;
 
-import REST.BasicPlatformConnection;
+import Communication.BasicPlatformConnection;
 
 public class ServerPlatformConnection extends BasicPlatformConnection {
     public ServerPlatformConnection(String baseURL, String registerURL, String instructionsURL) {

@@ -1,6 +1,6 @@
-package REST;
+package Communication;
 
-import REST.Exception.RESTClientException;
+import Communication.Exception.RESTClientException;
 
 public abstract class BasicPlatformConnection {
 

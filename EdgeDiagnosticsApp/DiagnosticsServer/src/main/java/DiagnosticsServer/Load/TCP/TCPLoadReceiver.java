@@ -98,7 +98,7 @@ public class TCPLoadReceiver extends LoadReceiver {
     }
 
 
-    private void receiveVideo() throws LoadReceivingException {
+    private void receiveVideo() {
 
     }
 

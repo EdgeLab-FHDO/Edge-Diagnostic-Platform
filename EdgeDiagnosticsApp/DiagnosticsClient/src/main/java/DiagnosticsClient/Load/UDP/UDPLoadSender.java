@@ -1,19 +1,20 @@
 package DiagnosticsClient.Load.UDP;
 
 import DiagnosticsClient.Load.ClientSocketOptions;
-import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;
 import DiagnosticsClient.Load.LoadSender;
-import DiagnosticsClient.Load.LoadTypes.FileLoad;
+import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.IOException;
-import java.net.*;
-import java.util.Arrays;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.util.Map;
 
-import static java.net.StandardSocketOptions.*;
+import static java.net.StandardSocketOptions.IP_TOS;
 
 public class UDPLoadSender extends LoadSender {
 
@@ -28,11 +29,11 @@ public class UDPLoadSender extends LoadSender {
     public void send(DiagnosticsLoad load) throws LoadSendingException {
         switch (load.getType()) {
             case PING -> sendPing((PingLoad) load);
-            case FILE -> sendFile((FileLoad) load);
+            case FILE -> sendFile();
         }
     }
 
-    private void sendFile(FileLoad load) {
+    private void sendFile() {
         System.err.println("File load not supported in UDP");
     }
 
@@ -48,10 +49,9 @@ public class UDPLoadSender extends LoadSender {
 
     private void sendPing(PingLoad load) throws UDPConnectionException {
         try (
-                DatagramSocket clientSocket = new DatagramSocket();
+                DatagramSocket clientSocket = new DatagramSocket()
         ){
             configureSocket(clientSocket);
-            printSocketOptions(clientSocket);
             int times = load.getTimes();
             byte[] message = load.getData();
             int interval = load.getInterval_ms();

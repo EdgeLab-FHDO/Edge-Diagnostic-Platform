@@ -1,10 +1,9 @@
-package DiagnosticsServer;
+package DiagnosticsServer.Load;
 
-import DiagnosticsServer.Control.RawData.ServerInstruction;
+import DiagnosticsServer.Control.ServerInstruction;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
-import DiagnosticsServer.Load.ServerLoadManager;
-import Multithreading.AbstractRunner;
-import Multithreading.InstructionQueue;
+import RunnerManagement.AbstractRunner;
+import Control.Instruction.InstructionQueue;
 
 public class LoadReceivingRunner extends AbstractRunner {
 
@@ -27,6 +26,7 @@ public class LoadReceivingRunner extends AbstractRunner {
             manager.receiveLoad();
         } catch (LoadReceivingException e) {
             e.printStackTrace();
+            this.stop();
         }
     }
 }

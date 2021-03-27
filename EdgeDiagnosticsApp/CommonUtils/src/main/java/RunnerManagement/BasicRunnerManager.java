@@ -1,6 +1,8 @@
-package Multithreading;
+package RunnerManagement;
 
-import REST.BasicPlatformConnection;
+import Communication.BasicPlatformConnection;
+import Communication.HeartBeatRunner;
+import RunnerManagement.Exception.RunnersNotConfiguredException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +27,19 @@ public class BasicRunnerManager {
         return runners;
     }
 
-    public void startRunners() {
+    public void startRunners() throws RunnersNotConfiguredException {
         if (!configured) {
-            //TODO: Throw custom exception
+            throw new RunnersNotConfiguredException("Runners were not configured");
         }
-        for (int i = 0; i < runners.size(); i++) {
-            Thread thread = new Thread(runners.get(i));
+        for (AbstractRunner runner : runners) {
+            Thread thread = new Thread(runner);
             threads.add(thread);
             thread.start();
         }
     }
 
     public void stopRunners() {
-        for (Thread t : threads) t.interrupt();
-        for (AbstractRunner r : runners) r.stop();
+        threads.forEach(Thread::interrupt);
+        runners.forEach(AbstractRunner::stop);
     }
 }

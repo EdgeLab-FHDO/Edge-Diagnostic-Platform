@@ -1,6 +1,5 @@
 package DiagnosticsClient.Load.LoadTypes;
 
-import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import LoadManagement.LoadType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

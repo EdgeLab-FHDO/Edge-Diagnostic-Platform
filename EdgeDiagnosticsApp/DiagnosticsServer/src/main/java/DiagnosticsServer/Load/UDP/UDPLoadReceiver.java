@@ -74,12 +74,12 @@ public class UDPLoadReceiver extends LoadReceiver {
     }
 
 
-    private void receiveFile() throws LoadReceivingException {
+    private void receiveFile() {
 
     }
 
 
-    private void receiveVideo() throws LoadReceivingException {
+    private void receiveVideo() {
 
     }
 

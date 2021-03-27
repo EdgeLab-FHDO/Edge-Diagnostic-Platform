@@ -1,8 +1,8 @@
 package DiagnosticsServer.Control;
 
-import DiagnosticsServer.Control.RawData.ServerInstruction;
-import Multithreading.BasicInstructionManager;
-import Multithreading.Instruction;
+import Control.Exception.InstructionCreationException;
+import Control.Instruction.BasicInstructionManager;
+import Control.Instruction.Instruction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,11 +16,11 @@ public class ServerInstructionManager implements BasicInstructionManager {
     }
 
     @Override
-    public Instruction createInstruction(String jsonRepresentation) {
+    public Instruction createInstruction(String jsonRepresentation) throws InstructionCreationException {
         try {
             instruction = mapper.readValue(jsonRepresentation, ServerInstruction.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new InstructionCreationException(e);
         }
         return instruction;
     }

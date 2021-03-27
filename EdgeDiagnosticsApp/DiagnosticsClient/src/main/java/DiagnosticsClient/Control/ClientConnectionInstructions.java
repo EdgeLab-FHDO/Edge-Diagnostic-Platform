@@ -1,6 +1,6 @@
-package DiagnosticsClient.Control.RawData;
+package DiagnosticsClient.Control;
 
-import Control.ConnectionInstructions;
+import Control.Instruction.ConnectionInstructions;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import LoadManagement.BasicLoadManager.ConnectionType;
 import com.fasterxml.jackson.annotation.JsonProperty;

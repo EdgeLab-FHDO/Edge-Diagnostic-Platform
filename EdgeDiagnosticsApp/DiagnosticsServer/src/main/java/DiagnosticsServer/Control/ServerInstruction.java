@@ -1,9 +1,9 @@
-package DiagnosticsServer.Control.RawData;
+package DiagnosticsServer.Control;
 
+import Control.Instruction.Instruction;
 import DiagnosticsServer.Load.ServerSocketOptions;
 import LoadManagement.BasicLoadManager;
 import LoadManagement.LoadType;
-import Multithreading.Instruction;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,10 +21,6 @@ public class ServerInstruction implements Instruction {
     @Override
     public LoadType getLoadType() {
         return loadType;
-    }
-
-    public ServerConnectionInstructions getConnection() {
-        return connection;
     }
 
     public ServerSocketOptions getSocketOptions() {

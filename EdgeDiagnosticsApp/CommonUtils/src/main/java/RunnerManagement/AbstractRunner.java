@@ -1,4 +1,4 @@
-package Multithreading;
+package RunnerManagement;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

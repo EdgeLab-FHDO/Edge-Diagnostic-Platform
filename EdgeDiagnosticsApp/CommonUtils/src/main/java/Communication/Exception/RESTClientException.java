@@ -1,4 +1,4 @@
-package REST.Exception;
+package Communication.Exception;
 
 public class RESTClientException extends Exception {
     public RESTClientException(String message) {

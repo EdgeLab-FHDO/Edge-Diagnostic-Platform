@@ -1,4 +1,4 @@
-package Control;
+package Control.Instruction;
 
 import LoadManagement.BasicLoadManager.ConnectionType;
 

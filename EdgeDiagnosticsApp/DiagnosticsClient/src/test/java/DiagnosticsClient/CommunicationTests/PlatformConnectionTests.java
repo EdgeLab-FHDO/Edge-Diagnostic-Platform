@@ -2,7 +2,7 @@ package DiagnosticsClient.CommunicationTests;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.ServerInformation;
-import REST.Exception.RESTClientException;
+import Communication.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Assert;
@@ -22,7 +22,8 @@ public class PlatformConnectionTests {
             "/client/register",
             "/client/assign",
             "/client/get_node/diagnostics_client",
-            "/diagnostics/instructions");
+            "/diagnostics/instructions",
+            "/diagnostics/report");
     private final String json = "{\"id\":\"diagnostics_client\"}";
 
 

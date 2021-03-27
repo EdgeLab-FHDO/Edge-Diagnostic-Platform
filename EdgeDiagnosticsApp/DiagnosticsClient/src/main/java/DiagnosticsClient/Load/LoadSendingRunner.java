@@ -1,14 +1,13 @@
-package DiagnosticsClient;
+package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.ServerInformation;
-import DiagnosticsClient.Control.RawData.ClientInstruction;
+import DiagnosticsClient.Control.ClientInstruction;
 import DiagnosticsClient.Load.ClientLoadManager;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
-import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
-import Multithreading.AbstractRunner;
-import Multithreading.InstructionQueue;
-import REST.Exception.RESTClientException;
+import RunnerManagement.AbstractRunner;
+import Control.Instruction.InstructionQueue;
+import Communication.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class LoadSendingRunner extends AbstractRunner {
@@ -16,7 +15,7 @@ public class LoadSendingRunner extends AbstractRunner {
     private final ClientLoadManager manager;
     private final InstructionQueue instructionQueue;
 
-    public LoadSendingRunner(ClientPlatformConnection connection, ServerInformation serverInformation, InstructionQueue instructionQueue) throws ServerNotSetUpException {
+    public LoadSendingRunner(ClientPlatformConnection connection, ServerInformation serverInformation, InstructionQueue instructionQueue) {
         this.manager = new ClientLoadManager(connection,serverInformation);
         this.instructionQueue = instructionQueue;
     }
@@ -32,6 +31,7 @@ public class LoadSendingRunner extends AbstractRunner {
             Thread.sleep(100);
         } catch (LoadSendingException | JsonProcessingException | RESTClientException e) {
             e.printStackTrace();
+            this.stop();
         }
     }
 }

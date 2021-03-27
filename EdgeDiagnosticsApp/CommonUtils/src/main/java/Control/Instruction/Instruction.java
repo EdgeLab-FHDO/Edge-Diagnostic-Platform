@@ -1,4 +1,4 @@
-package Multithreading;
+package Control.Instruction;
 
 import LoadManagement.BasicLoadManager.ConnectionType;
 import LoadManagement.LoadType;

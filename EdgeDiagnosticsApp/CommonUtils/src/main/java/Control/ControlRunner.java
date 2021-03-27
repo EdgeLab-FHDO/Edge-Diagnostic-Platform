@@ -1,7 +1,12 @@
-package Multithreading;
+package Control;
 
-import REST.BasicPlatformConnection;
-import REST.Exception.RESTClientException;
+import Communication.BasicPlatformConnection;
+import Communication.Exception.RESTClientException;
+import Control.Exception.InstructionCreationException;
+import Control.Instruction.BasicInstructionManager;
+import Control.Instruction.Instruction;
+import Control.Instruction.InstructionQueue;
+import RunnerManagement.AbstractRunner;
 
 public class ControlRunner extends AbstractRunner {
 
@@ -27,9 +32,9 @@ public class ControlRunner extends AbstractRunner {
                 lastInstruction = instructionString;
             }
             Thread.sleep(1000);
-
-        } catch (RESTClientException e) {
+        } catch (RESTClientException | InstructionCreationException e) {
             e.printStackTrace();
+            this.stop();
         }
     }
 

@@ -2,13 +2,12 @@ package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
-import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
 import DiagnosticsClient.Communication.ServerInformation;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.TCP.TCPLoadSender;
 import DiagnosticsClient.Load.UDP.UDPLoadSender;
 import LoadManagement.BasicLoadManager;
-import REST.Exception.RESTClientException;
+import Communication.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,8 +22,7 @@ public class ClientLoadManager extends BasicLoadManager {
     private final ClientPlatformConnection connection;
     private ClientSocketOptions options;
 
-    public ClientLoadManager(ClientPlatformConnection connection, ServerInformation serverInformation) throws ServerNotSetUpException {
-        if (serverInformation == null) throw new ServerNotSetUpException("Client is not connected to the server");
+    public ClientLoadManager(ClientPlatformConnection connection, ServerInformation serverInformation) {
         this.address = serverInformation.getIpAddress();
         this.port = serverInformation.getPort();
         this.connection = connection;

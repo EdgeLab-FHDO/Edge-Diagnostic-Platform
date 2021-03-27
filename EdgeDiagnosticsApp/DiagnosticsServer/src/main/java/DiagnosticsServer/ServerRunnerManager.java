@@ -2,9 +2,10 @@ package DiagnosticsServer;
 
 import DiagnosticsServer.Communication.ServerPlatformConnection;
 import DiagnosticsServer.Control.ServerInstructionManager;
-import Multithreading.BasicRunnerManager;
-import Multithreading.ControlRunner;
-import Multithreading.InstructionQueue;
+import DiagnosticsServer.Load.LoadReceivingRunner;
+import RunnerManagement.BasicRunnerManager;
+import Control.ControlRunner;
+import Control.Instruction.InstructionQueue;
 
 public class ServerRunnerManager extends BasicRunnerManager {
 

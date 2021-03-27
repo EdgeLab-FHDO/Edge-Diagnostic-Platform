@@ -1,8 +1,8 @@
 package DiagnosticsClient.Control;
 
-import DiagnosticsClient.Control.RawData.ClientInstruction;
-import Multithreading.BasicInstructionManager;
-import Multithreading.Instruction;
+import Control.Exception.InstructionCreationException;
+import Control.Instruction.BasicInstructionManager;
+import Control.Instruction.Instruction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,11 +17,11 @@ public class ClientInstructionManager implements BasicInstructionManager {
     }
 
     @Override
-    public Instruction createInstruction(String instructionJson) {
+    public Instruction createInstruction(String instructionJson) throws InstructionCreationException {
         try {
             instruction = mapper.readValue(instructionJson, ClientInstruction.class);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new InstructionCreationException(e);
         }
         return instruction;
     }

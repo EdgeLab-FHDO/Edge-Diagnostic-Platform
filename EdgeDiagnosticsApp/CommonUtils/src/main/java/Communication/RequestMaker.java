@@ -1,8 +1,8 @@
-package REST;
+package Communication;
 
 
-import REST.Exception.ErrorInRequestException;
-import REST.Exception.RESTClientException;
+import Communication.Exception.ErrorInRequestException;
+import Communication.Exception.RESTClientException;
 
 import java.io.IOException;
 import java.net.URI;

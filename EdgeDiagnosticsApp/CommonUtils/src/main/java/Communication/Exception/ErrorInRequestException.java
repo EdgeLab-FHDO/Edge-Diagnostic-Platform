@@ -1,4 +1,4 @@
-package REST.Exception;
+package Communication.Exception;
 
 public class ErrorInRequestException extends RESTClientException {
     public ErrorInRequestException(int responseStatus) {

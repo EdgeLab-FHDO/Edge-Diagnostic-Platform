@@ -3,8 +3,10 @@ package DiagnosticsClient;
 import DiagnosticsClient.Communication.ClientPlatformConnection;
 import DiagnosticsClient.Communication.ServerInformation;
 import DiagnosticsClient.Control.ClientInstructionManager;
-import DiagnosticsClient.Load.Exception.TCP.ServerNotSetUpException;
-import Multithreading.*;
+import DiagnosticsClient.Load.LoadSendingRunner;
+import RunnerManagement.BasicRunnerManager;
+import Control.ControlRunner;
+import Control.Instruction.InstructionQueue;
 
 public class ClientRunnerManager extends BasicRunnerManager {
 
@@ -14,7 +16,7 @@ public class ClientRunnerManager extends BasicRunnerManager {
 
     public void configure(ClientPlatformConnection connection,
                           String heartBeatBody,
-                          ServerInformation serverInformation) throws ServerNotSetUpException {
+                          ServerInformation serverInformation) {
         InstructionQueue instructionQueue = new InstructionQueue();
         ClientInstructionManager manager = new ClientInstructionManager();
         super.configure(connection,heartBeatBody);

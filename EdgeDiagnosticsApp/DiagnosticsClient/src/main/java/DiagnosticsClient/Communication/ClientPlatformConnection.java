@@ -1,21 +1,23 @@
 package DiagnosticsClient.Communication;
 
 
-import REST.BasicPlatformConnection;
-import REST.Exception.RESTClientException;
+import Communication.BasicPlatformConnection;
+import Communication.Exception.RESTClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ClientPlatformConnection extends BasicPlatformConnection {
 
     private final String assignURL;
     private final String getServerURL;
+    private final String measurementsURL;
 
     public ClientPlatformConnection(String baseURL, String registerURL,
                                     String assignURL, String getServerURL,
-                                    String instructionsURL) {
+                                    String instructionsURL, String measurementsURL) {
         super(baseURL,registerURL,instructionsURL);
         this.assignURL = assignURL;
         this.getServerURL = getServerURL;
+        this.measurementsURL = measurementsURL;
     }
 
     public ServerInformation getServer(String jsonRepresentation) throws RESTClientException, JsonProcessingException {
@@ -25,7 +27,6 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
     }
 
     public void sendMeasurements(String latencyString) throws RESTClientException {
-        String measurementsURL = "/diagnostics/report";
         this.getClient().post(measurementsURL,latencyString);
     }
 }

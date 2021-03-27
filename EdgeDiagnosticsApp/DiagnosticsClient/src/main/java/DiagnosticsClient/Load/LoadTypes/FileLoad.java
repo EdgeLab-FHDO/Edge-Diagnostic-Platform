@@ -41,7 +41,9 @@ public class FileLoad extends RepetitiveLoad {
 
     private File createFileBySize(String path, long sizeInBytes) throws FileCreationException {
         File result = new File(path);
-        if (result.exists()) result.delete();
+        if (result.exists() && !result.delete()) {
+            throw new FileCreationException("File already existed and could not be deleted");
+        }
         try {
             if (result.createNewFile()) {
                 RandomAccessFile auxFile = new RandomAccessFile(result,"rw");
