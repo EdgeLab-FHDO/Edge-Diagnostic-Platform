@@ -14,23 +14,26 @@ public class Client {
     private final ClientRunnerManager manager;
 
     public Client(String baseURL, String registerURL,
-                  String assignURL, String getServerURL,
+                  String assignURL, String getServerURL, String heartbeatURL,
                   String instructionsURL, String measurementsURL) throws ClientCommunicationException {
         manager = new ClientRunnerManager();
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL,
-                    assignURL, getServerURL, instructionsURL, measurementsURL);
-            connection.register(this.getJsonRepresentation());
-            ServerInformation server = connection.getServer(this.getJsonRepresentation());
-            manager.configure(connection,getJsonRepresentation(),server);
+                    assignURL, getServerURL, heartbeatURL ,instructionsURL, measurementsURL);
+            connection.register(this.getJsonRepresentation(true));
+            ServerInformation server = connection.getServer(this.getJsonRepresentation(true));
+            manager.configure(connection,getJsonRepresentation(true),server);
         } catch (JsonProcessingException | RESTClientException e) {
             throw new ClientCommunicationException("Communication with diagnostics platform failed: ", e);
         }
     }
 
-    private String getJsonRepresentation() {
+    private String getJsonRepresentation(boolean heartbeat) {
         String id = "diagnostics_client";
-        return  "{\"id\":\"" + id + "\"}";
+        if (heartbeat) {
+            return "{\"id\":\"" + id + "\"}";
+        }
+        return "{\"id\":\"" + id + "\", \"heartBeatInterval\":2000}";
     }
 
     public ClientRunnerManager getManager() {
@@ -43,10 +46,11 @@ public class Client {
             String registerURL = args[1];
             String assignURL = args[2];
             String getServerURL = args[3];
-            String instructionsURL = args[4];
-            String measurementsURL = args[5];
+            String heartbeatURL = args[4];
+            String instructionsURL = args[5];
+            String measurementsURL = args[6];
             Client activeClient = new Client(baseURL,registerURL,assignURL,
-                    getServerURL, instructionsURL, measurementsURL);
+                    getServerURL, heartbeatURL, instructionsURL, measurementsURL);
             activeClient.getManager().startRunners();
 
             // Temporary exit ----------------------
@@ -64,8 +68,9 @@ public class Client {
                     "2. Register URL\n" +
                     "3. Assignment URL\n" +
                     "4. Server GET URL\n" +
-                    "5. Instructions URL\n" +
-                    "6. Measurements URL");
+                    "5. Heartbeat URL\n" +
+                    "6. Instructions URL\n" +
+                    "7. Measurements URL");
             System.exit(-1);
         } catch (ClientCommunicationException | RunnersNotConfiguredException e) {
             e.printStackTrace();

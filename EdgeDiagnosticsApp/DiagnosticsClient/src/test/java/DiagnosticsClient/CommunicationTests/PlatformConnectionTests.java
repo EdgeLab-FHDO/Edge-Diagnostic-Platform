@@ -22,6 +22,7 @@ public class PlatformConnectionTests {
             "/client/register",
             "/client/assign",
             "/client/get_node/diagnostics_client",
+            "/client/heartbeat",
             "/diagnostics/instructions",
             "/diagnostics/report");
     private final String json = "{\"id\":\"diagnostics_client\"}";

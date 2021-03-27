@@ -12,9 +12,9 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
     private final String measurementsURL;
 
     public ClientPlatformConnection(String baseURL, String registerURL,
-                                    String assignURL, String getServerURL,
+                                    String assignURL, String getServerURL, String heartbeatURL,
                                     String instructionsURL, String measurementsURL) {
-        super(baseURL,registerURL,instructionsURL);
+        super(baseURL,registerURL,heartbeatURL,instructionsURL);
         this.assignURL = assignURL;
         this.getServerURL = getServerURL;
         this.measurementsURL = measurementsURL;
@@ -23,6 +23,7 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
     public ServerInformation getServer(String jsonRepresentation) throws RESTClientException, JsonProcessingException {
         this.getClient().post(assignURL,jsonRepresentation);
         String response = this.getClient().get(getServerURL);
+        System.out.println(response);
         return new ServerInformation(response);
     }
 

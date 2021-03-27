@@ -11,7 +11,10 @@
         {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
         {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
         {"name" : "diagnostic.report", "URL":  "/diagnostics/report", "command":  "latency_report $body", "information": []},
-        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]}
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
+        {"name" : "client.heartbeat","URL": "/client/heartbeat","command": "client_hb $body","information":  []},
+        {"name" : "node.heartbeat","URL": "/node/heartbeat","command": "node_hb $body","information":  []},
+        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
         {"name": "mm.give_node", "URL": "/client/get_node/:client_id"},
@@ -28,6 +31,29 @@
       "out" : "util.control",
       "commands" : {
         "exit" : "util exit"
+      }
+    },
+    {
+      "in" : "rest.client.disconnect",
+      "out" : "mm.out",
+      "commands" : {
+        "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.client.heartbeat",
+      "out" : "mm.out",
+      "commands" : {
+        "client_hb $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.node.heartbeat",
+      "out" : "mm.out",
+      "commands" : {
+        "node_hb $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
       }
     },
     {

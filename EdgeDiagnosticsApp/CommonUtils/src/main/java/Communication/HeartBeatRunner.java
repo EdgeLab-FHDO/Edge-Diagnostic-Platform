@@ -1,5 +1,6 @@
 package Communication;
 
+import Communication.Exception.RESTClientException;
 import RunnerManagement.AbstractRunner;
 
 public class HeartBeatRunner extends AbstractRunner {
@@ -14,7 +15,12 @@ public class HeartBeatRunner extends AbstractRunner {
 
     @Override
     public void runnerOperation() throws InterruptedException {
-        //connection.register(body);
+        /*try {
+            connection.beat(body);
+        } catch (RESTClientException e) {
+            e.printStackTrace();
+            this.stop();
+        }*/
         Thread.sleep(1000);
     }
 }
