@@ -5,7 +5,7 @@
     "socketOptions" : {
       "reuseAddress" : false,
       "receiveBufferSize" : 65536,
-      "timeout" : 0,
+      "timeout" : 1000,
       "ipTOS" : 0,
       "sendBufferSize" : 65536,
       "broadcast" : false

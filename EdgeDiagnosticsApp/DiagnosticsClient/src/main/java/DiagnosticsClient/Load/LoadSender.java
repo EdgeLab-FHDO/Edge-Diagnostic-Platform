@@ -33,6 +33,10 @@ public abstract class LoadSender {
         return latencyMeasurements.values().stream().mapToLong(i -> i).average().orElse(0);
     }
 
+    protected int getMeasurementNumber() {
+        return latencyMeasurements.size();
+    }
+
     public abstract void send(DiagnosticsLoad load) throws LoadSendingException;
     public abstract void changeSocketConfiguration(ClientSocketOptions options);
 }

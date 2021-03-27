@@ -43,10 +43,7 @@ public class UDPLoadSender extends LoadSender {
         long startTime = System.nanoTime();
         socket.send(outPackage);
         socket.receive(inPackage);
-        long latency = System.nanoTime() - startTime;
-        /*String response = new String(inPackage.getData());
-        System.out.println("Response: " + response + " Latency:" + latency + " ns");*/
-        return latency;
+        return System.nanoTime() - startTime;
     }
 
     private void sendPing(PingLoad load) throws UDPConnectionException {
@@ -54,22 +51,23 @@ public class UDPLoadSender extends LoadSender {
                 DatagramSocket clientSocket = new DatagramSocket();
         ){
             configureSocket(clientSocket);
-            //printSocketOptions(clientSocket);
-            long[] latencies = new long[load.getTimes()];
+            printSocketOptions(clientSocket);
+            int times = load.getTimes();
             byte[] message = load.getData();
             int interval = load.getInterval_ms();
             InetAddress address = InetAddress.getByName(this.getAddress());
             int port = this.getPort();
             System.out.println("Pinging " + this.getAddress() + ":" + port + " with " +
                     message.length + " bytes of data " + load.getTimes() + " times. Protocol UDP");
-            for (int i = 0; i < latencies.length; i++) {
-                latencies[i] = singlePing(message,address,port,clientSocket);
-                Thread.sleep(interval);
+            for (int i = 0; i < times; i++) {
+                try {
+                    this.addLatency(i, singlePing(message,address,port,clientSocket));
+                    Thread.sleep(interval);
+                } catch (SocketTimeoutException ignored) {}
             }
-            singlePing("exit".getBytes(),address,port,clientSocket); //Exit message for the server
             System.out.println("Ping load test finished");
-            double avgLatency = Arrays.stream(latencies).average().orElse(0);
-            System.out.println("Average latency: " + avgLatency + " ns. Data size =" + latencies.length);
+            System.out.println("Average latency: " + this.getAverageLatency() + " ns. Data size =" + this.getMeasurementNumber());
+            System.out.println("Not responded packets : " + (times - this.getMeasurementNumber()));
         } catch (IOException | InterruptedException e) {
             throw new UDPConnectionException("UDP Connection failed: ", e);
         }

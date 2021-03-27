@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 
 import static java.net.StandardSocketOptions.*;
 
@@ -42,19 +43,25 @@ public class UDPLoadReceiver extends LoadReceiver {
                 DatagramSocket serverSocket = new DatagramSocket(this.getPort())
         ){
             configureSocket(serverSocket);
+            printSocketOptions(serverSocket);
             byte[] receivingDataBuffer = new byte[1024];
             byte[] sendingDataBuffer;
             DatagramPacket inPacket;
             DatagramPacket outPacket;
             InetAddress replyAddress;
             int replyPort;
-            String receivedData = "";
-            while (!receivedData.trim().equals("exit")) {
-                inPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
-                serverSocket.receive(inPacket);
-                receivedData = new String(inPacket.getData());
-                //System.out.println("Received = " + receivedData);
-                sendingDataBuffer = receivedData.getBytes();
+            int timeoutCounter = 0;
+            final int TIMEOUT_COUNTER_MAX = 5;
+            while (timeoutCounter < TIMEOUT_COUNTER_MAX) {
+                try {
+                    inPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);
+                    serverSocket.receive(inPacket);
+                } catch (SocketTimeoutException e) {
+                    timeoutCounter++;
+                    continue;
+                }
+                timeoutCounter = 0;
+                sendingDataBuffer = inPacket.getData();
                 replyAddress = inPacket.getAddress();
                 replyPort = inPacket.getPort();
                 outPacket = new DatagramPacket(sendingDataBuffer, sendingDataBuffer.length, replyAddress, replyPort);
