@@ -22,7 +22,8 @@
         {"name" :  "diagnostic.server", "URL":  "/diagnostics/server/instructions"}
       ]
     },
-    {"type" :  "MatchMakingModule-Random", "name":  "mm"}
+    {"type" :  "MatchMakingModule-Random", "name":  "mm"},
+    {"type" :  "DiagnosticsModule", "name":  "diagnostics"}
   ],
 
   "connections" : [
@@ -107,44 +108,25 @@
     },
     {
       "in" : "console.in",
+      "out" : "diagnostics.instructions.out",
+      "commands" : {
+        "ping_tcp" : "instruction loadInstruction LoadInstructions/Client/Ping_TCP_client.json LoadInstructions/Server/Ping_TCP_server.json",
+        "file_tcp" : "instruction loadInstruction LoadInstructions/Client/File_TCP_client.json LoadInstructions/Server/File_TCP_server.json",
+        "ping_udp" : "instruction loadInstruction LoadInstructions/Client/Ping_UDP_client.json LoadInstructions/Server/Ping_UDP_server.json"
+      }
+    },
+    {
+      "in" : "diagnostics.instructions.in",
       "out" : "rest.diagnostic.client",
       "commands" : {
-        "ping_tcp" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
+        "set_instruction $client_instruction $server_instruction" : "toGET resource $client_instruction"
       }
     },
     {
-      "in" : "console.in",
+      "in" : "diagnostics.instructions.in",
       "out" : "rest.diagnostic.server",
       "commands" : {
-        "ping_tcp" : "toGET resource {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0}}}"
-      }
-    },
-    {
-      "in" : "console.in",
-      "out" : "rest.diagnostic.client",
-      "commands" : {
-        "ping_udp" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"UDP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":1000,\"broadcast\":false}}}"
-      }
-    },
-    {
-      "in" : "console.in",
-      "out" : "rest.diagnostic.server",
-      "commands" : {
-        "ping_udp" : "toGET resource {\"loadType\":\"PING\",\"connection\":{\"type\":\"UDP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":1000,\"ipTOS\":0,\"sendBufferSize\":65536,\"broadcast\":false}}}"
-      }
-    },
-    {
-      "in" : "console.in",
-      "out" : "rest.diagnostic.client",
-      "commands" : {
-        "file_tcp" : "toGET resource {\"load\":{\"type\":\"FILE\",\"times\":10,\"interval\":10,\"dataLength\":4096,\"src\":\"\"},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
-      }
-    },
-    {
-      "in" : "console.in",
-      "out" : "rest.diagnostic.server",
-      "commands" : {
-        "file_tcp" : "toGET resource {\"loadType\":\"FILE\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0}}}"
+        "set_instruction $client_instruction $server_instruction" : "toGET resource $server_instruction"
       }
     },
     {

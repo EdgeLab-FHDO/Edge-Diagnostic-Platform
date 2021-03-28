@@ -1,0 +1,11 @@
+{
+  "loadType" :  "FILE",
+  "connection" : {
+    "type" : "TCP",
+    "socketOptions" : {
+      "reuseAddress" : false,
+      "receiveBufferSize" : 65536,
+      "timeout" : 0
+    }
+  }
+}
