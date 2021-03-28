@@ -66,7 +66,8 @@ public class MatchMakingScoreTest {
         //client1 should be mapped to node1
 //        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         String thisShouldBeNode1 = module.getSharedList().getMapping().get("client1");
-        Assert.assertEquals("node1", thisShouldBeNode1);
+        String expected = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":200,\"network\":200,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected, thisShouldBeNode1);
     }
 
 //    @Ignore("Currently broken")
@@ -93,7 +94,8 @@ public class MatchMakingScoreTest {
         //Client 1 should connect to node 2 now cuz node 2 have better score
 //        String thisShouldBeNode2 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         String thisShouldBeNode2 = module.getSharedList().getMapping().get("client1");
-        Assert.assertEquals("node2",thisShouldBeNode2);
+        String expected2 = "{\"id\":\"node2\",\"ipAddress\":\"92.183.84.109:42589\",\"connected\":true,\"resource\":200,\"network\":200,\"location\":33,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected2,thisShouldBeNode2);
     }
 
     @Test

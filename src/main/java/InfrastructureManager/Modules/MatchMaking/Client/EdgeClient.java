@@ -18,6 +18,19 @@ public class EdgeClient extends MatchMakingModuleObject {
     private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
     private boolean online; //true = online, false = offline
 
+    public void setHeartBeatInterval(long heartBeatInterval) {
+        this.heartBeatInterval = heartBeatInterval;
+    }
+
+    public boolean isWatchDogOnline() {
+        return watchDogOnline;
+    }
+
+    public void setWatchDogOnline(boolean watchDogOnline) {
+        this.watchDogOnline = watchDogOnline;
+    }
+
+    private boolean watchDogOnline; //if there is a watch dog for this client, then true.
     private EdgeClientHistory clientHistory;
 
     @JsonCreator
@@ -31,9 +44,10 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.message = "no message"; // to send custom command if needed (similar to job fail, job done in history)
         this.heartBeatInterval = 0;
         this.online = true;
+        this.watchDogOnline = false;
     }
 
-    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule, String id, long reqRes, long reqNet, long location, String message, long thisHeartBeatInterval, boolean thisOnline) {
+    public EdgeClient(@JacksonInject ImmutablePlatformModule ownerModule, String id, long reqRes, long reqNet, long location, String message, long thisHeartBeatInterval, boolean thisOnline, boolean thisWatchDogOnline) {
         super(ownerModule);
         this.id = id;
         this.reqResource = reqRes;
@@ -43,7 +57,7 @@ public class EdgeClient extends MatchMakingModuleObject {
         this.clientHistory = new EdgeClientHistory(ownerModule, id);
         this.heartBeatInterval = thisHeartBeatInterval;
         this.online = thisOnline;
-
+        this.watchDogOnline = thisWatchDogOnline;
     }
 
     public String getId() {
