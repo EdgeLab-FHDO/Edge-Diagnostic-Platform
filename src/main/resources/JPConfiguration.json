@@ -10,7 +10,7 @@
       "POST" : [
         {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
         {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
-        {"name" : "diagnostic.report", "URL":  "/diagnostics/report", "command":  "latency_report $body", "information": []},
+        {"name" : "diagnostic.report", "URL":  "/diagnostics/report", "command":  "latency_report $path $content", "information": ["path", "content"]},
         {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
         {"name" : "client.heartbeat","URL": "/client/heartbeat","command": "client_hb $body","information":  []},
         {"name" : "node.heartbeat","URL": "/node/heartbeat","command": "node_hb $body","information":  []},
@@ -131,9 +131,9 @@
     },
     {
       "in" : "rest.diagnostic.report",
-      "out" : "console.out",
+      "out" : "util.fileOut",
       "commands" : {
-        "latency_report $latency_as_json_string" : "console report $latency_as_json_string"
+        "latency_report $path $content" : "file_out append $path $content"
       }
     }
   ]
