@@ -9,21 +9,17 @@
       "port": 4567,
       "baseURL": "/rest",
       "POST" : [
-        {"name" : "post1","URL": "/post_test","command": "test1 $body","information":  []},
-        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]},
-        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
-        {"name" : "client_beat","URL": "/client/beat","command": "beat_client $body","information":  []},
-        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
-        {"name" : "node_beat","URL": "/node/beat","command": "beat_node $body","information":  []},
-        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
-        {"name" : "report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]}
-        {"name" : "clientHeartBeatReceived","URL": "/client/heartbeat","command": "client_receive_heart_beat $body","information":  []},
-        {"name" : "nodeHeartBeatReceived","URL": "/node/heartbeat","command": "node_receive_heart_beat $body","information":  []},
+        {"name" : "client.register","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "client.heartbeat","URL": "/client/beat","command": "client_receive_heart_beat $body","information":  []},
+        {"name" : "node.register","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "node.heartbeat","URL": "/node/beat","command": "node_receive_heart_beat $body","information":  []},
+        {"name" : "client.assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
+        {"name" : "client.report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]},
         {"name" : "disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
-        {"name": "get2", "URL": "/client/get_node/:client_id"}
+        {"name": "client.getnode", "URL": "/client/get_node/:client_id"}
       ]
     },
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
@@ -74,13 +70,6 @@
       }
     },
     {
-      "in" : "rest.post2",
-      "out" : "console.out",
-      "commands" : {
-        "test2 $name $number" : "console $name $number"
-      }
-    },
-    {
       "in" : "console.in",
       "out" : "rest.get1",
       "commands" : {
@@ -117,7 +106,7 @@
       }
     },
     {
-      "in" : "rest.client",
+      "in" : "rest.client.register",
       "out" : "mm.out",
       "commands" : {
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
@@ -131,46 +120,29 @@
         "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
       }
     },
-
     {
-      "in" : "rest.clientHeartBeatReceived",
-      "out" : "mm.out",
-      "commands" : {
-        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
-      }
-    },
-
-    {
-      "in" : "rest.nodeHeartBeatReceived",
-      "out" : "mm.out",
-      "commands" : {
-        "node_receive_heart_beat $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
-      }
-    },
-
-    {
-      "in" : "rest.node",
+      "in" : "rest.node.register",
       "out" : "mm.out",
       "commands" : {
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
       }
     },
     {
-      "in" : "rest.client",
+      "in" : "rest.client.register",
       "out" : "console.out",
       "commands" : {
         "register_client $client_as_json_string" : "console register_client $client_as_json_string"
       }
     },
     {
-      "in" : "rest.node",
+      "in" : "rest.node.register",
       "out" : "console.out",
       "commands" : {
         "register_node $node_as_json_string" : "console register_node $node_as_json_string"
       }
     },
     {
-      "in" : "rest.assign",
+      "in" : "rest.client.assign",
       "out" : "mm.out",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
@@ -185,30 +157,44 @@
     },
     {
       "in" : "mm.in",
-      "out" : "rest.get2",
+      "out" : "rest.client.getnode",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
       }
     },
     {
-      "in" : "rest.report",
+      "in" : "rest.client.report",
       "out" : "util.fileOut",
       "commands" : {
         "report_latency $path $content": "file_out append $path $content"
       }
     },
     {
-      "in" : "rest.report",
-      "out" : "console.out",
+      "in" : "rest.node.heartbeat",
+      "out" : "mm.out",
       "commands" : {
-        "report_latency $path $content": "console append to $path information: $content"
+        "node_receive_heart_beat $node_as_json_string" : "matchMaker node_receive_heart_beat $node_as_json_string"
       }
     },
     {
-      "in" : "rest.client_beat",
+      "in" : "rest.node.heartbeat",
       "out" : "console.out",
       "commands" : {
-        "beat_client $client_as_json_string": "console beat client $client_as_json_string"
+        "node_receive_heart_beat $node_as_json_string" : "console beat node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client.heartbeat",
+      "out" : "mm.out",
+      "commands" : {
+        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client.heartbeat",
+      "out" : "console.out",
+      "commands" : {
+        "client_receive_heart_beat $client_as_json_string": "console beat client $client_as_json_string"
       }
     }
   ]

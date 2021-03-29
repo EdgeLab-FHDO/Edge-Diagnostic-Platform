@@ -17,10 +17,10 @@ public class OpenCVClient {
 
         try {
             activeOperator.setupClientRunners(args);
-            activeClient.heartBeatThread = new Thread(activeOperator.beatRunner, "HeartBeatThread");
-            activeClient.heartBeatThread.start();
             activeClient.registrationThread = new Thread(activeOperator.registrationRunner, "RegistrationThread");
             activeClient.registrationThread.start();
+            activeClient.heartBeatThread = new Thread(activeOperator.beatRunner, "HeartBeatThread");
+            activeClient.heartBeatThread.start();
             activeClient.masterCommunicationThread = new Thread(activeOperator.masterCommunicationRunner, "MasterCommunicationThread");
             activeClient.masterCommunicationThread.start();
             activeClient.processingThread = new Thread(activeOperator.processingRunner, "ProcessingThread");

@@ -202,11 +202,11 @@ public class OpenCVClientOperator implements CoreOperator {
         String reportUrl = masterUrl + latencyReportCommand;
 
         registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
+        reportRunner = new LatencyReporterRunner(reportUrl);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
         masterCommunicationRunner.pause();
-        reportRunner = new LatencyReporterRunner(reportUrl);
     }
 
     public void detectMarkerInServer() throws RemoteExecutionException {
