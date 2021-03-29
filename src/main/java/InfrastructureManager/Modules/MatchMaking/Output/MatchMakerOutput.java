@@ -59,7 +59,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         }
         //If thisClient has already been matched,
         if (sharedMatchesList.getMapping().containsKey(thisClientID)) {
-            String connectedNode = sharedMatchesList.getMapping().get(thisClientID);
+//            String connectedNode = sharedMatchesList.getMapping().get(thisClientID);
+            String connectedNode = sharedMatchesList.getClientConnectedNodeID(thisClientID);
             logger.warn("this client is already connected with {}", connectedNode);
             logger.info("client history info: \n{}", clientHistoryInfo);
             logger.info("mapping map: {}", sharedMatchesList.getMapping());
@@ -159,7 +160,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         else {
             //No update client that already been mapped to a node
             if (sharedMatchesList.clientIsConnected(thisClientID)) {
-                String mappedNode = sharedMatchesList.getMapping().get(thisClientID);
+//                String mappedNode = sharedMatchesList.getMapping().get(thisClientID);
+                String mappedNode = sharedMatchesList.getClientConnectedNodeID(thisClientID);
                 throw new ClientAlreadyAssignedException("can't update because [" + thisClientID + "] already been assigned to [" + mappedNode + "]");
             }
             logger.info("this client has already been registered, updating {} stats", thisClientID);
@@ -561,7 +563,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                         //if client is matched with a node in the platform, disconnect client from the node
                         if (sharedMatchesList.clientIsConnected(thisClientID)) {
 
-                            String mappedNodeID = sharedMatchesList.getMapping().get(thisClientID);
+                            String mappedNodeID = sharedMatchesList.getClientConnectedNodeID(thisClientID);
 
                             try {
                                 disconnectAfterTimeOut(thisClientID,mappedNodeID,"timeout");
