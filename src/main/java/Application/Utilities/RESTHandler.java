@@ -18,7 +18,7 @@ public class RESTHandler {
             .connectTimeout(Duration.ofSeconds(20))
             .build();
 
-    public void sendPostRequest(String url, String body) throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
+    public boolean sendPostRequest(String url, String body) throws IOException, InterruptedException, IllegalArgumentException, SecurityException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofMinutes(1))
@@ -33,6 +33,7 @@ public class RESTHandler {
             case 400: throw new ConnectException("400 - Bad Request");
             default: throw new ConnectException("404 - Not found");
         }
+        return true;
     }
 
     public String sendGetRequest(String url) throws IOException, InterruptedException {

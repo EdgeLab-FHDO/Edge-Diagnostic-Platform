@@ -195,7 +195,12 @@ public class OpenCVClientOperator implements CoreOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
         String registrationUrl = masterUrl +registerCommand;
-        String registrationBody = "{\"id\" : \"" + clientId + "\"}";
+        String registrationBody = "{\"id\": \"" + clientId + "\""
+                + ", \"reqNetwork\": " + 10
+                + ", \"reqResource\": " + 5
+                + ", \"location\": " + 54
+                + ", \"heartBeatInterval\": " + (2*interval) + "}";
+        System.out.println(registrationBody);
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
@@ -204,9 +209,7 @@ public class OpenCVClientOperator implements CoreOperator {
         registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
         reportRunner = new LatencyReporterRunner(reportUrl);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
-        beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
-        masterCommunicationRunner.pause();
     }
 
     public void detectMarkerInServer() throws RemoteExecutionException {

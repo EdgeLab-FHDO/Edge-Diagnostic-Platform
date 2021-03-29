@@ -10,8 +10,8 @@ public class HeartBeatRunner implements Runnable {
     private final int interval;
 
     private volatile boolean exit = false;
-    private volatile boolean running = true;
-    private volatile boolean paused = false;
+    private volatile boolean running = false;
+    private volatile boolean paused = true;
     private final Semaphore pauseBlock;
 
     public HeartBeatRunner(String url, String body, int interval) {
@@ -24,7 +24,9 @@ public class HeartBeatRunner implements Runnable {
         while(!exit) {
             try {
                 checkPause();
-                beater.beat();
+                if(running) {
+                    beater.beat();
+                }
             } catch (IOException | InterruptedException | SecurityException e) {
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {

@@ -10,8 +10,8 @@ public class MasterCommunicationRunner implements Runnable {
     public MasterCommunicator communicator;
 
     private volatile boolean exit = false;
-    private volatile boolean running = true;
-    private volatile boolean paused = false;
+    private volatile boolean running = false;
+    private volatile boolean paused = true;
     private final Semaphore pauseBlock;
 
     public MasterCommunicationRunner(String masterUrl) {

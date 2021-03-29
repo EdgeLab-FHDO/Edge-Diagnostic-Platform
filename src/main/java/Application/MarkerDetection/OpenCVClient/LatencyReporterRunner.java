@@ -3,7 +3,7 @@ package Application.MarkerDetection.OpenCVClient;
 import java.io.IOException;
 
 public class LatencyReporterRunner implements Runnable {
-    //TODO implement and use exit and running values
+    //TODO implement and use pause, exit and running values
     private final OpenCVClientOperator activeOperator;
     private final LatencyReporterOperator reporter;
 

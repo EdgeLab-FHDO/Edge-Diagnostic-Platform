@@ -32,6 +32,7 @@ public class OpenCVServerOperator implements CoreOperator {
 
     private BufferedImage currentImage;
 
+    public RegistrationRunner registrationRunner;
     public ServerRunner serverRunner;
     public HeartBeatRunner beatRunner;
     private String beatBody;
@@ -109,10 +110,11 @@ public class OpenCVServerOperator implements CoreOperator {
         String[] argument;
         String masterUrl = "";
         String beatCommand = "";
+        String registerCommand = "";
         int interval = 1000;
         serverRunner = new ServerRunner();
 
-        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
+        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "PORT")); // Connected has default value of false
 
         //TODO move beat command to other input methods such as configuration files
         for (String arg : args) {
@@ -130,6 +132,10 @@ public class OpenCVServerOperator implements CoreOperator {
                     case "MASTER_URL":
                         masterUrl = argument[1];
                         missingParameterList.remove("MASTER_URL");
+                        break;
+                    case "REGISTER_COMMAND":
+                        registerCommand = argument[1];
+                        missingParameterList.remove("REGISTER_COMMAND");
                         break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
@@ -152,14 +158,24 @@ public class OpenCVServerOperator implements CoreOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
 
+        String registrationUrl = masterUrl +registerCommand;
+        String registrationBody = "{\"id\": \"" + serverId + "\""
+                + ", \"ipAddress\": \"" + serverIp + " : " + port + "\""
+                + ", \"connected\": " + true
+                + ", \"totalResource\": " + 250
+                + ", \"totalNetwork\": " + 200
+                + ", \"location\": " + 50
+                + ", \"heartBeatInterval\": " + (2*interval) + "}";
         String beatUrl = masterUrl + beatCommand;
+
+        registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
         updateBeatBodyContent();
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
-        startMasterCommunication();
+        beatRunner.pause();
     }
 
     private void updateBeatBodyContent() {
-        beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
+        beatBody =  "{\"id\": \"" + serverId + "\"}";
     }
 
     private void updateBeatBody() {
