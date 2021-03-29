@@ -13,7 +13,8 @@
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/get_test"},
-        {"name": "get2", "URL": "/get_test2/:id"}
+        {"name": "get2", "URL": "/get_test2/:id"},
+        {"name" : "get3", "URL":  "/get_test3"}
       ]
     }
   ],

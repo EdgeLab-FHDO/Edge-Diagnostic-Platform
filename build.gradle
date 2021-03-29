@@ -2,27 +2,36 @@ plugins {
     //Application plugin which implicitly includes java plugin
     //Makes the app runnable on CL (gradle run)
     id 'application'
+    id "com.palantir.docker" version "0.26.0"
 }
 application {
     //Necessary configuration for application plugin, path to the main method
-    mainClassName 'InfrastructureManager.Master'
+    mainClassName = 'InfrastructureManager.Master'
 }
 
 group 'de.fh-dortmund'
 version '0.5'
 
-jar {
-    //Include the Main-Class Attribute so that the generated jar is executable using java -jar
+
+
+task fatJar(type: Jar) {
     manifest {
-        attributes "Main-Class": "InfrastructureManager.Master"
+        attributes "Main-Class": mainClassName
+    }
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
 }
 
-jar {
-    //jar for Applications
-    manifest {
-        attributes "Main-Class": "Application.DockerApp"
-    }
+docker {
+    dependsOn fatJar
+    name "${project.name.toLowerCase()}:${project.version}"
+    dockerfile file('Dockerfile')
+    files tasks.fatJar.outputs.files
+    tag 'DockerHub', "edgelabfh/${project.name.toLowerCase()}:${project.version}"
 }
 
 run {

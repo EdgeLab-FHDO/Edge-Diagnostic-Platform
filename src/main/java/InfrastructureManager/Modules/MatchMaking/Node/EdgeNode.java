@@ -18,6 +18,9 @@ public class EdgeNode extends MatchMakingModuleObject {
     private long location; //node's location, for ping calculation
     private long totalResource; //Maximum amount of resource the node have
     private long totalNetwork; // maximum amount of network bandwidth the node have
+    private long heartBeatInterval; //period between each heartbeat signal, time in millisecond
+    private boolean online; //true = online, false = offline
+    private boolean watchDogOnline; //if there is a watch dog for this client, then true.
 
     /*
    ------------------------Getter & setter function--------------------------------
@@ -54,6 +57,8 @@ public class EdgeNode extends MatchMakingModuleObject {
         return totalNetwork;
     }
 
+    public long getHeartBeatInterval(){ return heartBeatInterval;}
+
     public void setTotalNetwork(long thisTotalComputingResource) {
         this.totalNetwork = thisTotalComputingResource;
         this.network = thisTotalComputingResource;
@@ -87,9 +92,12 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalResource = 0;
         this.totalNetwork = 0;
         this.location = 0;
+        this.heartBeatInterval = 0;
+        this.online = true;
+        this.watchDogOnline = false;
     }
 
-    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation) {
+    public EdgeNode(@JacksonInject ImmutablePlatformModule ownerModule, String id, String ip, boolean connected, long thisTotalComputingResource, long thisTotalNetworkBandwidth, long thisLocation, long thisHeartBeatInterval,boolean thisOnline, boolean thisWatchDogOnline) {
         super(ownerModule);
         this.id = id;
         this.ipAddress = ip;
@@ -99,16 +107,38 @@ public class EdgeNode extends MatchMakingModuleObject {
         this.totalNetwork = thisTotalNetworkBandwidth;
         this.totalResource = thisTotalComputingResource;
         this.location = thisLocation;
+        this.heartBeatInterval = thisHeartBeatInterval;
+        this.online = thisOnline;
+        this.watchDogOnline = thisWatchDogOnline;
     }
 
     public void updateComputingResource(Long usedComputingResource) {
-        resource = resource - usedComputingResource;
+        resource = totalResource - usedComputingResource;
     }
 
     public void updateNetworkBandwidth(Long usedNetworkBandwidth) {
-        network = network - usedNetworkBandwidth;
+        network = totalNetwork - usedNetworkBandwidth;
     }
 
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    public void setHeartBeatInterval(long heartBeatInterval) {
+        this.heartBeatInterval = heartBeatInterval;
+    }
+
+    public boolean isWatchDogOnline() {
+        return watchDogOnline;
+    }
+
+    public void setWatchDogOnline(boolean watchDogOnline) {
+        this.watchDogOnline = watchDogOnline;
+    }
 
     //edit this when add new data parameter, left and right side must be exact in order to print things out.
     @Override
@@ -121,7 +151,9 @@ public class EdgeNode extends MatchMakingModuleObject {
                 "  totalResource : " + totalResource + ",\n" +
                 "  network : " + network + ",\n" +
                 "  totalNetwork : " + totalNetwork + ",\n" +
-                "  location : " + location + "\n}";
+                "  location : " + location + "\n" +
+                "  heartBeatInterval : " + heartBeatInterval + "\n" +
+                "  online : " + online + "}\n";
     }
 
     @Override

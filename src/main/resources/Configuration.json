@@ -1,7 +1,7 @@
 {
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
-    {"type": "ScenarioModule", "name": "dummy", "path": "src/main/resources/scenarios/dummy.json"},
+    {"type": "ScenarioModule", "name": "dummy", "path": "Scenarios/dummy.json"},
     {"type": "UtilityModule", "name": "util"},
     {
       "type" : "RESTModule",
@@ -17,6 +17,9 @@
         {"name" : "node_beat","URL": "/node/beat","command": "beat_node $body","information":  []},
         {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
         {"name" : "report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]}
+        {"name" : "clientHeartBeatReceived","URL": "/client/heartbeat","command": "client_receive_heart_beat $body","information":  []},
+        {"name" : "nodeHeartBeatReceived","URL": "/node/heartbeat","command": "node_receive_heart_beat $body","information":  []},
+        {"name" : "disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
@@ -25,7 +28,7 @@
     },
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
     {"type" : "RemoteExecutionModule", "name": "remote"},
-    {"type" :  "MatchMakingModule-Random", "name":  "mm"}
+    {"type" :  "MatchMakingModule-ScoreBased", "name":  "mm"}
   ],
 
   "connections" : [
@@ -120,6 +123,31 @@
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
       }
     },
+
+    {
+      "in" : "rest.disconnect",
+      "out" : "mm.out",
+      "commands" : {
+        "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.clientHeartBeatReceived",
+      "out" : "mm.out",
+      "commands" : {
+        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.nodeHeartBeatReceived",
+      "out" : "mm.out",
+      "commands" : {
+        "node_receive_heart_beat $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
+      }
+    },
+
     {
       "in" : "rest.node",
       "out" : "mm.out",
