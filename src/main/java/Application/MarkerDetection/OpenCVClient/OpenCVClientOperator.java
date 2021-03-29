@@ -195,12 +195,13 @@ public class OpenCVClientOperator implements CoreOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
         String registrationUrl = masterUrl +registerCommand;
+        String registrationBody = "{\"id\" : \"" + clientId + "\"}";
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
         String reportUrl = masterUrl + latencyReportCommand;
 
-        registrationRunner = new RegistrationRunner(instance, registrationUrl, beatBody);
+        registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         beatRunner.pause();
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);

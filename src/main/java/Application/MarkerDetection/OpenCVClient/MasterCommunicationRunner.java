@@ -35,6 +35,8 @@ public class MasterCommunicationRunner implements Runnable {
             while (OpenCVClientOperator.getInstance().utilizeServer && evaluation.isGood()) {
                 //TODO consider moving the new server utilization value into a parameter or take it from the evaluation result
                 //TODO add condition if processing is local, break from this loop and skip evaluation (make a custom Exception and throw it)
+                //TODO add connected value
+                //TODO add new state: Evaluate (connected but not using server) -< in this case we only use the latency value for evaulation
                 evaluation.evaluate();
                 try {
                     Thread.sleep(1000);
