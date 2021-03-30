@@ -59,14 +59,16 @@ public class MatchMakingNaiveTest {
         //client1 should be mapped to node1 because is closer
 //        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         String thisShouldBeNode1 = module.getSharedList().getMapping().get("client1");
-        Assert.assertEquals("node1", thisShouldBeNode1);
+        String expected = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected, thisShouldBeNode1);
 
 
         matchMaker.execute("matchMaker assign_client client2");
 //        String thisShouldBeNode2 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client2"));
         //Should be node 2 because node2 is closer to client 2 than others
         String thisShouldBeNode2 = module.getSharedList().getMapping().get("client2");
-        Assert.assertEquals("node2", thisShouldBeNode2);
+        String expected2 = "{\"id\":\"node2\",\"ipAddress\":\"92.183.84.109:42589\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":33,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected2, thisShouldBeNode2);
     }
 
     @Test
@@ -79,7 +81,8 @@ public class MatchMakingNaiveTest {
         //Should still be node 1, the distance hasn't changed yet
 //        String thisShouldBeNode1 = getNodeIDFromJSON(module.getSharedList().getMapping().get("client1"));
         String thisShouldBeNode1 = module.getSharedList().getMapping().get("client1");
-        Assert.assertEquals("node1", thisShouldBeNode1);
+        String expected = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":200,\"network\":200,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected, thisShouldBeNode1);
 
     }
 
@@ -94,7 +97,8 @@ public class MatchMakingNaiveTest {
 //        String thisShouldBeNode1ForThis = getNodeIDFromJSON(module.getSharedList().getMapping().get("client2"));
         //Should be node 1 because node1 is closer to client 2 than others
         String thisShouldBeNode1ForThis = module.getSharedList().getMapping().get("client2");
-        Assert.assertEquals("node1", thisShouldBeNode1ForThis);
+        String expected = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
+        Assert.assertEquals(expected, thisShouldBeNode1ForThis);
     }
 
     private String getNodeIDFromJSON(String nodeAsString) throws Exception {

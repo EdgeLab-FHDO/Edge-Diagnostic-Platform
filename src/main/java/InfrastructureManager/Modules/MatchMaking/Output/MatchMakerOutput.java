@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -31,9 +28,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     private final MatchMakingAlgorithm algorithm;
     private final List<EdgeNode> nodeList;
     private final List<EdgeClient> clientList;
-    private ConcurrentMap<String, Long> clientHeartBeatMap = new ConcurrentHashMap<>(); //<ClientID, HeartBeat>
-    private ConcurrentMap<String, Long> nodeHeartBeatMap = new ConcurrentHashMap<>(); //NodeID, heartbeat
-    private final long watchDogWaitTime = 500;
+    private final ConcurrentMap<String, Long> clientHeartBeatMap = new ConcurrentHashMap<>(); //<ClientID, HeartBeat>
+    private final ConcurrentMap<String, Long> nodeHeartBeatMap = new ConcurrentHashMap<>(); //NodeID, heartbeat
+    private static final long WATCH_DOG_WAIT_TIME = 500;
 
 
     public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm) {
@@ -41,8 +38,9 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         this.sharedMatchesList = this.getSharedList();
         this.algorithm = algorithm;
         this.mapper = new ObjectMapper();
-        this.nodeList = new ArrayList<>();
-        this.clientList = new ArrayList<>();
+        //synchronizedList because of concurrency
+        this.nodeList = Collections.synchronizedList(new ArrayList<>());
+        this.clientList = Collections.synchronizedList(new ArrayList<>());
         InjectableValues inject = new InjectableValues.Std()
                 .addValue(ImmutablePlatformModule.class, module);
         mapper.setInjectableValues(inject);
@@ -61,7 +59,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         }
         //If thisClient has already been matched,
         if (sharedMatchesList.getMapping().containsKey(thisClientID)) {
-            String connectedNode = sharedMatchesList.getMapping().get(thisClientID);
+//            String connectedNode = sharedMatchesList.getMapping().get(thisClientID);
+            String connectedNode = sharedMatchesList.getClientConnectedNodeID(thisClientID);
             logger.warn("this client is already connected with {}", connectedNode);
             logger.info("client history info: \n{}", clientHistoryInfo);
             logger.info("mapping map: {}", sharedMatchesList.getMapping());
@@ -86,7 +85,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             updateAfterAssigning(thisClientID, thisNodeID);
 
             //mapping should take only client ID, because of object referencing
-            sharedMatchesList.putValue(thisClientID, thisNodeID);
+            //add whole JSON body of node. bao
+            sharedMatchesList.putValue(thisClientID, thisNodeAsString);
             logger.info("client history info: \n{}", clientHistoryInfo);
             logger.info("mapping map: {}", sharedMatchesList);
         }
@@ -114,7 +114,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         //node that we going to replace in our nodeList
         EdgeNode updateNode = new EdgeNode(this.getOwnerModule(), thisNodeID, thisNode.getIpAddress(),
                 thisNode.isConnected(), thisNode.getTotalResource(), thisNode.getTotalNetwork(), thisNode.getLocation(),
-                thisNode.getHeartBeatInterval(),thisNode.isOnline());
+                thisNode.getHeartBeatInterval(),thisNode.isOnline(),thisNode.isWatchDogOnline());
 
         //accounting usedResource (resource - usedResource)
         updateNode.updateComputingResource(usedResource);
@@ -160,7 +160,8 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         else {
             //No update client that already been mapped to a node
             if (sharedMatchesList.clientIsConnected(thisClientID)) {
-                String mappedNode = sharedMatchesList.getMapping().get(thisClientID);
+//                String mappedNode = sharedMatchesList.getMapping().get(thisClientID);
+                String mappedNode = sharedMatchesList.getClientConnectedNodeID(thisClientID);
                 throw new ClientAlreadyAssignedException("can't update because [" + thisClientID + "] already been assigned to [" + mappedNode + "]");
             }
             logger.info("this client has already been registered, updating {} stats", thisClientID);
@@ -206,33 +207,35 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     }
 
 
-
     private void updateClient(String clientAsString) throws NoClientFoundException, JsonProcessingException {
         //Map the contents of the JSON file to a java object
         EdgeClient newClient = this.mapper.readValue(clientAsString, EdgeClient.class);
-
         //get updating client location
         EdgeClient oldClient = getClientByID(newClient.getId());
-        int thisClientLocation = clientList.indexOf(oldClient);
-
+        logger.info("Before update {}",oldClient);
         //Reassign old value if there aren't any new value (default value = Long.MAX_VALUE when unassigned)
         if (newClient.getReqResource() == Long.MAX_VALUE) {
             logger.debug("there are no new required computing resource to update, reuse the old one");
-            newClient.setReqResource(oldClient.getReqResource());
+        } else {
+            oldClient.setReqResource(newClient.getReqResource());
         }
+
         if (newClient.getReqNetwork() == Long.MAX_VALUE) {
             logger.debug("there are no new required network bandwidth address to update, reuse the old one");
-            newClient.setReqNetwork(oldClient.getReqNetwork());
+        } else {
+            oldClient.setReqNetwork(newClient.getReqNetwork());
         }
+
         if (newClient.getLocation() == Long.MAX_VALUE) {
             logger.debug("there are no new location to update, reuse the old one");
-            newClient.setLocation(oldClient.getLocation());
+        } else {
+            oldClient.setLocation(newClient.getLocation());
         }
-        //remap the old client history to new client history
-        newClient.setClientHistory(oldClient.getClientHistory());
 
-        //replace new old client with the new client
-        clientList.set(thisClientLocation, newClient);
+        if (newClient.getHeartBeatInterval() != 0){
+            oldClient.setHeartBeatInterval(newClient.getHeartBeatInterval());
+        }
+        logger.info("After update {}",oldClient);
     }
 
 
@@ -279,46 +282,43 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         //Get updating node location in list
         int thisNodeLocation = nodeList.indexOf(getNodeByID(newNodeID));
         EdgeNode oldNode = nodeList.get(thisNodeLocation);
+        logger.info("[{}] before update\n{}", oldNode.getId(), nodeList.get(thisNodeLocation));
 
         //Check whether node is assigned, if yes then we will deduct the accumulated network and resource when updating
         boolean nodeIsAssigned = sharedMatchesList.nodeIsAssigned(nodeAsString);
         long usedResource = 0;
         long usedNetwork = 0;
         if (nodeIsAssigned) {
-            for (String client : sharedMatchesList.getConnectedClientsToNode(nodeAsString)) {
+            for (String client : sharedMatchesList.getConnectedClientsToNode(newNodeID)) {
                 EdgeClient thisClient = getClientByID(client);
                 usedNetwork = usedNetwork + thisClient.getReqNetwork();
                 usedResource = usedResource + thisClient.getReqResource();
             }
-            logger.debug("usedNetwork : {}         usedResource : {}", usedNetwork, usedResource);
+            logger.info("usedNetwork : {}         usedResource : {}", usedNetwork, usedResource);
         }
 
-        //Reassign old value if there aren't any new value (default value = Long.MAX_VALUE when unassigned)
-        if (newNode.getIpAddress().equalsIgnoreCase("null")) {
-            logger.debug("there are no new ip address to update, reuse the old one");
-            newNode.setIpAddress(oldNode.getIpAddress());
+        //Assign new value.
+        if (newNode.getTotalResource() != 0) {
+            oldNode.setTotalResource(newNode.getTotalResource());
         }
-        if (newNode.getTotalResource() == 0) {
-            logger.debug("there are no new total computing resource to update, reuse the old one");
-            newNode.setTotalResource(oldNode.getTotalResource());
+        if (newNode.getTotalNetwork() != 0) {
+            oldNode.setTotalNetwork(newNode.getTotalNetwork());
         }
-        if (newNode.getTotalNetwork() == 0) {
-            logger.debug("there are no new total network bandwidth to update, reuse the old one");
-            newNode.setTotalNetwork(oldNode.getTotalNetwork());
+        if (newNode.getLocation() != 0) {
+            oldNode.setLocation(newNode.getLocation());
         }
-        if (newNode.getLocation() == 0) {
-            logger.debug("there are no new location to update, reuse the old one");
-            newNode.setLocation(oldNode.getLocation());
+        if (!(newNode.getIpAddress().equalsIgnoreCase("null"))){
+            oldNode.setIpAddress(newNode.getIpAddress());
+        }
+        if (newNode.getHeartBeatInterval() != 0){
+            oldNode.setHeartBeatInterval(newNode.getHeartBeatInterval());
         }
 
         //minus the occupied resource from assigned clients
-        newNode.updateNetworkBandwidth(usedNetwork);
-        newNode.updateComputingResource(usedResource);
+        oldNode.updateNetworkBandwidth(usedNetwork);
+        oldNode.updateComputingResource(usedResource);
 
-        logger.info("[{}] before update\n{}", newNodeID, nodeList.get(thisNodeLocation));
-        //replace the oldNode with this newNode
-        nodeList.set(thisNodeLocation, newNode);
-        logger.info("[{}] after update\n{}", newNodeID, nodeList.get(thisNodeLocation));
+        logger.info("[{}] after update\n{}", oldNode.getId(), nodeList.get(thisNodeLocation));
 
     }
 
@@ -348,9 +348,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             throw new ClientNotAssignedException("This client [" + thisClientID + "] is not connected to any nodes in the system");
         }
         //Get node that assigned to client
-//        EdgeNode auxNode = this.mapper.readValue(sharedMatchesList.getMapping().get(thisClientID), EdgeNode.class);
-//        String thisNodeID = auxNode.getId();
-        String thisNodeID = sharedMatchesList.getMapping().get(thisClientID);
+        String thisNodeID = sharedMatchesList.getClientConnectedNodeID(thisClientID);
         EdgeNode thisNode = getNodeByID(thisNodeID);
 
         logger.info("Node [{}] before disconnect from client [{}]: \n{}", thisNodeID, thisClientID, thisNode);
@@ -506,25 +504,30 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
      *
      * @param clientAsString JSON body of client to its heartbeat signal
      */
-    private void createHeartBeatForClient(String clientAsString) throws JsonProcessingException, NoClientFoundException {
+    private void createHeartBeatForClient(String clientAsString) throws JsonProcessingException, NoClientFoundException, WatchdogAlreadyCreated {
 
         EdgeClient thisClientFromString = this.mapper.readValue(clientAsString, EdgeClient.class);
         String thisClientFromStringID = thisClientFromString.getId();
 
         EdgeClient thisClient = getClientByID(thisClientFromStringID);
+
         String thisClientID = thisClient.getId();
+        logger.info("client's INFO: {}\n,onl : {}\nwatchDog : {} ",thisClient, thisClient.isOnline(), thisClient.isWatchDogOnline());
 
         long heartBeatInterval = thisClient.getHeartBeatInterval();
         long createdTime = System.currentTimeMillis();
         clientHeartBeatMap.put(thisClientID,createdTime);
-
         final boolean[] abortCondition = {false};
 
+        if(thisClient.isWatchDogOnline()){
+            logger.warn("watch dog is already online, not gonna create a new one");
+        }
 
         Runnable r = new Runnable() {
             @Override
             public void run() {
                 logger.info("watch dog for [{}] created. ",thisClientID);
+                thisClient.setWatchDogOnline(true);
                 while (!abortCondition[0]) {
                     //check for heartbeat signal
                     Long currentHeartBeatTime = clientHeartBeatMap.get(thisClientID);
@@ -533,7 +536,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
                     //Wait for a set period
                     try {
-                        Thread.sleep(watchDogWaitTime);
+                        Thread.sleep(WATCH_DOG_WAIT_TIME);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -549,26 +552,23 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     //reset heart beat and keep watching
                     if (checkHeartBeat) {
                         logger.info("heart beat signal = [{}], resetting watch dog",checkHeartBeat);
+                        thisClient.setOnline(true);
                     }
                     //time out, abort this , tell the platform that client is offline
                     if (!checkHeartBeat) {
                         logger.info("Heart beat signal time out, [{}] status switched to [offline]",thisClientID);
                         thisClient.setOnline(false);
+                        thisClient.setWatchDogOnline(false);
                         abortCondition[0] = true;
                         //if client is matched with a node in the platform, disconnect client from the node
                         if (sharedMatchesList.clientIsConnected(thisClientID)) {
 
-                            String mappedNodeID = sharedMatchesList.getMapping().get(thisClientID);
+                            String mappedNodeID = sharedMatchesList.getClientConnectedNodeID(thisClientID);
 
                             try {
                                 disconnectAfterTimeOut(thisClientID,mappedNodeID,"timeout");
-                            } catch (NoClientFoundException e) {
-                                e.printStackTrace();
-                            } catch (NoNodeFoundException e) {
-                                e.printStackTrace();
-                            } catch (ClientNotAssignedException e) {
-                                e.printStackTrace();
-                            } catch (NoNodeFoundInHistoryException e) {
+                            } catch (NoClientFoundException | NoNodeFoundException
+                                    | ClientNotAssignedException | NoNodeFoundInHistoryException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -578,17 +578,25 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             }
         };
 
-        Thread watchDog = new Thread(r);
-        watchDog.start();
+        if(!thisClient.isWatchDogOnline()){
+            Thread watchDog = new Thread(r);
+            watchDog.start();
+        }
+
     }
 
-    private void clientHeartBeatSignalReceived(String heartBeatSignalAsString) throws JsonProcessingException, NoClientFoundException {
+    private void clientHeartBeatSignalReceived(String heartBeatSignalAsString) throws JsonProcessingException, NoClientFoundException, WatchdogAlreadyCreated {
         EdgeClient thisClient = this.mapper.readValue(heartBeatSignalAsString, EdgeClient.class);
         String thisClientID = thisClient.getId();
+
         //Check whether this client is registered or not
         if (isClientInList(thisClientID)){
             //Set client's status to [online]
             EdgeClient clientInList = getClientByID(thisClientID);
+            //create a new watchdog for heartbeat signal if watchdog timed out
+            if (!clientInList.isWatchDogOnline()){
+                createHeartBeatForClient(heartBeatSignalAsString);
+            }
             clientInList.setOnline(true);
             //Put the start time in the map
             long startTime = System.currentTimeMillis();
@@ -596,6 +604,11 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             clientHeartBeatMap.put(thisClientID,startTime);
             logger.info("{}, heart beat received time", startTimeTimeStamp );
             logger.info("heart beat signal for [{}] received",thisClientID);
+            //create watchDog if the previous one is gone
+            if (!clientInList.isWatchDogOnline()){
+                logger.info("watch dog for [{}] was offline, creating a new one",thisClientID);
+                createHeartBeatForClient(heartBeatSignalAsString);
+            }
         }
         else if (!isClientInList(thisClientID)){
             logger.warn("[{}] is not registered, please register client before sending heartbeat", thisClientID);
@@ -606,7 +619,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
 
 
 
-    private void nodeHeartBeatSignalReceived (String heartBeatSignalAsString) throws JsonProcessingException, NoNodeFoundException {
+    private void nodeHeartBeatSignalReceived (String heartBeatSignalAsString) throws JsonProcessingException, NoNodeFoundException, NoClientFoundException, WatchdogAlreadyCreated {
         EdgeNode thisNode = this.mapper.readValue(heartBeatSignalAsString, EdgeNode.class);
         String thisNodeID = thisNode.getId();
         //Put the start time in the map
@@ -614,12 +627,19 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             //set node's status to [online]
             EdgeNode nodeInList = getNodeByID(thisNodeID);
             nodeInList.setOnline(true);
+
             //put start time in the map
             long startTime = System.currentTimeMillis();
             Timestamp startTimeTimeStamp = new Timestamp(startTime);
             nodeHeartBeatMap.put(thisNodeID, startTime);
             logger.info("{}, heart beat received time", startTimeTimeStamp );
             logger.info("heart beat signal for [{}] received", thisNodeID);
+            //create watchDog if the previous one is gone
+            if(!nodeInList.isWatchDogOnline())
+            {
+                logger.info("watch dog was offline, creating a new one");
+                createHeartBeatForNode(heartBeatSignalAsString);
+            }
         }
         else if (!isNodeInList(thisNodeID)){
             logger.warn("[{}] is not registered, please register node before sending heartbeat", thisNodeID);
@@ -655,12 +675,16 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
 
         final boolean[] abortCondition = {false};
 
+        if(thisNode.isWatchDogOnline()){
+            logger.warn("watch dog is already online, not gonna create a new one");
+        }
+
         Runnable r = new Runnable() {
             @Override
             public void run() {
                 logger.info("watch dog for [{}] created. ",thisNodeID);
+                thisNode.setWatchDogOnline(true);
                 while (!abortCondition[0]) {
-
                     //get deadline for next heartbeat
                     Long currentHeartBeatTime = nodeHeartBeatMap.get(thisNodeID);
                     Timestamp currentHeartBeatTimeStamp = new Timestamp(currentHeartBeatTime);
@@ -668,7 +692,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
                     //Wait for the heart beat interval
                     try {
-                        Thread.sleep(watchDogWaitTime);
+                        Thread.sleep(WATCH_DOG_WAIT_TIME);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -684,23 +708,19 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     //reset heart beat and keep watching
                     if (checkHeartBeat) {
                         logger.info("heart beat signal did arrived for [{}], resetting watch dog",thisNodeID);
+                        thisNode.setOnline(true);
                     }
                     //time out, abort this , tell the platform that client is offline
                     if (!checkHeartBeat) {
                         logger.info("Heart beat signal time out, [{}] status switched to [offline]",thisNodeID);
                         thisNode.setOnline(false);
+                        thisNode.setWatchDogOnline(false);
                         abortCondition[0] = true;
 
                         //disconnect all clients that matched to thisNode
                         try {
                             disconnectAllClientsFromNode(thisNodeID);
-                        } catch (NoNodeFoundException e) {
-                            e.printStackTrace();
-                        } catch (ClientNotAssignedException e) {
-                            e.printStackTrace();
-                        } catch (NoNodeFoundInHistoryException e) {
-                            e.printStackTrace();
-                        } catch (NoClientFoundException e) {
+                        } catch (NoNodeFoundException | NoNodeFoundInHistoryException | ClientNotAssignedException | NoClientFoundException e) {
                             e.printStackTrace();
                         }
                     }
@@ -709,8 +729,10 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             }
         };
 
-        Thread watchDog = new Thread(r);
-        watchDog.start();
+        if (!thisNode.isWatchDogOnline()){
+            Thread watchDog = new Thread(r);
+            watchDog.start();
+        }
     }
 
 
