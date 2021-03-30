@@ -38,10 +38,10 @@ public class ClientLoadManager extends BasicLoadManager {
         this.options = options;
     }
 
-    public void sendLoad(DiagnosticsLoad load) throws LoadSendingException {
+    public void sendLoad(DiagnosticsLoad load, BufferInformation bufferInformation) throws LoadSendingException {
         LoadSender sender = getSender();
         if (this.options != null) sender.changeSocketConfiguration(this.options);
-        sender.send(load);
+        sender.send(load, bufferInformation);
         reportFilePath = "load" + fileCounter + ".txt";
         fileCounter++;
     }

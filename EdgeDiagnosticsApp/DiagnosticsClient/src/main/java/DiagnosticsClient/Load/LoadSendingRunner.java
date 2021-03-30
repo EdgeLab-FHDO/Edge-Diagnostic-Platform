@@ -26,7 +26,7 @@ public class LoadSendingRunner extends AbstractRunner {
             ClientInstruction instruction = (ClientInstruction) instructionQueue.get();
             manager.setSocketOptions(instruction.getSocketOptions());
             manager.setConnectionType(instruction.getConnectionType());
-            manager.sendLoad(instruction.getLoad());
+            manager.sendLoad(instruction.getLoad(), instruction.getConnection().getBufferInformation());
             manager.reportMeasurements();
             Thread.sleep(100);
         } catch (LoadSendingException | JsonProcessingException | RESTClientException e) {

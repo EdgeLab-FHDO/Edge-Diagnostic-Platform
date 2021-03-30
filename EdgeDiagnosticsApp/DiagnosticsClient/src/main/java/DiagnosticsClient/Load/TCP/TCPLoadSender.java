@@ -1,7 +1,9 @@
 package DiagnosticsClient.Load.TCP;
 
+import DiagnosticsClient.Load.BufferInformation;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.Exception.TCP.TCPConnectionException;
+import DiagnosticsClient.Load.FileBufferInformation;
 import DiagnosticsClient.Load.LoadSender;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.LoadTypes.FileLoad;
@@ -24,10 +26,10 @@ public class TCPLoadSender extends LoadSender {
     }
 
     @Override
-    public void send(DiagnosticsLoad load) throws TCPConnectionException {
+    public void send(DiagnosticsLoad load, BufferInformation bufferInformation) throws TCPConnectionException {
         switch (load.getType()) {
-            case PING -> sendPing((PingLoad)load);
-            case FILE -> sendFile((FileLoad) load);
+            case PING -> sendPing((PingLoad)load, bufferInformation);
+            case FILE -> sendFile((FileLoad) load, (FileBufferInformation) bufferInformation);
             case VIDEO -> sendVideo();
         }
     }
@@ -46,7 +48,7 @@ public class TCPLoadSender extends LoadSender {
         return System.nanoTime() - startTime;
     }
 
-    private void sendPing(PingLoad load) throws TCPConnectionException {
+    private void sendPing(PingLoad load, BufferInformation bufferInformation) throws TCPConnectionException {
         String address = this.getAddress();
         int port = this.getPort();
         byte[] pingMessage = load.getData();
@@ -58,8 +60,10 @@ public class TCPLoadSender extends LoadSender {
                 dataLength + " bytes of data " + times + " times. Protocol TCP";
         try (
                 Socket clientSocket = new Socket(address,port);
-                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream(),
+                        bufferInformation.getOutputStreamBuffer());
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()),
+                        bufferInformation.getInputReaderBuffer())
         ) {
             configureSocket(clientSocket);
             //printSocketOptions(clientSocket);
@@ -76,13 +80,14 @@ public class TCPLoadSender extends LoadSender {
         }
     }
 
-    private long singleFile(File load, BufferedOutputStream out, BufferedReader in) throws TCPConnectionException {
+    private long singleFile(File load, BufferedOutputStream out, BufferedReader in,
+                            int fileReadBufferSize, int fileInputBufferSize) throws TCPConnectionException {
         try (
-                BufferedInputStream inFile = new BufferedInputStream(new FileInputStream(load))
+                BufferedInputStream inFile = new BufferedInputStream(new FileInputStream(load), fileInputBufferSize)
         ){
             int bytesRead;
             long startTime = System.nanoTime();
-            byte[] buffer = new byte[4 * 1024];
+            byte[] buffer = new byte[fileReadBufferSize];
             while ((bytesRead = inFile.read(buffer)) > 0) {
                 out.write(buffer, 0, bytesRead);
             }
@@ -94,7 +99,7 @@ public class TCPLoadSender extends LoadSender {
         }
     }
 
-    private void sendFile(FileLoad load) throws TCPConnectionException {
+    private void sendFile(FileLoad load, FileBufferInformation bufferInformation) throws TCPConnectionException {
         String address = this.getAddress();
         int port = this.getPort();
         int times = load.getTimes();
@@ -104,16 +109,20 @@ public class TCPLoadSender extends LoadSender {
         String fileName = fileToSend.getName();
         try (
                 Socket clientSocket = new Socket(address, port);
-                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream());
+                BufferedOutputStream out = new BufferedOutputStream(clientSocket.getOutputStream(),
+                        bufferInformation.getOutputStreamBuffer());
                 DataOutputStream out2 = new DataOutputStream(clientSocket.getOutputStream());
-                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()),
+                        bufferInformation.getFileInputBuffer())
         ){
             configureSocket(clientSocket);
             System.out.println("Sending file " + fileName + "(" + fileSize + " bytes) to " + address
                     + ":" + port + ". Protocol TCP");
             out2.writeInt((int) fileSize); //Send file size first as a 32bit number (Max size 2GB)
+            int fileBuffer = bufferInformation.getFileReadingBuffer();
+            int fileInputBuffer = bufferInformation.getFileInputBuffer();
             for (int i = 0; i < times; i++) {
-                this.addLatency(i, singleFile(fileToSend,out,in));
+                this.addLatency(i, singleFile(fileToSend,out,in, fileBuffer, fileInputBuffer));
                 Thread.sleep(interval);
             }
             System.out.println("File load test finished");

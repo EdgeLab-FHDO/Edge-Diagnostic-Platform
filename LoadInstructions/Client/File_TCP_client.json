@@ -17,6 +17,12 @@
       "keepAlive" : false,
       "nagleAlgorithm" : true,
       "linger" : -1
+    },
+    "bufferInformation" : {
+      "outputStreamBuffer" : 8192,
+      "inputReaderBuffer" : 8192,
+      "fileReadingBuffer" : 8192,
+      "fileInputBuffer" : 8192
     }
   }
 }

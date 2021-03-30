@@ -37,6 +37,6 @@ public abstract class LoadSender {
         return latencyMeasurements.size();
     }
 
-    public abstract void send(DiagnosticsLoad load) throws LoadSendingException;
+    public abstract void send(DiagnosticsLoad load, BufferInformation bufferInformation) throws LoadSendingException;
     public abstract void changeSocketConfiguration(ClientSocketOptions options);
 }

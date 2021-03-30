@@ -1,5 +1,6 @@
 package DiagnosticsClient.Load.UDP;
 
+import DiagnosticsClient.Load.BufferInformation;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;
@@ -26,7 +27,7 @@ public class UDPLoadSender extends LoadSender {
     }
 
     @Override
-    public void send(DiagnosticsLoad load) throws LoadSendingException {
+    public void send(DiagnosticsLoad load, BufferInformation bufferInformation) throws LoadSendingException {
         switch (load.getType()) {
             case PING -> sendPing((PingLoad) load);
             case FILE -> sendFile();
