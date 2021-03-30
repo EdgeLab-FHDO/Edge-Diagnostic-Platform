@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -121,7 +121,7 @@ extends <a href="../MatchMakingModuleObject.html" title="class in Infrastructure
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean)">EdgeNode</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean,boolean)">EdgeNode</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 java.lang.String&nbsp;ip,
 boolean&nbsp;connected,
@@ -129,7 +129,8 @@ long&nbsp;thisTotalComputingResource,
 long&nbsp;thisTotalNetworkBandwidth,
 long&nbsp;thisLocation,
 long&nbsp;thisHeartBeatInterval,
-boolean&nbsp;thisOnline)</code></th>
+boolean&nbsp;thisOnline,
+boolean&nbsp;thisWatchDogOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -211,46 +212,61 @@ boolean&nbsp;thisOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i11">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setConnected(boolean)">setConnected</a></span>&#8203;(boolean&nbsp;connected)</code></th>
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isWatchDogOnline()">isWatchDogOnline</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i12">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setIpAddress(java.lang.String)">setIpAddress</a></span>&#8203;(java.lang.String&nbsp;ipAddress)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setConnected(boolean)">setConnected</a></span>&#8203;(boolean&nbsp;connected)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i13">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setHeartBeatInterval(long)">setHeartBeatInterval</a></span>&#8203;(long&nbsp;heartBeatInterval)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i14">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnline(boolean)">setOnline</a></span>&#8203;(boolean&nbsp;online)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setIpAddress(java.lang.String)">setIpAddress</a></span>&#8203;(java.lang.String&nbsp;ipAddress)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i15">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalNetwork(long)">setTotalNetwork</a></span>&#8203;(long&nbsp;thisTotalComputingResource)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i16">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalResource(long)">setTotalResource</a></span>&#8203;(long&nbsp;thisTotalNetworkBandwidth)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnline(boolean)">setOnline</a></span>&#8203;(boolean&nbsp;online)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i17">
-<td class="colFirst"><code>java.lang.String</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalNetwork(long)">setTotalNetwork</a></span>&#8203;(long&nbsp;thisTotalComputingResource)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i18">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateComputingResource(java.lang.Long)">updateComputingResource</a></span>&#8203;(java.lang.Long&nbsp;usedComputingResource)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setTotalResource(long)">setTotalResource</a></span>&#8203;(long&nbsp;thisTotalNetworkBandwidth)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i19">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setWatchDogOnline(boolean)">setWatchDogOnline</a></span>&#8203;(boolean&nbsp;watchDogOnline)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i20">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i21">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateComputingResource(java.lang.Long)">updateComputingResource</a></span>&#8203;(java.lang.Long&nbsp;usedComputingResource)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i22">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updateNetworkBandwidth(java.lang.Long)">updateNetworkBandwidth</a></span>&#8203;(java.lang.Long&nbsp;usedNetworkBandwidth)</code></th>
 <td class="colLast">&nbsp;</td>
@@ -295,7 +311,7 @@ boolean&nbsp;thisOnline)</code></th>
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean)">EdgeNode</a></h3>
+<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,java.lang.String,boolean,long,long,long,long,boolean,boolean)">EdgeNode</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">EdgeNode</span>&#8203;(<span class="arguments"><a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 java.lang.String&nbsp;ip,
@@ -304,7 +320,8 @@ long&nbsp;thisTotalComputingResource,
 long&nbsp;thisTotalNetworkBandwidth,
 long&nbsp;thisLocation,
 long&nbsp;thisHeartBeatInterval,
-boolean&nbsp;thisOnline)</span></div>
+boolean&nbsp;thisOnline,
+boolean&nbsp;thisWatchDogOnline)</span></div>
 </section>
 </li>
 </ul>
@@ -423,6 +440,24 @@ boolean&nbsp;thisOnline)</span></div>
 <section class="detail">
 <h3><a id="setOnline(boolean)">setOnline</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setOnline</span>&#8203;(<span class="arguments">boolean&nbsp;online)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setHeartBeatInterval(long)">setHeartBeatInterval</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setHeartBeatInterval</span>&#8203;(<span class="arguments">long&nbsp;heartBeatInterval)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="isWatchDogOnline()">isWatchDogOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isWatchDogOnline</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setWatchDogOnline(boolean)">setWatchDogOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setWatchDogOnline</span>&#8203;(<span class="arguments">boolean&nbsp;watchDogOnline)</span></div>
 </section>
 </li>
 <li class="blockList">

@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -121,14 +121,15 @@ extends <a href="../MatchMakingModuleObject.html" title="class in Infrastructure
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,long,long,long,java.lang.String,long,boolean)">EdgeClient</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
+<th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a href="#%3Cinit%3E(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,long,long,long,java.lang.String,long,boolean,boolean)">EdgeClient</a></span>&#8203;(<a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 long&nbsp;reqRes,
 long&nbsp;reqNet,
 long&nbsp;location,
 java.lang.String&nbsp;message,
 long&nbsp;thisHeartBeatInterval,
-boolean&nbsp;thisOnline)</code></th>
+boolean&nbsp;thisOnline,
+boolean&nbsp;thisWatchDogOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -200,31 +201,46 @@ boolean&nbsp;thisOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i9">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setClientHistory(InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory)">setClientHistory</a></span>&#8203;(<a href="EdgeClientHistory.html" title="class in InfrastructureManager.Modules.MatchMaking.Client">EdgeClientHistory</a>&nbsp;clientHistory)</code></th>
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isWatchDogOnline()">isWatchDogOnline</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i10">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setClientHistory(InfrastructureManager.Modules.MatchMaking.Client.EdgeClientHistory)">setClientHistory</a></span>&#8203;(<a href="EdgeClientHistory.html" title="class in InfrastructureManager.Modules.MatchMaking.Client">EdgeClientHistory</a>&nbsp;clientHistory)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i11">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnline(boolean)">setOnline</a></span>&#8203;(boolean&nbsp;thisOnline)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setHeartBeatInterval(long)">setHeartBeatInterval</a></span>&#8203;(long&nbsp;heartBeatInterval)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i12">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setReqNetwork(long)">setReqNetwork</a></span>&#8203;(long&nbsp;reqNetwork)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setLocation(long)">setLocation</a></span>&#8203;(long&nbsp;location)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i13">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setReqResource(long)">setReqResource</a></span>&#8203;(long&nbsp;reqResource)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setOnline(boolean)">setOnline</a></span>&#8203;(boolean&nbsp;thisOnline)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor" id="i14">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setReqNetwork(long)">setReqNetwork</a></span>&#8203;(long&nbsp;reqNetwork)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i15">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setReqResource(long)">setReqResource</a></span>&#8203;(long&nbsp;reqResource)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i16">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setWatchDogOnline(boolean)">setWatchDogOnline</a></span>&#8203;(boolean&nbsp;watchDogOnline)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i17">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#toString()">toString</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -269,7 +285,7 @@ boolean&nbsp;thisOnline)</code></th>
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,long,long,long,java.lang.String,long,boolean)">EdgeClient</a></h3>
+<h3><a id="&lt;init&gt;(InfrastructureManager.ModuleManagement.ImmutablePlatformModule,java.lang.String,long,long,long,java.lang.String,long,boolean,boolean)">EdgeClient</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="memberName">EdgeClient</span>&#8203;(<span class="arguments"><a href="../../../ModuleManagement/ImmutablePlatformModule.html" title="interface in InfrastructureManager.ModuleManagement">ImmutablePlatformModule</a>&nbsp;ownerModule,
 java.lang.String&nbsp;id,
 long&nbsp;reqRes,
@@ -277,7 +293,8 @@ long&nbsp;reqNet,
 long&nbsp;location,
 java.lang.String&nbsp;message,
 long&nbsp;thisHeartBeatInterval,
-boolean&nbsp;thisOnline)</span></div>
+boolean&nbsp;thisOnline,
+boolean&nbsp;thisWatchDogOnline)</span></div>
 </section>
 </li>
 </ul>
@@ -290,6 +307,24 @@ boolean&nbsp;thisOnline)</span></div>
 </a>
 <h2>Method Details</h2>
 <ul class="blockList">
+<li class="blockList">
+<section class="detail">
+<h3><a id="setHeartBeatInterval(long)">setHeartBeatInterval</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setHeartBeatInterval</span>&#8203;(<span class="arguments">long&nbsp;heartBeatInterval)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="isWatchDogOnline()">isWatchDogOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isWatchDogOnline</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setWatchDogOnline(boolean)">setWatchDogOnline</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setWatchDogOnline</span>&#8203;(<span class="arguments">boolean&nbsp;watchDogOnline)</span></div>
+</section>
+</li>
 <li class="blockList">
 <section class="detail">
 <h3><a id="getId()">getId</a></h3>
