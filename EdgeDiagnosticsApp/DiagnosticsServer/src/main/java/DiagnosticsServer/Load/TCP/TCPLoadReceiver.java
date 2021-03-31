@@ -1,5 +1,6 @@
 package DiagnosticsServer.Load.TCP;
 
+import DiagnosticsServer.Control.BufferControl.BufferInformation;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.Exception.TCP.TCPConnectionException;
 import DiagnosticsServer.Load.LoadReceiver;
@@ -14,6 +15,7 @@ import java.net.SocketException;
 public class TCPLoadReceiver extends LoadReceiver {
 
     private ServerSocketOptions socketConfig;
+    private BufferedInputStream in;
 
     public TCPLoadReceiver(int port) {
         super(port);
@@ -21,10 +23,10 @@ public class TCPLoadReceiver extends LoadReceiver {
     }
 
     @Override
-    public void receive(LoadType loadType) throws LoadReceivingException {
+    public void receive(LoadType loadType, BufferInformation bufferInformation) throws LoadReceivingException {
         switch (loadType) {
-            case PING -> receivePing();
-            case FILE -> receiveFile();
+            case PING -> receivePing(bufferInformation);
+            case FILE -> receiveFile(bufferInformation);
             case VIDEO -> receiveVideo();
         }
     }
@@ -34,21 +36,20 @@ public class TCPLoadReceiver extends LoadReceiver {
         this.socketConfig = options;
     }
 
-    private void receivePing() throws LoadReceivingException {
+    private void receivePing(BufferInformation bufferInformation) throws LoadReceivingException {
         System.out.println("Configured for PING TCP load");
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
             configureSocket(serverSocket);
             try (
                     Socket clientSocket = serverSocket.accept();
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
-                    BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream())
+                    BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream(), bufferInformation.getInputStreamBuffer())
             ){
                 while (true) {
                     int bufferSize = in.read(); //First byte to indicate message size
                     if (bufferSize < 0) break;
                     byte[] data = new byte[bufferSize];
                     int bytesReceived = in.read(data);
-                    //String readingString = new String(data);
                     out.println("Data Read: " + bytesReceived + " bytes");
                 }
                 System.out.println("Finished PING TCP");
@@ -59,7 +60,7 @@ public class TCPLoadReceiver extends LoadReceiver {
     }
 
 
-    private void receiveFile() throws LoadReceivingException {
+    private void receiveFile(BufferInformation bufferInformation) throws LoadReceivingException {
         System.out.println("Configured for FILE TCP load");
         try (ServerSocket serverSocket = new ServerSocket(this.getPort())) {
             configureSocket(serverSocket);
@@ -68,7 +69,8 @@ public class TCPLoadReceiver extends LoadReceiver {
             try (
                     Socket clientSocket = serverSocket.accept();
                     PrintWriter out = new PrintWriter(clientSocket.getOutputStream(),true);
-                    BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
+                    BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream(),
+                            bufferInformation.getInputStreamBuffer());
                     DataInputStream in2 = new DataInputStream(clientSocket.getInputStream())
             ){
                 final int fileSize = in2.readInt();
@@ -77,7 +79,7 @@ public class TCPLoadReceiver extends LoadReceiver {
                 while (count >= 0) {
                     sizeCounter = fileSize;
                     outFile = new FileOutputStream(tempFile);
-                    byte[] buffer = new byte[4 * 1024];
+                    byte[] buffer = new byte[bufferInformation.getReceiveBuffer()];
                     while (sizeCounter > 0 && (count = in.read(buffer)) > 0) {
                         outFile.write(buffer, 0, count);
                         sizeCounter -= count;

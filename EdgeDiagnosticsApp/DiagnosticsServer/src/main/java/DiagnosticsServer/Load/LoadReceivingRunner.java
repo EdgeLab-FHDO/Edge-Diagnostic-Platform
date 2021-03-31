@@ -23,7 +23,7 @@ public class LoadReceivingRunner extends AbstractRunner {
         manager.setLoadType(instruction.getLoadType());
         Thread.sleep(100);
         try {
-            manager.receiveLoad();
+            manager.receiveLoad(instruction.getConnection().getBufferInformation());
         } catch (LoadReceivingException e) {
             e.printStackTrace();
             this.stop();

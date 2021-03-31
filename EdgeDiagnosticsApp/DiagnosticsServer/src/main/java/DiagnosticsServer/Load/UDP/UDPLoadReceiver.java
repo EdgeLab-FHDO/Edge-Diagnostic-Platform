@@ -1,5 +1,6 @@
 package DiagnosticsServer.Load.UDP;
 
+import DiagnosticsServer.Control.BufferControl.BufferInformation;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.Exception.UDP.UDPConnectionException;
 import DiagnosticsServer.Load.LoadReceiver;
@@ -24,9 +25,9 @@ public class UDPLoadReceiver extends LoadReceiver {
     }
 
     @Override
-    public void receive(LoadType loadType) throws LoadReceivingException {
+    public void receive(LoadType loadType, BufferInformation bufferInformation) throws LoadReceivingException {
         switch (loadType) {
-            case PING -> receivePing();
+            case PING -> receivePing(bufferInformation);
             case FILE -> receiveFile();
             case VIDEO -> receiveVideo();
         }
@@ -37,14 +38,14 @@ public class UDPLoadReceiver extends LoadReceiver {
         this.socketConfig = (UDPServerSocketOptions) options;
     }
 
-    private void receivePing() throws LoadReceivingException {
+    private void receivePing(BufferInformation bufferInformation) throws LoadReceivingException {
         System.out.println("Configured for PING UDP load");
         try (
                 DatagramSocket serverSocket = new DatagramSocket(this.getPort())
         ){
             configureSocket(serverSocket);
             printSocketOptions(serverSocket);
-            byte[] receivingDataBuffer = new byte[1024];
+            byte[] receivingDataBuffer = new byte[bufferInformation.getReceiveBuffer()];
             byte[] sendingDataBuffer;
             DatagramPacket inPacket;
             DatagramPacket outPacket;

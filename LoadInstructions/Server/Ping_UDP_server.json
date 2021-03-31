@@ -9,6 +9,10 @@
       "ipTOS" : 0,
       "sendBufferSize" : 65536,
       "broadcast" : false
+    },
+    "bufferInformation" : {
+      "inputStreamBuffer" : -1,
+      "receiveBuffer" : 8192
     }
   }
 }

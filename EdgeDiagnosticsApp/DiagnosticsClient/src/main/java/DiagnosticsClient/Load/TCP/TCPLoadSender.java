@@ -1,9 +1,9 @@
 package DiagnosticsClient.Load.TCP;
 
-import DiagnosticsClient.Load.BufferInformation;
+import DiagnosticsClient.Control.BufferInformation;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.Exception.TCP.TCPConnectionException;
-import DiagnosticsClient.Load.FileBufferInformation;
+import DiagnosticsClient.Control.FileBufferInformation;
 import DiagnosticsClient.Load.LoadSender;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 import DiagnosticsClient.Load.LoadTypes.FileLoad;

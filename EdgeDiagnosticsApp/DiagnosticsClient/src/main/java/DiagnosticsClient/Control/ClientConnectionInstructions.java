@@ -1,7 +1,6 @@
 package DiagnosticsClient.Control;
 
 import Control.Instruction.ConnectionInstructions;
-import DiagnosticsClient.Load.BufferInformation;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import LoadManagement.BasicLoadManager.ConnectionType;
 import com.fasterxml.jackson.annotation.JsonProperty;

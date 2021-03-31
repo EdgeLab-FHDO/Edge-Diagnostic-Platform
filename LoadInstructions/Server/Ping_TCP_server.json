@@ -6,6 +6,10 @@
       "reuseAddress" : false,
       "receiveBufferSize" : 65536,
       "timeout" : 0
+    },
+    "bufferInformation" : {
+      "inputStreamBuffer" : 8192,
+      "receiveBuffer" : -1
     }
   }
 }

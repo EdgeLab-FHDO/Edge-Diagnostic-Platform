@@ -23,6 +23,10 @@ public class ServerInstruction implements Instruction {
         return loadType;
     }
 
+    public ServerConnectionInstructions getConnection() {
+        return connection;
+    }
+
     public ServerSocketOptions getSocketOptions() {
         return this.connection.getSocketOptions();
     }

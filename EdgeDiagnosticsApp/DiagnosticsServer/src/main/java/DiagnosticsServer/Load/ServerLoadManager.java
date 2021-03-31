@@ -1,5 +1,6 @@
 package DiagnosticsServer.Load;
 
+import DiagnosticsServer.Control.BufferControl.BufferInformation;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.TCP.TCPLoadReceiver;
 import DiagnosticsServer.Load.UDP.UDPLoadReceiver;
@@ -28,10 +29,10 @@ public class ServerLoadManager extends BasicLoadManager {
         this.options = options;
     }
 
-    public void receiveLoad() throws LoadReceivingException {
+    public void receiveLoad(BufferInformation bufferInformation) throws LoadReceivingException {
         LoadReceiver receiver = getReceiver();
         if (this.options != null) receiver.changeSocketConfiguration(options);
-        receiver.receive(this.getLoadType());
+        receiver.receive(this.getLoadType(), bufferInformation);
     }
 
     private LoadReceiver getReceiver() {

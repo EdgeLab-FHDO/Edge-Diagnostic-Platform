@@ -1,6 +1,7 @@
 package DiagnosticsClient.Load;
 
 import DiagnosticsClient.Communication.ClientPlatformConnection;
+import DiagnosticsClient.Control.BufferInformation;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Communication.ServerInformation;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;

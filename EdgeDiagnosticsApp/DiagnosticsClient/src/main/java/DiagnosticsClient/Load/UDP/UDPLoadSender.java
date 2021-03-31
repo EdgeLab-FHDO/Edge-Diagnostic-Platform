@@ -1,6 +1,6 @@
 package DiagnosticsClient.Load.UDP;
 
-import DiagnosticsClient.Load.BufferInformation;
+import DiagnosticsClient.Control.BufferInformation;
 import DiagnosticsClient.Load.ClientSocketOptions;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.Exception.UDP.UDPConnectionException;

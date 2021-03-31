@@ -1,5 +1,6 @@
-package DiagnosticsClient.Load;
+package DiagnosticsClient.Control;
 
+import DiagnosticsClient.Control.BufferInformation;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,5 +1,6 @@
 package DiagnosticsServer.Load;
 
+import DiagnosticsServer.Control.BufferControl.BufferInformation;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import LoadManagement.LoadType;
 
@@ -15,6 +16,6 @@ public abstract class LoadReceiver {
         return port;
     }
 
-    public abstract void receive(LoadType loadType) throws LoadReceivingException;
+    public abstract void receive(LoadType loadType, BufferInformation bufferInformation) throws LoadReceivingException;
     public abstract void changeSocketConfiguration(ServerSocketOptions options);
 }
