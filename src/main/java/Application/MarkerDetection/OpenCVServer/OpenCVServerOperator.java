@@ -159,6 +159,7 @@ public class OpenCVServerOperator implements CoreOperator {
         }
 
         String registrationUrl = masterUrl +registerCommand;
+        //TODO implement something to replace hardcoded value
         String registrationBody = "{\"id\": \"" + serverId + "\""
                 + ", \"ipAddress\": \"" + serverIp + " : " + port + "\""
                 + ", \"connected\": " + true

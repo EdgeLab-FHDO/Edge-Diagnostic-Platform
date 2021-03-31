@@ -195,12 +195,13 @@ public class OpenCVClientOperator implements CoreOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
         String registrationUrl = masterUrl +registerCommand;
+        //TODO implement something to replace hardcoded value
         String registrationBody = "{\"id\": \"" + clientId + "\""
                 + ", \"reqNetwork\": " + 10
                 + ", \"reqResource\": " + 5
                 + ", \"location\": " + 54
                 + ", \"heartBeatInterval\": " + (2*interval) + "}";
-        System.out.println(registrationBody);
+        
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
@@ -237,7 +238,7 @@ public class OpenCVClientOperator implements CoreOperator {
 
     //TODO move this to a latency reporter utility
     public void queueLatencyReport(String location, boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
-        String timestamp = new SimpleDateFormat("YYYY-mm-dd_HH:mm:ss").format(new Date());
+        String timestamp = new SimpleDateFormat("YYYY-MM-dd_HH:mm:ss").format(new Date());
         long latency = (endTime-startTime)/1000000;
         String reportedIp="";
         if(debugMode) {
