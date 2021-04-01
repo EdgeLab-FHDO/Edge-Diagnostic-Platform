@@ -1,7 +1,10 @@
 package DiagnosticsServer.Load;
 
+import Control.Instruction.InitialInstruction;
+import Control.Instruction.Instruction;
 import DiagnosticsServer.Control.ServerInstruction;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
+import DiagnosticsServer.Server;
 import RunnerManagement.AbstractRunner;
 import Control.Instruction.InstructionQueue;
 
@@ -17,16 +20,21 @@ public class LoadReceivingRunner extends AbstractRunner {
 
     @Override
     public void runnerOperation() throws InterruptedException {
-        ServerInstruction instruction = (ServerInstruction) instructionQueue.get();
-        manager.setSocketOptions(instruction.getSocketOptions());
-        manager.setConnectionType(instruction.getConnectionType());
-        manager.setLoadType(instruction.getLoadType());
-        Thread.sleep(100);
-        try {
-            manager.receiveLoad(instruction.getConnection().getBufferInformation());
-        } catch (LoadReceivingException e) {
-            e.printStackTrace();
-            this.stop();
+        Instruction instruction = instructionQueue.get();
+        if (instruction.getClass().equals(InitialInstruction.class)) {
+            return;
+        } else {
+            ServerInstruction serverInstruction = (ServerInstruction) instruction;
+            manager.setSocketOptions(serverInstruction.getSocketOptions());
+            manager.setConnectionType(serverInstruction.getConnectionType());
+            manager.setLoadType(serverInstruction.getLoadType());
+            try {
+                manager.receiveLoad(serverInstruction.getConnection().getBufferInformation());
+            } catch (LoadReceivingException e) {
+                e.printStackTrace();
+                this.stop();
+            }
         }
+        Thread.sleep(100);
     }
 }

@@ -116,6 +116,13 @@
       }
     },
     {
+      "in" : "console.in",
+      "out" : "diagnostics.instructions.out",
+      "commands" : {
+        "experiment" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment1.json"
+      }
+    },
+    {
       "in" : "diagnostics.instructions.in",
       "out" : "rest.diagnostic.client",
       "commands" : {

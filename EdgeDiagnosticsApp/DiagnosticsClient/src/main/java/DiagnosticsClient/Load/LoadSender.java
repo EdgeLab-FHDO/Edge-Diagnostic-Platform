@@ -4,15 +4,15 @@ import DiagnosticsClient.Control.BufferInformation;
 import DiagnosticsClient.Load.Exception.LoadSendingException;
 import DiagnosticsClient.Load.LoadTypes.DiagnosticsLoad;
 
-import java.util.Map;
+import java.util.*;
 
 public abstract class LoadSender {
 
     private final String address;
     private final int port;
-    private final Map<Integer,Long> latencyMeasurements;
+    private List<Double> latencyMeasurements;
 
-    public LoadSender(String address, int port, Map<Integer,Long> latencyMeasurements) {
+    public LoadSender(String address, int port, List<Double> latencyMeasurements) {
         this.address = address;
         this.port = port;
         this.latencyMeasurements = latencyMeasurements;
@@ -26,16 +26,14 @@ public abstract class LoadSender {
         return port;
     }
 
-    protected void addLatency(int iteration, long latency) {
-        this.latencyMeasurements.put(iteration,latency);
+    protected double addAverageLatency(long[] latencies) {
+        double average = Arrays.stream(latencies).average().orElse(-1);
+        this.latencyMeasurements.add(average);
+        return average;
     }
 
-    protected double getAverageLatency() {
-        return latencyMeasurements.values().stream().mapToLong(i -> i).average().orElse(0);
-    }
-
-    protected int getMeasurementNumber() {
-        return latencyMeasurements.size();
+    public void setLatencyMeasurements(List<Double> latencyMeasurements) {
+        this.latencyMeasurements = latencyMeasurements;
     }
 
     public abstract void send(DiagnosticsLoad load, BufferInformation bufferInformation) throws LoadSendingException;

@@ -11,7 +11,7 @@ import DiagnosticsClient.Load.LoadTypes.PingLoad;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
+import java.util.List;
 
 import static java.net.StandardSocketOptions.IP_TOS;
 import static java.net.StandardSocketOptions.SO_LINGER;
@@ -20,7 +20,7 @@ public class TCPLoadSender extends LoadSender {
 
     private TCPClientSocketOptions socketConfig;
 
-    public TCPLoadSender(String address, int port, Map<Integer,Long> latencyMeasurements) {
+    public TCPLoadSender(String address, int port, List<Double> latencyMeasurements) {
         super(address, port,latencyMeasurements);
         socketConfig = new TCPClientSocketOptions(); //Start with default values
     }
@@ -68,12 +68,13 @@ public class TCPLoadSender extends LoadSender {
             configureSocket(clientSocket);
             //printSocketOptions(clientSocket);
             System.out.println(screenMessage);
+            long[] latencies = new long[times];
             for (int i = 0; i < times; i++) {
-                this.addLatency(i, singlePing(pingMessage,out,in));
+                latencies[i] = singlePing(pingMessage,out,in);
                 Thread.sleep(interval);
             }
             System.out.println("Ping load test finished");
-            double avgLatency = this.getAverageLatency();
+            double avgLatency = this.addAverageLatency(latencies);
             System.out.println("Average latency: " + avgLatency + " ns. Data size =" + times);
         } catch (IOException | InterruptedException e) {
             throw new TCPConnectionException("TCP Connection failed: ",e);
@@ -121,13 +122,14 @@ public class TCPLoadSender extends LoadSender {
             out2.writeInt((int) fileSize); //Send file size first as a 32bit number (Max size 2GB)
             int fileBuffer = bufferInformation.getFileReadingBuffer();
             int fileInputBuffer = bufferInformation.getFileInputBuffer();
+            long[] latencies = new long[times];
             for (int i = 0; i < times; i++) {
-                this.addLatency(i, singleFile(fileToSend,out,in, fileBuffer, fileInputBuffer));
+                latencies[i] = singleFile(fileToSend,out,in, fileBuffer, fileInputBuffer);
                 Thread.sleep(interval);
             }
             System.out.println("File load test finished");
-            //double avgLatency = Arrays.stream(latencies).average().orElse(0);
-            System.out.println("Average latency: " + this.getAverageLatency() + " ns. Times that the File was sent = "
+            double avgLatency = this.addAverageLatency(latencies);
+            System.out.println("Average latency: " + avgLatency + " ns. Times that the File was sent = "
                     + times);
             fileToSend.deleteOnExit();
         } catch (IOException | InterruptedException e) {

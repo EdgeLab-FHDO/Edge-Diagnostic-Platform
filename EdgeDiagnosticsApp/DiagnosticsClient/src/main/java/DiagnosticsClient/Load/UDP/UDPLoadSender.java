@@ -13,7 +13,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.util.Map;
+import java.util.List;
 
 import static java.net.StandardSocketOptions.IP_TOS;
 
@@ -21,7 +21,7 @@ public class UDPLoadSender extends LoadSender {
 
     private UDPClientSocketOptions socketConfig;
 
-    public UDPLoadSender(String address, int port, Map<Integer,Long> latencyMeasurements) {
+    public UDPLoadSender(String address, int port, List<Double> latencyMeasurements) {
         super(address, port, latencyMeasurements);
         this.socketConfig = new UDPClientSocketOptions();
     }
@@ -60,15 +60,20 @@ public class UDPLoadSender extends LoadSender {
             int port = this.getPort();
             System.out.println("Pinging " + this.getAddress() + ":" + port + " with " +
                     message.length + " bytes of data " + load.getTimes() + " times. Protocol UDP");
+            long[] latencies = new long[times];
+            int missedPackages = 0;
             for (int i = 0; i < times; i++) {
                 try {
-                    this.addLatency(i, singlePing(message,address,port,clientSocket));
+                    latencies[i] = singlePing(message,address,port,clientSocket);
                     Thread.sleep(interval);
-                } catch (SocketTimeoutException ignored) {}
+                } catch (SocketTimeoutException ignored) {
+                    missedPackages++;
+                }
             }
             System.out.println("Ping load test finished");
-            System.out.println("Average latency: " + this.getAverageLatency() + " ns. Data size =" + this.getMeasurementNumber());
-            System.out.println("Not responded packets : " + (times - this.getMeasurementNumber()));
+            double avgLatency = this.addAverageLatency(latencies);
+            System.out.println("Average latency: " + avgLatency + " ns. Data size =" + (times - missedPackages));
+            System.out.println("Not responded packets : " + missedPackages);
         } catch (IOException | InterruptedException e) {
             throw new UDPConnectionException("UDP Connection failed: ", e);
         }

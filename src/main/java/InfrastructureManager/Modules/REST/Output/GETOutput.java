@@ -9,6 +9,9 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import static spark.Spark.get;
 
 /**
@@ -19,7 +22,7 @@ import static spark.Spark.get;
  */
 public class GETOutput extends RESTModuleObject implements PlatformOutput {
 
-    private String toSend;
+    private BlockingQueue<String> sendingQueue;
     protected final String URL;
 
     protected boolean isActivated; //To check if REST server is running
@@ -29,7 +32,8 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      */
     protected Route GETHandler = (Request request, Response response) -> {
         response.type("application/json");
-        return this.toSend;
+        return this.sendingQueue.take();
+        //return this.toSend;
     };
 
     /**
@@ -41,7 +45,7 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      */
     public GETOutput(ImmutablePlatformModule module, String name, String URL) {
         super(module,name);
-        this.toSend = "";
+        this.sendingQueue = new ArrayBlockingQueue<>(10);
         this.URL = URL;
         this.isActivated = false;
     }
@@ -93,7 +97,11 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      *
      * @param jsonBody JSON body that will be a GET resource
      */
-    protected void addResource(String jsonBody) {
-        this.toSend = jsonBody;
+    protected void addResource(String jsonBody) throws RESTOutputException {
+        try {
+            this.sendingQueue.put(jsonBody);
+        } catch (InterruptedException e) {
+            throw new RESTOutputException("Interrupted while waiting to fill queue");
+        }
     }
 }
