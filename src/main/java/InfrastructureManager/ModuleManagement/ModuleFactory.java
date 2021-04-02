@@ -4,6 +4,7 @@ import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleNotDefine
 import InfrastructureManager.ModuleManagement.RawData.ModuleConfigData;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.Console.ConsoleModule;
+import InfrastructureManager.Modules.CustomConnector.CustomConnectorModule;
 import InfrastructureManager.Modules.MatchMaking.Naive.MatchMakingNaiveModule;
 import InfrastructureManager.Modules.MatchMaking.Random.MatchMakingRandomModule;
 import InfrastructureManager.Modules.MatchMaking.ScoreBased.MatchMakingScoreBasedModule;
@@ -30,7 +31,7 @@ public class ModuleFactory {
      */
     public enum ModuleType {DEFAULT, CONSOLE, UTILITY, SCENARIO, REST, ADVANTEDGE,
         REMOTE_EXEC, MATCH_MAKING_RANDOM, MATCH_MAKING_NAIVE, MATCH_MAKING_SCORE_BASED,
-        NETWORK_STRUCTURE}
+        NETWORK_STRUCTURE,CUSTOM_CONNECTOR}
 
     /**
      * Create and configure a {@link PlatformModule} based on raw data representations.
@@ -51,6 +52,7 @@ public class ModuleFactory {
             case MATCH_MAKING_NAIVE -> new MatchMakingNaiveModule();
             case MATCH_MAKING_SCORE_BASED -> new MatchMakingScoreBasedModule();
             case NETWORK_STRUCTURE -> new NetworkModule();
+            case CUSTOM_CONNECTOR -> new CustomConnectorModule();
             default -> throw new ModuleNotDefinedException("The module type for module" + data.getName() + "is not defined");
         };
         result.configure(data);
