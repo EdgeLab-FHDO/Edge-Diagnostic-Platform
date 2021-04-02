@@ -1,6 +1,7 @@
 {
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
+    {"type":  "CustomConnectorModule", "name": "CustomConnector"},
     {"type": "ScenarioModule", "name": "dummy", "path": "Scenarios/dummy.json"},
     {"type": "UtilityModule", "name": "util"},
     {
@@ -185,6 +186,20 @@
       "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in": "CustomConnector.in",
+      "out": "CustomConnector.out",
+      "commands": {
+        "test1 $param": "CustomConnector $param"
+      }
+    },
+    {
+      "in" : "CustomConnector.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit"
       }
     }
   ]

@@ -3,6 +3,7 @@ package InfrastructureManager.ModuleManagement.RawData;
 import InfrastructureManager.ModuleManagement.ModuleFactory.*;
 import InfrastructureManager.Modules.AdvantEDGE.RawData.AdvantEdgeModuleConfigData;
 import InfrastructureManager.Modules.Console.RawData.ConsoleModuleConfigData;
+import InfrastructureManager.Modules.CustomConnector.RawData.CustomConnectorModuleConfigData;
 import InfrastructureManager.Modules.MatchMaking.Naive.RawData.MatchMakingNaiveModuleConfigData;
 import InfrastructureManager.Modules.MatchMaking.Random.RawData.MatchMakingRandomModuleConfigData;
 import InfrastructureManager.Modules.MatchMaking.ScoreBased.RawData.MatchMakingScoreBasedModuleConfigData;
@@ -36,7 +37,8 @@ import com.fasterxml.jackson.annotation.*;
         @JsonSubTypes.Type(value = MatchMakingRandomModuleConfigData.class, name = "MatchMakingModule-Random"),
         @JsonSubTypes.Type(value = MatchMakingNaiveModuleConfigData.class, name = "MatchMakingModule-Naive"),
         @JsonSubTypes.Type(value = MatchMakingScoreBasedModuleConfigData.class, name = "MatchMakingModule-ScoreBased"),
-        @JsonSubTypes.Type(value = NetworkModuleConfigData.class, name = "NetworkModule")
+        @JsonSubTypes.Type(value = NetworkModuleConfigData.class, name = "NetworkModule"),
+        @JsonSubTypes.Type(value = CustomConnectorModuleConfigData.class, name = "CustomConnectorModule"),
 })
 public abstract class ModuleConfigData {
     private final String name;
