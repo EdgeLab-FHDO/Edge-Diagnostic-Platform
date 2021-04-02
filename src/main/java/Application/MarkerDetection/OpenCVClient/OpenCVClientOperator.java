@@ -215,7 +215,7 @@ public class OpenCVClientOperator implements CoreOperator {
                 + ", \"reqNetwork\": " + reqNetwork
                 + ", \"reqResource\": " + reqResource
                 + ", \"location\": " + location
-                + ", \"heartBeatInterval\": " + (2*interval) + "}";
+                + ", \"heartBeatInterval\": " + interval + "}";
         
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";

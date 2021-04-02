@@ -181,7 +181,7 @@ public class OpenCVServerOperator implements CoreOperator {
                 + ", \"totalResource\": " + totalResource
                 + ", \"totalNetwork\": " + totalNetwork
                 + ", \"location\": " + location
-                + ", \"heartBeatInterval\": " + (2*interval) + "}";
+                + ", \"heartBeatInterval\": " + interval + "}";
         String beatUrl = masterUrl + beatCommand;
 
         registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
