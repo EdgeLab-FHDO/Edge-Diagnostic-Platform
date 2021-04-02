@@ -150,8 +150,11 @@ public class OpenCVClientOperator implements CoreOperator {
         String latencyReportCommand = "";
         processingRunner = new ProcessingRunner();
         int interval = 1000;
+        int reqNetwork = 0;
+        int reqResource = 0;
+        int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -182,6 +185,18 @@ public class OpenCVClientOperator implements CoreOperator {
                         latencyReportCommand = argument[1];
                         missingParameterList.remove("LATENCY_REPORT_COMMAND");
                         break;
+                    case "REQUIRED_RESOURCE":
+                        reqResource = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("REQUIRED_RESOURCE");
+                        break;
+                    case "REQUIRED_NETWORK":
+                        reqNetwork = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("REQUIRED_NETWORK");
+                        break;
+                    case "LOCATION":
+                        location = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("LOCATION");
+                        break;
                     case "INTERVAL":
                         interval = Integer.parseInt(argument[1]);
                         break;
@@ -197,9 +212,9 @@ public class OpenCVClientOperator implements CoreOperator {
         String registrationUrl = masterUrl +registerCommand;
         //TODO implement something to replace hardcoded value
         String registrationBody = "{\"id\": \"" + clientId + "\""
-                + ", \"reqNetwork\": " + 10
-                + ", \"reqResource\": " + 5
-                + ", \"location\": " + 54
+                + ", \"reqNetwork\": " + reqNetwork
+                + ", \"reqResource\": " + reqResource
+                + ", \"location\": " + location
                 + ", \"heartBeatInterval\": " + (2*interval) + "}";
         
         String beatUrl = masterUrl + beatCommand;

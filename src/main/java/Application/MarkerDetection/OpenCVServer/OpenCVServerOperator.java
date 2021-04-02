@@ -111,10 +111,13 @@ public class OpenCVServerOperator implements CoreOperator {
         String masterUrl = "";
         String beatCommand = "";
         String registerCommand = "";
-        int interval = 1000;
         serverRunner = new ServerRunner();
+        int interval = 1000;
+        int totalNetwork = 0;
+        int totalResource = 0;
+        int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "PORT")); // Connected has default value of false
+        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "PORT", "TOTAL_NETWORK", "TOTAL_RESOURCE", "LOCATION")); // Connected has default value of false
 
         //TODO move beat command to other input methods such as configuration files
         for (String arg : args) {
@@ -145,6 +148,18 @@ public class OpenCVServerOperator implements CoreOperator {
                         port = Integer.parseInt(argument[1]);
                         missingParameterList.remove("PORT");
                         break;
+                    case "TOTAL_RESOURCE":
+                        totalResource = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("TOTAL_RESOURCE");
+                        break;
+                    case "TOTAL_NETWORK":
+                        totalNetwork = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("TOTAL_NETWORK");
+                        break;
+                    case "LOCATION":
+                        location = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("LOCATION");
+                        break;
                     case "INTERVAL":
                         interval = Integer.parseInt(argument[1]);
                         break;
@@ -163,9 +178,9 @@ public class OpenCVServerOperator implements CoreOperator {
         String registrationBody = "{\"id\": \"" + serverId + "\""
                 + ", \"ipAddress\": \"" + serverIp + " : " + port + "\""
                 + ", \"connected\": " + true
-                + ", \"totalResource\": " + 250
-                + ", \"totalNetwork\": " + 200
-                + ", \"location\": " + 50
+                + ", \"totalResource\": " + totalResource
+                + ", \"totalNetwork\": " + totalNetwork
+                + ", \"location\": " + location
                 + ", \"heartBeatInterval\": " + (2*interval) + "}";
         String beatUrl = masterUrl + beatCommand;
 
