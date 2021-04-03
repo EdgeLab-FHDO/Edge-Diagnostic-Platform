@@ -30,7 +30,7 @@
       "object" : "load",
       "field" : "dataLength",
       "from" : 1,
-      "to" : 100,
+      "to" : 10,
       "step" : 1
     }
   },

@@ -15,12 +15,12 @@ public class HeartBeatRunner extends AbstractRunner {
 
     @Override
     public void runnerOperation() throws InterruptedException {
-        /*try {
+        try {
             connection.beat(body);
         } catch (RESTClientException e) {
             e.printStackTrace();
             this.stop();
-        }*/
+        }
         Thread.sleep(1000);
     }
 }

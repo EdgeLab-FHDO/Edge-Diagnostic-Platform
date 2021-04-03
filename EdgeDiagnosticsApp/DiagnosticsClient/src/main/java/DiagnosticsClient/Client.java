@@ -20,10 +20,11 @@ public class Client {
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL,
                     assignURL, getServerURL, heartbeatURL ,instructionsURL, measurementsURL);
-            connection.register(this.getJsonRepresentation(true));
-            ServerInformation server = connection.getServer(this.getJsonRepresentation(true));
+            connection.register(this.getJsonRepresentation(false));
+            Thread.sleep(100);
+            ServerInformation server = connection.getServer(this.getJsonRepresentation(false));
             manager.configure(connection,getJsonRepresentation(true),server);
-        } catch (JsonProcessingException | RESTClientException e) {
+        } catch (JsonProcessingException | RESTClientException | InterruptedException e) {
             throw new ClientCommunicationException("Communication with diagnostics platform failed: ", e);
         }
     }

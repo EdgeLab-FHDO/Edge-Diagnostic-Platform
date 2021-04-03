@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import Application.Commons.CoreOperator;
 import Application.Utilities.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.opencv.core.Mat;
@@ -15,21 +16,26 @@ import org.opencv.core.Mat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class OpenCVServerOperator {
+public class OpenCVServerOperator implements CoreOperator {
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private DataInputStream in;
     private PrintWriter out;
     private DetectMarker detector;
+
+    private String serverId;
+    private String serverIp;
     private int port;
+    private boolean connected;
 
     private String fileName;
 
     private BufferedImage currentImage;
 
+    public RegistrationRunner registrationRunner;
     public ServerRunner serverRunner;
     public HeartBeatRunner beatRunner;
-    private boolean connected;
+    private String beatBody;
 
     private static OpenCVServerOperator instance = null;
 
@@ -39,6 +45,9 @@ public class OpenCVServerOperator {
         fileName= "read.png";
         detector = new DetectMarker();
         connected = false;
+        beatBody = "";
+        serverId = "";
+        serverIp = "";
     }
 
     public void startConnection() throws IOException {
@@ -48,11 +57,13 @@ public class OpenCVServerOperator {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new DataInputStream(clientSocket.getInputStream());
             connected = true;
+            updateBeatBody();
         }
     }
 
     public void processing() throws IOException, IllegalArgumentException {
         currentImage = ImageIO.read(in);
+        
         if(currentImage != null) {
             Mat subject = ImageProcessor.getBufferedImageMat(currentImage);
 
@@ -82,6 +93,7 @@ public class OpenCVServerOperator {
             clientSocket.close();
             serverSocket.close();
             connected = false;
+            updateBeatBody();
         } catch (IOException | NullPointerException e) {
             throw new RemoteExecutionException(e);
         }
@@ -98,12 +110,14 @@ public class OpenCVServerOperator {
         String[] argument;
         String masterUrl = "";
         String beatCommand = "";
-        String serverId = "";
-        String serverIp = "";
-        boolean connected = false;
+        String registerCommand = "";
         serverRunner = new ServerRunner();
+        int interval = 1000;
+        int totalNetwork = 0;
+        int totalResource = 0;
+        int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "BEAT_COMMAND", "PORT")); // Connected has default value of false
+        List<String> missingParameterList = new ArrayList<>(List.of("SERVER_ID", "SERVER_IP", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "PORT", "TOTAL_NETWORK", "TOTAL_RESOURCE", "LOCATION")); // Connected has default value of false
 
         //TODO move beat command to other input methods such as configuration files
         for (String arg : args) {
@@ -122,16 +136,32 @@ public class OpenCVServerOperator {
                         masterUrl = argument[1];
                         missingParameterList.remove("MASTER_URL");
                         break;
+                    case "REGISTER_COMMAND":
+                        registerCommand = argument[1];
+                        missingParameterList.remove("REGISTER_COMMAND");
+                        break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
                         missingParameterList.remove("BEAT_COMMAND");
                         break;
-                    case "CONNECTED":
-                        connected = Boolean.parseBoolean(argument[1]);
-                        break;
                     case "PORT":
                         port = Integer.parseInt(argument[1]);
                         missingParameterList.remove("PORT");
+                        break;
+                    case "TOTAL_RESOURCE":
+                        totalResource = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("TOTAL_RESOURCE");
+                        break;
+                    case "TOTAL_NETWORK":
+                        totalNetwork = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("TOTAL_NETWORK");
+                        break;
+                    case "LOCATION":
+                        location = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("LOCATION");
+                        break;
+                    case "INTERVAL":
+                        interval = Integer.parseInt(argument[1]);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
@@ -143,8 +173,34 @@ public class OpenCVServerOperator {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
 
+        String registrationUrl = masterUrl +registerCommand;
+        //TODO implement something to replace hardcoded value
+        String registrationBody = "{\"id\": \"" + serverId + "\""
+                + ", \"ipAddress\": \"" + serverIp + " : " + port + "\""
+                + ", \"connected\": " + true
+                + ", \"totalResource\": " + totalResource
+                + ", \"totalNetwork\": " + totalNetwork
+                + ", \"location\": " + location
+                + ", \"heartBeatInterval\": " + (2*interval) + "}";
         String beatUrl = masterUrl + beatCommand;
-        String beatBody =  "{\"id\": \"" + serverId + "\", \"ipAddress\": \"" + serverIp + ":" + port + "\", \"connected\": " + connected + "}";
-        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
+
+        registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
+        updateBeatBodyContent();
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
+        beatRunner.pause();
+    }
+
+    private void updateBeatBodyContent() {
+        beatBody =  "{\"id\": \"" + serverId + "\"}";
+    }
+
+    private void updateBeatBody() {
+        updateBeatBodyContent();
+        beatRunner.beater.setBody(beatBody);
+    }
+
+    @Override
+    public void startMasterCommunication() {
+        beatRunner.resume();
     }
 }

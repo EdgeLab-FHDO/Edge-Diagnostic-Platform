@@ -11,8 +11,7 @@ public class RawServerData {
     private final String id;
     @JsonView(ServerViews.RegisterView.class)
     private final String ipAddress;
-    //@JsonView(ServerViews.RegisterView.class)
-    @JsonIgnore
+    @JsonView(ServerViews.RegisterView.class)
     private final int heartBeatInterval;
 
     @JsonCreator
