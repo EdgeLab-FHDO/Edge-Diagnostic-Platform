@@ -23,20 +23,22 @@ public class MatchMakingInputTests {
         String client = "{\"id\":\"client1\"}";
         registerNodeAndClient(output,node,client);
         output.execute("matchMaker assign_client client1");
-
-        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true,\"resource\":0,\"network\":0,\"location\":0,\"totalResource\":0,\"totalNetwork\":0}";
+//        String expected = "give_node client1 node1";
+        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"192.168.0.1\",\"connected\":true,\"resource\":0,\"network\":0,\"location\":0,\"totalResource\":0,\"totalNetwork\":0,\"heartBeatInterval\":0,\"online\":true,\"watchDogOnline\":true}";
         Assert.assertEquals(expected,input.read());
+
+
     }
 
     @Test
     public void correctInputReadWithNaiveMatchMakerOutputTest() throws InterruptedException, ModuleExecutionException {
         MatchMakerOutput output = new MatchMakerOutput(module,"mm.out", new NaiveMatchMaking(module));
-        String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55}";
-        String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54}";
+        String node = "{\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"totalResource\":200,\"network\":100,\"totalNetwork\":200,\"location\":55,\"heartBeatInterval\":15000}";
+        String client = "{\"id\":\"client1\",\"reqNetwork\":5,\"reqResource\":10,\"location\":54,\"heartBeatInterval\":15000}";
         registerNodeAndClient(output,node,client);
         output.execute("matchMaker assign_client client1");
-
-        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
+//        String expected = "give_node client1 node1";
+        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":15000,\"online\":true,\"watchDogOnline\":true}";
         Assert.assertEquals(expected,input.read());
     }
 
@@ -48,7 +50,8 @@ public class MatchMakingInputTests {
         registerNodeAndClient(output,node,client);
         output.execute("matchMaker assign_client client1");
 
-        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200}";
+//        String expected = "give_node client1 node1";
+        String expected = "give_node client1 {\"id\":\"node1\",\"ipAddress\":\"68.131.232.215:30968\",\"connected\":true,\"resource\":100,\"network\":100,\"location\":55,\"totalResource\":200,\"totalNetwork\":200,\"heartBeatInterval\":0,\"online\":true,\"watchDogOnline\":true}";
         Assert.assertEquals(expected,input.read());
     }
 
