@@ -121,6 +121,7 @@ public class EdgeClient extends MatchMakingModuleObject {
                 ", \n  location : " + location +
                 ", \n  message : " + message +
                 ", \n  heartBeatInterval : " + heartBeatInterval +
+                ", \n  watchDogOnline : " + watchDogOnline +
                 ", \n  online : " + online +
                 "}\n";
     }
