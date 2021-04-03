@@ -2,24 +2,16 @@
   "name" : "run_open_cv_demo" ,
   "eventList" : [
     {
-      "command" : "start_rest_server",
+      "command" : "ae_create_scenario opencvdemo src/main/resources/AdvantEdge/opencv-demo.yaml",
       "executionTime" : 1000
     },
     {
-      "command" : "start_runner Runner_rest_in",
+      "command" : "ae_deploy_scenario opencvdemo",
       "executionTime" : 3000
     },
     {
-      "command" : "start_runner Runner_match_m",
-      "executionTime" : 5000
-    },
-    {
-      "command" : "ae_create_scenario opencvdemo src/main/resources/AdvantEdge/opencv-demo.yaml",
+      "command" : "assign_client client13",
       "executionTime" : 7000
-    },
-    {
-      "command" : "ae_deploy_scenario opencvdemo",
-      "executionTime" : 9000
     }
   ]
 }

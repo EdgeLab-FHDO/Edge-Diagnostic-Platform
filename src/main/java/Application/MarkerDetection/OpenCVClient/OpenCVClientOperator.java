@@ -1,24 +1,30 @@
 package Application.MarkerDetection.OpenCVClient;
 
+import Application.Commons.CoreOperator;
 import Application.Utilities.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.opencv.core.Mat;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class OpenCVClientOperator {
+public class OpenCVClientOperator implements CoreOperator {
     private Socket clientSocket;
     private BufferedReader in;
     private DataOutputStream out;
     private DetectMarker detector;
     private ObjectMapper mapper;
+    private String clientId;
 
     //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
     private final String fileName= "singlemarkerssource.png";
@@ -26,9 +32,11 @@ public class OpenCVClientOperator {
     private final String fileExtension = "png";
     private Mat subject;
     private BufferedImage currentImage;
+    private List<String> reportQueue;
 
     public Semaphore ipLock;
     public Semaphore serverLock;
+    public Semaphore reportLock;
 
     //Server Communication Properties
     public boolean utilizeServer;
@@ -36,9 +44,11 @@ public class OpenCVClientOperator {
     private int port;
     public boolean connected;
 
+    public RegistrationRunner registrationRunner;
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
     public ProcessingRunner processingRunner;
+    public LatencyReporterRunner reportRunner;
 
     private static OpenCVClientOperator instance = null;
 
@@ -48,9 +58,17 @@ public class OpenCVClientOperator {
         mapper = new ObjectMapper();
         ipLock = new Semaphore(1);
         serverLock = new Semaphore(1);
+        reportLock = new Semaphore(1);
         utilizeServer = false;
         detector = new DetectMarker();
         connected = false;
+        reportQueue = new ArrayList<>();
+        clientId = "";
+    }
+
+    public void startMasterCommunication() {
+        beatRunner.resume();
+        masterCommunicationRunner.resume();
     }
 
     public static OpenCVClientOperator getInstance() {
@@ -125,13 +143,18 @@ public class OpenCVClientOperator {
 
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
-        String clientId = "";
         String masterUrl = "";
+        String registerCommand = "";
         String beatCommand = "";
         String getServerCommand = "";
+        String latencyReportCommand = "";
         processingRunner = new ProcessingRunner();
+        int interval = 1000;
+        int reqNetwork = 0;
+        int reqResource = 0;
+        int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "BEAT_COMMAND", "GET_SERVER_COMMAND"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -146,6 +169,10 @@ public class OpenCVClientOperator {
                         masterUrl = argument[1];
                         missingParameterList.remove("MASTER_URL");
                         break;
+                    case "REGISTER_COMMAND":
+                        registerCommand = argument[1];
+                        missingParameterList.remove("REGISTER_COMMAND");
+                        break;
                     case "BEAT_COMMAND":
                         beatCommand = argument[1];
                         missingParameterList.remove("BEAT_COMMAND");
@@ -153,6 +180,25 @@ public class OpenCVClientOperator {
                     case "GET_SERVER_COMMAND":
                         getServerCommand = argument[1];
                         missingParameterList.remove("GET_SERVER_COMMAND");
+                        break;
+                    case "LATENCY_REPORT_COMMAND":
+                        latencyReportCommand = argument[1];
+                        missingParameterList.remove("LATENCY_REPORT_COMMAND");
+                        break;
+                    case "REQUIRED_RESOURCE":
+                        reqResource = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("REQUIRED_RESOURCE");
+                        break;
+                    case "REQUIRED_NETWORK":
+                        reqNetwork = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("REQUIRED_NETWORK");
+                        break;
+                    case "LOCATION":
+                        location = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("LOCATION");
+                        break;
+                    case "INTERVAL":
+                        interval = Integer.parseInt(argument[1]);
                         break;
                     default:
                         throw new IllegalArgumentException("Invalid argument");
@@ -163,11 +209,22 @@ public class OpenCVClientOperator {
         if(missingParameterList.size() > 0) {
             throw new IllegalArgumentException("Missing Parameter: " + String.join(",", missingParameterList));
         }
+        String registrationUrl = masterUrl +registerCommand;
+        //TODO implement something to replace hardcoded value
+        String registrationBody = "{\"id\": \"" + clientId + "\""
+                + ", \"reqNetwork\": " + reqNetwork
+                + ", \"reqResource\": " + reqResource
+                + ", \"location\": " + location
+                + ", \"heartBeatInterval\": " + (2*interval) + "}";
+        
         String beatUrl = masterUrl + beatCommand;
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
-        beatRunner = new HeartBeatRunner(beatUrl, beatBody);
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
+        String reportUrl = masterUrl + latencyReportCommand;
 
+        registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
+        reportRunner = new LatencyReporterRunner(reportUrl);
+        beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
     }
 
@@ -194,14 +251,71 @@ public class OpenCVClientOperator {
         detector.detect(subject);
     }
 
-    public void markerDetection() {
+    //TODO move this to a latency reporter utility
+    public void queueLatencyReport(String location, boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
+        String timestamp = new SimpleDateFormat("YYYY-MM-dd_HH:mm:ss").format(new Date());
+        long latency = (endTime-startTime)/1000000;
+        String reportedIp="";
+        if(debugMode) {
+            System.out.println("[" + timestamp + "] Detected in " + location + " Execution Time: " + latency + "ms");
+        }
+        try {
+            ipLock.acquire();
+            reportedIp = ip;
+        } finally {
+            ipLock.release();
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode resultObject = mapper.createObjectNode();
+        resultObject.put("timestamp", timestamp);
+        resultObject.put("latency", latency);
+        resultObject.put("use_server", serverUsage);
+        resultObject.put("server_ip", reportedIp);
+
+        String result = mapper.writeValueAsString(resultObject);
+
+        try {
+            reportLock.acquire();
+            reportQueue.add(result);
+        } finally {
+            reportLock.release();
+        }
+    }
+
+    public String getReportBody() {
+        String returnedResult = "";
+        try {
+            reportLock.acquire();
+            if(!reportQueue.isEmpty()) {
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectNode result = mapper.createObjectNode();
+                String reportFileName = "report_" + clientId + ".txt";
+
+                result.put("path", reportFileName);
+                result.put("content", String.join("", reportQueue));
+                returnedResult = mapper.writeValueAsString(result);
+                reportQueue.clear();
+            }
+        } catch (InterruptedException | JsonProcessingException e) {
+            e.printStackTrace();
+        } finally {
+            reportLock.release();
+        }
+        return returnedResult;
+    }
+
+    public void markerDetection() throws JsonProcessingException, InterruptedException {
         Mat result;
         long startTime = System.nanoTime();
         String location = "Client";
         subject = ImageProcessor.getImageMat(fileName);
+        boolean serverUsage = false;
 
         try {
             serverLock.acquire();
+            serverUsage = utilizeServer;
+
             if(utilizeServer) {
                 detectMarkerInServer();
                 location = "Server";
@@ -210,6 +324,7 @@ public class OpenCVClientOperator {
             }
         } catch (RemoteExecutionException e) {
             detectMarkerInClient();
+            serverUsage = false;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -221,8 +336,6 @@ public class OpenCVClientOperator {
 
         long endTime = System.nanoTime();
 
-        if(debugMode) {
-            System.out.println("Detected in " + location + " Execution Time: " + ((endTime-startTime)/1000000) + "ms");
-        }
+        queueLatencyReport(location, serverUsage, startTime, endTime);
     }
 }
