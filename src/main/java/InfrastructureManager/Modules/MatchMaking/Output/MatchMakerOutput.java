@@ -30,7 +30,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
     private final List<EdgeClient> clientList;
     private final ConcurrentMap<String, Long> clientHeartBeatMap = new ConcurrentHashMap<>(); //<ClientID, HeartBeat>
     private final ConcurrentMap<String, Long> nodeHeartBeatMap = new ConcurrentHashMap<>(); //NodeID, heartbeat
-    private static final long WATCH_DOG_WAIT_TIME = 500;
+//    private static final long WATCH_DOG_WAIT_TIME = 5000;
 
 
     public MatchMakerOutput(ImmutablePlatformModule module, String name, MatchMakingAlgorithm algorithm) {
@@ -313,7 +313,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         if (newNode.getHeartBeatInterval() != 0){
             oldNode.setHeartBeatInterval(newNode.getHeartBeatInterval());
         }
-
         //minus the occupied resource from assigned clients
         oldNode.updateNetworkBandwidth(usedNetwork);
         oldNode.updateComputingResource(usedResource);
@@ -512,6 +511,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         EdgeClient thisClient = getClientByID(thisClientFromStringID);
 
         String thisClientID = thisClient.getId();
+        thisClient.setOnline(true);
         logger.info("client's INFO: {}\n,onl : {}\nwatchDog : {} ",thisClient, thisClient.isOnline(), thisClient.isWatchDogOnline());
 
         long heartBeatInterval = thisClient.getHeartBeatInterval();
@@ -520,6 +520,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         final boolean[] abortCondition = {false};
 
         if(thisClient.isWatchDogOnline()){
+            thisClient.setWatchDogOnline(true);
             logger.warn("watch dog is already online, not gonna create a new one");
         }
 
@@ -527,13 +528,13 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             @Override
             public void run() {
                 logger.info("watch dog for [{}] created. ",thisClientID);
-                thisClient.setWatchDogOnline(true);
                 while (!abortCondition[0]) {
                     //check for heartbeat signal
                     Long currentHeartBeatTime = clientHeartBeatMap.get(thisClientID);
                     Timestamp currentHeartBeatTimeStamp = new Timestamp(currentHeartBeatTime);
                     logger.info("{} : current heart beat arrival time for [{}]",currentHeartBeatTimeStamp,thisClientID);
                     logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
+                    long WATCH_DOG_WAIT_TIME = heartBeatInterval/3;
                     //Wait for a set period
                     try {
                         Thread.sleep(WATCH_DOG_WAIT_TIME);
@@ -579,6 +580,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         };
 
         if(!thisClient.isWatchDogOnline()){
+            thisClient.setWatchDogOnline(true);
             Thread watchDog = new Thread(r);
             watchDog.start();
         }
@@ -668,7 +670,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         String thisNodeFromStringID = thisNodeFromString.getId();
         EdgeNode thisNode = getNodeByID(thisNodeFromStringID);
         String thisNodeID = thisNode.getId();
-
+        thisNode.setOnline(true);
         long heartBeatInterval = thisNode.getHeartBeatInterval();
         long createdTime = System.currentTimeMillis();
         nodeHeartBeatMap.put(thisNodeID,createdTime);
@@ -676,6 +678,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         final boolean[] abortCondition = {false};
 
         if(thisNode.isWatchDogOnline()){
+            thisNode.setWatchDogOnline(true);
             logger.warn("watch dog is already online, not gonna create a new one");
         }
 
@@ -690,6 +693,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                     Timestamp currentHeartBeatTimeStamp = new Timestamp(currentHeartBeatTime);
                     logger.info("{} : current heart beat arrival time for [{}]",currentHeartBeatTimeStamp,thisNodeID);
                     logger.info("waiting for the next heart beat (interval = {} ms) ...",heartBeatInterval);
+                    long WATCH_DOG_WAIT_TIME = heartBeatInterval/3;
                     //Wait for the heart beat interval
                     try {
                         Thread.sleep(WATCH_DOG_WAIT_TIME);
@@ -723,6 +727,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
                         } catch (NoNodeFoundException | NoNodeFoundInHistoryException | ClientNotAssignedException | NoClientFoundException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }
                 logger.info("watch dog for [{}] closed.",thisNodeID);
@@ -730,6 +735,7 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         };
 
         if (!thisNode.isWatchDogOnline()){
+            thisNode.setWatchDogOnline(true);
             Thread watchDog = new Thread(r);
             watchDog.start();
         }
