@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,9 +90,14 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">Application.MarkerDetection.OpenCVClient.OpenCVClientOperator</div>
 </div>
 <section class="description">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></code></dd>
+</dl>
 <hr>
 <pre>public class <span class="typeNameLabel">OpenCVClientOperator</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements <a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></pre>
 </section>
 <section class="summary">
 <ul class="blockList">
@@ -139,11 +144,26 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../Utilities/RegistrationRunner.html" title="class in Application.Utilities">RegistrationRunner</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registrationRunner">registrationRunner</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.concurrent.Semaphore</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#reportLock">reportLock</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="LatencyReporterRunner.html" title="class in Application.MarkerDetection.OpenCVClient">LatencyReporterRunner</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#reportRunner">reportRunner</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.util.concurrent.Semaphore</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#serverLock">serverLock</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#utilizeServer">utilizeServer</a></span></code></th>
 <td class="colLast">&nbsp;</td>
@@ -187,36 +207,54 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i3">
+<td class="colFirst"><code>java.lang.String</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getReportBody()">getReportBody</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i4">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#markerDetection()">markerDetection</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i4">
+<tr class="rowColor" id="i5">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#queueLatencyReport(java.lang.String,boolean,long,long)">queueLatencyReport</a></span>&#8203;(java.lang.String&nbsp;location,
+boolean&nbsp;serverUsage,
+long&nbsp;startTime,
+long&nbsp;endTime)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i6">
 <td class="colFirst"><code>java.lang.String</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sendImage()">sendImage</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i5">
+<tr class="rowColor" id="i7">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setServerUtilization(boolean)">setServerUtilization</a></span>&#8203;(boolean&nbsp;input)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i6">
+<tr class="altColor" id="i8">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setupClientRunners(java.lang.String%5B%5D)">setupClientRunners</a></span>&#8203;(java.lang.String[]&nbsp;args)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i7">
+<tr class="rowColor" id="i9">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setupTcpConnection(java.lang.String)">setupTcpConnection</a></span>&#8203;(java.lang.String&nbsp;ipAddress)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i8">
+<tr class="altColor" id="i10">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#startConnection()">startConnection</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i9">
+<tr class="rowColor" id="i11">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#startMasterCommunication()">startMasterCommunication</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i12">
 <td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stopConnection()">stopConnection</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
@@ -257,6 +295,12 @@ extends java.lang.Object</pre>
 </li>
 <li class="blockList">
 <section class="detail">
+<h3><a id="reportLock">reportLock</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">java.util.concurrent.Semaphore</span>&nbsp;<span class="memberName">reportLock</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
 <h3><a id="utilizeServer">utilizeServer</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">utilizeServer</span></div>
 </section>
@@ -265,6 +309,12 @@ extends java.lang.Object</pre>
 <section class="detail">
 <h3><a id="connected">connected</a></h3>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">connected</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="registrationRunner">registrationRunner</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="../../Utilities/RegistrationRunner.html" title="class in Application.Utilities">RegistrationRunner</a></span>&nbsp;<span class="memberName">registrationRunner</span></div>
 </section>
 </li>
 <li class="blockList">
@@ -285,6 +335,12 @@ extends java.lang.Object</pre>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="ProcessingRunner.html" title="class in Application.MarkerDetection.OpenCVClient">ProcessingRunner</a></span>&nbsp;<span class="memberName">processingRunner</span></div>
 </section>
 </li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="reportRunner">reportRunner</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="LatencyReporterRunner.html" title="class in Application.MarkerDetection.OpenCVClient">LatencyReporterRunner</a></span>&nbsp;<span class="memberName">reportRunner</span></div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -295,6 +351,16 @@ extends java.lang.Object</pre>
 </a>
 <h2>Method Details</h2>
 <ul class="blockList">
+<li class="blockList">
+<section class="detail">
+<h3><a id="startMasterCommunication()">startMasterCommunication</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">startMasterCommunication</span>()</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../Commons/CoreOperator.html#startMasterCommunication()">startMasterCommunication</a></code>&nbsp;in interface&nbsp;<code><a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></code></dd>
+</dl>
+</section>
+</li>
 <li class="blockList">
 <section class="detail">
 <h3><a id="getInstance()">getInstance</a></h3>
@@ -385,8 +451,37 @@ java.lang.InterruptedException</span></div>
 </li>
 <li class="blockList">
 <section class="detail">
+<h3><a id="queueLatencyReport(java.lang.String,boolean,long,long)">queueLatencyReport</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">queueLatencyReport</span>&#8203;(<span class="arguments">java.lang.String&nbsp;location,
+boolean&nbsp;serverUsage,
+long&nbsp;startTime,
+long&nbsp;endTime)</span>
+                        throws <span class="exceptions">com.fasterxml.jackson.core.JsonProcessingException,
+java.lang.InterruptedException</span></div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>com.fasterxml.jackson.core.JsonProcessingException</code></dd>
+<dd><code>java.lang.InterruptedException</code></dd>
+</dl>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="getReportBody()">getReportBody</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">java.lang.String</span>&nbsp;<span class="memberName">getReportBody</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
 <h3><a id="markerDetection()">markerDetection</a></h3>
-<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">markerDetection</span>()</div>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">markerDetection</span>()
+                     throws <span class="exceptions">com.fasterxml.jackson.core.JsonProcessingException,
+java.lang.InterruptedException</span></div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>com.fasterxml.jackson.core.JsonProcessingException</code></dd>
+<dd><code>java.lang.InterruptedException</code></dd>
+</dl>
 </section>
 </li>
 </ul>

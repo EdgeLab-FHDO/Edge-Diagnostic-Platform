@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10};
+<script type="text/javascript">var data = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -90,9 +90,14 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">Application.MarkerDetection.OpenCVServer.OpenCVServerOperator</div>
 </div>
 <section class="description">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></code></dd>
+</dl>
 <hr>
 <pre>public class <span class="typeNameLabel">OpenCVServerOperator</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements <a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></pre>
 </section>
 <section class="summary">
 <ul class="blockList">
@@ -119,6 +124,11 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../Utilities/RegistrationRunner.html" title="class in Application.Utilities">RegistrationRunner</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#registrationRunner">registrationRunner</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="ServerRunner.html" title="class in Application.MarkerDetection.OpenCVServer">ServerRunner</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#serverRunner">serverRunner</a></span></code></th>
 <td class="colLast">&nbsp;</td>
@@ -168,6 +178,11 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor" id="i4">
 <td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#startMasterCommunication()">startMasterCommunication</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i5">
+<td class="colFirst"><code>void</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#stopConnection()">stopConnection</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -193,6 +208,12 @@ extends java.lang.Object</pre>
 </a>
 <h2>Field Details</h2>
 <ul class="blockList">
+<li class="blockList">
+<section class="detail">
+<h3><a id="registrationRunner">registrationRunner</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType"><a href="../../Utilities/RegistrationRunner.html" title="class in Application.Utilities">RegistrationRunner</a></span>&nbsp;<span class="memberName">registrationRunner</span></div>
+</section>
+</li>
 <li class="blockList">
 <section class="detail">
 <h3><a id="serverRunner">serverRunner</a></h3>
@@ -264,6 +285,16 @@ java.lang.IllegalArgumentException</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.IllegalArgumentException</code></dd>
+</dl>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="startMasterCommunication()">startMasterCommunication</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">startMasterCommunication</span>()</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../Commons/CoreOperator.html#startMasterCommunication()">startMasterCommunication</a></code>&nbsp;in interface&nbsp;<code><a href="../../Commons/CoreOperator.html" title="interface in Application.Commons">CoreOperator</a></code></dd>
 </dl>
 </section>
 </li>

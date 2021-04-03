@@ -1,3 +1,4 @@
+Application.Commons
 Application.MarkerDetection.OpenCVClient
 Application.MarkerDetection.OpenCVServer
 Application.MarkerGenerator
