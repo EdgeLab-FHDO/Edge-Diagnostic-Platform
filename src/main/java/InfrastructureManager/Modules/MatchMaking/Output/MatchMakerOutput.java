@@ -232,8 +232,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
             oldClient.setLocation(newClient.getLocation());
         }
 
-        oldClient.setOnline(true);
-
         if (newClient.getHeartBeatInterval() != 0){
             oldClient.setHeartBeatInterval(newClient.getHeartBeatInterval());
         }
@@ -315,8 +313,6 @@ public class MatchMakerOutput extends MatchMakingModuleObject implements Platfor
         if (newNode.getHeartBeatInterval() != 0){
             oldNode.setHeartBeatInterval(newNode.getHeartBeatInterval());
         }
-        oldNode.setOnline(true);
-
         //minus the occupied resource from assigned clients
         oldNode.updateNetworkBandwidth(usedNetwork);
         oldNode.updateComputingResource(usedResource);

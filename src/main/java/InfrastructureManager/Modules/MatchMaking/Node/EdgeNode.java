@@ -153,7 +153,6 @@ public class EdgeNode extends MatchMakingModuleObject {
                 "  totalNetwork : " + totalNetwork + ",\n" +
                 "  location : " + location + "\n" +
                 "  heartBeatInterval : " + heartBeatInterval + "\n" +
-                "  watchDogOnline : " + watchDogOnline + "\n" +
                 "  online : " + online + "}\n" ;
     }
 
