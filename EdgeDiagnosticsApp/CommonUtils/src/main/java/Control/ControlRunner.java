@@ -23,7 +23,7 @@ public class ControlRunner extends AbstractRunner {
         this.manager = manager;
         this.instructionQueue = queue;
         this.lastInstruction = "";
-        this.length = 0;
+        this.length = 1;
         this.instructionCounter = 0;
     }
 
@@ -31,7 +31,7 @@ public class ControlRunner extends AbstractRunner {
     public void runnerOperation() throws InterruptedException {
         try {
             String instructionString = connection.getInstructions();
-            if (!instructionString.equals(lastInstruction)) {
+            if (!instructionString.equals("")) {
                 Instruction instruction =manager.createInstruction(instructionString);
                 instructionQueue.add(instruction);
                 if (instruction.getClass().equals(InitialInstruction.class)) {
@@ -41,7 +41,7 @@ public class ControlRunner extends AbstractRunner {
                 }
                 if (instructionCounter == length) {
                     lastInstruction = instructionString;
-                    length = 0;
+                    length = 1;
                     instructionCounter = 0;
                 }
             }

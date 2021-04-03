@@ -22,7 +22,8 @@ public class LoadSendingRunner extends AbstractRunner {
     public LoadSendingRunner(ClientPlatformConnection connection, ServerInformation serverInformation, InstructionQueue instructionQueue) {
         this.manager = new ClientLoadManager(connection,serverInformation);
         this.instructionQueue = instructionQueue;
-        this.experimentLength = 0;
+        this.experimentLength = 1;
+        this.instructionCounter=0;
     }
 
     @Override
@@ -45,7 +46,8 @@ public class LoadSendingRunner extends AbstractRunner {
                 instructionCounter++;
             }
             if (instructionCounter == experimentLength) {
-                experimentLength = 0;
+                experimentLength = 1;
+                instructionCounter = 0;
                 manager.reportMeasurements(experimentName);
             }
 

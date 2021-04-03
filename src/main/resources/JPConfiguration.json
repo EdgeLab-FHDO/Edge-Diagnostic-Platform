@@ -119,7 +119,8 @@
       "in" : "console.in",
       "out" : "diagnostics.instructions.out",
       "commands" : {
-        "experiment" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment1.json"
+        "experiment" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment1.json",
+        "experiment2" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment2.json"
       }
     },
     {
@@ -141,6 +142,13 @@
       "out" : "util.fileOut",
       "commands" : {
         "latency_report $path $content" : "file_out append $path $content"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
+      "out" : "console.out",
+      "commands" : {
+        "latency_report $path $content" : "console Received report in $path"
       }
     }
   ]

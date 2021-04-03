@@ -2,11 +2,10 @@ package DiagnosticsServer.Load;
 
 import Control.Instruction.InitialInstruction;
 import Control.Instruction.Instruction;
+import Control.Instruction.InstructionQueue;
 import DiagnosticsServer.Control.ServerInstruction;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
-import DiagnosticsServer.Server;
 import RunnerManagement.AbstractRunner;
-import Control.Instruction.InstructionQueue;
 
 public class LoadReceivingRunner extends AbstractRunner {
 
@@ -22,6 +21,8 @@ public class LoadReceivingRunner extends AbstractRunner {
     public void runnerOperation() throws InterruptedException {
         Instruction instruction = instructionQueue.get();
         if (instruction.getClass().equals(InitialInstruction.class)) {
+            String name = ((InitialInstruction) instruction).getExperimentName();
+            System.out.println("Starting " + name);
             return;
         } else {
             ServerInstruction serverInstruction = (ServerInstruction) instruction;
