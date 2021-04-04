@@ -62,10 +62,12 @@ public class LimitList extends RemoteExecutionModuleObject {
      * @throws InterruptedException If interrupted while blocked
      */
     public String getListAsBody() throws InterruptedException {
+        this.getLogger().debug(this.getName() + " - Converting List to Json string" );
         this.block.acquire();
         try {
             return mapper.writeValueAsString(limitList);
         } catch (JsonProcessingException e) {
+            this.getLogger().debug(this.getName() + " - List parsing failed");
             return null;
         }
     }
@@ -77,6 +79,7 @@ public class LimitList extends RemoteExecutionModuleObject {
      * @param value CPU limit as "QUOTA_PERIOD"
      */
     public void putValue(String key, String value) {
+        this.getLogger().debug(this.getName() + " - Placing the value: "+ value +" & key: " + key + " in list");
         this.limitList.put(key, value);
         this.block.release();
     }

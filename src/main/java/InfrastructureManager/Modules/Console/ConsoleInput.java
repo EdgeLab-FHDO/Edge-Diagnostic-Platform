@@ -29,7 +29,7 @@ public class ConsoleInput extends ConsoleModuleObject implements PlatformInput {
     public String read() {
         System.out.println("Input >");
         String reading = IN.nextLine();
-        this.getLogger().debug(reading);
+        this.getLogger().debug(this.getName()+" - "+ reading);
         return reading; //Wraps the nextLine method from the console scanner
     }
 

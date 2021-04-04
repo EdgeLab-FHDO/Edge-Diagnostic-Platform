@@ -51,6 +51,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
      */
     public AdvantEdgeClient(ImmutablePlatformModule module, String name, String address, int port) {
         super(module, name);
+        this.getLogger().debug(this.getName() + " - Instantiating a new Advant edge client");
         this.requestPath = address + ":" + port;
     }
 
@@ -68,6 +69,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
     public void execute(String response) throws AdvantEdgeModuleException {
         String[] command = response.split(" ");
         if (command[0].equals("advantEdge")) { //The commands must come like "advantEdge command"
+            this.getLogger().debug(this.getName() + " - Advant edge add cmds: "+command[1]);
             try {
                 switch (command[1]) {
                     case "create" -> createAEScenario(command[2], command[3]);
@@ -93,6 +95,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
      * @throws ErrorInResponseException If a bad response is received from the API when creating the scenario
      */
     private void createAEScenario(String name, String pathToFile) throws AdvantEdgeModuleException {
+        this.getLogger().debug(this.getName() + " - Creating a new Advant edge client and adding it to the platform");
         if (pathToFile.endsWith(".yaml")) {
             pathToFile = FileParser.YAMLtoJSON(pathToFile);
         }
@@ -122,6 +125,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
      * @throws ErrorInResponseException If a bad response is received from the API when deploying the scenario
      */
     private void deployAEScenario(String name) throws AdvantEdgeModuleException {
+        this.getLogger().debug(this.getName() + " - Deploying a scenario present in the platform");
         String requestPath = this.requestPath + "/platform-ctrl/v1/sandboxes/sandbox-" + name;
         //String requestPath = "https://postman-echo.com/post/";
         String jsonRequestString = "{\"scenarioName\" : \""+name+"\"}";
@@ -150,6 +154,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
      * @throws ErrorInResponseException If a bad response is received from the API when terminating the scenario
      */
     private void terminateAEScenario(String sandboxName) throws AdvantEdgeModuleException {
+        this.getLogger().debug(this.getName() + " - Terminating the current running scenario in AdvantEdge");
         String requestPath = this.requestPath + "/" + sandboxName + "/sandbox-ctrl/v1/active/";
         //String requestPath = "https://postman-echo.com/delete";
         try {
@@ -185,6 +190,7 @@ public class AdvantEdgeClient extends AdvantEdgeModuleObject implements Platform
                                                             String throughputDl, String throughputUl, String latency,
                                                             String latencyVariation, String packetLoss)
             throws AdvantEdgeModuleException {
+        this.getLogger().debug(this.getName() + " - Sending an network characteristics update to an already running AdvantEdge scenario");
         String requestPath = this.requestPath + "/" + sandboxName
                 + "/sandbox-ctrl/v1/events/NETWORK-CHARACTERISTICS-UPDATE";
 

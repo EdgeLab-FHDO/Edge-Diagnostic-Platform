@@ -104,6 +104,7 @@ public class POSTInput extends RESTModuleObject implements PlatformInput {
      * @throws UnsupportedJSONTypeException       if the parameter type is not supported (Array, JSON object, null)
      */
     private String substituteCommand(String rawCommand, UnknownJSONObject object) throws ParsingArgumentNotDefinedException, UnsupportedJSONTypeException {
+        this.getLogger().debug(this.getName() + " - Creating the command that will be sent to the master by extracting information" );
         String[] splitCommand = rawCommand.split(" ");
         StringBuilder finalCommand = new StringBuilder(splitCommand[0]);
         String cleanValueName;
@@ -154,6 +155,7 @@ public class POSTInput extends RESTModuleObject implements PlatformInput {
      */
     @Override
     public void response(ModuleExecutionException outputException) {
+        this.getLogger().debug(this.getName() + " - Checking for exceptions from the exec process" );
         if (outputException != null) {
             outputException.printStackTrace();
             this.customResponse = outputException.getMessage();
@@ -166,6 +168,7 @@ public class POSTInput extends RESTModuleObject implements PlatformInput {
      * server has been initialized
      */
     private void activate() {
+        this.getLogger().debug(this.getName() + " - Syncing with the Rest Server Thread" );
         try {
             RestServerRunner.serverCheck.acquire();
             post(this.URL, this.POSTHandler);

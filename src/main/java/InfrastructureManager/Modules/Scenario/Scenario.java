@@ -78,6 +78,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
                 return null;
             }
         } else {
+            this.getLogger().debug(this.getName() + " - Stopping scenario as current index > eventList size");
             stop();
             return null;
         }
@@ -107,6 +108,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @throws InvalidTimeException If the passed time is in the past compared to the instant when this method was called
      */
     public void setStartTime(long startTime) throws InvalidTimeException {
+        this.getLogger().debug(this.getName() + " - Setting the start time of the scenario");
         if (startTime >= System.currentTimeMillis()) {
             this.startTime = startTime;
         } else {
@@ -120,6 +122,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @return Defined absolute time in milliseconds (Since UNIX epoch)
      */
     public long getStartTime() {
+        this.getLogger().debug(this.getName() + " - Scenario start time is : "+startTime );
         return startTime;
     }
 
@@ -129,6 +132,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @param event Event to be added
      */
     public void addEvent(Event event) {
+        this.getLogger().debug(this.getName() + " - Scenario event: "+event+" added");
         this.eventList.add(event);
     }
 
@@ -138,6 +142,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @param index Index in the event list of the scenario to be deleted
      */
     public void deleteEvent(int index) {
+        this.getLogger().debug(this.getName() + "- Scenario event: "+this.eventList.get(index)+" removed");
         this.eventList.remove(index);
     }
 
@@ -149,6 +154,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @throws OwnerModuleNotSetUpException If the owner module was not correctly configured while instantiating.
      */
     public void start() throws OwnerModuleNotSetUpException {
+        this.getLogger().debug(this.getName() + " - Scenario Started");
         if (this.getOwnerModule() == null) {
             throw new OwnerModuleNotSetUpException("Owner module of the scenario has not been set up");
         }
@@ -160,8 +166,9 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
     /**
      * Pauses the scenario.
      */
-    public void pause() {
+    public void pause(){
         this.pausedTime += System.currentTimeMillis();
+        this.getLogger().debug(this.getName() + " - Scenario Paused");
     }
 
     /**
@@ -169,6 +176,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      */
     public void resume() {
         this.resumedTime += System.currentTimeMillis();
+        this.getLogger().debug(this.getName() + " - Scenario Resumed");
     }
 
     /**
@@ -179,6 +187,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
         this.resumedTime = 0L;
         currentIndex = 0;
         this.started = false;
+        this.getLogger().debug(this.getName() + " - Scenario Finished");
         //System.out.println("FINISHED SCENARIO: " + this.getName());
     }
 
@@ -190,6 +199,7 @@ public class Scenario extends ScenarioModuleObject implements PlatformInput {
      * @throws InvalidTimeException If errors with the timing make the waiting time negative.
      */
     private String waitForEvent (Event e) throws InvalidTimeException {
+        this.getLogger().debug(this.getName() + " - Waiting for Event");
         long absoluteTime = this.getStartTime() + (resumedTime - pausedTime) + e.getExecutionTime();
         try {
             Thread.sleep(absoluteTime - System.currentTimeMillis());

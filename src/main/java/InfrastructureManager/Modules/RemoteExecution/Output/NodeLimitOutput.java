@@ -40,6 +40,7 @@ public class NodeLimitOutput extends RemoteExecutionModuleObject implements Plat
     public void execute(String response) throws NodeLimitException {
         String[] command = response.split(" ");
         if (command[0].equals("limit")) {
+            this.getLogger().debug(this.getName() + " - Limit command additional cmds: "+ command[2] + command[3] + command[4]);
             try {
                 switch (command[1]) {
                     case "cores" -> {
@@ -64,6 +65,7 @@ public class NodeLimitOutput extends RemoteExecutionModuleObject implements Plat
      * invalid numeric strings for the limit and period parameters
      */
     private void addToLimitList(String tag, String limit, String period_ms) throws InvalidLimitParametersException {
+        this.getLogger().debug(this.getName() + " - Adding a limit to the shared Limit List");
         try {
             int quota_ms = (int) (Double.parseDouble(limit) * Integer.parseInt(period_ms));
             this.getLimitList().putValue(tag, quota_ms + "_" + period_ms);
