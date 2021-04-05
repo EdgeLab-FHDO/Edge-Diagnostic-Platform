@@ -1,0 +1,73 @@
+{
+  "name" : "experiment2",
+  "client" : {
+    "base" : {
+      "load" : {
+        "type" : "PING",
+        "times" : 1000,
+        "interval" : 1,
+        "dataLength" : 4
+      },
+      "connection" : {
+        "type" : "TCP",
+        "socketOptions" : {
+          "reuseAddress" : false,
+          "ipTOS" : 0,
+          "receiveBufferSize" : 65536,
+          "sendBufferSize" : 65536,
+          "timeout" : 0,
+          "keepAlive" : false,
+          "nagleAlgorithm" : true,
+          "linger" : -1
+        },
+        "bufferInformation" : {
+          "outputStreamBuffer" : 8192,
+          "inputReaderBuffer" : 8192
+        }
+      }
+    },
+    "varying": {}
+  },
+  "server" : {
+    "base" : {
+      "loadType" :  "PING",
+      "connection" : {
+        "type" : "TCP",
+        "socketOptions" : {
+          "reuseAddress" : false,
+          "receiveBufferSize" : 65536,
+          "timeout" : 0
+        },
+        "bufferInformation" : {
+          "inputStreamBuffer" : 8192,
+          "receiveBuffer" : -1
+        }
+      }
+    },
+    "varying" : {}
+  },
+  "compute" : {
+    "from": 0.1,
+    "to": 1,
+    "step": 0.1
+  },
+  "network" : [
+    {
+      "elementName": "Node1",
+      "elementType" : "FOG",
+      "throughputDl": 0,
+      "throughputUl": 0,
+      "latency": 0,
+      "latencyVariation": 0,
+      "packetLoss": {
+        "from": 0,
+        "to" : 10,
+        "step" : 1
+      }
+    }
+  ]
+
+
+
+
+}
