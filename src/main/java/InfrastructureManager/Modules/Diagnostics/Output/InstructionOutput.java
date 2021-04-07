@@ -6,6 +6,7 @@ import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Diagnostics.DiagnosticsModuleObject;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionFileLoadingException;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionHandlingException;
+import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.AdvantEdgeInstruction;
 import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.Instruction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class InstructionOutput extends DiagnosticsModuleObject implements PlatformOutput {
 
@@ -66,68 +72,138 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
         }
     }
 
-
-    private void executeExperiment(String path) {
+    private void executeExperiment(String path) throws InstructionFileLoadingException {
         ObjectMapper mapper = new ObjectMapper();
+        File experimentFile = new File(path);
+        if (!experimentFile.exists()) throw new InstructionFileLoadingException("Experiment file not found!");
         try {
-            JsonNode experiment = mapper.readTree(new File(path));
+            JsonNode experiment = mapper.readTree(experimentFile);
             String name = experiment.get("name").asText();
             System.out.println("Executing " + name + " with diagnostics module");
-            ObjectNode clientBase = (ObjectNode) experiment.get("client").get("base");
-            JsonNode clientChanges = experiment.get("client").get("varying");
-            ObjectNode serverBase = (ObjectNode) experiment.get("server").get("base");
-            JsonNode serverChanges = experiment.get("server").get("varying");
+            Map<String, List<String>> instructions = getInstructionLists(experiment);
 
-            List<String> clientInstructions = getInstructionList(clientBase,clientChanges);
-            List<String> serverInstructions = getInstructionList(serverBase,serverChanges);
+            List<String> clientInstructions = instructions.get("client");
+            List<String> serverInstructions = instructions.get("server");
 
-            int clientIndex = 0;
-            int serverIndex = 0;
-            int clientSize = clientInstructions.size();
-            int serverSize = serverInstructions.size();
-            if (clientSize != serverSize && clientSize != 1 && serverSize != 1) {
-                //TODO: THROW EXCEPTION, INVALID EXPERIMENT
-                System.err.println("Experiment is invalid in length!");
-                return;
-            }
-            int limit = Integer.max(clientSize, serverSize);
+            List<String> aeInstructions = instructions.getOrDefault("ae",null);
+            List<String> computeInstructions = instructions.getOrDefault("compute", null);
+
+
+            int experimentLength = clientInstructions.size();
             ObjectNode initialInstruction = mapper.createObjectNode();
             initialInstruction.put("experimentName", name);
-            initialInstruction.put("experimentLength", limit);
+            initialInstruction.put("experimentLength", experimentLength);
             String initialInstructionString = initialInstruction.toString();
-            addToInstructionList(new Instruction(initialInstructionString,initialInstructionString));
-            
-            for (int i = 0; i < limit; i++) {
-                String clientInstruction = clientInstructions.get(clientIndex);
-                String serverInstruction = serverInstructions.get(serverIndex);
-                Instruction instruction = new Instruction(clientInstruction, serverInstruction);
-                addToInstructionList(instruction);
-                clientIndex = clientSize > 1 ? clientIndex + 1 : 0;
-                serverIndex = serverSize > 1 ? serverSize + 1 : 0;
-            }
+            //addToInstructionList(new Instruction(initialInstructionString,initialInstructionString));
 
-        } catch (IOException | InstructionHandlingException e) {
-            e.printStackTrace(); //TODO: HANDLE
+            for (int i = 0; i < experimentLength; i++) {
+                if (aeInstructions != null) System.out.println(aeInstructions.get(i));
+                if (computeInstructions != null) System.out.println(computeInstructions.get(i));
+                String clientInstruction = clientInstructions.get(i);
+                String serverInstruction = serverInstructions.get(i);
+                Instruction instruction = new Instruction(clientInstruction, serverInstruction);
+                //addToInstructionList(instruction);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private List<String> getInstructionList(ObjectNode base, JsonNode changes) {
-        List<String> result = new ArrayList<>();
-        if (!changes.isEmpty()) {
-            String object = changes.get("object").asText();
-            String field = changes.get("field").asText();
-            ObjectNode nodeToBeChanged = (ObjectNode) base.findValue(object);
+    private Map<String, List<String>> getInstructionLists(JsonNode experiment) {
+        Map<String, List<String>> result = new HashMap<>();
+        ObjectNode clientBase = (ObjectNode) experiment.get("client").get("base");
+        JsonNode clientChanges = experiment.get("client").get("varying");
+        ObjectNode serverBase = (ObjectNode) experiment.get("server").get("base");
+        JsonNode serverChanges = experiment.get("server").get("varying");
+        JsonNode computeChanges = experiment.get("compute");
+        JsonNode networkChanges = experiment.get("network");
 
-            int from = changes.get("from").asInt();
-            int to = changes.get("to").asInt();
-            int step = changes.get("step").asInt();
-            for (int i = from; i <= to; i+=step) {
-                nodeToBeChanged.put(field, i);
-                result.add(base.toString());
+        List<String> aeInstructions = new ArrayList<>();
+        List<String> computeInstructions = new ArrayList<>();
+        List<String> clientInstructions = new ArrayList<>();
+        List<String> serverInstructions = new ArrayList<>();
+
+        boolean changesInClient = !clientChanges.isEmpty();
+        boolean changesInServer = !serverChanges.isEmpty();
+        boolean changesInCompute = !computeChanges.isEmpty();
+        boolean changesInNetwork = !networkChanges.isEmpty();
+
+        if (!changesInClient && !changesInServer) {
+            int size = 0;
+            if (!changesInCompute && !changesInNetwork) {
+                // Invalid experiment nothing changes //TODO: Custom exception
+            } else if (changesInNetwork) {
+                aeInstructions = getAEInstructionList(networkChanges);
+                size = aeInstructions.size();
+            } else {
+                computeInstructions = getComputeInstructionList(computeChanges);
+                size = computeInstructions.size();
             }
+            clientInstructions = getRepeatedClientServerInstructionList(clientBase, size);
+            serverInstructions = getRepeatedClientServerInstructionList(serverBase, size);
+        } else if(changesInClient) {
+            clientInstructions = getChangingClientServerInstructionList(clientBase,clientChanges);
+            serverInstructions = getRepeatedClientServerInstructionList(serverBase, clientInstructions.size());
         } else {
+            serverInstructions = getChangingClientServerInstructionList(serverBase, serverChanges);
+            clientInstructions = getRepeatedClientServerInstructionList(clientBase, serverInstructions.size());
+        }
+        result.put("client", clientInstructions);
+        result.put("server", serverInstructions);
+        if (!aeInstructions.isEmpty()) result.put("ae", aeInstructions);
+        if (!computeInstructions.isEmpty()) result.put("compute", computeInstructions);
+        return result;
+    }
+
+    private List<String> getRepeatedClientServerInstructionList(ObjectNode base, int size) {
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
             result.add(base.toString());
         }
         return result;
+    }
+
+    private List<String> getChangingClientServerInstructionList(ObjectNode base, JsonNode changes) {
+        List<String> result = new ArrayList<>();
+        String object = changes.get("object").asText();
+        String field = changes.get("field").asText();
+        ObjectNode nodeToBeChanged = (ObjectNode) base.findValue(object);
+
+        int from = changes.get("from").asInt();
+        int to = changes.get("to").asInt();
+        int step = changes.get("step").asInt();
+        for (int i = from; i <= to; i+=step) {
+            nodeToBeChanged.put(field, i);
+            result.add(base.toString());
+        }
+        return result;
+    }
+
+    private List<String> getAEInstructionList(JsonNode networkChanges){
+        String scenarioName = networkChanges.get("scenarioName").asText();
+        String elementName = networkChanges.get("elementName").asText();
+        String elementType = networkChanges.get("elementType").asText();
+        String fieldToChange = networkChanges.get("field").asText();
+        int from = networkChanges.get("from").asInt();
+        int to = networkChanges.get("to").asInt();
+        int step = networkChanges.get("step").asInt();
+
+        AdvantEdgeInstruction instruction = new AdvantEdgeInstruction(scenarioName,
+                elementName, elementType);
+        List<String> aeInstructions = new ArrayList<>();
+        for (int i = from; i <= to; i+= step) {
+            instruction.changeValue(fieldToChange,i);
+            aeInstructions.add(instruction.toString());
+        }
+        return aeInstructions;
+    }
+
+    private List<String> getComputeInstructionList(JsonNode computeChanges) {
+        int from = computeChanges.get("from").asInt();
+        int to = computeChanges.get("to").asInt();
+        int step = computeChanges.get("step").asInt();
+        return IntStream.iterate(from,n -> n >= to, n -> n + step)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.toList());
     }
 }

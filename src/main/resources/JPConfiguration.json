@@ -120,7 +120,7 @@
       "out" : "diagnostics.instructions.out",
       "commands" : {
         "experiment" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment1.json",
-        "experiment2" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment2.json"
+        "experiment2" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment3.json"
       }
     },
     {

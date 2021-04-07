@@ -46,16 +46,12 @@
     },
     "varying" : {}
   },
-  "compute" : {},
-  "network" : {
-    "scenarioName": "scenario1",
-    "elementName": "node1",
-    "elementType" : "FOG",
-    "field" : "packetLoss",
-    "from": 0,
-    "to" : 10,
-    "step" : 1
-  }
+  "compute" : {
+    "from" : 100,
+    "to" : 20,
+    "step": -10
+  },
+  "network" : {}
 
 
 
