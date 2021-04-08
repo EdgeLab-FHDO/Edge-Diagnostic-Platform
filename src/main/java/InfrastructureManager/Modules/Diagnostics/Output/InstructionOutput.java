@@ -6,6 +6,7 @@ import InfrastructureManager.ModuleManagement.PlatformOutput;
 import InfrastructureManager.Modules.Diagnostics.DiagnosticsModuleObject;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionFileLoadingException;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionHandlingException;
+import InfrastructureManager.Modules.Diagnostics.InstructionLock;
 import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.AdvantEdgeInstruction;
 import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.ApplicationInstruction;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,10 +25,16 @@ import java.util.stream.IntStream;
 
 public class InstructionOutput extends DiagnosticsModuleObject implements PlatformOutput {
 
-    private static final int WAITING_TIME = 5000;
+    private static final int WAITING_TIME = 1000;
+    private final InstructionLock instructionLock;
+    private boolean clientNextFlag;
+    private boolean serverNextFlag;
 
     public InstructionOutput(ImmutablePlatformModule ownerModule, String name) {
         super(ownerModule, name);
+        instructionLock = new InstructionLock(ownerModule);
+        clientNextFlag = false;
+        serverNextFlag = false;
     }
 
     @Override
@@ -41,12 +48,28 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
                         addToAppInstructionList(instruction);
                     }
                     case "loadExperiment" -> executeExperiment(command[2]);
+                    case "client_next" -> {
+                        clientNextFlag = true;
+                        checkAndUnlock();
+                    }
+                    case "server_next" -> {
+                        serverNextFlag = true;
+                        checkAndUnlock();
+                    }
                     default -> throw new InstructionHandlingException("Invalid command " + command[1] + " for InstructionOutput");
                 }
 
             } catch (IndexOutOfBoundsException e) {
                 throw new InstructionHandlingException("Arguments missing for command " + response  + " to InstructionOutput");
             }
+        }
+    }
+
+    private synchronized void checkAndUnlock() {
+        if (clientNextFlag && serverNextFlag) {
+            instructionLock.unlock();
+            clientNextFlag = false;
+            serverNextFlag = false;
         }
     }
 
@@ -114,6 +137,7 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
             addToAppInstructionList(new ApplicationInstruction(initialInstructionString,initialInstructionString));
 
             for (int i = 0; i < experimentLength; i++) {
+                instructionLock.waitOnNext();
                 if (aeInstructions != null) {
                     addToAEInstructionList(aeInstructions.get(i));
                     Thread.sleep(WAITING_TIME);
@@ -127,9 +151,9 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
                 ApplicationInstruction instruction = new ApplicationInstruction(clientInstruction, serverInstruction);
                 addToAppInstructionList(instruction);
             }
-        } catch (IOException | InstructionHandlingException | InterruptedException e) {
+        } catch (IOException | InstructionHandlingException  e) {
             e.printStackTrace();
-        }
+        } catch (InterruptedException ignored) {}
     }
 
     private Map<String, List<String>> getInstructionLists(JsonNode experiment) {

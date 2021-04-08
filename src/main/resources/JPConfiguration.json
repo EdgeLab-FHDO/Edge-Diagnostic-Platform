@@ -14,7 +14,9 @@
         {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
         {"name" : "client.heartbeat","URL": "/client/heartbeat","command": "client_hb $body","information":  []},
         {"name" : "node.heartbeat","URL": "/node/heartbeat","command": "node_hb $body","information":  []},
-        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
+        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []},
+        {"name" : "diagnostic.next.client", "URL":  "/diagnostics/next", "command": "next_instruction_client", "information" : []},
+        {"name" : "diagnostic.next.server", "URL":  "/diagnostics/server/next", "command": "next_instruction_server", "information" : []}
       ],
       "GET" : [
         {"name": "mm.give_node", "URL": "/client/get_node/:client_id"},
@@ -23,7 +25,8 @@
       ]
     },
     {"type" :  "MatchMakingModule-Random", "name":  "mm"},
-    {"type" :  "DiagnosticsModule", "name":  "diagnostics"}
+    {"type" :  "DiagnosticsModule", "name":  "diagnostics"},
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "443", "address": "https://8248625e-f750-4a14-ae31-9d4ee9f585e8.mock.pstmn.io"}
   ],
 
   "connections" : [
@@ -116,6 +119,20 @@
       }
     },
     {
+      "in" : "rest.diagnostic.next.client",
+      "out" : "diagnostics.instructions.out",
+      "commands" : {
+        "next_instruction_client": "instruction client_next"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.next.server",
+      "out" : "diagnostics.instructions.out",
+      "commands" : {
+        "next_instruction_server": "instruction server_next"
+      }
+    },
+    {
       "in" : "console.in",
       "out" : "diagnostics.instructions.out",
       "commands" : {
@@ -133,9 +150,9 @@
     },
     {
       "in" : "diagnostics.instructions.in.ae",
-      "out" : "console.out",
+      "out" : "ae.out",
       "commands" : {
-        "set_instruction $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "console $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
+        "set_instruction $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
       }
     },
     {
