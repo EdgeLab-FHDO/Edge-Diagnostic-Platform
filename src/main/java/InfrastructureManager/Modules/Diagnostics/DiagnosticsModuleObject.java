@@ -12,7 +12,7 @@ public class DiagnosticsModuleObject extends PlatformObject {
         super(ownerModule, name);
     }
 
-    public InstructionList getInstructionList() {
+    public InstructionSet getInstructionList() {
         GlobalVarAccessDiagnosticsModule castedModule = (GlobalVarAccessDiagnosticsModule) this.getOwnerModule();
         return castedModule.getInstructionList();
     }

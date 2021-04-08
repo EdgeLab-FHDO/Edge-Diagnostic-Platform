@@ -120,35 +120,29 @@
       "out" : "diagnostics.instructions.out",
       "commands" : {
         "experiment" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment1.json",
-        "experiment2" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment3.json"
+        "experiment2" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment2.json",
+        "experiment3" : "instruction loadExperiment LoadInstructions/Client/Experiments/Experiment3.json"
       }
     },
     {
-      "in" : "diagnostics.instructions.in",
-      "out" : "rest.diagnostic.client",
-      "commands" : {
-        "set_instruction $client_instruction $server_instruction" : "toGET resource $client_instruction"
-      }
-    },
-    {
-      "in" : "diagnostics.instructions.in",
-      "out" : "rest.diagnostic.server",
-      "commands" : {
-        "set_instruction $client_instruction $server_instruction" : "toGET resource $server_instruction"
-      }
-    },
-    {
-      "in" : "rest.diagnostic.report",
-      "out" : "util.fileOut",
-      "commands" : {
-        "latency_report $path $content" : "file_out append $path $content"
-      }
-    },
-    {
-      "in" : "rest.diagnostic.report",
+      "in" : "diagnostics.instructions.in.app",
       "out" : "console.out",
       "commands" : {
-        "latency_report $path $content" : "console Received report in $path"
+        "set_instruction $client_instruction $server_instruction" : "console $client_instruction $server_instruction"
+      }
+    },
+    {
+      "in" : "diagnostics.instructions.in.ae",
+      "out" : "console.out",
+      "commands" : {
+        "set_instruction $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "console $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
+      }
+    },
+    {
+      "in" : "diagnostics.instructions.in.compute",
+      "out" : "console.out",
+      "commands" : {
+        "set_instruction $limit" : "console node_tag $limit"
       }
     }
   ]

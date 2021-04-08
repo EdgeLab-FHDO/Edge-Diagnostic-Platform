@@ -6,7 +6,7 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
  * This interface provides a standard, well-defined manner of
  * giving objects inside the module (in this case the Diagnostics module) access to a shared resource.
  *
- * In this particular case, it provides access to a shared {@link InstructionList} used between inputs and
+ * In this particular case, it provides access to a shared {@link InstructionSet} used between inputs and
  * outputs to communicate.
  *
  * Having a separate interface adds a level of "information hiding" and allows objects to only access global variables in the module
@@ -18,5 +18,5 @@ public interface GlobalVarAccessDiagnosticsModule extends ImmutablePlatformModul
      * Method to be implemented by the module to provide the shared instruction list
      * @return The shared list
      */
-    InstructionList getInstructionList();
+    InstructionSet getInstructionList();
 }

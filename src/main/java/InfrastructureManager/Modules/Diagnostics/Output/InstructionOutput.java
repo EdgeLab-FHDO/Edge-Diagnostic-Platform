@@ -7,7 +7,7 @@ import InfrastructureManager.Modules.Diagnostics.DiagnosticsModuleObject;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionFileLoadingException;
 import InfrastructureManager.Modules.Diagnostics.Exception.Instruction.InstructionHandlingException;
 import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.AdvantEdgeInstruction;
-import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.Instruction;
+import InfrastructureManager.Modules.Diagnostics.RawData.Instruction.ApplicationInstruction;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,10 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class InstructionOutput extends DiagnosticsModuleObject implements PlatformOutput {
+
+    private static final int WAITING_TIME = 5000;
 
     public InstructionOutput(ImmutablePlatformModule ownerModule, String name) {
         super(ownerModule, name);
@@ -36,8 +37,8 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
             try {
                 switch (command[1]) {
                     case "loadInstruction" -> {
-                        Instruction instruction = instructionFromFile(command[2],command[3]);
-                        addToInstructionList(instruction);
+                        ApplicationInstruction instruction = instructionFromFile(command[2],command[3]);
+                        addToAppInstructionList(instruction);
                     }
                     case "loadExperiment" -> executeExperiment(command[2]);
                     default -> throw new InstructionHandlingException("Invalid command " + command[1] + " for InstructionOutput");
@@ -49,7 +50,7 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
         }
     }
 
-    private Instruction instructionFromFile(String clientInstructionPath, String serverInstructionPath) throws InstructionFileLoadingException {
+    private ApplicationInstruction instructionFromFile(String clientInstructionPath, String serverInstructionPath) throws InstructionFileLoadingException {
         try {
             File clientFile = new File(clientInstructionPath);
             File serverFile = new File(serverInstructionPath);
@@ -58,15 +59,31 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
             }
             String clientInstruction = Files.readString(clientFile.toPath()).replaceAll("\\s+","");
             String serverInstruction = Files.readString(serverFile.toPath()).replaceAll("\\s+","");
-            return new Instruction(clientInstruction,serverInstruction);
+            return new ApplicationInstruction(clientInstruction,serverInstruction);
         } catch (IOException e) {
             throw new InstructionFileLoadingException("Instruction files could not be read",e);
         }
     }
 
-    private void addToInstructionList(Instruction instruction) throws InstructionHandlingException {
+    private void addToAppInstructionList(ApplicationInstruction instruction) throws InstructionHandlingException {
         try {
-            this.getInstructionList().addInstruction(instruction);
+            this.getInstructionList().addAppInstruction(instruction);
+        } catch (InterruptedException e) {
+            throw new InstructionHandlingException("Output interrupted while waiting on instruction list");
+        }
+    }
+
+    private void addToAEInstructionList(String instruction) throws InstructionHandlingException {
+        try {
+            this.getInstructionList().addAEInstruction(instruction);
+        } catch (InterruptedException e) {
+            throw new InstructionHandlingException("Output interrupted while waiting on instruction list");
+        }
+    }
+
+    private void addToComputeInstructionList(String instruction) throws InstructionHandlingException {
+        try {
+            this.getInstructionList().addComputeInstruction(instruction);
         } catch (InterruptedException e) {
             throw new InstructionHandlingException("Output interrupted while waiting on instruction list");
         }
@@ -94,17 +111,23 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
             initialInstruction.put("experimentName", name);
             initialInstruction.put("experimentLength", experimentLength);
             String initialInstructionString = initialInstruction.toString();
-            //addToInstructionList(new Instruction(initialInstructionString,initialInstructionString));
+            addToAppInstructionList(new ApplicationInstruction(initialInstructionString,initialInstructionString));
 
             for (int i = 0; i < experimentLength; i++) {
-                if (aeInstructions != null) System.out.println(aeInstructions.get(i));
-                if (computeInstructions != null) System.out.println(computeInstructions.get(i));
+                if (aeInstructions != null) {
+                    addToAEInstructionList(aeInstructions.get(i));
+                    Thread.sleep(WAITING_TIME);
+                }
+                if (computeInstructions != null) {
+                    addToComputeInstructionList(computeInstructions.get(i));
+                    Thread.sleep(WAITING_TIME);
+                }
                 String clientInstruction = clientInstructions.get(i);
                 String serverInstruction = serverInstructions.get(i);
-                Instruction instruction = new Instruction(clientInstruction, serverInstruction);
-                //addToInstructionList(instruction);
+                ApplicationInstruction instruction = new ApplicationInstruction(clientInstruction, serverInstruction);
+                addToAppInstructionList(instruction);
             }
-        } catch (IOException e) {
+        } catch (IOException | InstructionHandlingException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -120,8 +143,8 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
 
         List<String> aeInstructions = new ArrayList<>();
         List<String> computeInstructions = new ArrayList<>();
-        List<String> clientInstructions = new ArrayList<>();
-        List<String> serverInstructions = new ArrayList<>();
+        List<String> clientInstructions;
+        List<String> serverInstructions;
 
         boolean changesInClient = !clientChanges.isEmpty();
         boolean changesInServer = !serverChanges.isEmpty();
