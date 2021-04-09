@@ -13,8 +13,8 @@ public class ClientPlatformConnection extends BasicPlatformConnection {
 
     public ClientPlatformConnection(String baseURL, String registerURL,
                                     String assignURL, String getServerURL, String heartbeatURL,
-                                    String instructionsURL, String measurementsURL) {
-        super(baseURL,registerURL,heartbeatURL,instructionsURL);
+                                    String instructionsURL, String measurementsURL, String nextURL) {
+        super(baseURL,registerURL,heartbeatURL,instructionsURL,nextURL);
         this.assignURL = assignURL;
         this.getServerURL = getServerURL;
         this.measurementsURL = measurementsURL;

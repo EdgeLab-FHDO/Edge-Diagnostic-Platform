@@ -48,6 +48,10 @@ public class ClientLoadManager extends BasicLoadManager {
         sender.send(load, bufferInformation);
     }
 
+    public void signalNextInstruction() throws RESTClientException {
+        connection.nextInstruction();
+    }
+
     public void reportMeasurements(String experimentName) throws RESTClientException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
@@ -78,6 +82,7 @@ public class ClientLoadManager extends BasicLoadManager {
         }
         return result.toString();
     }
+
 
 
 }

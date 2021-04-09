@@ -15,11 +15,11 @@ public class Client {
 
     public Client(String baseURL, String registerURL,
                   String assignURL, String getServerURL, String heartbeatURL,
-                  String instructionsURL, String measurementsURL) throws ClientCommunicationException {
+                  String instructionsURL, String measurementsURL, String nextURL) throws ClientCommunicationException {
         manager = new ClientRunnerManager();
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL,
-                    assignURL, getServerURL, heartbeatURL ,instructionsURL, measurementsURL);
+                    assignURL, getServerURL, heartbeatURL ,instructionsURL, measurementsURL, nextURL);
             connection.register(this.getJsonRepresentation(false));
             Thread.sleep(100);
             ServerInformation server = connection.getServer(this.getJsonRepresentation(false));
@@ -50,8 +50,9 @@ public class Client {
             String heartbeatURL = args[4];
             String instructionsURL = args[5];
             String measurementsURL = args[6];
+            String nextURL = args[7];
             Client activeClient = new Client(baseURL,registerURL,assignURL,
-                    getServerURL, heartbeatURL, instructionsURL, measurementsURL);
+                    getServerURL, heartbeatURL, instructionsURL, measurementsURL, nextURL);
             activeClient.getManager().startRunners();
 
             // Temporary exit ----------------------
@@ -71,7 +72,8 @@ public class Client {
                     "4. Server GET URL\n" +
                     "5. Heartbeat URL\n" +
                     "6. Instructions URL\n" +
-                    "7. Measurements URL");
+                    "7. Measurements URL\n" +
+                    "8. Next Instruction URL");
             System.exit(-1);
         } catch (ClientCommunicationException | RunnersNotConfiguredException e) {
             e.printStackTrace();

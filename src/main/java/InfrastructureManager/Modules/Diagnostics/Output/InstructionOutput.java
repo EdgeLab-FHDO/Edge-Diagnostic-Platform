@@ -134,6 +134,7 @@ public class InstructionOutput extends DiagnosticsModuleObject implements Platfo
             initialInstruction.put("experimentName", name);
             initialInstruction.put("experimentLength", experimentLength);
             String initialInstructionString = initialInstruction.toString();
+            instructionLock.waitOnNext();
             addToAppInstructionList(new ApplicationInstruction(initialInstructionString,initialInstructionString));
 
             for (int i = 0; i < experimentLength; i++) {

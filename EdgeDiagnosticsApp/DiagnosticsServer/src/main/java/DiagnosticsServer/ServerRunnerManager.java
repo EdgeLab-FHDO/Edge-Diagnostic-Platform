@@ -14,6 +14,6 @@ public class ServerRunnerManager extends BasicRunnerManager {
         ServerInstructionManager manager = new ServerInstructionManager();
         super.configure(connection, heartbeatBody);
         getRunners().add(new ControlRunner(connection,manager,instructionQueue));
-        getRunners().add(new LoadReceivingRunner(port,instructionQueue));
+        getRunners().add(new LoadReceivingRunner(connection, port,instructionQueue));
     }
 }

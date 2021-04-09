@@ -143,16 +143,37 @@
     },
     {
       "in" : "diagnostics.instructions.in.app",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "set_instruction $client_instruction $server_instruction" : "toGET resource $client_instruction"
+      }
+    },
+    {
+      "in" : "diagnostics.instructions.in.app",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "set_instruction $client_instruction $server_instruction" : "toGET resource $server_instruction"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
+      "out" : "util.fileOut",
+      "commands" : {
+        "latency_report $path $content" : "file_out append $path $content"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
       "out" : "console.out",
       "commands" : {
-        "set_instruction $client_instruction $server_instruction" : "console $client_instruction $server_instruction"
+        "latency_report $path $content" : "console Received report in $path"
       }
     },
     {
       "in" : "diagnostics.instructions.in.ae",
-      "out" : "ae.out",
+      "out" : "console.out",
       "commands" : {
-        "set_instruction $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
+        "set_instruction $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "console advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
       }
     },
     {

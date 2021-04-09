@@ -1,5 +1,5 @@
 {
-  "name" : "experiment1",
+  "name" : "experiment11",
   "client" : {
     "base" : {
       "load" : {
@@ -51,5 +51,7 @@
       }
     },
     "varying" : {}
-  }
+  },
+  "compute" : {},
+  "network" : {}
 }

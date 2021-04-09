@@ -1,5 +1,7 @@
 package DiagnosticsServer.Load;
 
+import Communication.Exception.RESTClientException;
+import DiagnosticsServer.Communication.ServerPlatformConnection;
 import DiagnosticsServer.Control.BufferControl.BufferInformation;
 import DiagnosticsServer.Load.Exception.LoadReceivingException;
 import DiagnosticsServer.Load.TCP.TCPLoadReceiver;
@@ -10,11 +12,13 @@ import LoadManagement.LoadType;
 public class ServerLoadManager extends BasicLoadManager {
 
     private final int port;
+    private final ServerPlatformConnection connection;
     private LoadType loadType;
     private ServerSocketOptions options;
 
-    public ServerLoadManager(int port) {
+    public ServerLoadManager(ServerPlatformConnection connection, int port) {
         this.port = port;
+        this.connection = connection;
     }
 
     public void setLoadType(LoadType loadType) {
@@ -33,6 +37,10 @@ public class ServerLoadManager extends BasicLoadManager {
         LoadReceiver receiver = getReceiver();
         if (this.options != null) receiver.changeSocketConfiguration(options);
         receiver.receive(this.getLoadType(), bufferInformation);
+    }
+
+    public void signalNextInstruction() throws RESTClientException {
+        connection.nextInstruction();
     }
 
     private LoadReceiver getReceiver() {
