@@ -20,8 +20,15 @@ public class MasterCommunicator {
         String getRequestBody = handler.sendGetRequest(url);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(getRequestBody);
+        // map to object
+        // separate getIP to another method
         String serverInformation = node.findValue("ipAddress").asText();
 
         return serverInformation;
+    }
+
+    public void disconnectServer() throws IOException, InterruptedException {
+        String body = "";
+        //handler.sendPostRequest("", body);
     }
 }

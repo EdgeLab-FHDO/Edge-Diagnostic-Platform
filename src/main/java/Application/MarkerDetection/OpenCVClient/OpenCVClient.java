@@ -9,6 +9,7 @@ public class OpenCVClient {
     private Thread registrationThread;
     private Thread heartBeatThread;
     private Thread latencyReporterThread;
+    private Thread serverEvaluationThread;
 
     public static void main(String[] args) {
         OpenCVUtil.initOpenCVSharedLibrary();
@@ -27,12 +28,15 @@ public class OpenCVClient {
             activeClient.processingThread.start();
             activeClient.latencyReporterThread = new Thread(activeOperator.reportRunner, "LatencyReporterThread");
             activeClient.latencyReporterThread.start();
+            activeClient.serverEvaluationThread = new Thread(activeOperator.serverEvaluationRunner, "ServerEvaluationThread");
+            activeClient.serverEvaluationThread.start();
 
             activeClient.registrationThread.join();
             activeClient.heartBeatThread.join();
             activeClient.masterCommunicationThread.join();
             activeClient.processingThread.join();
             activeClient.latencyReporterThread.join();
+            activeClient.serverEvaluationThread.join();
         } catch (IllegalArgumentException | InterruptedException e) {
             e.printStackTrace();
         }
