@@ -143,6 +143,18 @@ public class OpenCVClientOperator implements CoreOperator {
         }
     }
 
+    public void clearTcpInformation() throws InterruptedException {
+        String[] argument;
+        try {
+            ipLock.acquire();
+            ip = "";
+            port = 0;
+            maxEdgeQualityRating = 0;
+        } finally {
+            ipLock.release();
+        }
+    }
+
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
         String masterUrl = "";
@@ -150,6 +162,7 @@ public class OpenCVClientOperator implements CoreOperator {
         String beatCommand = "";
         String getServerCommand = "";
         String latencyReportCommand = "";
+        String disconnectCommand = "";
         processingRunner = new ProcessingRunner();
         int interval = 1000;
         int reqNetwork = 0;
@@ -157,7 +170,7 @@ public class OpenCVClientOperator implements CoreOperator {
         int location = 0;
         int latencyThreshold = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "LATENCY_REPORT_THRESHOLD"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "DISCONNECT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "LATENCY_REPORT_THRESHOLD"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -187,6 +200,10 @@ public class OpenCVClientOperator implements CoreOperator {
                     case "LATENCY_REPORT_COMMAND":
                         latencyReportCommand = argument[1];
                         missingParameterList.remove("LATENCY_REPORT_COMMAND");
+                        break;
+                    case "DISCONNECT_COMMAND":
+                        disconnectCommand = argument[1];
+                        missingParameterList.remove("DISCONNECT_COMMAND");
                         break;
                     case "REQUIRED_RESOURCE":
                         reqResource = Integer.parseInt(argument[1]);
@@ -228,11 +245,13 @@ public class OpenCVClientOperator implements CoreOperator {
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
         String reportUrl = masterUrl + latencyReportCommand;
+        String disconnectUrl = masterUrl + disconnectCommand;
+        String disconnectBody = "{\"id\" : \"" + clientId + "\"}";
 
         registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
         reportRunner = new LatencyReporterRunner(reportUrl);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
-        masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
+        masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl, disconnectUrl, disconnectBody);
         serverEvaluationRunner = new ServerEvaluationRunner(latencyThreshold);
     }
 

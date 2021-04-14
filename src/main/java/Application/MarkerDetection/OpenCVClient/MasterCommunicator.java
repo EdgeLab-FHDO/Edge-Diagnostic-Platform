@@ -8,16 +8,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class MasterCommunicator {
     //TODO consider moving url to configuration
-    public String url;
+    private String getServerUrl;
+    private String disconnectUrl;
+    private String disconnectBody;
     private final RESTHandler handler;
+    private final OpenCVClientOperator operator;
 
-    public MasterCommunicator(String masterUrl) {
-        url = masterUrl;
+    public MasterCommunicator(OpenCVClientOperator operator, String getServerUrl, String disconnectUrl, String disconnectBody) {
+        this.operator = operator;
+        this.getServerUrl = getServerUrl;
+        this.disconnectUrl = disconnectUrl;
+        this.disconnectBody = disconnectBody;
         this.handler = new RESTHandler();
     }
 
     public String getServer() throws InterruptedException, IOException {
-        String getRequestBody = handler.sendGetRequest(url);
+        String getRequestBody = handler.sendGetRequest(getServerUrl);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(getRequestBody);
         // map to object
@@ -28,7 +34,7 @@ public class MasterCommunicator {
     }
 
     public void disconnectServer() throws IOException, InterruptedException {
-        String body = "";
-        //handler.sendPostRequest("", body);
+        operator.clearTcpInformation();
+        handler.sendPostRequest(disconnectUrl, disconnectBody);
     }
 }

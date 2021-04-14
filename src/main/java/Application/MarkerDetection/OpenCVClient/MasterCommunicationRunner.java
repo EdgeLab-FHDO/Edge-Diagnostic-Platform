@@ -14,10 +14,10 @@ public class MasterCommunicationRunner implements Runnable {
     private volatile boolean paused = true;
     private final Semaphore pauseBlock;
 
-    public MasterCommunicationRunner(String masterUrl) {
+    public MasterCommunicationRunner(String getServerUrl, String disconnectUrl, String disconnectBody) {
         activeOperator = OpenCVClientOperator.getInstance();
         evaluator = activeOperator.evaluator;
-        communicator = new MasterCommunicator(masterUrl);
+        communicator = new MasterCommunicator(activeOperator, getServerUrl, disconnectUrl, disconnectBody);
         pauseBlock = new Semaphore(1);
     }
 
