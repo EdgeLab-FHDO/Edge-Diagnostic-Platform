@@ -51,7 +51,6 @@ public class LoadSendingRunner extends AbstractRunner {
                 instructionCounter = 0;
                 manager.reportMeasurements(experimentName);
             }
-
             Thread.sleep(100);
         } catch (LoadSendingException | JsonProcessingException | RESTClientException e) {
             e.printStackTrace();
