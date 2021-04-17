@@ -1,0 +1,36 @@
+{
+  "eventList" : [ {
+    "command" : "client_server {\"experimentName\":\"experiment11\",\"experimentLength\":10} {\"experimentName\":\"experiment11\",\"experimentLength\":10}",
+    "executionTime" : 1000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":1},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 2000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":2},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 4000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":3},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 6000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 8000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":5},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 10000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":6},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 12000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":7},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 14000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":8},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 16000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":9},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 18000
+  }, {
+    "command" : "client_server {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":10},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1},\"bufferInformation\":{\"outputStreamBuffer\":8192,\"inputReaderBuffer\":8192}}} {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0},\"bufferInformation\":{\"inputStreamBuffer\":8192,\"receiveBuffer\":-1}}}",
+    "executionTime" : 20000
+  } ]
+}
