@@ -39,10 +39,6 @@ public class ServerLoadManager extends BasicLoadManager {
         receiver.receive(this.getLoadType(), bufferInformation);
     }
 
-    public void signalNextInstruction() throws RESTClientException {
-        connection.nextInstruction();
-    }
-
     private LoadReceiver getReceiver() {
         return switch (this.getConnectionType()) {
             case TCP -> new TCPLoadReceiver(port);

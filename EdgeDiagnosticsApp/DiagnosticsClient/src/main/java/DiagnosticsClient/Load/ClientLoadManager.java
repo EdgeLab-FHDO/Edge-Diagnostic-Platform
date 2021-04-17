@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ClientLoadManager extends BasicLoadManager {
 
@@ -46,10 +45,6 @@ public class ClientLoadManager extends BasicLoadManager {
     public void sendLoad(DiagnosticsLoad load, BufferInformation bufferInformation) throws LoadSendingException {
         if (this.options != null) sender.changeSocketConfiguration(this.options);
         sender.send(load, bufferInformation);
-    }
-
-    public void signalNextInstruction() throws RESTClientException {
-        connection.nextInstruction();
     }
 
     public void reportMeasurements(String experimentName) throws RESTClientException, JsonProcessingException {

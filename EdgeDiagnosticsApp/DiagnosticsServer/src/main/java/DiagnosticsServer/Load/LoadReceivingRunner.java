@@ -1,6 +1,5 @@
 package DiagnosticsServer.Load;
 
-import Communication.Exception.RESTClientException;
 import Control.Instruction.InitialInstruction;
 import Control.Instruction.Instruction;
 import Control.Instruction.InstructionQueue;
@@ -22,7 +21,6 @@ public class LoadReceivingRunner extends AbstractRunner {
     @Override
     public void runnerOperation() throws InterruptedException {
         try {
-            manager.signalNextInstruction();
             Instruction instruction = instructionQueue.get();
             if (instruction.getClass().equals(InitialInstruction.class)) {
                 String name = ((InitialInstruction) instruction).getExperimentName();
@@ -36,9 +34,6 @@ public class LoadReceivingRunner extends AbstractRunner {
                 manager.receiveLoad(serverInstruction.getConnection().getBufferInformation());
             }
             Thread.sleep(100);
-        } catch (RESTClientException e) {
-            System.err.println("Platform could not be reached for next instruction");
-            this.stop();
         } catch (LoadReceivingException e) {
             e.printStackTrace();
             this.stop();

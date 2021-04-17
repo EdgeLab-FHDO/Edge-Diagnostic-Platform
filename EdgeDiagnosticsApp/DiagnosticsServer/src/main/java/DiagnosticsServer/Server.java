@@ -19,12 +19,12 @@ public class Server {
     private final int port;
 
     public Server(int port, String baseURL, String registerURL,String heartbeatURL,
-                  String instructionsURL, String nextURL) throws ServerCommunicationException {
+                  String instructionsURL) throws ServerCommunicationException {
         this.manager = new ServerRunnerManager();
         this.port = port;
         try {
             ServerPlatformConnection connection = new ServerPlatformConnection(baseURL, registerURL,
-                    heartbeatURL,instructionsURL, nextURL);
+                    heartbeatURL,instructionsURL);
             connection.register(this.getJsonRepresentation(false));
             manager.configure(connection,getJsonRepresentation(true),port);
         } catch (RESTClientException | UnknownHostException | JsonProcessingException e) {
@@ -59,8 +59,8 @@ public class Server {
             String registerURL = args[1];
             String heartBeatURL = args[2];
             String instructionsURL = args[3];
-            String nextURL = args[4];
-            Server activeInstance = new Server(4444, baseURL,registerURL, heartBeatURL ,instructionsURL, nextURL);
+            Server activeInstance = new Server(4444, baseURL,registerURL,
+                    heartBeatURL ,instructionsURL);
             System.out.println("Starting Server");
             activeInstance.getManager().startRunners();
             System.out.println("Ready");

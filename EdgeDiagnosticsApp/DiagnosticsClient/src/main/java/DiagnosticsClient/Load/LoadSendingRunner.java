@@ -29,7 +29,6 @@ public class LoadSendingRunner extends AbstractRunner {
     @Override
     public void runnerOperation() throws InterruptedException {
         try {
-            manager.signalNextInstruction();
             Instruction instruction = instructionQueue.get();
             if (instruction.getClass().equals(InitialInstruction.class)) {
                 InitialInstruction initialInstruction = (InitialInstruction) instruction;
