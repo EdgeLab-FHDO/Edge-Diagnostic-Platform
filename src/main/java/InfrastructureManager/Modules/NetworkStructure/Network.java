@@ -1,9 +1,14 @@
 package InfrastructureManager.Modules.NetworkStructure;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 
 /**
  * This class contains network information.
@@ -20,7 +25,43 @@ public class Network {
 	private Map<String, ApplicationInstanceDeviceRelation> applicationDeviceMap;
 	private Map<String, LocationConnectionRelation> locationConnectionMap;
 	private Map<String, DeviceLocationRelation> deviceLocationMap;
+	
+/* 
+	 public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+	 
+		Network abc = new Network();
+		
+		DeviceType devicetype = new DeviceType(DeviceType.TypeId.UE,DeviceType.Mobility.NONMOVABLE,"Vodafone");
+		ComputeLimits computelimits = new ComputeLimits(1,2,3);
+		Device device1 = new Device("100","192.168.0.1",devicetype,computelimits);
 
+		abc.addDevice(device1);
+		
+		NetworkLimits networkLimits = new NetworkLimits(0.5f,0.2f,1.5,2.0);
+		Connection connection1 = new Connection("Connection1",networkLimits);
+		
+		abc.addConnection(connection1);
+		
+		Location location1 = new Location("location1",10.5f,20.5f);
+		abc.addLocation(location1);
+		
+		ComputeRequirements computeRequirements = new ComputeRequirements(1.0f,2.0f,3.0f);
+		NetworkRequirements networkRequirements = new NetworkRequirements(10.0f,20.0f,30.0,40.0);
+		ApplicationType applicationType = new ApplicationType("Application1",computeRequirements,networkRequirements);
+		ApplicationInstance application1 = new ApplicationInstance(applicationType,ApplicationInstance.State.RUNNING);
+		ApplicationInstanceDeviceRelation appDevice1 = new ApplicationInstanceDeviceRelation("appDevice1",application1,device1);
+		LocationConnectionRelation locCon1 = new LocationConnectionRelation("locCon1",location1,connection1);
+		DeviceLocationRelation devLoc1 = new DeviceLocationRelation("devLoc1",device1,location1);
+			
+		abc.addApplicationInstance(application1);
+		abc.addApplicationDeviceRelation(appDevice1);
+		abc.addLocationConnectionRelation(locCon1);
+		abc.addDeviceLocationRelation(devLoc1);
+		
+		abc.loadNetwork();
+	}
+	*/
+	
 	/**
 	 * Default constructor for Network Class
 	 */
@@ -212,19 +253,40 @@ public class Network {
 		this.deviceLocationMap.remove(deviceLocationRelationId);
 	}
 	
-	public void loadNetwork(String readString) throws JsonProcessingException{
+	public void loadNetwork() throws JsonParseException, JsonMappingException, IOException{
 
 		//New object created as the called object cannot be accessed as a whole. Therefore new object is created to update the calling object members with values from json string
 		Network clonedObject = new Network();
+		File input = new File("src/main/resources/Network/networkv2.json");
 		
-		Map<String, Device> jsonMap = this.mapper.readValue(readString,
+		Map<String, Device> jsonMap = this.mapper.readValue(input,
 			    new TypeReference<Map<String,Device>>(){});
 		
 		this.deviceMap = jsonMap;
-		//this.mapper.readValue(readString,Network.class);
-		//copyNetwork(clonedObject);
+		this.mapper.readValue(input,Network.class);
+		copyNetwork(clonedObject);
 	}
+	
+	
+	/*public void loadNetwork()
+	{
+		try {
+	
+	    // create object mapper instance
+	    //ObjectMapper mapper = new ObjectMapper();
 
+	    // convert JSON file to map
+		File input = new File("src/main/resources/Network/network.json");
+	    Network clonedObject = this.mapper.readValue(input, Network.class);
+
+	    System.out.print(clonedObject);
+		} 
+		
+		catch (Exception ex) {
+	    ex.printStackTrace();
+		}
+	}
+*/
 	public void copyNetwork(Network network) {
 		this.deviceMap = network.deviceMap;
 		this.connectionMap = network.connectionMap;

@@ -23,6 +23,7 @@
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
     {"type" : "RemoteExecutionModule", "name": "remote"},
     {"type" :  "MatchMakingModule-Random", "name":  "mm"}
+    {"type" :  "NetworkStructureModule, "name":  "ns"}
   ],
 
   "connections" : [
@@ -157,7 +158,22 @@
       "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      },
+    {
+      "in" : "console.in",
+      "out" : "ns.out",
+      "commands" : {
+        "load_network $network_as_json_string" : "console load_network $network_as_json_string"
       }
+    }, 
+    {
+      "in" : "ns.in",
+      "out" : "console.out",
+      "commands" : {
+        "test $param" : "console $param"
+      }
+    }
+
     }
   ]
 }

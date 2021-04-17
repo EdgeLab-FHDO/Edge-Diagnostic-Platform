@@ -1,0 +1,1 @@
+{"100":{"deviceId":"100","applicationRelationId":"appDevice1","locationRelationId":"devLoc1","deviceAddress":"192.168.0.1","deviceType":{"deviceName":"Vodafone","typeId":"UE","mobility":"NONMOVABLE"},"computeLimits":{"cpuCount":1.0,"gpuCount":2.0,"memoryLimit":3.0}}};
