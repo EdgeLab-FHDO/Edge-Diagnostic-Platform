@@ -13,6 +13,7 @@ public class MasterCommunicationRunner implements Runnable {
     private volatile boolean running = false;
     private volatile boolean paused = true;
     private final Semaphore pauseBlock;
+    private String ipAddress;
 
     public MasterCommunicationRunner(String getServerUrl, String disconnectUrl, String disconnectBody) {
         activeOperator = OpenCVClientOperator.getInstance();
@@ -26,21 +27,27 @@ public class MasterCommunicationRunner implements Runnable {
         while(!exit) {
             try {
                 checkPause();
-                activeOperator.setupTcpConnection(communicator.getServer());
-                evaluator.initialize();
+                ipAddress=communicator.getServer();
+                if(ipAddress != "") {
+                    System.out.println("Initializing with the IP (" + ipAddress +")");
+                    activeOperator.setupTcpConnection(ipAddress);
+                    evaluator.initialize();
+                }
             } catch (InterruptedException | IllegalArgumentException | IOException e) {
                 e.printStackTrace();
             }
-            System.out.println(evaluator.isGood());
+
             while (evaluator.isGood()) {
                 //TODO consider moving the new server utilization value into a parameter or take it from the evaluation result
                 evaluator.evaluate();
                 if(evaluator.isEvaluating()) {
                     activeOperator.setServerUtilization(false);
                     activeOperator.serverEvaluationRunner.resume();
-                } else {
+                } else if(evaluator.isGood()) {
                     activeOperator.setServerUtilization(true);
                     activeOperator.serverEvaluationRunner.pause();
+                } else {
+                    break;
                 }
                 try {
                     Thread.sleep(1000);
@@ -49,12 +56,15 @@ public class MasterCommunicationRunner implements Runnable {
                     break;
                 }
             }
-
-            try {
-                activeOperator.setServerUtilization(false);
-                communicator.disconnectServer();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+            if(evaluator.needToDisconnect()) {
+                try {
+                    communicator.disconnectServer();
+                    activeOperator.setServerUtilization(false);
+                checkPause();
+                    evaluator.setDisconnect(false);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             try {

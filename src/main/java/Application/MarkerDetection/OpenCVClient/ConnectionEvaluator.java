@@ -7,10 +7,12 @@ import javax.sound.midi.SysexMessage;
 public class ConnectionEvaluator {
     protected boolean evaluation;
     protected boolean evaluating;
+    protected boolean disconnect;
 
     public ConnectionEvaluator() {
         evaluation = false;
         evaluating = false;
+        disconnect = false;
     }
 
     public void evaluate() {
@@ -22,6 +24,12 @@ public class ConnectionEvaluator {
     }
 
     public boolean isEvaluating() { return evaluating; }
+
+    public boolean needToDisconnect() { return disconnect; }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
+    }
 
     public void initialize() {
         evaluation = true; //assume connection is okay before evaluating on first iteration

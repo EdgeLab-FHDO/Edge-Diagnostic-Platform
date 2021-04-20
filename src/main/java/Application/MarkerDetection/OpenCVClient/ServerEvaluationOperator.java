@@ -23,12 +23,13 @@ public class ServerEvaluationOperator {
 
         long endTime = System.nanoTime();
         long latency = (endTime-startTime)/1000000;
+        boolean incrementEQR = true;
 
         if(latency > latencyThreshold) {
-            evaluator.decrementEQR();
-        } else {
-            evaluator.incrementEQR();
+            incrementEQR = false;
         }
+
+        evaluator.queueEqrChange(incrementEQR);
         System.out.println("[Server Evaluation] Execution Time: " + latency + "ms - EQR: " + evaluator.getEvaluationParameter());
     }
 }

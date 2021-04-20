@@ -15,7 +15,7 @@
         {"name" : "node.heartbeat","URL": "/node/beat","command": "node_receive_heart_beat $body","information":  []},
         {"name" : "client.assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
         {"name" : "client.report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]},
-        {"name" : "node.disconnect","URL": "/node/disconnect","command": "disconnect_client $body","information":  []}
+        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
@@ -114,7 +114,7 @@
     },
 
     {
-      "in" : "rest.node.disconnect",
+      "in" : "rest.client.disconnect",
       "out" : "mm.out",
       "commands" : {
         "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"

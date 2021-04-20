@@ -52,6 +52,7 @@ public class OpenCVClientOperator implements CoreOperator {
     public ProcessingRunner processingRunner;
     public LatencyReporterRunner reportRunner;
     public ServerEvaluationRunner serverEvaluationRunner;
+    public EQRManagementRunner eqrManagementRunner;
 
     private OpenCVClientOperator() {
         mapper = new ObjectMapper();
@@ -134,7 +135,8 @@ public class OpenCVClientOperator implements CoreOperator {
             if(argument.length == 2) {
                 ip = argument[0];
                 port = Integer.parseInt(argument[1]);
-                maxEdgeQualityRating = 500;
+                //TODO make this a configuration or part of the information obtained from the master
+                maxEdgeQualityRating = 10;
             } else {
                 throw new IllegalArgumentException("Invalid argument");
             }
@@ -144,12 +146,12 @@ public class OpenCVClientOperator implements CoreOperator {
     }
 
     public void clearTcpInformation() throws InterruptedException {
-        String[] argument;
         try {
             ipLock.acquire();
             ip = "";
             port = 0;
             maxEdgeQualityRating = 0;
+            stopConnection();
         } finally {
             ipLock.release();
         }
@@ -253,6 +255,7 @@ public class OpenCVClientOperator implements CoreOperator {
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl, disconnectUrl, disconnectBody);
         serverEvaluationRunner = new ServerEvaluationRunner(latencyThreshold);
+        eqrManagementRunner = new EQRManagementRunner();
     }
 
     public DetectMarker detectMarkerInServer(DetectMarker detector) throws RemoteExecutionException {
