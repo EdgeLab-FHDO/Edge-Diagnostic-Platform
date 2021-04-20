@@ -17,6 +17,7 @@ public class EQREvaluator extends ConnectionEvaluator {
         eqrBlock = new Semaphore(1);
         eqrChangeQueue = new LinkedList<>();
         max_eqr=-1;
+        current_eqr=0;
     }
 
     public void evaluate() {
