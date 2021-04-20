@@ -29,13 +29,25 @@ public class ScenarioEditorTests {
     private final String originalContent = "deploy_application" + "node_request" + "update_gui";
 
     @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+        Master.getInstance().getManager().startModule("dummy");
+        module = (ScenarioModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("dummy"))
+                .findFirst()
+                .orElseThrow();
+
+    }
+
+    /*@BeforeClass
     public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException {
         Master.resetInstance();
         Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
         ModuleManager manager = Master.getInstance().getManager();
         manager.startAllModules();
         module = findModule(manager);
-    }
+    }*/
 
     private static ScenarioModule findModule(ModuleManager manager) throws ModuleNotFoundException, ModuleManagerException {
         return (ScenarioModule) manager.getModules().stream()

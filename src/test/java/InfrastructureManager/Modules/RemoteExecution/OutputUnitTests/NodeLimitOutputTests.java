@@ -1,6 +1,10 @@
 package InfrastructureManager.Modules.RemoteExecution.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
+import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.CommonTestingMethods;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.InvalidLimitParametersException;
 import InfrastructureManager.Modules.RemoteExecution.Exception.NodeLimit.NodeLimitException;
@@ -8,16 +12,29 @@ import InfrastructureManager.Modules.RemoteExecution.LimitList;
 import InfrastructureManager.Modules.RemoteExecution.Output.NodeLimitOutput;
 import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class NodeLimitOutputTests {
 
-    RemoteExecutionModule module = new RemoteExecutionModule();
+    private static RemoteExecutionModule module ;//= new RemoteExecutionModule();
     private final LimitList list = module.getLimitList();
     private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out");
 
     private void assertExceptionInOutput(Class<? extends Exception> exceptionClass, String expectedMessage, String command) {
         CommonTestingMethods.assertException(exceptionClass, expectedMessage, () -> output.execute(command));
+    }
+
+    @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/RemoteExecution/NodeLimit/NodeLimitConfiguration.json");
+        Master.getInstance().getManager().startModule("rest");
+        module = (RemoteExecutionModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("remote"))
+                .findFirst()
+                .orElseThrow();
+
     }
 
     @Test

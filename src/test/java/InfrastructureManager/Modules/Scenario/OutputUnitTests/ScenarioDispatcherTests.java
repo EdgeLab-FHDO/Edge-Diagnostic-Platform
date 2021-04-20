@@ -9,6 +9,7 @@ import InfrastructureManager.ModuleManagement.ImmutablePlatformModule;
 import InfrastructureManager.ModuleManagement.ModuleManager;
 import InfrastructureManager.ModuleManagement.PlatformModule;
 import InfrastructureManager.Modules.CommonTestingMethods;
+import InfrastructureManager.Modules.REST.RESTModule;
 import InfrastructureManager.Modules.Scenario.Event;
 import InfrastructureManager.Modules.Scenario.Exception.Output.ScenarioDispatcherException;
 import InfrastructureManager.Modules.Scenario.Scenario;
@@ -16,6 +17,7 @@ import InfrastructureManager.Modules.Scenario.ScenarioDispatcher;
 import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.builder.RequestSpecBuilder;
 import org.junit.*;
 
 import java.io.ByteArrayOutputStream;
@@ -30,20 +32,33 @@ public class ScenarioDispatcherTests {
     private ScenarioDispatcher dispatcher;
     static final long WAITING_TIME = 12000; //If events are delayed this has to be modified
     private final ByteArrayOutputStream outContent;
-    private static ScenarioModule module = new ScenarioModule();
+    private static ScenarioModule module ;
 
 
     public ScenarioDispatcherTests() {
         outContent = new ByteArrayOutputStream();
     }
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException, IOException {
         Master.resetInstance();
         Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
         ModuleManager manager = Master.getInstance().getManager();
         manager.startAllModules();
         module = findModule(manager);
+    }*/
+
+    @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
+        Master.getInstance().getManager().startModule("dummy");
+        module = (ScenarioModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("dummy"))
+                .findFirst()
+                .orElseThrow();
+
     }
 
     @Before

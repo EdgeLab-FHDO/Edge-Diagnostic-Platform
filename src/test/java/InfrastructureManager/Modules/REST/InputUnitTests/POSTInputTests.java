@@ -22,7 +22,7 @@ import static io.restassured.RestAssured.given;
 public class POSTInputTests {
 
     private static RequestSpecification requestSpec;
-    private final RESTModule module = new RESTModule();
+    private static RESTModule module ;//= new RESTModule();
     public static final String JSONExample = "{\"name\":\"example\",\"number\":874}";
 
     @BeforeClass
@@ -36,6 +36,10 @@ public class POSTInputTests {
         Master.resetInstance();
         Master.getInstance().configure("src/test/resources/Modules/REST/RESTTestConfiguration.json");
         Master.getInstance().getManager().startModule("rest");
+        module = (RESTModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("rest"))
+                .findFirst()
+                .orElseThrow();
     }
 
     @Test

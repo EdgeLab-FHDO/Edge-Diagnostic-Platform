@@ -1,6 +1,11 @@
 package InfrastructureManager.Modules.Utility.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
+import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
+import InfrastructureManager.Modules.RemoteExecution.RemoteExecutionModule;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.FileOutputException;
 import InfrastructureManager.Modules.Utility.Exception.FileOutput.InvalidEncodingException;
 import InfrastructureManager.Modules.Utility.Output.FileOutput;
@@ -16,9 +21,21 @@ import static InfrastructureManager.Modules.CommonTestingMethods.assertException
 
 public class FileOutputTests {
 
-    private final UtilityModule module = new UtilityModule();
+    private static UtilityModule module ;// = new UtilityModule();
     private final FileOutput fileOutput = new FileOutput(module,"util.fileOut");
     private final String testPath = "src/test/resources/Modules/Utility/FileOutput/";
+
+    @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/Utility/UtilityModuleTestConfiguration.json");
+        Master.getInstance().getManager().startModule("console");
+        module = (UtilityModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("util"))
+                .findFirst()
+                .orElseThrow();
+
+    }
 
     @BeforeClass
     public static void createTestFolder() throws Exception {
@@ -29,7 +46,6 @@ public class FileOutputTests {
             }
         }
     }
-
 
     @Test
     public void fileIsCreatedTest() throws ModuleExecutionException {

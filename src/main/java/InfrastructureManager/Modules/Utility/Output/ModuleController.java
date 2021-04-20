@@ -43,10 +43,11 @@ public class ModuleController extends UtilityModuleObject implements PlatformOut
      */
     @Override
     public void execute(String response) throws ModuleNotFoundException, ModuleControllerException {
+        this.getLogger().debug(this.getName(),"Util execute, response: "+response);
         String[] command = response.split(" ");
         if (command[0].equals("util")) {
-            this.getLogger().debug(this.getName()+" - "+ command[1] +" command received");
-            this.getLogger().debug(this.getName()+" - "+command[2] +" additional command received");
+            this.getLogger().debug(this.getName(),command[1] +" command received");
+            //this.getLogger().debug(this.getName()+" - "+command[2] +" additional command received");
             try {
                 ModuleManager manager = Master.getInstance().getManager();
                 switch (command[1]) {

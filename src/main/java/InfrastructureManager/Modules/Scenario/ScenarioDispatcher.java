@@ -50,10 +50,10 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
      */
     @Override
     public void execute(String response) throws ScenarioDispatcherException, InvalidTimeException, OwnerModuleNotSetUpException {
-        this.getLogger().debug(this.getName() + " - Executing Scenario");
+        this.getLogger().debug(this.getName(),"Executing Scenario, resp: "+response);
         String[] command = response.split(" ");
         if (command[0].equals("dispatcher")) {
-            this.getLogger().debug(this.getName() + " - Dispatcher cmd additional cmd: "+ command[1]);
+            this.getLogger().debug(this.getName(),"Dispatcher cmd additional cmd: "+ command[1]);
             try {
                 switch (command[1]) {
                     case "run" :
@@ -103,7 +103,7 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
      */
     private void stopScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.stopScenario();
-        this.getLogger().debug(this.getName() + " - Scenario Stopped");
+        this.getLogger().debug(this.getName(),"Scenario Stopped");
     }
 
     /**
@@ -113,7 +113,7 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
      */
     private void pauseScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.pauseScenario();
-        this.getLogger().debug(this.getName() + " - Scenario Paused");
+        this.getLogger().debug(this.getName(),"Scenario Paused");
     }
 
     /**
@@ -123,7 +123,7 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
      */
     private void resumeScenario() throws ScenarioNotSetUpException {
         this.ownerScenarioModule.resumeScenario();
-        this.getLogger().debug(this.getName() + " - Scenario Resumed ");
+        this.getLogger().debug(this.getName(),"Scenario Resumed ");
     }
 
     /**
@@ -135,6 +135,6 @@ public class ScenarioDispatcher extends ScenarioModuleObject implements Platform
      */
     private void runScenario(long startTime) throws InvalidTimeException, OwnerModuleNotSetUpException {
         this.ownerScenarioModule.startScenario(startTime);
-        this.getLogger().debug(this.getName() + " - Scenario Started");
+        this.getLogger().debug(this.getName(),"Scenario Started,  startTime: "+startTime);
     }
 }

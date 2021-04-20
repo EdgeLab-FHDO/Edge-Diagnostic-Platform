@@ -49,8 +49,8 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
     public void execute(String response) throws FileOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("file_out")) { //The commands must come like "file_out command"
-            this.getLogger().debug(this.getName() + " - "+command[1] +" command received");
-            this.getLogger().debug(this.getName() + " - " + command[2] +" additional command received");
+            this.getLogger().debug(this.getName(),command[1] +" command received");
+            //this.getLogger().debug(this.getName() + " - " + command[2] +" additional command received");
             try {
                 switch (command[1]) {
                     case "encoding" :
@@ -87,7 +87,7 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
      * @throws InvalidEncodingException If an invalid or not supported encoding is used
      */
     public void setEncoding(String encodingName) throws InvalidEncodingException {
-        this.getLogger().debug(this.getName() + " -  setting the encoding of output files with file name: "+encodingName);
+        this.getLogger().debug(this.getName(),"Setting the encoding of output files with file name: "+encodingName);
         try {
             this.encoding = Charset.forName(encodingName);
         } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
@@ -104,7 +104,7 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
      * @throws FileOutputException If an error occurs while writing to the file.
      */
     private void writeToFile(String path, String content, boolean append) throws FileOutputException {
-        this.getLogger().debug(this.getName() + " - Writing string to file");
+        this.getLogger().debug(this.getName(),"Writing string to file, path: "+path+",content: "+content+",append: "+append);
         File file = new File(path);
         try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file,append))) {
             byte[] toWrite = content.getBytes(this.encoding);
@@ -120,7 +120,7 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
      * @return String containing all arguments after the action command ("create" or "append") as a single string.
      */
     private String restOfCommand(String[] command) {
-        this.getLogger().debug(this.getName() + " -  Extracting rest of the incoming command to the output");
+        this.getLogger().debug(this.getName(),"Extracting rest of the incoming command to the output, cmd: "+command);
         return String.join(" ",Arrays.copyOfRange(command, 3,command.length));
     }
 }

@@ -44,7 +44,7 @@ public class ScenarioModuleObject extends PlatformObject {
     @JsonIgnore
     public Scenario getScenario() {
         GlobalVarAccessScenarioModule casted = (GlobalVarAccessScenarioModule) this.getOwnerModule();
-        this.getLogger().debug(this.getName() +" - Scenario assigned to the owner module is: "+casted.getScenario().getName());
+        this.getLogger().debug(this.getName(),"Scenario assigned to the owner module is: "+casted.getScenario().getName());
         return casted.getScenario();
     }
 }

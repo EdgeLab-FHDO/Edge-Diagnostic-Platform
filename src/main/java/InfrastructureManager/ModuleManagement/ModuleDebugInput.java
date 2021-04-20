@@ -48,10 +48,14 @@ public class ModuleDebugInput extends PlatformObject implements PlatformInput {
 
     /**
      * Store a debug level message in the logging queue
+     * @param name Name of the entity
      * @param message Message to be stored
      */
-    public void debug(String message){
-        this.store("DEBUG - " + message);
+    public void debug(String name, String message){
+        //this.store("DEBUG - " + message);
+        //String[] temp = message.split("-",2);
+        //temp[0]=temp[0].replaceAll("\\s","");
+        this.store("DEBUG-"+name+"-"+ Thread.currentThread().getStackTrace()[2].getMethodName()+":"+Thread.currentThread().getStackTrace()[2].getLineNumber() +" -" + message);
     }
 
     /**
