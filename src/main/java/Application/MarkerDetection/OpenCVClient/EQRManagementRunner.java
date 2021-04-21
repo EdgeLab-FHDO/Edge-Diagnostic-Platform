@@ -19,7 +19,7 @@ public class EQRManagementRunner implements Runnable {
         while(true) {
             evaluator.manageEqrChange(latencyThreshold);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

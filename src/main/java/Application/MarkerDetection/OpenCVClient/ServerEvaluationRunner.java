@@ -13,8 +13,6 @@ public class ServerEvaluationRunner implements Runnable {
     private volatile boolean paused = true;
     private final Semaphore pauseBlock;
 
-    private int latencyThreshold;
-
     public ServerEvaluationRunner() {
         activeOperator = OpenCVClientOperator.getInstance();
         operator = new ServerEvaluationOperator();
