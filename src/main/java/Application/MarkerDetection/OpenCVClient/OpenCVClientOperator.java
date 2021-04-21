@@ -45,6 +45,7 @@ public class OpenCVClientOperator implements CoreOperator {
     public boolean connected;
     public boolean evaluating;
     public int maxEdgeQualityRating;
+    public int latencyThreshold;
     public ConnectionEvaluator evaluator;
     public RegistrationRunner registrationRunner;
     public HeartBeatRunner beatRunner;
@@ -66,6 +67,7 @@ public class OpenCVClientOperator implements CoreOperator {
         reportQueue = new ArrayList<>();
         clientId = "";
         maxEdgeQualityRating = 0;
+        latencyThreshold = 0;
     }
 
     public void startMasterCommunication() {
@@ -170,7 +172,6 @@ public class OpenCVClientOperator implements CoreOperator {
         int reqNetwork = 0;
         int reqResource = 0;
         int location = 0;
-        int latencyThreshold = 0;
 
         List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "DISCONNECT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "LATENCY_REPORT_THRESHOLD"));
 
@@ -254,7 +255,7 @@ public class OpenCVClientOperator implements CoreOperator {
         reportRunner = new LatencyReporterRunner(reportUrl);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
         masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl, disconnectUrl, disconnectBody);
-        serverEvaluationRunner = new ServerEvaluationRunner(latencyThreshold);
+        serverEvaluationRunner = new ServerEvaluationRunner();
         eqrManagementRunner = new EQRManagementRunner();
     }
 

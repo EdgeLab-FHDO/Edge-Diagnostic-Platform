@@ -6,14 +6,12 @@ import Application.Utilities.RemoteExecutionException;
 public class ServerEvaluationOperator {
     private final OpenCVClientOperator activeOperator;
     private final EQREvaluator evaluator;
-    private int latencyThreshold;
     private DetectMarker detector;
 
-    public ServerEvaluationOperator(int latencyThreshold) {
+    public ServerEvaluationOperator() {
         activeOperator = OpenCVClientOperator.getInstance();
         evaluator = (EQREvaluator) activeOperator.masterCommunicationRunner.evaluator;
         detector = new DetectMarker();
-        this.latencyThreshold = latencyThreshold;
     }
 
     public void evaluationOperation() throws RemoteExecutionException {
@@ -22,14 +20,9 @@ public class ServerEvaluationOperator {
         activeOperator.markerDetection(true, true, detector);
 
         long endTime = System.nanoTime();
-        long latency = (endTime-startTime)/1000000;
-        boolean incrementEQR = true;
+        int latency = (int)(endTime-startTime)/1000000;
 
-        if(latency > latencyThreshold) {
-            incrementEQR = false;
-        }
-
-        evaluator.queueEqrChange(incrementEQR);
+        evaluator.updateLatency(latency);
         System.out.println("[Server Evaluation] Execution Time: " + latency + "ms - EQR: " + evaluator.getEvaluationParameter());
     }
 }

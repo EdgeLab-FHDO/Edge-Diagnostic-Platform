@@ -6,24 +6,24 @@ import java.util.concurrent.Semaphore;
 
 public class EQREvaluator extends ConnectionEvaluator {
     private int max_eqr;
-    private int current_eqr;
+    private int currentEqr;
     private final Semaphore eqrBlock;
     private final Semaphore eqrChangeBlock;
-    private Queue<Boolean> eqrChangeQueue;
+    private int currentLatency;
 
     public EQREvaluator() {
         super();
         eqrChangeBlock = new Semaphore(1);
         eqrBlock = new Semaphore(1);
-        eqrChangeQueue = new LinkedList<>();
-        max_eqr=-1;
-        current_eqr=0;
+        max_eqr = -1;
+        currentEqr = 0;
+        currentLatency = 0;
     }
 
     public void evaluate() {
-        if(current_eqr == max_eqr) {
+        if(currentEqr == max_eqr) {
             evaluating = false;
-        } else if(current_eqr == 0) {
+        } else if(currentEqr == 0) {
             evaluation = false;
             evaluating = false;
             max_eqr=-1;
@@ -33,10 +33,10 @@ public class EQREvaluator extends ConnectionEvaluator {
         System.out.println("[Node Evaluation] evaluation: " + evaluation + " evaluating: " + evaluating);
     }
 
-    public void queueEqrChange(boolean increment) {
+    public void updateLatency(int latency) {
         try {
             eqrChangeBlock.acquire();
-            eqrChangeQueue.add(increment);
+            currentLatency=latency;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -44,15 +44,15 @@ public class EQREvaluator extends ConnectionEvaluator {
         }
     }
 
-    public void manageEqrChange() {
+    public void manageEqrChange(int latencyThreshold) {
         try {
             eqrChangeBlock.acquire();
-            if(eqrChangeQueue.size() > 0) {
-                boolean increment = eqrChangeQueue.remove();
-                if (increment) {
-                    incrementEQR();
-                } else {
+            // only generate new increment if at least one evaluation has been made
+            if(currentLatency > 0) {
+                if (currentLatency > latencyThreshold) {
                     decrementEQR();
+                } else {
+                    incrementEQR();
                 }
             }
         } catch (InterruptedException e) {
@@ -65,11 +65,11 @@ public class EQREvaluator extends ConnectionEvaluator {
     public void decrementEQR() {
         try {
             eqrBlock.acquire();
-            current_eqr--;
-            if (current_eqr == 0) {
+            currentEqr--;
+            if (currentEqr == 0) {
                 setDisconnect(true);
-            } else if (current_eqr < 0) {
-                current_eqr = 0;
+            } else if (currentEqr < 0) {
+                currentEqr = 0;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -81,9 +81,9 @@ public class EQREvaluator extends ConnectionEvaluator {
     public void incrementEQR() {
         try {
             eqrBlock.acquire();
-            current_eqr++;
-            if(current_eqr>max_eqr) {
-                current_eqr = max_eqr;
+            currentEqr++;
+            if(currentEqr > max_eqr) {
+                currentEqr = max_eqr;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -99,13 +99,14 @@ public class EQREvaluator extends ConnectionEvaluator {
         try {
             eqrBlock.acquire();
             max_eqr = activeOperator.maxEdgeQualityRating;
-            current_eqr = max_eqr/2;
+            currentEqr = max_eqr/2;
+            currentLatency = 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             eqrBlock.release();
         }
-        System.out.println("EQR:"+ current_eqr +"/"+max_eqr);
+        System.out.println("EQR:"+ currentEqr +"/"+max_eqr);
     }
 
     public void handleException(Exception e) {
@@ -113,6 +114,6 @@ public class EQREvaluator extends ConnectionEvaluator {
     }
 
     public int getEvaluationParameter() {
-        return current_eqr;
+        return currentEqr;
     }
 }

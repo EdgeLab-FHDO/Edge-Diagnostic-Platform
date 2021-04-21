@@ -15,11 +15,10 @@ public class ServerEvaluationRunner implements Runnable {
 
     private int latencyThreshold;
 
-    public ServerEvaluationRunner(int latencyThreshold) {
+    public ServerEvaluationRunner() {
         activeOperator = OpenCVClientOperator.getInstance();
-        operator = new ServerEvaluationOperator(latencyThreshold);
+        operator = new ServerEvaluationOperator();
         pauseBlock = new Semaphore(1);
-        this.latencyThreshold = latencyThreshold;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class ServerEvaluationRunner implements Runnable {
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
