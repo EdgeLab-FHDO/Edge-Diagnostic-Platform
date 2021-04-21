@@ -29,7 +29,6 @@ public class ServerEvaluationRunner implements Runnable {
                 }
             } catch(RemoteExecutionException e) {
                 activeOperator.evaluator.handleException(e);
-                System.out.println("Cannot communicate with server, current EQR:" + activeOperator.evaluator.getEvaluationParameter());
             } catch (InterruptedException | SecurityException | IllegalArgumentException e) {
                 e.printStackTrace();
             }

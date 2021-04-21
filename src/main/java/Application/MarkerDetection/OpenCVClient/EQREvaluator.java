@@ -30,7 +30,6 @@ public class EQREvaluator extends ConnectionEvaluator {
         } else {
             evaluating = true;
         }
-        System.out.println("[Node Evaluation] evaluation: " + evaluation + " evaluating: " + evaluating);
     }
 
     public void updateLatency(int latency) {

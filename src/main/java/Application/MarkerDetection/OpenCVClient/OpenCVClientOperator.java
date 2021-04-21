@@ -66,7 +66,6 @@ public class OpenCVClientOperator implements CoreOperator {
         evaluating = false;
         reportQueue = new ArrayList<>();
         clientId = "";
-        maxEdgeQualityRating = 0;
         latencyThreshold = 0;
     }
 
@@ -137,8 +136,6 @@ public class OpenCVClientOperator implements CoreOperator {
             if(argument.length == 2) {
                 ip = argument[0];
                 port = Integer.parseInt(argument[1]);
-                //TODO make this a configuration or part of the information obtained from the master
-                maxEdgeQualityRating = 10;
             } else {
                 throw new IllegalArgumentException("Invalid argument");
             }
@@ -173,7 +170,7 @@ public class OpenCVClientOperator implements CoreOperator {
         int reqResource = 0;
         int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "DISCONNECT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "LATENCY_REPORT_THRESHOLD"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "DISCONNECT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "MAX_EQR", "LATENCY_REPORT_THRESHOLD"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -223,6 +220,10 @@ public class OpenCVClientOperator implements CoreOperator {
                     case "LATENCY_REPORT_THRESHOLD":
                         latencyThreshold = Integer.parseInt(argument[1]);
                         missingParameterList.remove("LATENCY_REPORT_THRESHOLD");
+                        break;
+                    case "MAX_EQR":
+                        maxEdgeQualityRating = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("MAX_EQR");
                         break;
                     case "INTERVAL":
                         interval = Integer.parseInt(argument[1]);

@@ -23,6 +23,5 @@ public class ServerEvaluationOperator {
         int latency = (int)(endTime-startTime)/1000000;
 
         evaluator.updateLatency(latency);
-        System.out.println("[Server Evaluation] Execution Time: " + latency + "ms - EQR: " + evaluator.getEvaluationParameter());
     }
 }
