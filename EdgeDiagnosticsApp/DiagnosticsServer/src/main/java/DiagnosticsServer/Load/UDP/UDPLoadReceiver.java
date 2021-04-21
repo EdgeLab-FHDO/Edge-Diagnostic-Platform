@@ -44,7 +44,7 @@ public class UDPLoadReceiver extends LoadReceiver {
                 DatagramSocket serverSocket = new DatagramSocket(this.getPort())
         ){
             configureSocket(serverSocket);
-            printSocketOptions(serverSocket);
+            //printSocketOptions(serverSocket);
             byte[] receivingDataBuffer = new byte[bufferInformation.getReceiveBuffer()];
             byte[] sendingDataBuffer;
             DatagramPacket inPacket;
@@ -52,7 +52,7 @@ public class UDPLoadReceiver extends LoadReceiver {
             InetAddress replyAddress;
             int replyPort;
             int timeoutCounter = 0;
-            final int TIMEOUT_COUNTER_MAX = 5;
+            final int TIMEOUT_COUNTER_MAX = 2;
             while (timeoutCounter < TIMEOUT_COUNTER_MAX) {
                 try {
                     inPacket = new DatagramPacket(receivingDataBuffer, receivingDataBuffer.length);

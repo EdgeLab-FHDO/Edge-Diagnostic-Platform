@@ -2,7 +2,7 @@
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
     {"type": "UtilityModule", "name": "util"},
-    {"type": "ScenarioModule", "name": "experiment", "path": "Scenarios/scenario3.json"},
+    {"type": "ScenarioModule", "name": "experiment", "path": "C:\\Users\\jpcr3\\Desktop\\Projects\\FH-Dortmund\\Diagnostics-Scenario-Generator\\ScenariosCreated\\UDP_Ping_DataSize.json"},
     {
       "type" : "RESTModule",
       "name":  "rest",
