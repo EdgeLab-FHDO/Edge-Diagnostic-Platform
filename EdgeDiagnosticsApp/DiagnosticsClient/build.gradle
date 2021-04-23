@@ -18,7 +18,7 @@ repositories {
 dependencies {
     // This dependency is used by the application.
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.2'
-    implementation project(':EdgeDiagnosticsApp:CommonUtils')
+    implementation project(':CommonUtils')
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'

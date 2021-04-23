@@ -10,3 +10,4 @@ src/test/resources/testScenario.json
 /EdgeDiagnosticsApp/DiagnosticsClient/out/
 /EdgeDiagnosticsApp/DiagnosticsServer/build/
 /EdgeDiagnosticsApp/DiagnosticsServer/out/
+/EdgeDiagnosticsApp/.gradle/
