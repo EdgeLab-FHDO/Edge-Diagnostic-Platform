@@ -17,12 +17,16 @@ public class Server {
 
     private final ServerRunnerManager manager;
     private final int port;
+    private final String ip;
+    private final String name;
 
-    public Server(int port, String baseURL, String registerURL,String heartbeatURL,
+    public Server(String name, String ip, int port, String baseURL, String registerURL,String heartbeatURL,
                   String instructionsURL) throws ServerCommunicationException {
         this.manager = new ServerRunnerManager();
         this.port = port;
+        this.name = name;
         try {
+            this.ip = ip == null ? this.getIP() : ip;
             ServerPlatformConnection connection = new ServerPlatformConnection(baseURL, registerURL,
                     heartbeatURL,instructionsURL);
             connection.register(this.getJsonRepresentation(false));
@@ -37,10 +41,9 @@ public class Server {
         return myIP.getHostAddress();
     }
 
-    private String getJsonRepresentation(boolean heartbeat) throws UnknownHostException, JsonProcessingException {
-        String id = "diagnostics_server";
-        String completeAddress = this.getIP() + ":" + this.port;
-        RawServerData rawServerData = new RawServerData(id, completeAddress,2000);
+    private String getJsonRepresentation(boolean heartbeat) throws JsonProcessingException {
+        String completeAddress = this.ip + ":" + this.port;
+        RawServerData rawServerData = new RawServerData(this.name, completeAddress,2000);
         ObjectMapper mapper = new ObjectMapper();
         if (heartbeat) {
             return mapper.writerWithView(ServerViews.HeartBeatView.class).writeValueAsString(rawServerData);
@@ -54,12 +57,16 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-
             String baseURL = args[0];
             String registerURL = args[1];
             String heartBeatURL = args[2];
             String instructionsURL = args[3];
-            Server activeInstance = new Server(4444, baseURL,registerURL,
+            String nodeName = args[4];
+            String ip = null;
+            if (args.length > 5) {
+                ip = args[5];
+            }
+            Server activeInstance = new Server(nodeName,ip,4444, baseURL,registerURL,
                     heartBeatURL ,instructionsURL);
             System.out.println("Starting Server");
             activeInstance.getManager().startRunners();
@@ -78,7 +85,9 @@ public class Server {
                     "1. Base URL\n" +
                     "2. Register URL\n" +
                     "3. Heartbeat URL\n" +
-                    "4. Instructions URL\n");
+                    "4. Instructions URL\n" +
+                    "5. Node Name\n" +
+                    "6. [OPTIONAL] Node IP\n" );
             System.exit(-1);
         } catch (ServerCommunicationException | RunnersNotConfiguredException e) {
             e.printStackTrace();
