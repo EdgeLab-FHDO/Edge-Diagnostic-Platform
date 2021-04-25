@@ -1,2 +1,0 @@
-rootProject.name = 'EdgeDiagnosticsApp'
-include('CommonUtils', 'DiagnosticsClient', 'DiagnosticsServer')

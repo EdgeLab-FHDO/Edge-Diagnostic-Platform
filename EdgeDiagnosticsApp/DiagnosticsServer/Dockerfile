@@ -1,17 +1,7 @@
-#Docker file to create images from fatJar custom task in gradle multi-project build
-#Use gradle multistage build, in the first stage install gradle and run the jar task
-FROM gradle:6.6-jdk14-hotspot AS build
-COPY --chown=gradle:gradle ./DiagnosticsServer /home/gradle/EdgeDiagnosticsApp/DiagnosticsServer
-COPY ./CommonUtils /home/gradle/EdgeDiagnosticsApp/CommonUtils
-COPY ./settings.gradle /home/gradle/EdgeDiagnosticsApp/settings.gradle
-WORKDIR /home/gradle/EdgeDiagnosticsApp
-RUN gradle fatJar
-
-#Second stage, copy the generated jar into a new lightweight image with only JRE
-FROM adoptopenjdk/openjdk14:jre-14.0.2_12-alpine
-RUN mkdir /app
-COPY --from=build /home/gradle/EdgeDiagnosticsApp/DiagnosticsServer/build/libs/*.jar /app/server.jar
-EXPOSE 4444
-ENTRYPOINT ["java", "-jar","/app/server.jar"]
-#Use this to put arguments that pass as default to the app, otherwise pass them in docker build
+FROM adoptopenjdk/openjdk15:alpine-jre
+RUN mkdir /DiagnosticsServer
+COPY *.jar /DiagnosticsServer/client.jar
+WORKDIR /DiagnosticsServer
+ENTRYPOINT ["java", "-jar","./server.jar"]
+#Use this to put arguments that pass as default to the app, otherwise pass them in docker run
 CMD []
