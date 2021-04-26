@@ -129,6 +129,20 @@
       }
     },
     {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "clear_output" : "toGET resource "
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "clear_output" : "toGET resource "
+      }
+    },
+    {
       "in" : "rest.diagnostic.report",
       "out" : "util.fileOut",
       "commands" : {
