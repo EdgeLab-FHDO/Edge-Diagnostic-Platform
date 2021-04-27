@@ -56,9 +56,11 @@ public class Client {
 
             // Temporary exit ----------------------
             Scanner in = new Scanner(System.in);
-            String input;
+            String input = "";
             do {
-                input = in.nextLine();
+                if (in.hasNextLine()) {
+                    input = in.nextLine();
+                }
             } while (!input.equals("exit"));
             activeClient.getManager().stopRunners();
             //----------------------------------------

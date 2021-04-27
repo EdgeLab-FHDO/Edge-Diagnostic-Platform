@@ -73,9 +73,11 @@ public class Server {
             System.out.println("Ready");
             // Temporary exit ----------------------
             Scanner in = new Scanner(System.in);
-            String input;
+            String input = "";
             do {
-                input = in.nextLine();
+                if (in.hasNextLine()) {
+                    input = in.nextLine();
+                }
             } while (!input.equals("exit"));
             activeInstance.getManager().stopRunners();
             //----------------------------------------
