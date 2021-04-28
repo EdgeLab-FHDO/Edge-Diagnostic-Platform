@@ -34,12 +34,13 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
      * @param name   Name of this output. Normally hardcoded "MODULE_NAME.fileOut"
      */
     public FileOutput(ImmutablePlatformModule module, String name) {
-        super(module,name);
+        super(module, name);
         this.encoding = StandardCharsets.UTF_8;
     }
 
     /**
      * Based on processed responses from the inputs executes the different functionalities
+     *
      * @param response Must be in a way: "file_out COMMAND" and additionally:
      *                 - Encoding type following the "encoding" command
      *                 - Path and content following the "create" and "append" commands
@@ -49,11 +50,10 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
     public void execute(String response) throws FileOutputException {
         String[] command = response.split(" ");
         if (command[0].equals("file_out")) { //The commands must come like "file_out command"
-            this.getLogger().debug(this.getName(),command[1] +" command received");
-            //this.getLogger().debug(this.getName() + " - " + command[2] +" additional command received");
+            this.getLogger().debug(this.getName(), command[1] + " command received");
             try {
                 switch (command[1]) {
-                    case "encoding" :
+                    case "encoding":
                         setEncoding(command[2]);
                     case "create":
                         writeToFile(command[2], restOfCommand(command), false);
@@ -64,7 +64,7 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
                     default:
                         throw new FileOutputException("Invalid command " + command[1] + " for FileOutput");
                 }
-            } catch (IndexOutOfBoundsException e){
+            } catch (IndexOutOfBoundsException e) {
                 throw new FileOutputException("Arguments missing for command " + response + " to FileOutput");
             }
         }
@@ -83,11 +83,11 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
      * Sets the encoding of the output files.
      *
      * @param encodingName the encoding name.
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/intl/encoding.doc.html">Java Supported Encodings</a>
      * @throws InvalidEncodingException If an invalid or not supported encoding is used
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/intl/encoding.doc.html">Java Supported Encodings</a>
      */
     public void setEncoding(String encodingName) throws InvalidEncodingException {
-        this.getLogger().debug(this.getName(),"Setting the encoding of output files with file name: "+encodingName);
+        this.getLogger().debug(this.getName(), "Setting the encoding of output files with file name: " + encodingName);
         try {
             this.encoding = Charset.forName(encodingName);
         } catch (IllegalCharsetNameException | UnsupportedCharsetException e) {
@@ -97,16 +97,17 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
 
     /**
      * Writes a string into a file
-     * @param path Path for the result file
+     *
+     * @param path    Path for the result file
      * @param content String with content to put on the file. Can contain spaces and special characters (according to selected encoding)
-     * @param append If the file in path already exists and this is true, the file will be appended instead of overwritten.
-     *               If no file exists, a new one will be created regardless of this parameter
+     * @param append  If the file in path already exists and this is true, the file will be appended instead of overwritten.
+     *                If no file exists, a new one will be created regardless of this parameter
      * @throws FileOutputException If an error occurs while writing to the file.
      */
     private void writeToFile(String path, String content, boolean append) throws FileOutputException {
-        this.getLogger().debug(this.getName(),"Writing string to file, path: "+path+",content: "+content+",append: "+append);
+        this.getLogger().debug(this.getName(), "Writing string to file, path: " + path + ", content: " + content + ", append: " + append);
         File file = new File(path);
-        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file,append))) {
+        try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file, append))) {
             byte[] toWrite = content.getBytes(this.encoding);
             out.write(toWrite);
         } catch (IOException e) {
@@ -116,11 +117,12 @@ public class FileOutput extends UtilityModuleObject implements PlatformOutput {
 
     /**
      * Allows to extract the rest of the incoming command to the output, to generate a content string for the file that includes spaces
+     *
      * @param command Command coming from processed input
      * @return String containing all arguments after the action command ("create" or "append") as a single string.
      */
     private String restOfCommand(String[] command) {
-        this.getLogger().debug(this.getName(),"Extracting rest of the incoming command to the output, cmd: "+command);
-        return String.join(" ",Arrays.copyOfRange(command, 3,command.length));
+        this.getLogger().debug(this.getName(), "Extracting rest of the incoming command to the output, cmd: " + command);
+        return String.join(" ", Arrays.copyOfRange(command, 3, command.length));
     }
 }

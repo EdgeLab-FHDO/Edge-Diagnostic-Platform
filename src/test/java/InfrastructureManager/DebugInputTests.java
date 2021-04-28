@@ -34,7 +34,7 @@ public class DebugInputTests {
     @Test
     public void debugLevelMessagesTest() throws InterruptedException {
         String message = "A debug message";
-        String expected = "fromDebug DEBUG-debug-debugLevelMessagesTest:38 -A debug message";
+        String expected = "fromDebug DEBUG-debug-debugLevelMessagesTest:38 - A debug message";
         input.debug(this.input.getName(), message);
         Assert.assertEquals(expected, input.read());
     }

@@ -29,7 +29,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class AdvantEdgeClientTests {
     private final String scenarioName = "dummy-test";
     private final int portNumber = 10500;
-    private static AdvantEdgeModule module ;//= new AdvantEdgeModule();
+    private static AdvantEdgeModule module ;
     private final AdvantEdgeClient client = new AdvantEdgeClient(module, "ae_client","http://localhost",portNumber);
 
     @BeforeClass

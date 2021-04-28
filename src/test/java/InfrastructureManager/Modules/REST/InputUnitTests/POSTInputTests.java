@@ -22,7 +22,7 @@ import static io.restassured.RestAssured.given;
 public class POSTInputTests {
 
     private static RequestSpecification requestSpec;
-    private static RESTModule module ;//= new RESTModule();
+    private static RESTModule module ;
     public static final String JSONExample = "{\"name\":\"example\",\"number\":874}";
 
     @BeforeClass

@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class NodeLimitOutputTests {
 
-    private static RemoteExecutionModule module ;//= new RemoteExecutionModule();
+    private static RemoteExecutionModule module ;
     private final LimitList list = module.getLimitList();
     private final NodeLimitOutput output = new NodeLimitOutput(module,"limit.out");
 

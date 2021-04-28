@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ModuleControllerTests {
 
-    private static UtilityModule module ;//= new UtilityModule();
+    private static UtilityModule module ;
     private final ModuleController output = new ModuleController(module,"util.control");
 
     @BeforeClass

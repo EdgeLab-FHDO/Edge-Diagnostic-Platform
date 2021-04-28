@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class SSHClientTests {
 
-    private static RemoteExecutionModule module ;//= new RemoteExecutionModule();
+    private static RemoteExecutionModule module ;
     private final SSHClient client = new SSHClient(module,"test_ssh");
 
     private void assertExceptionInClient(Class<? extends  Throwable> exceptionClass, String expectedMessage, String commandToClient) {

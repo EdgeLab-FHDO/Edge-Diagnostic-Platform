@@ -40,15 +40,6 @@ public class ScenarioEditorTests {
 
     }
 
-    /*@BeforeClass
-    public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException {
-        Master.resetInstance();
-        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
-        ModuleManager manager = Master.getInstance().getManager();
-        manager.startAllModules();
-        module = findModule(manager);
-    }*/
-
     private static ScenarioModule findModule(ModuleManager manager) throws ModuleNotFoundException, ModuleManagerException {
         return (ScenarioModule) manager.getModules().stream()
                 .filter(m -> m.getName().equals("dummy"))

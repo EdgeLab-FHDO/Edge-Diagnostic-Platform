@@ -55,7 +55,7 @@ public class RestServerRunner extends Runner {
         this.authenticator = new DummyAuthentication();
         this.authenticationHandler = (Request request, Response response) -> {
             if (!authenticator.authenticate()) {
-                this.getLogger().debug(this.getName(),"401 Request not authorized");
+                this.getLogger().debug(this.getName(), "401 Request not authorized");
                 halt(401, "Request not authorized");
             }
         };
@@ -69,13 +69,13 @@ public class RestServerRunner extends Runner {
      * Starts the REST server on the defined port, creates the route for the heartbeat check and performs the authentication.
      */
     private void startServer() {
-        this.getLogger().debug(this.getName(),"Starting Server on port: "+ this.port);
+        this.getLogger().debug(this.getName(), "Starting Server on port: " + this.port);
         Spark.port(this.port);
         initExceptionHandler(this.initExceptionHandler); //Print the exception is an error happens when starting
         before(this.authenticationHandler);
-        this.getLogger().debug(this.getName(),"Server authentication passed");
+        this.getLogger().debug(this.getName(), "Server authentication passed");
         get(heartbeatPath, (request, response) -> response.status());
-        this.getLogger().debug(this.getName(),"Heartbeat route created");
+        this.getLogger().debug(this.getName(), "Heartbeat route created");
     }
 
     /**
@@ -84,7 +84,7 @@ public class RestServerRunner extends Runner {
      */
     private void startServerIfNotRunning() {
         if(!serverIsRunning()) {
-            this.getLogger().debug(this.getName(),"Server not running, restarting server");
+            this.getLogger().debug(this.getName(), "Server not running, restarting server");
             startServer();
             awaitInitialization();
             serverCheck.release();
@@ -98,12 +98,12 @@ public class RestServerRunner extends Runner {
      */
     private boolean serverIsRunning(){
         try{
-            this.getLogger().debug(this.getName(),"Sending heartbeat");
+            this.getLogger().debug(this.getName(), "Sending heartbeat");
             String host = "localhost";
             HttpURLConnection con = (HttpURLConnection)new URL("http", host, port, heartbeatPath).openConnection();
             return con.getResponseCode()==200;
         }catch(Exception e){
-            this.getLogger().debug(this.getName(),"Server not running normally");
+            this.getLogger().debug(this.getName(), "Server not running normally");
             return false;
         }
     }
@@ -112,7 +112,7 @@ public class RestServerRunner extends Runner {
      * Method for stopping the static Spark instance (embedded web server)
      */
     private void killServer() {
-        this.getLogger().debug(this.getName(),"Stopping the static Spark instance");
+        this.getLogger().debug(this.getName(), "Stopping the static Spark instance");
         Spark.stop();
         Spark.awaitStop();
     }
@@ -155,7 +155,7 @@ public class RestServerRunner extends Runner {
      */
     @Override
     public void run() {
-        this.getLogger().debug(this.getName() ,"Starting the rest server");
+        this.getLogger().debug(this.getName(), "Starting the rest server");
         this.startServerIfNotRunning();
         running = true;
     }
@@ -165,7 +165,7 @@ public class RestServerRunner extends Runner {
      */
     @Override
     public void exit() {
-        this.getLogger().debug(this.getName(),"Stopping the server and thread");
+        this.getLogger().debug(this.getName(), "Stopping the server and thread");
         killServer();
         super.exit();
     }

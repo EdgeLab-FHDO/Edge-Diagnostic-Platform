@@ -21,7 +21,7 @@ import static InfrastructureManager.Modules.CommonTestingMethods.assertException
 
 public class FileOutputTests {
 
-    private static UtilityModule module ;// = new UtilityModule();
+    private static UtilityModule module ;
     private final FileOutput fileOutput = new FileOutput(module,"util.fileOut");
     private final String testPath = "src/test/resources/Modules/Utility/FileOutput/";
 

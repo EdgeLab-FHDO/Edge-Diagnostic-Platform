@@ -50,10 +50,10 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
      */
     @Override
     public void execute(String response) throws ScenarioEditorException {
-        this.getLogger().debug(this.getName(),"Scenario execute, response: "+response);
+        this.getLogger().debug(this.getName(), "Scenario execute, response: " + response);
         String[] command = response.split(" ");
         if (command[0].equals("editor")) {
-            this.getLogger().debug(this.getName(),"Editor cmd additional cmd: "+ command[1]);
+            this.getLogger().debug(this.getName(), "Editor cmd additional cmd: " + command[1]);
             try {
                 switch (command[1]) {
                     case "addEvent" -> addEvent(command[2], Integer.parseInt(command[3]));
@@ -76,7 +76,7 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
      * @param executionTime Relative execution time of the event (in ms)
      */
     private void addEvent(String command, int executionTime){
-        this.getLogger().debug(this.getName(),"Add event command: "+ command+ "execution time: "+executionTime);
+        this.getLogger().debug(this.getName(), "Add event command: " + command + "execution time: " + executionTime);
         scenario.addEvent(new Event(command,executionTime));
     }
 
@@ -86,7 +86,7 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
      * @throws EmptyEventListException If the scenario has no events to delete
      */
     private void deleteLastEvent() throws EmptyEventListException {
-        this.getLogger().debug(this.getName(),"Deleting last event");
+        this.getLogger().debug(this.getName(), "Deleting last event");
         if (scenario.getEventList().isEmpty()) {
             throw new EmptyEventListException("Event list is empty!");
         } else {
@@ -104,7 +104,7 @@ public class ScenarioEditor extends ScenarioModuleObject implements PlatformOutp
      * @throws ScenarioIOException If an error happens while writing to the file.
      */
     private void scenarioToFile(String path) throws ScenarioIOException {
-        this.getLogger().debug(this.getName(),"Saving scenario to Json file, path: "+path);
+        this.getLogger().debug(this.getName(), "Saving scenario to Json file, path: " + path);
         String processedName = scenario.getName().substring(0, scenario.getName().indexOf('.'));
         path = path + processedName + ".json"; //Filename according to scenario name
         try {

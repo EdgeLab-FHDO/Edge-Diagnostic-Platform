@@ -52,10 +52,7 @@ public class ModuleDebugInput extends PlatformObject implements PlatformInput {
      * @param message Message to be stored
      */
     public void debug(String name, String message){
-        //this.store("DEBUG - " + message);
-        //String[] temp = message.split("-",2);
-        //temp[0]=temp[0].replaceAll("\\s","");
-        this.store("DEBUG-"+name+"-"+ Thread.currentThread().getStackTrace()[2].getMethodName()+":"+Thread.currentThread().getStackTrace()[2].getLineNumber() +" -" + message);
+        this.store("DEBUG-" + name + "-" + Thread.currentThread().getStackTrace()[2].getMethodName() + ":" + Thread.currentThread().getStackTrace()[2].getLineNumber() + " - " + message);
     }
 
     /**

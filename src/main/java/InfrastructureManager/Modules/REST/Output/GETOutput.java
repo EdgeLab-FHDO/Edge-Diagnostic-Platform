@@ -55,7 +55,7 @@ public class GETOutput extends RESTModuleObject implements PlatformOutput {
      */
     @Override
     public void execute(String response) throws RESTOutputException {
-        this.getLogger().debug(this.getName()," - Executing toGet,response: "+ response);
+        this.getLogger().debug(this.getName(), "Executing toGet,response: " + response);
         String[] command = response.split(" ",3);
         if (command[0].equals("toGET")) {
             try {

@@ -39,15 +39,6 @@ public class ScenarioDispatcherTests {
         outContent = new ByteArrayOutputStream();
     }
 
-    /*@BeforeClass
-    public static void setUp() throws ConfigurationException, ModuleManagerException, ModuleNotFoundException, IOException {
-        Master.resetInstance();
-        Master.getInstance().configure("src/test/resources/Modules/Scenario/ScenarioConfiguration.json");
-        ModuleManager manager = Master.getInstance().getManager();
-        manager.startAllModules();
-        module = findModule(manager);
-    }*/
-
     @BeforeClass
     public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
 
