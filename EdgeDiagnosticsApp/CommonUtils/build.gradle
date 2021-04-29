@@ -1,0 +1,12 @@
+plugins {
+    id 'java'
+}
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+dependencies {
+    // This dependency is used by the application.
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.2'
+}

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 /**
  * Represent a set of command-response pairs, that define a connection between two modules, specifically
@@ -147,7 +148,7 @@ public class CommandSet {
             //Search by regex, parameters of the form " $PARAM"
             //Specifically, the regex translates to: match any character(s) in a lazy way that start with "$",
             // are preceded by one or more whitespaces and are a separate word.
-            response = response.replaceFirst("\\s+\\$.+?\\b", " " + commandAsArray[position]);
+            response = response.replaceFirst("\\s+\\$.+?\\b", " " + Matcher.quoteReplacement(commandAsArray[position]));
         }
         return response;
     }

@@ -1,0 +1,22 @@
+{
+  "load" : {
+    "type" : "FILE",
+    "times" : 10,
+    "interval" : 10,
+    "dataLength" : 4096,
+    "src" : ""
+  },
+  "connection" : {
+    "type" : "TCP",
+    "socketOptions" : {
+      "reuseAddress" : false,
+      "ipTOS" : 0,
+      "receiveBufferSize" : 65536,
+      "sendBufferSize" : 65536,
+      "timeout" : 0,
+      "keepAlive" : false,
+      "nagleAlgorithm" : true,
+      "linger" : -1
+    }
+  }
+}
