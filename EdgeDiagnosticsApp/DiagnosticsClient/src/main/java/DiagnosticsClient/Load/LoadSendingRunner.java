@@ -19,8 +19,8 @@ public class LoadSendingRunner extends AbstractRunner {
     private int experimentLength;
     private String experimentName;
 
-    public LoadSendingRunner(ClientPlatformConnection connection, ServerInformation serverInformation, InstructionQueue instructionQueue) {
-        this.manager = new ClientLoadManager(connection,serverInformation);
+    public LoadSendingRunner(ClientPlatformConnection connection, ServerInformation serverInformation, InstructionQueue instructionQueue, String reportPath) {
+        this.manager = new ClientLoadManager(connection,serverInformation, reportPath);
         this.instructionQueue = instructionQueue;
         this.experimentLength = 1;
         this.instructionCounter=0;

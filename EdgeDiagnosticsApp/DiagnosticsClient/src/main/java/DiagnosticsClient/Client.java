@@ -15,7 +15,7 @@ public class Client {
 
     public Client(String baseURL, String registerURL,
                   String assignURL, String getServerURL, String heartbeatURL,
-                  String instructionsURL, String measurementsURL) throws ClientCommunicationException {
+                  String instructionsURL, String measurementsURL, String reportPath) throws ClientCommunicationException {
         manager = new ClientRunnerManager();
         try {
             ClientPlatformConnection connection = new ClientPlatformConnection(baseURL, registerURL,
@@ -23,7 +23,7 @@ public class Client {
             connection.register(this.getJsonRepresentation(false));
             Thread.sleep(100);
             ServerInformation server = connection.getServer(this.getJsonRepresentation(false));
-            manager.configure(connection,getJsonRepresentation(true),server);
+            manager.configure(connection,getJsonRepresentation(true),server, reportPath);
         } catch (JsonProcessingException | RESTClientException | InterruptedException e) {
             throw new ClientCommunicationException("Communication with diagnostics platform failed: ", e);
         }
@@ -50,8 +50,9 @@ public class Client {
             String heartbeatURL = args[4];
             String instructionsURL = args[5];
             String measurementsURL = args[6];
+            String reportPath = args[7];
             Client activeClient = new Client(baseURL,registerURL,assignURL,
-                    getServerURL, heartbeatURL, instructionsURL, measurementsURL);
+                    getServerURL, heartbeatURL, instructionsURL, measurementsURL, reportPath);
             activeClient.getManager().startRunners();
 
             // Temporary exit ----------------------
@@ -73,7 +74,8 @@ public class Client {
                     "4. Server GET URL\n" +
                     "5. Heartbeat URL\n" +
                     "6. Instructions URL\n" +
-                    "7. Measurements URL");
+                    "7. Measurements URL\n" +
+                    "8. Measurements Report Path");
             System.exit(-1);
         } catch (ClientCommunicationException | RunnersNotConfiguredException e) {
             e.printStackTrace();

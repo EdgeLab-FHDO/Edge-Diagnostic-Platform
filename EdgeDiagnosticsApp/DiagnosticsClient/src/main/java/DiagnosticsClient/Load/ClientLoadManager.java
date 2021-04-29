@@ -21,15 +21,17 @@ public class ClientLoadManager extends BasicLoadManager {
     private final String address;
     private final int port;
     private List<Double> latencyMeasurements;
+    private final String reportPath;
     private final ClientPlatformConnection connection;
     private ClientSocketOptions options;
     private LoadSender sender;
 
-    public ClientLoadManager(ClientPlatformConnection connection, ServerInformation serverInformation) {
+    public ClientLoadManager(ClientPlatformConnection connection, ServerInformation serverInformation, String reportPath) {
         this.address = serverInformation.getIpAddress();
         this.port = serverInformation.getPort();
         this.connection = connection;
         this.latencyMeasurements = new ArrayList<>();
+        this.reportPath = reportPath;
     }
 
     @Override
@@ -50,9 +52,8 @@ public class ClientLoadManager extends BasicLoadManager {
     public void reportMeasurements(String experimentName) throws RESTClientException, JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
-
         String latencyString = formatMeasurements();
-        result.put("path","LatencyReports/" + experimentName + "_results.txt");
+        result.put("path", reportPath + "\\" + experimentName + "_results.txt");
         result.put("content", latencyString);
         String body = mapper.writeValueAsString(result);
         connection.sendMeasurements(body);

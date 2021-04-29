@@ -2,7 +2,7 @@
   "modules": [
     {"type": "ConsoleModule", "name": "console"},
     {"type": "UtilityModule", "name": "util"},
-    {"type": "ScenarioModule", "name": "experiment", "path": "C:\\Users\\jpcr3\\Desktop\\Projects\\FH-Dortmund\\Diagnostics-Scenario-Generator\\ScenariosCreated\\TCP_Ping_DataSize_2.json"},
+    {"type": "ScenarioModule", "name": "experiment", "path": "C:\\Users\\jpcr3\\Desktop\\ESM_FH-Dortmund\\Semester4\\Master_Thesis\\Experiments\\ExperimentFiles\\Scenarios\\TCP_Ping_AE_Latency.json"},
     {
       "type" : "RESTModule",
       "name":  "rest",
@@ -26,7 +26,7 @@
       ]
     },
     {"type" :  "MatchMakingModule-Random", "name":  "mm"},
-    {"type": "AdvantEdgeModule", "name": "ae", "port": "443", "address": "https://8248625e-f750-4a14-ae31-9d4ee9f585e8.mock.pstmn.io"}
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "10002", "address": "http://localhost"}
   ],
 
   "connections" : [
@@ -158,9 +158,9 @@
     },
     {
       "in" : "experiment.scenario",
-      "out" : "console.out",
+      "out" : "ae.out",
       "commands" : {
-        "ae $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "console advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
+        "ae $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
       }
     },
     {
