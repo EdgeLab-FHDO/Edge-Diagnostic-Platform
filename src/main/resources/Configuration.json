@@ -72,6 +72,11 @@
         "resume_scenario" : "dispatcher resume"
       }
     },
+    { "in" : "dummy.debug",
+      "out" : "console.out",
+      "commands" : {
+        "fromDebug $message" : "console $message" }
+    },
     {
       "in" : "rest.post2",
       "out" : "console.out",

@@ -1,11 +1,17 @@
 package InfrastructureManager.Modules.AdvantEDGE.OutputUnitTests;
 
+import InfrastructureManager.Configuration.Exception.ConfigurationException;
+import InfrastructureManager.Master;
+import InfrastructureManager.ModuleManagement.Exception.Creation.ModuleManagerException;
 import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleExecutionException;
+import InfrastructureManager.ModuleManagement.Exception.Execution.ModuleNotFoundException;
 import InfrastructureManager.Modules.AdvantEDGE.AdvantEdgeModule;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.AdvantEdgeModuleException;
 import InfrastructureManager.Modules.AdvantEDGE.Exception.ErrorInResponseException;
 import InfrastructureManager.Modules.AdvantEDGE.Output.AdvantEdgeClient;
+import InfrastructureManager.Modules.Scenario.ScenarioModule;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,8 +29,20 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 public class AdvantEdgeClientTests {
     private final String scenarioName = "dummy-test";
     private final int portNumber = 10500;
-    AdvantEdgeModule module = new AdvantEdgeModule();
+    private static AdvantEdgeModule module ;
     private final AdvantEdgeClient client = new AdvantEdgeClient(module, "ae_client","http://localhost",portNumber);
+
+    @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/AdvantEDGE/AdvantEdgeModuleConfiguration.json");
+        Master.getInstance().getManager().startModule("ae");
+        module = (AdvantEdgeModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("ae"))
+                .findFirst()
+                .orElseThrow();
+
+    }
 
     @Rule //Mock server on port 10500
     public WireMockRule rule = new WireMockRule(options().port(portNumber),false);

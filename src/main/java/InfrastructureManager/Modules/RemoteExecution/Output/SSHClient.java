@@ -67,7 +67,9 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
     @Override
     public void execute(String response) throws SSHException {
         String[] command = response.split(" ");
+        this.getLogger().debug(this.getName(), "SSH execute, response: " + response);
         if (command[0].equals("ssh")) { //The commands must come like "ssh command"
+            this.getLogger().debug(this.getName(), "SSH command additional cmds: " + command[1]);
             try {
                 switch (command[1]) {
                     case "execute" -> {
@@ -100,6 +102,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
         if (!isSetUp()) {
             throw new ClientNotInitializedException("SSH Client has not been set up");
         }
+        this.getLogger().debug(this.getName(), "Sending a file with path: " + localFilePath + " with dest add: " + remoteDestFilePath);
         //Resources declaration in null, so they can be closed in the finally
         Session session = null;
         ChannelExec channel = null;
@@ -112,8 +115,9 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
         }
         //Try-with-resources, closes the stream automatically
         try (FileInputStream fileStream = new FileInputStream(localFile)) {
-
+            this.getLogger().debug(this.getName(), "Creating a session");
             session = createSession();
+            this.getLogger().debug(this.getName(), "Connecting to SSH session");
             session.connect(); //Connect to SSH Session
 
             String command = "scp -t " + remoteDestFilePath; //Execute scp -t file in the remote
@@ -123,6 +127,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
             out = channel.getOutputStream(); //Get stream to send to remote
             in = channel.getInputStream(); //Get stream to receive from remote
 
+            this.getLogger().debug(this.getName(), "Start the channel and send the command");
             channel.connect(); //Start the channel and send the command
 
             checkSCPAck(in); //Check for SCP acknowledge
@@ -134,6 +139,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
 
             checkSCPAck(in); //Check if received
 
+            this.getLogger().debug(this.getName(), "Sending content of the file");
             // send content of the file
             byte[] buf=new byte[1024];
             while(true){
@@ -152,6 +158,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
             throw new FileSendingException("Error while sending file", e);
         } finally {
             //Close IO Resources
+            this.getLogger().debug(this.getName(), "Closing IO Resources");
             if (channel != null) channel.disconnect();
             if (session != null) session.disconnect();
             if (in != null) try {in.close();} catch (IOException ignored) {}
@@ -168,7 +175,9 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
      * from the stream and adds it to the exception
      */
     private void checkSCPAck(InputStream in) throws IOException, SCPProtocolException {
+        this.getLogger().debug(this.getName(), "Checking for ack response ");
         int ack=in.read();
+        this.getLogger().debug(this.getName(), "Ack response: " + ack);
         switch (ack) {
             case 0: return;
             case 1:
@@ -187,6 +196,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
      * @throws IOException If an error happens while reading from the stream
      */
     private String getErrorFromInputStream (InputStream in) throws IOException {
+        this.getLogger().debug(this.getName(), "Response from SCP");
         int ch;
         StringBuilder sb=new StringBuilder();
         do {
@@ -210,6 +220,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
         if (!isSetUp()) {
             throw new ClientNotInitializedException("SSH Client has not been set up");
         }
+        this.getLogger().debug(this.getName(), "Executing command on remote machine, cmd: " + command + ", background_flag: " + background);
         //Resources declaration in null, so they can be closed in the finally
         Session session = null;
         ChannelExec channel = null;
@@ -220,6 +231,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
         command = modifyCommand(command,background,sudo); //Modify the command according to if its sudo and background
 
         try {
+            this.getLogger().debug(this.getName(), "Crating and connecting to SSH Session");
             session = createSession();
             session.connect(); //Connect to the SSH session
 
@@ -227,6 +239,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
             channel.setCommand(command); //Create an execution channel and set the command
 
             if (!background) { //If commands runs on the front, create a stream to sink its output
+                this.getLogger().debug(this.getName(), "Creating a stream to sink its output");
                 responseStream = new ByteArrayOutputStream();
                 channel.setOutputStream(responseStream);
             }
@@ -235,10 +248,12 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
             channel.connect(); //Connect to the channel and send the command
 
             if (sudo) { //If sudo command,write the password to the STDIN
+                this.getLogger().debug(this.getName(), "Writing the password to the STDIN");
                 toChannel.write((password + "\n").getBytes());
                 toChannel.flush();
             }
             if (!background) { //If the command runs on the front, print its output to the console
+                this.getLogger().debug(this.getName(), "Cmd running on front, print to console");
                 do {
                     Thread.sleep(100);
                 } while (channel.isConnected()); //Wait for command to be over in the remote
@@ -250,6 +265,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
             throw new CommandExecutionException("Error while executing command", e);
         } finally {
             //Close IO Resources
+            this.getLogger().debug(this.getName(), "Closing IO Resources");
             if (channel != null) channel.disconnect();
             if (session != null) session.disconnect();
             if (responseStream != null) try {responseStream.close();} catch (IOException ignored) {}
@@ -264,6 +280,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
      * @throws JSchException If an error happens while creating the session
      */
     private Session createSession() throws JSchException {
+        this.getLogger().debug(this.getName(), "Creating SSH session");
         Session session = jsch.getSession(username,host,port);
         session.setPassword(password);
         session.setConfig("StrictHostKeyChecking", "no");
@@ -279,6 +296,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
      * @return Command ready to be sent to the remote
      */
     private String modifyCommand(String command, boolean background, boolean sudo) {
+        this.getLogger().debug(this.getName(), "Modifying the command: " + command + ", back ground flag is " + background + " & sudo flag is " + sudo);
         if (background && sudo) {
             return command.replaceFirst("sudo\\s+","sudo -b -S ") + " > /dev/null 2>&1";
         } else if (background) {
@@ -299,6 +317,7 @@ public class SSHClient extends RemoteExecutionModuleObject implements PlatformOu
      * @param password Password for the username
      */
     private void setUpClient(String host, String port, String username, String password) {
+        this.getLogger().debug(this.getName(), "Setting up client, host: " + host + ", port: " + port + ", username: " + username + ", pass: " + password);
         this.username = username;
         this.host = host;
         this.password = password;
