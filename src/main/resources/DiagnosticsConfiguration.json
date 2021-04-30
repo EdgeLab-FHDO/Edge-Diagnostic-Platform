@@ -1,0 +1,174 @@
+{
+  "modules": [
+    {"type": "ConsoleModule", "name": "console"},
+    {"type": "UtilityModule", "name": "util"},
+    {"type": "ScenarioModule", "name": "experiment", "path": "C:\\Users\\jpcr3\\Desktop\\ESM_FH-Dortmund\\Semester4\\Master_Thesis\\Experiments\\ExperimentFiles\\Scenarios\\TCP_Ping_AE_Latency.json"},
+    {
+      "type" : "RESTModule",
+      "name":  "rest",
+      "port": 4567,
+      "baseURL": "/rest",
+      "POST" : [
+        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "diagnostic.report", "URL":  "/diagnostics/report", "command":  "latency_report $path $content", "information": ["path", "content"]},
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
+        {"name" : "client.heartbeat","URL": "/client/heartbeat","command": "client_hb $body","information":  []},
+        {"name" : "node.heartbeat","URL": "/node/heartbeat","command": "node_hb $body","information":  []},
+        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []},
+        {"name" : "diagnostic.next.client", "URL":  "/diagnostics/next", "command": "next_instruction_client", "information" : []},
+        {"name" : "diagnostic.next.server", "URL":  "/diagnostics/server/next", "command": "next_instruction_server", "information" : []}
+      ],
+      "GET" : [
+        {"name": "mm.give_node", "URL": "/client/get_node/:client_id"},
+        {"name" : "diagnostic.client", "URL": "/diagnostics/instructions"},
+        {"name" :  "diagnostic.server", "URL":  "/diagnostics/server/instructions"}
+      ]
+    },
+    {"type" :  "MatchMakingModule-Random", "name":  "mm"},
+    {"type": "AdvantEdgeModule", "name": "ae", "port": "10002", "address": "http://localhost"}
+  ],
+
+  "connections" : [
+    {
+      "in" : "console.in",
+      "out" : "util.control",
+      "commands" : {
+        "exit" : "util exit"
+      }
+    },
+    {
+      "in" : "rest.client.disconnect",
+      "out" : "mm.out",
+      "commands" : {
+        "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client.heartbeat",
+      "out" : "mm.out",
+      "commands" : {
+        "client_hb $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node.heartbeat",
+      "out" : "mm.out",
+      "commands" : {
+        "node_hb $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "mm.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "mm.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.client",
+      "out" : "console.out",
+      "commands" : {
+        "register_client $client_as_json_string" : "console register_client $client_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.node",
+      "out" : "console.out",
+      "commands" : {
+        "register_node $node_as_json_string" : "console register_node $node_as_json_string"
+      }
+    },
+    {
+      "in" : "rest.assign",
+      "out" : "mm.out",
+      "commands" : {
+        "assign_client $client_id" : "matchMaker assign_client $client_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "console.out",
+      "commands" : {
+        "give_node $client_id $node_id": "console client $client_id was assigned node $node_id"
+      }
+    },
+    {
+      "in" : "mm.in",
+      "out" : "rest.mm.give_node",
+      "commands" : {
+        "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "experiment.dispatcher",
+      "commands" : {
+        "start_experiment": "dispatcher run"
+      }
+    },
+    {
+      "in" : "experiment.scenario",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "client_server $client_instruction $server_instruction" : "toGET resource $client_instruction"
+      }
+    },
+    {
+      "in" : "experiment.scenario",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "client_server $client_instruction $server_instruction" : "toGET resource $server_instruction"
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.client",
+      "commands" : {
+        "clear_output" : "toGET resource "
+      }
+    },
+    {
+      "in" : "console.in",
+      "out" : "rest.diagnostic.server",
+      "commands" : {
+        "clear_output" : "toGET resource "
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
+      "out" : "util.fileOut",
+      "commands" : {
+        "latency_report $path $content" : "file_out append $path $content"
+      }
+    },
+    {
+      "in" : "rest.diagnostic.report",
+      "out" : "console.out",
+      "commands" : {
+        "latency_report $path $content" : "console Received report in $path"
+      }
+    },
+    {
+      "in" : "experiment.scenario",
+      "out" : "ae.out",
+      "commands" : {
+        "ae $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS" : "advantEdge networkUpdate $SANDBOX_NAME $ELEMENT_NAME $TYPE $TDL $TUL $LATENCY $JITTER $PACKET_LOSS"
+      }
+    },
+    {
+      "in" : "experiment.scenario",
+      "out" : "console.out",
+      "commands" : {
+        "compute $limit" : "console node_tag $limit"
+      }
+    }
+  ]
+}

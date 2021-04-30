@@ -9,17 +9,20 @@
       "port": 4567,
       "baseURL": "/rest",
       "POST" : [
-        {"name" : "client.register","URL": "/client/register","command": "register_client $body","information":  []},
-        {"name" : "client.heartbeat","URL": "/client/beat","command": "client_receive_heart_beat $body","information":  []},
-        {"name" : "node.register","URL": "/node/register","command": "register_node $body","information":  []},
-        {"name" : "node.heartbeat","URL": "/node/beat","command": "node_receive_heart_beat $body","information":  []},
-        {"name" : "client.assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
-        {"name" : "client.report","URL": "/client/report","command": "report_latency $path $content","information":  ["path", "content"]},
-        {"name" : "client.disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
+        {"name" : "post1","URL": "/post_test","command": "test1 $body","information":  []},
+        {"name" : "post2","URL": "/post_test2","command": "test2 $name $number","information": ["name", "number"]},
+        {"name" : "client","URL": "/client/register","command": "register_client $body","information":  []},
+        {"name" : "node","URL": "/node/register","command": "register_node $body","information":  []},
+        {"name" : "assign","URL": "/client/assign","command": "assign_client $id","information":  ["id"]},
+        {"name" : "clientHeartBeatReceived","URL": "/client/heartbeat","command": "client_receive_heart_beat $body","information":  []},
+        {"name" : "nodeHeartBeatReceived","URL": "/node/heartbeat","command": "node_receive_heart_beat $body","information":  []},
+        {"name" : "disconnect","URL": "/client/disconnect","command": "disconnect_client $body","information":  []}
       ],
       "GET" : [
         {"name" : "get1", "URL":  "/limit_test"},
-        {"name": "client.getnode", "URL": "/client/get_node/:client_id"}
+        {"name": "get2", "URL": "/client/get_node/:client_id"},
+        {"name" : "get_diag", "URL": "/diagnostics/instructions"},
+        {"name" :  "get_diag_server", "URL":  "/diagnostics/server/instructions"}
       ]
     },
     {"type": "AdvantEdgeModule", "name": "ae", "port": "80", "address": "http://localhost"},
@@ -69,6 +72,18 @@
         "resume_scenario" : "dispatcher resume"
       }
     },
+    { "in" : "dummy.debug",
+      "out" : "console.out",
+      "commands" : {
+        "fromDebug $message" : "console $message" }
+    },
+    {
+      "in" : "rest.post2",
+      "out" : "console.out",
+      "commands" : {
+        "test2 $name $number" : "console $name $number"
+      }
+    },
     {
       "in" : "console.in",
       "out" : "rest.get1",
@@ -106,7 +121,7 @@
       }
     },
     {
-      "in" : "rest.client.register",
+      "in" : "rest.client",
       "out" : "mm.out",
       "commands" : {
         "register_client $client_as_json_string" : "matchMaker register_client $client_as_json_string"
@@ -114,35 +129,52 @@
     },
 
     {
-      "in" : "rest.client.disconnect",
+      "in" : "rest.disconnect",
       "out" : "mm.out",
       "commands" : {
         "disconnect_client $client_as_json_string" : "matchMaker disconnect_client $client_as_json_string"
       }
     },
+
     {
-      "in" : "rest.node.register",
+      "in" : "rest.clientHeartBeatReceived",
+      "out" : "mm.out",
+      "commands" : {
+        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.nodeHeartBeatReceived",
+      "out" : "mm.out",
+      "commands" : {
+        "node_receive_heart_beat $client_as_json_string" : "matchMaker node_receive_heart_beat $client_as_json_string"
+      }
+    },
+
+    {
+      "in" : "rest.node",
       "out" : "mm.out",
       "commands" : {
         "register_node $node_as_json_string" : "matchMaker register_node $node_as_json_string"
       }
     },
     {
-      "in" : "rest.client.register",
+      "in" : "rest.client",
       "out" : "console.out",
       "commands" : {
         "register_client $client_as_json_string" : "console register_client $client_as_json_string"
       }
     },
     {
-      "in" : "rest.node.register",
+      "in" : "rest.node",
       "out" : "console.out",
       "commands" : {
         "register_node $node_as_json_string" : "console register_node $node_as_json_string"
       }
     },
     {
-      "in" : "rest.client.assign",
+      "in" : "rest.assign",
       "out" : "mm.out",
       "commands" : {
         "assign_client $client_id" : "matchMaker assign_client $client_id"
@@ -157,30 +189,23 @@
     },
     {
       "in" : "mm.in",
-      "out" : "rest.client.getnode",
+      "out" : "rest.get2",
       "commands" : {
         "give_node $client_id $node_json_body": "toGET resource $client_id $node_json_body"
       }
     },
     {
-      "in" : "rest.client.report",
-      "out" : "util.fileOut",
+      "in" : "console.in",
+      "out" : "rest.get_diag",
       "commands" : {
-        "report_latency $path $content": "file_out append $path $content"
+        "dummy_ping" : "toGET resource {\"load\":{\"type\":\"PING\",\"times\":1000,\"interval\":1,\"dataLength\":4},\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"ipTOS\":0,\"receiveBufferSize\":65536,\"sendBufferSize\":65536,\"timeout\":0,\"keepAlive\":false,\"nagleAlgorithm\":true,\"linger\":-1}}}"
       }
     },
     {
-      "in" : "rest.node.heartbeat",
-      "out" : "mm.out",
+      "in" : "console.in",
+      "out" : "rest.get_diag_server",
       "commands" : {
-        "node_receive_heart_beat $node_as_json_string" : "matchMaker node_receive_heart_beat $node_as_json_string"
-      }
-    },
-    {
-      "in" : "rest.client.heartbeat",
-      "out" : "mm.out",
-      "commands" : {
-        "client_receive_heart_beat $client_as_json_string" : "matchMaker client_receive_heart_beat $client_as_json_string"
+        "dummy_ping" : "toGET resource {\"loadType\":\"PING\",\"connection\":{\"type\":\"TCP\",\"socketOptions\":{\"reuseAddress\":false,\"receiveBufferSize\":65536,\"timeout\":0}}}"
       }
     }
   ]

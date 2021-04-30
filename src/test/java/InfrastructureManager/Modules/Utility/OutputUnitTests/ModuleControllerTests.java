@@ -13,8 +13,20 @@ import org.junit.Test;
 
 public class ModuleControllerTests {
 
-    private final UtilityModule module = new UtilityModule();
+    private static UtilityModule module ;
     private final ModuleController output = new ModuleController(module,"util.control");
+
+    @BeforeClass
+    public static void setUpMasterAndStartServer() throws ModuleNotFoundException, ConfigurationException, ModuleManagerException {
+        Master.resetInstance();
+        Master.getInstance().configure("src/test/resources/Modules/Utility/UtilityModuleTestConfiguration.json");
+        Master.getInstance().getManager().startModule("util");
+        module = (UtilityModule) Master.getInstance().getManager().getModules().stream()
+                .filter(m -> m.getName().equals("util"))
+                .findFirst()
+                .orElseThrow();
+
+    }
 
     @BeforeClass
     public static void setUp() throws ConfigurationException, ModuleManagerException {

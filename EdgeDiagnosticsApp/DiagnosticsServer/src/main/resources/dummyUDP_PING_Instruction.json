@@ -1,0 +1,14 @@
+{
+  "loadType" :  "PING",
+  "connection" : {
+    "type" : "UDP",
+    "socketOptions" : {
+      "reuseAddress" : false,
+      "receiveBufferSize" : 65536,
+      "timeout" : 1000,
+      "ipTOS" : 0,
+      "sendBufferSize" : 65536,
+      "broadcast" : false
+    }
+  }
+}
