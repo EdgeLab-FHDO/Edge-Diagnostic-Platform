@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":10,"i1":10};
+<script type="text/javascript">var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -56,13 +56,13 @@ loadScripts(document, 'script');</script>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -90,12 +90,53 @@ loadScripts(document, 'script');</script>
 <div class="inheritance">Application.MarkerDetection.OpenCVClient.ConnectionEvaluator</div>
 </div>
 <section class="description">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><code><a href="EQREvaluator.html" title="class in Application.MarkerDetection.OpenCVClient">EQREvaluator</a></code></dd>
+</dl>
 <hr>
 <pre>public class <span class="typeNameLabel">ConnectionEvaluator</span>
 extends java.lang.Object</pre>
 </section>
 <section class="summary">
 <ul class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<li class="blockList">
+<section class="fieldSummary"><a id="field.summary">
+<!--   -->
+</a>
+<h2>Field Summary</h2>
+<div class="memberSummary">
+<table>
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<thead>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colSecond" scope="col">Field</th>
+<th class="colLast" scope="col">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#disconnect">disconnect</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#evaluating">evaluating</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#evaluation">evaluation</a></span></code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li class="blockList">
 <section class="constructorSummary"><a id="constructor.summary">
@@ -145,8 +186,38 @@ extends java.lang.Object</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i1">
+<td class="colFirst"><code>int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEvaluationParameter()">getEvaluationParameter</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i2">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#handleException(java.lang.Exception)">handleException</a></span>&#8203;(java.lang.Exception&nbsp;e)</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i3">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#initialize()">initialize</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i4">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isEvaluating()">isEvaluating</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i5">
 <td class="colFirst"><code>boolean</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#isGood()">isGood</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i6">
+<td class="colFirst"><code>boolean</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#needToDisconnect()">needToDisconnect</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor" id="i7">
+<td class="colFirst"><code>void</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setDisconnect(boolean)">setDisconnect</a></span>&#8203;(boolean&nbsp;disconnect)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -164,6 +235,34 @@ extends java.lang.Object</pre>
 </section>
 <section class="details">
 <ul class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<li class="blockList">
+<section class="fieldDetails"><a id="field.detail">
+<!--   -->
+</a>
+<h2>Field Details</h2>
+<ul class="blockList">
+<li class="blockList">
+<section class="detail">
+<h3><a id="evaluation">evaluation</a></h3>
+<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">evaluation</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="evaluating">evaluating</a></h3>
+<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">evaluating</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="disconnect">disconnect</a></h3>
+<div class="memberSignature"><span class="modifiers">protected</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">disconnect</span></div>
+</section>
+</li>
+</ul>
+</section>
+</li>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <li class="blockList">
 <section class="constructorDetails"><a id="constructor.detail">
@@ -199,6 +298,42 @@ extends java.lang.Object</pre>
 <div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isGood</span>()</div>
 </section>
 </li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="isEvaluating()">isEvaluating</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">isEvaluating</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="needToDisconnect()">needToDisconnect</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">boolean</span>&nbsp;<span class="memberName">needToDisconnect</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="setDisconnect(boolean)">setDisconnect</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">setDisconnect</span>&#8203;(<span class="arguments">boolean&nbsp;disconnect)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="initialize()">initialize</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">initialize</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="handleException(java.lang.Exception)">handleException</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">void</span>&nbsp;<span class="memberName">handleException</span>&#8203;(<span class="arguments">java.lang.Exception&nbsp;e)</span></div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="getEvaluationParameter()">getEvaluationParameter</a></h3>
+<div class="memberSignature"><span class="modifiers">public</span>&nbsp;<span class="returnType">int</span>&nbsp;<span class="memberName">getEvaluationParameter</span>()</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -232,13 +367,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
