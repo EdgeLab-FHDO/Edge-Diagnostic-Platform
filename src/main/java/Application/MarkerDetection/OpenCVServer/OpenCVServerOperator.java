@@ -37,6 +37,8 @@ public class OpenCVServerOperator implements CoreOperator {
     public HeartBeatRunner beatRunner;
     private String beatBody;
 
+    private LatencyReporter latencyReport;
+
     private static OpenCVServerOperator instance = null;
 
     private OpenCVServerOperator() {
@@ -48,6 +50,7 @@ public class OpenCVServerOperator implements CoreOperator {
         beatBody = "";
         serverId = "";
         serverIp = "";
+        latencyReport = new LatencyReporter();
     }
 
     public void startConnection() throws IOException {
@@ -66,8 +69,23 @@ public class OpenCVServerOperator implements CoreOperator {
         
         if(currentImage != null) {
             Mat subject = ImageProcessor.getBufferedImageMat(currentImage);
+            
+            //Start measuring the processing time for detection
+            long startDetectionTime = System.nanoTime();
 
             detector.detect(subject);
+
+            //End measuring the processing time for detection
+            long endDetectionTime = System.nanoTime();
+            //Store the processing time for detection
+            try {
+                latencyReport.queueLatencyReport("server", true, startDetectionTime, endDetectionTime, "serverDetect");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //Start measuring the time to send detection result to client
+            long startSendTime = System.nanoTime();
 
             String ids = OpenCVUtil.serializeMat(detector.getIds());
             String corners = OpenCVUtil.serializeMatList(detector.getCorners());
@@ -81,6 +99,16 @@ public class OpenCVServerOperator implements CoreOperator {
             result = mapper.writeValueAsString(resultObject);
 
             out.println(result);
+
+            //End measuring the time to send detection result to client
+            long endSendTime = System.nanoTime();
+            //Store the time to send detection result to client
+            try {
+                latencyReport.queueLatencyReport("server", true, startSendTime, endSendTime, "sendResult");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else {
             clientSocket.sendUrgentData(1);
         }

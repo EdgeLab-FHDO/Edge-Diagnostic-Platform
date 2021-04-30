@@ -20,7 +20,7 @@ public class LatencyReporterRunner implements Runnable {
             String reportedBody = null;
             try {
                 //TODO get reported body
-                reportedBody = activeOperator.getReportBody();
+                reportedBody = activeOperator.getLatencyReport();
                 reporter.report(reportedBody);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();

@@ -26,17 +26,18 @@ public class OpenCVClientOperator implements CoreOperator {
     private ObjectMapper mapper;
     private String clientId;
 
+    private LatencyReporter latencyReport;
+
     //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
     private final String fileName= "singlemarkerssource.png";
     private final String resultFileName = "detected.png";
     private final String fileExtension = "png";
     private Mat subject;
     private BufferedImage currentImage;
-    private List<String> reportQueue;
+    
 
     public Semaphore ipLock;
     public Semaphore serverLock;
-    public Semaphore reportLock;
 
     //Server Communication Properties
     public boolean utilizeServer;
@@ -52,18 +53,16 @@ public class OpenCVClientOperator implements CoreOperator {
 
     private static OpenCVClientOperator instance = null;
 
-    private boolean debugMode = true; //TODO make this available when starting application
-
+    
     private OpenCVClientOperator() {
         mapper = new ObjectMapper();
         ipLock = new Semaphore(1);
         serverLock = new Semaphore(1);
-        reportLock = new Semaphore(1);
         utilizeServer = false;
         detector = new DetectMarker();
         connected = false;
-        reportQueue = new ArrayList<>();
         clientId = "";
+        latencyReport = new LatencyReporter();
     }
 
     public void startMasterCommunication() {
@@ -92,12 +91,27 @@ public class OpenCVClientOperator implements CoreOperator {
         }
     }
 
-    public String sendImage() throws IOException {
+    public String sendImage() throws IOException, JsonProcessingException, InterruptedException{
         String resp = "";
+
+        //Start measuring the processing time to send image to server
+        long startTime = System.nanoTime();
 
         currentImage = ImageIO.read(new File(fileName));
         ImageIO.write(currentImage, fileExtension, clientSocket.getOutputStream());
+
+        //End measuring the processing time to send image to server
+        long endTime = System.nanoTime();
+        //Store the processing time to send image to server
+        latencyReport.queueLatencyReport("Server", false, startTime, endTime, "sendImage", ip, ipLock);
+
+        //Start measuring the time to read response from server
+        startTime = System.nanoTime();
         resp = in.readLine();
+        //End measuring the time to read response from server
+        endTime = System.nanoTime();
+        //Store the time to read response from server
+        latencyReport.queueLatencyReport("Server", false, startTime, endTime, "readResult", ip, ipLock);
 
         return resp;
     }
@@ -235,12 +249,20 @@ public class OpenCVClientOperator implements CoreOperator {
             startConnection();
             response = sendImage().replace("\\\\", "");
 
+            //Start measuring the time to analyze detection result from server
+            long analyzeStartTime = System.nanoTime();
             node = mapper.readTree(response);
             Mat ids = OpenCVUtil.deserializeMat(node.get("ids").asText());
             List<Mat> corners = OpenCVUtil.deserializeMatList(node.get("corners").asText());
 
             detector.setIds(ids);
             detector.setCorners(corners);
+
+            //End measuring the time to analyze detection result from server
+            long analyzeEndTime = System.nanoTime();
+            //Store the time to analyze detection result from server
+            latencyReport.queueLatencyReport("Client", false, analyzeStartTime, analyzeEndTime, "analyzeResult", ip, ipLock);
+
         } catch (IOException | InterruptedException e) {
             stopConnection();
             throw new RemoteExecutionException(e);
@@ -248,68 +270,33 @@ public class OpenCVClientOperator implements CoreOperator {
     }
 
     public void detectMarkerInClient() {
+        //Start measuring the detection time in client
+        long startTime = System.nanoTime();
         detector.detect(subject);
-    }
-
-    //TODO move this to a latency reporter utility
-    public void queueLatencyReport(String location, boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
-        String timestamp = new SimpleDateFormat("YYYY-MM-dd_HH:mm:ss").format(new Date());
-        long latency = (endTime-startTime)/1000000;
-        String reportedIp="";
-        if(debugMode) {
-            System.out.println("[" + timestamp + "] Detected in " + location + " Execution Time: " + latency + "ms");
-        }
+        //End measuring the detection time in client
+        long endTime = System.nanoTime();
+        //Store the detection time in client
         try {
-            ipLock.acquire();
-            reportedIp = ip;
-        } finally {
-            ipLock.release();
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode resultObject = mapper.createObjectNode();
-        resultObject.put("timestamp", timestamp);
-        resultObject.put("latency", latency);
-        resultObject.put("use_server", serverUsage);
-        resultObject.put("server_ip", reportedIp);
-
-        String result = mapper.writeValueAsString(resultObject);
-
-        try {
-            reportLock.acquire();
-            reportQueue.add(result);
-        } finally {
-            reportLock.release();
-        }
-    }
-
-    public String getReportBody() {
-        String returnedResult = "";
-        try {
-            reportLock.acquire();
-            if(!reportQueue.isEmpty()) {
-                ObjectMapper mapper = new ObjectMapper();
-                ObjectNode result = mapper.createObjectNode();
-                String reportFileName = "report_" + clientId + ".txt";
-
-                result.put("path", reportFileName);
-                result.put("content", String.join("", reportQueue));
-                returnedResult = mapper.writeValueAsString(result);
-                reportQueue.clear();
-            }
-        } catch (InterruptedException | JsonProcessingException e) {
+            latencyReport.queueLatencyReport("Client", false, startTime, endTime, "clientDetect", ip, ipLock);
+        } catch (JsonProcessingException | InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            reportLock.release();
         }
-        return returnedResult;
     }
+
 
     public void markerDetection() throws JsonProcessingException, InterruptedException {
         Mat result;
         long startTime = System.nanoTime();
         String location = "Client";
+
+        //Start measuring the time to read image locally
+        long readImageStartTime = System.nanoTime();
         subject = ImageProcessor.getImageMat(fileName);
+        //End measuring the time to read image locally
+        long readImageEndTime = System.nanoTime();
+        //Store the time to read image locally
+        latencyReport.queueLatencyReport("Client", false, readImageStartTime, readImageEndTime, "readImage", ip, ipLock);
+
         boolean serverUsage = false;
 
         try {
@@ -330,12 +317,23 @@ public class OpenCVClientOperator implements CoreOperator {
         } finally {
             serverLock.release();
         }
+        //Start measuring the processing time for output result
+        long writeResultStartTime = System.nanoTime();
 
         result = detector.drawDetectedMarkers(subject);
         ImageProcessor.writeImage(resultFileName, result);
 
+        //End measuring the processing time for output result
+        long writeResultEndTime = System.nanoTime();
+        //Store the processing time for output result
+        latencyReport.queueLatencyReport("Client", serverUsage, writeResultStartTime, writeResultEndTime, "writeResult", ip, ipLock);
+
         long endTime = System.nanoTime();
 
-        queueLatencyReport(location, serverUsage, startTime, endTime);
+        latencyReport.queueLatencyReport(location, serverUsage, startTime, endTime, "All", ip, ipLock);
+    }
+
+    public String getLatencyReport() {
+        return latencyReport.getReportBody(clientId);
     }
 }
