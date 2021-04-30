@@ -22,37 +22,38 @@ public class OpenCVClientOperator implements CoreOperator {
     private Socket clientSocket;
     private BufferedReader in;
     private DataOutputStream out;
-    private DetectMarker detector;
     private ObjectMapper mapper;
     private String clientId;
 
     //TODO allow fixed values to be set externally or update system to reduce reliance on fixed file names
     private final String fileName= "singlemarkerssource.png";
-    private final String resultFileName = "detected.png";
     private final String fileExtension = "png";
-    private Mat subject;
+    public final String resultFileName = "detected.png";
+
     private BufferedImage currentImage;
     private List<String> reportQueue;
-
     public Semaphore ipLock;
     public Semaphore serverLock;
     public Semaphore reportLock;
 
     //Server Communication Properties
-    public boolean utilizeServer;
+    private static OpenCVClientOperator instance = null;
     private String ip;
     private int port;
+    private boolean debugMode = true; //TODO make this available when starting application
+    public boolean utilizeServer;
     public boolean connected;
-
+    public boolean evaluating;
+    public int maxEdgeQualityRating;
+    public int latencyThreshold;
+    public ConnectionEvaluator evaluator;
     public RegistrationRunner registrationRunner;
     public HeartBeatRunner beatRunner;
     public MasterCommunicationRunner masterCommunicationRunner;
     public ProcessingRunner processingRunner;
     public LatencyReporterRunner reportRunner;
-
-    private static OpenCVClientOperator instance = null;
-
-    private boolean debugMode = true; //TODO make this available when starting application
+    public ServerEvaluationRunner serverEvaluationRunner;
+    public EQRManagementRunner eqrManagementRunner;
 
     private OpenCVClientOperator() {
         mapper = new ObjectMapper();
@@ -60,10 +61,12 @@ public class OpenCVClientOperator implements CoreOperator {
         serverLock = new Semaphore(1);
         reportLock = new Semaphore(1);
         utilizeServer = false;
-        detector = new DetectMarker();
+        evaluator = new EQREvaluator();
         connected = false;
+        evaluating = false;
         reportQueue = new ArrayList<>();
         clientId = "";
+        latencyThreshold = 0;
     }
 
     public void startMasterCommunication() {
@@ -141,6 +144,18 @@ public class OpenCVClientOperator implements CoreOperator {
         }
     }
 
+    public void clearTcpInformation() throws InterruptedException {
+        try {
+            ipLock.acquire();
+            ip = "";
+            port = 0;
+            maxEdgeQualityRating = 0;
+            stopConnection();
+        } finally {
+            ipLock.release();
+        }
+    }
+
     public void setupClientRunners(String[] args) throws IllegalArgumentException {
         String[] argument;
         String masterUrl = "";
@@ -148,13 +163,14 @@ public class OpenCVClientOperator implements CoreOperator {
         String beatCommand = "";
         String getServerCommand = "";
         String latencyReportCommand = "";
+        String disconnectCommand = "";
         processingRunner = new ProcessingRunner();
         int interval = 1000;
         int reqNetwork = 0;
         int reqResource = 0;
         int location = 0;
 
-        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION"));
+        List<String> missingParameterList = new ArrayList<>(List.of("CLIENT_ID", "MASTER_URL", "REGISTER_COMMAND", "BEAT_COMMAND", "DISCONNECT_COMMAND", "GET_SERVER_COMMAND", "LATENCY_REPORT_COMMAND", "REQUIRED_NETWORK", "REQUIRED_RESOURCE", "LOCATION", "MAX_EQR", "LATENCY_REPORT_THRESHOLD"));
 
         //TODO move beat and get server commands to other input methods such as configuration files
         for(int i=0; i<args.length; i++) {
@@ -185,6 +201,10 @@ public class OpenCVClientOperator implements CoreOperator {
                         latencyReportCommand = argument[1];
                         missingParameterList.remove("LATENCY_REPORT_COMMAND");
                         break;
+                    case "DISCONNECT_COMMAND":
+                        disconnectCommand = argument[1];
+                        missingParameterList.remove("DISCONNECT_COMMAND");
+                        break;
                     case "REQUIRED_RESOURCE":
                         reqResource = Integer.parseInt(argument[1]);
                         missingParameterList.remove("REQUIRED_RESOURCE");
@@ -196,6 +216,14 @@ public class OpenCVClientOperator implements CoreOperator {
                     case "LOCATION":
                         location = Integer.parseInt(argument[1]);
                         missingParameterList.remove("LOCATION");
+                        break;
+                    case "LATENCY_REPORT_THRESHOLD":
+                        latencyThreshold = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("LATENCY_REPORT_THRESHOLD");
+                        break;
+                    case "MAX_EQR":
+                        maxEdgeQualityRating = Integer.parseInt(argument[1]);
+                        missingParameterList.remove("MAX_EQR");
                         break;
                     case "INTERVAL":
                         interval = Integer.parseInt(argument[1]);
@@ -221,14 +249,18 @@ public class OpenCVClientOperator implements CoreOperator {
         String beatBody =  "{\"id\" : \"" + clientId + "\"}";
         String masterCommunicationUrl = masterUrl + getServerCommand + clientId;
         String reportUrl = masterUrl + latencyReportCommand;
+        String disconnectUrl = masterUrl + disconnectCommand;
+        String disconnectBody = "{\"id\" : \"" + clientId + "\"}";
 
         registrationRunner = new RegistrationRunner(instance, registrationUrl, registrationBody);
         reportRunner = new LatencyReporterRunner(reportUrl);
         beatRunner = new HeartBeatRunner(beatUrl, beatBody, interval);
-        masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl);
+        masterCommunicationRunner = new MasterCommunicationRunner(masterCommunicationUrl, disconnectUrl, disconnectBody);
+        serverEvaluationRunner = new ServerEvaluationRunner();
+        eqrManagementRunner = new EQRManagementRunner();
     }
 
-    public void detectMarkerInServer() throws RemoteExecutionException {
+    public DetectMarker detectMarkerInServer(DetectMarker detector) throws RemoteExecutionException {
         String response;
         JsonNode node;
         try {
@@ -245,17 +277,24 @@ public class OpenCVClientOperator implements CoreOperator {
             stopConnection();
             throw new RemoteExecutionException(e);
         }
+
+        return detector;
     }
 
-    public void detectMarkerInClient() {
+    public DetectMarker detectMarkerInClient(Mat subject, DetectMarker detector) {
         detector.detect(subject);
+        return detector;
     }
 
     //TODO move this to a latency reporter utility
-    public void queueLatencyReport(String location, boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
+    public void queueLatencyReport(boolean serverUsage, long startTime, long endTime) throws JsonProcessingException, InterruptedException {
         String timestamp = new SimpleDateFormat("YYYY-MM-dd_HH:mm:ss").format(new Date());
         long latency = (endTime-startTime)/1000000;
         String reportedIp="";
+        String location = "Client";
+        if(serverUsage) {
+            location = "Server";
+        }
         if(debugMode) {
             System.out.println("[" + timestamp + "] Detected in " + location + " Execution Time: " + latency + "ms");
         }
@@ -272,6 +311,8 @@ public class OpenCVClientOperator implements CoreOperator {
         resultObject.put("latency", latency);
         resultObject.put("use_server", serverUsage);
         resultObject.put("server_ip", reportedIp);
+        resultObject.put("evaluating", evaluator.isEvaluating());
+        resultObject.put("eqr", evaluator.getEvaluationParameter());
 
         String result = mapper.writeValueAsString(resultObject);
 
@@ -305,37 +346,20 @@ public class OpenCVClientOperator implements CoreOperator {
         return returnedResult;
     }
 
-    public void markerDetection() throws JsonProcessingException, InterruptedException {
-        Mat result;
-        long startTime = System.nanoTime();
-        String location = "Client";
-        subject = ImageProcessor.getImageMat(fileName);
-        boolean serverUsage = false;
+    public Mat markerDetection(boolean evaluating, boolean useServer, DetectMarker detector) throws RemoteExecutionException {
+        Mat subject = ImageProcessor.getImageMat(fileName);
 
-        try {
-            serverLock.acquire();
-            serverUsage = utilizeServer;
-
-            if(utilizeServer) {
-                detectMarkerInServer();
-                location = "Server";
-            } else {
-                detectMarkerInClient();
-            }
-        } catch (RemoteExecutionException e) {
-            detectMarkerInClient();
-            serverUsage = false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            serverLock.release();
+        if(useServer) {
+            detectMarkerInServer(detector);
+        } else {
+            detectMarkerInClient(subject, detector);
         }
 
-        result = detector.drawDetectedMarkers(subject);
-        ImageProcessor.writeImage(resultFileName, result);
+        if(!evaluating) {
+            Mat result = detector.drawDetectedMarkers(subject);
+            ImageProcessor.writeImage(resultFileName, result);
+        }
 
-        long endTime = System.nanoTime();
-
-        queueLatencyReport(location, serverUsage, startTime, endTime);
+        return subject;
     }
 }

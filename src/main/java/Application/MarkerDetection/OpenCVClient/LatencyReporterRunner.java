@@ -24,13 +24,11 @@ public class LatencyReporterRunner implements Runnable {
                 reporter.report(reportedBody);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
-                System.out.println(e);
             }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                System.out.println(e);
             }
 
         }

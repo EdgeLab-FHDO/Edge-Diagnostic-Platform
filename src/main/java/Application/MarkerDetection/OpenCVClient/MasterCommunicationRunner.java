@@ -6,18 +6,19 @@ import java.util.concurrent.Semaphore;
 public class MasterCommunicationRunner implements Runnable {
     //TODO today, request assign client during the first time
     private final OpenCVClientOperator activeOperator;
-    private ConnectionEvaluator evaluation;
+    public ConnectionEvaluator evaluator;
     public MasterCommunicator communicator;
 
     private volatile boolean exit = false;
     private volatile boolean running = false;
     private volatile boolean paused = true;
     private final Semaphore pauseBlock;
+    private String ipAddress;
 
-    public MasterCommunicationRunner(String masterUrl) {
+    public MasterCommunicationRunner(String getServerUrl, String disconnectUrl, String disconnectBody) {
         activeOperator = OpenCVClientOperator.getInstance();
-        evaluation = new ConnectionEvaluator();
-        communicator = new MasterCommunicator(masterUrl);
+        evaluator = activeOperator.evaluator;
+        communicator = new MasterCommunicator(activeOperator, getServerUrl, disconnectUrl, disconnectBody);
         pauseBlock = new Semaphore(1);
     }
 
@@ -26,18 +27,28 @@ public class MasterCommunicationRunner implements Runnable {
         while(!exit) {
             try {
                 checkPause();
-                activeOperator.setupTcpConnection(communicator.getServer());
-                activeOperator.setServerUtilization(true);
+                ipAddress=communicator.getServer();
+                if(ipAddress != "") {
+                    System.out.println("Initializing with the IP (" + ipAddress +")");
+                    activeOperator.setupTcpConnection(ipAddress);
+                    evaluator.initialize();
+                }
             } catch (InterruptedException | IllegalArgumentException | IOException e) {
                 e.printStackTrace();
             }
 
-            while (OpenCVClientOperator.getInstance().utilizeServer && evaluation.isGood()) {
+            while (evaluator.isGood()) {
                 //TODO consider moving the new server utilization value into a parameter or take it from the evaluation result
-                //TODO add condition if processing is local, break from this loop and skip evaluation (make a custom Exception and throw it)
-                //TODO add connected value
-                //TODO add new state: Evaluate (connected but not using server) -< in this case we only use the latency value for evaulation
-                evaluation.evaluate();
+                evaluator.evaluate();
+                if(evaluator.isEvaluating()) {
+                    activeOperator.setServerUtilization(false);
+                    activeOperator.serverEvaluationRunner.resume();
+                } else if(evaluator.isGood()) {
+                    activeOperator.setServerUtilization(true);
+                    activeOperator.serverEvaluationRunner.pause();
+                } else {
+                    break;
+                }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -45,7 +56,16 @@ public class MasterCommunicationRunner implements Runnable {
                     break;
                 }
             }
-            activeOperator.setServerUtilization(false);
+            if(evaluator.needToDisconnect()) {
+                try {
+                    communicator.disconnectServer();
+                    activeOperator.setServerUtilization(false);
+                checkPause();
+                    evaluator.setDisconnect(false);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
 
             try {
                 Thread.sleep(1000);
